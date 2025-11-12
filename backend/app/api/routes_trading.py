@@ -1494,7 +1494,7 @@ def _read_throttle_from_meta_or_headers(
     return comp
 
 
-@router.post("/trading/backtest")
+@router.post("/backtest")
 def trading_backtest(body: BacktestIn):
     """
     Lightweight backtest intended for quick UI feedback.

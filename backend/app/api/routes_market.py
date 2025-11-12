@@ -83,7 +83,7 @@ def _router_has_path(rtr: APIRouter, path: str, method: str = "GET") -> bool:
 # ── route ─────────────────────────────────────────────────────────────────────
 
 
-@router.get("/market/overview")
+@router.get("/overview")
 async def market_overview(
     symbols: str = Query("AAPL,MSFT", description="Comma-separated symbols."),
     period_days: int = Query(30, ge=2, le=3650),
@@ -232,7 +232,7 @@ async def market_overview(
 
 
 # ── Market breadth (no keys required; yfinance underneath via provider) ───────
-@router.get("/market/breadth")
+@router.get("/breadth")
 async def market_breadth(
     symbols: str | None = Query(
         None, description="Comma-separated tickers; default internal watchlist"
@@ -503,7 +503,7 @@ except Exception:
 
 if not _risk_already_exposed:
 
-    @router.get("/market/risk-lite")
+    @router.get("/risk-lite")
     def market_risk_lite():
         now = _now()
 
@@ -701,7 +701,7 @@ async def _spx_reactions(dates: list[str]) -> dict[str, dict[str, float | None]]
     return out
 
 
-@router.get("/market/macro/history")
+@router.get("/macro/history")
 async def market_macro_history(
     code: str = Query(..., description="Macro code (e.g., CPI, NFP, PCE, ISM)."),
     limit: int = Query(50, ge=1, le=200),

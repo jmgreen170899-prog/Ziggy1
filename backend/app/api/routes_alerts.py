@@ -171,7 +171,7 @@ def _create_alert(symbol: str, atype: str, params: dict[str, Any]) -> dict[str, 
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/alerts/status")
+@router.get("/status")
 def alerts_status():
     """
     Return current scanning status. If full scheduler status is available,
@@ -203,7 +203,7 @@ def alerts_status():
     return result
 
 
-@router.post("/alerts/start")
+@router.post("/start")
 def alerts_start():
     """
     Start (or ensure) the background scan loop and enable it.
@@ -233,7 +233,7 @@ def alerts_start():
         )
 
 
-@router.post("/alerts/stop")
+@router.post("/stop")
 def alerts_stop():
     """
     Disable the background scan loop. If stop_scanner is available, call it;
@@ -264,7 +264,7 @@ def alerts_stop():
         )
 
 
-@router.post("/alerts/ping/test")
+@router.post("/ping/test")
 def alerts_ping_test():
     """
     Send a Telegram test message.
@@ -329,7 +329,7 @@ def _build_params(body: AlertCreateIn) -> dict[str, Any]:
     return params
 
 
-@router.post("/alerts/create")
+@router.post("/create")
 async def alerts_create(body: AlertCreateIn):
     """
     Generic alert creator - now uses production alert system.
@@ -400,7 +400,7 @@ async def alerts_create(body: AlertCreateIn):
         )
 
 
-@router.post("/alerts/sma50")
+@router.post("/sma50")
 def alerts_sma50(body: dict[str, Any]):
     """
     Convenience endpoint: create a 50DMA cross alert.
@@ -419,7 +419,7 @@ def alerts_sma50(body: dict[str, Any]):
         )
 
 
-@router.post("/alerts/moving-average/50")
+@router.post("/moving-average/50")
 def alerts_ma50_alias(body: dict[str, Any]):
     """
     Alias for /alerts/sma50.
@@ -428,7 +428,7 @@ def alerts_ma50_alias(body: dict[str, Any]):
 
 
 # Optional: simple list for debugging the in-memory store (no auth changes)
-@router.get("/alerts/list")
+@router.get("/list")
 def alerts_list():
     """
     Returns alerts from production system or in-memory fallback.
@@ -479,7 +479,7 @@ def alerts_list():
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/alerts/production/status")
+@router.get("/production/status")
 def alerts_production_status():
     """Check if production alert system is available."""
     return {
@@ -489,7 +489,7 @@ def alerts_production_status():
     }
 
 
-@router.get("/alerts/history")
+@router.get("/history")
 def alerts_history(alert_id: str | None = None, symbol: str | None = None, limit: int = 100):
     """Get alert trigger history."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
@@ -520,7 +520,7 @@ def alerts_history(alert_id: str | None = None, symbol: str | None = None, limit
         }
 
 
-@router.delete("/alerts/{alert_id}")
+@router.delete("/{alert_id}")
 def delete_alert(alert_id: str):
     """Delete a specific alert."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
@@ -543,7 +543,7 @@ def delete_alert(alert_id: str):
         )
 
 
-@router.put("/alerts/{alert_id}/enable")
+@router.put("/{alert_id}/enable")
 def enable_alert(alert_id: str):
     """Enable a specific alert."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
@@ -566,7 +566,7 @@ def enable_alert(alert_id: str):
         )
 
 
-@router.put("/alerts/{alert_id}/disable")
+@router.put("/{alert_id}/disable")
 def disable_alert(alert_id: str):
     """Disable a specific alert."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
