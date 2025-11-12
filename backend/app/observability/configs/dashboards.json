@@ -1,0 +1,402 @@
+{
+  "dashboards": [
+    {
+      "name": "ZiggyAI Production Observability",
+      "description": "Main production monitoring dashboard with SLO tracking",
+      "refresh_interval": "30s",
+      "time_range": "1h",
+      "panels": [
+        {
+          "id": "slo_compliance",
+          "title": "SLO Compliance Overview",
+          "type": "stat",
+          "description": "Overall SLO compliance percentage",
+          "metrics": [
+            {
+              "query": "slo.compliance_pct",
+              "label": "SLO Compliance",
+              "unit": "%",
+              "thresholds": {
+                "critical": 95,
+                "warning": 98,
+                "good": 100
+              }
+            }
+          ],
+          "position": {
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          }
+        },
+        {
+          "id": "ws_latency_p95",
+          "title": "WebSocket Delivery Latency (p95)",
+          "type": "timeseries",
+          "description": "95th percentile WebSocket message delivery latency",
+          "metrics": [
+            {
+              "query": "avg(websocket.channels.*.send_latency_ms)",
+              "label": "p95 Latency",
+              "unit": "ms"
+            }
+          ],
+          "thresholds": [
+            {
+              "value": 100,
+              "color": "red",
+              "label": "SLO Threshold"
+            }
+          ],
+          "position": {
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          }
+        },
+        {
+          "id": "queue_drop_rate",
+          "title": "Queue Drop Rate",
+          "type": "timeseries",
+          "description": "Message queue drop rate across all channels",
+          "metrics": [
+            {
+              "query": "rate(sum(websocket.channels.*.dropped_msgs))",
+              "label": "Drop Rate",
+              "unit": "%"
+            }
+          ],
+          "thresholds": [
+            {
+              "value": 0.1,
+              "color": "red",
+              "label": "SLO Threshold"
+            }
+          ],
+          "position": {
+            "x": 12,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          }
+        },
+        {
+          "id": "provider_availability",
+          "title": "Provider Availability",
+          "type": "gauge",
+          "description": "Health and availability of external providers",
+          "metrics": [
+            {
+              "query": "providers.polygon.availability_pct",
+              "label": "Polygon",
+              "unit": "%"
+            },
+            {
+              "query": "providers.alpaca.availability_pct",
+              "label": "Alpaca",
+              "unit": "%"
+            },
+            {
+              "query": "providers.news.availability_pct",
+              "label": "News",
+              "unit": "%"
+            },
+            {
+              "query": "providers.fred.availability_pct",
+              "label": "FRED",
+              "unit": "%"
+            },
+            {
+              "query": "providers.iex.availability_pct",
+              "label": "IEX Cloud",
+              "unit": "%"
+            }
+          ],
+          "thresholds": {
+            "critical": 99.5,
+            "warning": 99.8,
+            "good": 100
+          },
+          "position": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          }
+        },
+        {
+          "id": "ws_connections",
+          "title": "WebSocket Connections",
+          "type": "timeseries",
+          "description": "Total active WebSocket connections",
+          "metrics": [
+            {
+              "query": "websocket.total_connections",
+              "label": "Total Connections",
+              "unit": "connections"
+            }
+          ],
+          "position": {
+            "x": 0,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          }
+        },
+        {
+          "id": "ws_queue_lengths",
+          "title": "WebSocket Queue Lengths",
+          "type": "timeseries",
+          "description": "Message queue lengths per channel",
+          "metrics": [
+            {
+              "query": "websocket.channels.market_data.queue_len",
+              "label": "Market Data"
+            },
+            {
+              "query": "websocket.channels.news_feed.queue_len",
+              "label": "News Feed"
+            },
+            {
+              "query": "websocket.channels.trading_signals.queue_len",
+              "label": "Trading Signals"
+            }
+          ],
+          "position": {
+            "x": 8,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          }
+        },
+        {
+          "id": "provider_latency",
+          "title": "Provider Response Latency (p95)",
+          "type": "timeseries",
+          "description": "95th percentile response latency for each provider",
+          "metrics": [
+            {
+              "query": "providers.polygon.p95_latency_ms",
+              "label": "Polygon"
+            },
+            {
+              "query": "providers.alpaca.p95_latency_ms",
+              "label": "Alpaca"
+            },
+            {
+              "query": "providers.news.p95_latency_ms",
+              "label": "News"
+            }
+          ],
+          "unit": "ms",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          }
+        },
+        {
+          "id": "provider_health_scores",
+          "title": "Provider Health Scores",
+          "type": "table",
+          "description": "Detailed health metrics for all providers",
+          "columns": [
+            {
+              "field": "provider",
+              "header": "Provider",
+              "type": "string"
+            },
+            {
+              "field": "health_score",
+              "header": "Health Score",
+              "type": "number",
+              "format": "0.000"
+            },
+            {
+              "field": "availability_pct",
+              "header": "Availability %",
+              "type": "number",
+              "format": "0.00"
+            },
+            {
+              "field": "avg_latency_ms",
+              "header": "Avg Latency (ms)",
+              "type": "number",
+              "format": "0.00"
+            },
+            {
+              "field": "consecutive_failures",
+              "header": "Consecutive Failures",
+              "type": "number"
+            }
+          ],
+          "data_source": "providers.providers",
+          "position": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 4
+          }
+        },
+        {
+          "id": "slo_violations",
+          "title": "Active SLO Violations",
+          "type": "table",
+          "description": "Current SLO violations requiring attention",
+          "columns": [
+            {
+              "field": "name",
+              "header": "SLO Target",
+              "type": "string"
+            },
+            {
+              "field": "current_value",
+              "header": "Current Value",
+              "type": "number"
+            },
+            {
+              "field": "target_value",
+              "header": "Target Value",
+              "type": "number"
+            },
+            {
+              "field": "unit",
+              "header": "Unit",
+              "type": "string"
+            }
+          ],
+          "data_source": "slo.targets[violated=true]",
+          "position": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 4
+          }
+        },
+        {
+          "id": "failover_events",
+          "title": "Provider Failover Events",
+          "type": "stat",
+          "description": "Total provider failover events",
+          "metrics": [
+            {
+              "query": "providers.global.failover_count",
+              "label": "Failover Count",
+              "unit": "events"
+            }
+          ],
+          "position": {
+            "x": 0,
+            "y": 12,
+            "w": 6,
+            "h": 3
+          }
+        },
+        {
+          "id": "tracked_providers",
+          "title": "Tracked Providers",
+          "type": "stat",
+          "description": "Number of providers being monitored",
+          "metrics": [
+            {
+              "query": "providers.global.tracked_providers",
+              "label": "Providers",
+              "unit": "count"
+            }
+          ],
+          "position": {
+            "x": 6,
+            "y": 12,
+            "w": 6,
+            "h": 3
+          }
+        }
+      ],
+      "tags": ["production", "slo", "observability"]
+    },
+    {
+      "name": "WebSocket Performance",
+      "description": "Detailed WebSocket metrics and performance monitoring",
+      "refresh_interval": "10s",
+      "time_range": "30m",
+      "panels": [
+        {
+          "id": "ws_broadcast_stats",
+          "title": "Broadcast Statistics",
+          "type": "timeseries",
+          "metrics": [
+            {
+              "query": "sum(websocket.channels.*.broadcasts_attempted)",
+              "label": "Attempted"
+            },
+            {
+              "query": "sum(websocket.channels.*.broadcasts_failed)",
+              "label": "Failed"
+            }
+          ],
+          "position": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 4
+          }
+        },
+        {
+          "id": "ws_subscribers",
+          "title": "Active Subscribers by Channel",
+          "type": "bar",
+          "metrics": [
+            {
+              "query": "websocket.channels.*.subscribers",
+              "label": "Subscribers",
+              "breakdown": "channel"
+            }
+          ],
+          "position": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 4
+          }
+        },
+        {
+          "id": "ws_uptime",
+          "title": "Average Connection Uptime",
+          "type": "stat",
+          "metrics": [
+            {
+              "query": "avg(websocket.channels.*.avg_uptime_s)",
+              "label": "Avg Uptime",
+              "unit": "seconds"
+            }
+          ],
+          "position": {
+            "x": 0,
+            "y": 4,
+            "w": 8,
+            "h": 3
+          }
+        }
+      ],
+      "tags": ["websocket", "performance"]
+    }
+  ],
+  "variables": [
+    {
+      "name": "environment",
+      "label": "Environment",
+      "type": "constant",
+      "value": "production"
+    },
+    {
+      "name": "refresh_interval",
+      "label": "Refresh Interval",
+      "type": "select",
+      "options": ["10s", "30s", "1m", "5m"],
+      "default": "30s"
+    }
+  ]
+}

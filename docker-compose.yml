@@ -1,0 +1,156 @@
+# no "version:" key (Compose v2 ignores it)
+
+x-health-interval: &health_interval 10s
+x-health-timeout: &health_timeout 5s
+x-health-retries: &health_retries 20
+x-health-start: &health_start 40s
+
+services:
+  backend:
+    image: python:3.11-slim
+    container_name: ziggy-backend
+    working_dir: /app
+    env_file:
+      - ./backend/.env
+      - ./.env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://ziggy:ziggy@postgres:5432/ziggy}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      API_BASE_URL: ${API_BASE_URL:-http://backend:8000}
+      ALLOW_ORIGINS: ${ALLOW_ORIGINS:-http://localhost:5173}
+      PYTHONUNBUFFERED: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      PIP_NO_CACHE_DIR: "1"
+      PIP_NO_INPUT: "1"
+      PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu
+      PIP_CONSTRAINT: /app/constraints.txt
+
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./backend/data:/app/data
+
+    depends_on:
+      qdrant:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    command: >
+      sh -c "
+        set -e;
+        python -m pip install --upgrade pip;
+        # IMPORTANT: no backslashes here so YAML folding can't break it
+        python -m pip install --no-deps 'torch==2.5.0+cpu' 'torchvision==0.20.0+cpu' 'torchaudio==2.5.0+cpu';
+        if [ -f requirements.cpu.txt ]; then
+          python -m pip install -r requirements.cpu.txt -c /app/constraints.txt;
+        elif [ -f requirements.txt ]; then
+          python -m pip install -r requirements.txt -c /app/constraints.txt;
+        fi;
+        if [ -f requirements-dev.txt ]; then
+          python -m pip install -r requirements-dev.txt -c /app/constraints.txt;
+        fi;
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').read()==b'ok' else 1)"]
+      interval: *health_interval
+      timeout: *health_timeout
+      retries: *health_retries
+      start_period: *health_start
+
+    restart: unless-stopped
+
+  frontend:
+    image: node:20-alpine
+    container_name: ziggy-frontend
+    working_dir: /app
+    environment:
+      VITE_API_BASE: ${VITE_API_BASE:-http://localhost:8000}
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - node_modules_cache:/app/node_modules
+    command: >
+      sh -c "
+        npm ci || npm install;
+        npm run dev -- --host 0.0.0.0 --port 5173
+      "
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http=require('http');const req=http.request({host:'localhost',port:5173,path:'/'},res=>{process.exit(res.statusCode>=200&&res.statusCode<500?0:1)});req.on('error',()=>process.exit(1));req.end();"]
+      interval: *health_interval
+      timeout: *health_timeout
+      retries: 20
+      start_period: 40s
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.11.4
+    container_name: ziggy-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -m 3 http://localhost:6333/readyz >/dev/null || curl -fsS -m 3 http://localhost:6333/ready >/dev/null || exit 1"]
+      interval: *health_interval
+      timeout: *health_timeout
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: ziggy-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ziggy}
+      POSTGRES_USER: ${POSTGRES_USER:-ziggy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ziggy}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ziggy} -d ${POSTGRES_DB:-ziggy}"]
+      interval: *health_interval
+      timeout: *health_timeout
+      retries: *health_retries
+      start_period: 30s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: ziggy-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: *health_interval
+      timeout: *health_timeout
+      retries: *health_retries
+      start_period: *health_start
+    restart: unless-stopped
+
+volumes:
+  qdrant_storage:
+  pg_data:
+  redis_data:
+  node_modules_cache:

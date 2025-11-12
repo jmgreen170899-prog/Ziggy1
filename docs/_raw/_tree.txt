@@ -1,0 +1,851 @@
+﻿ZiggyClean
+|-- .dockerignore
+|-- .env
+|-- .gitignore
+|-- .pre-commit-config.yaml
+|-- ALL_NOTES.md
+|-- audit.ps1
+|-- check_data_freshness.py
+|-- Consolidate-Notes.ps1
+|-- debug_websocket.html
+|-- demo_audit.py
+|-- docker-compose.yml
+|-- ISSUE_REPORT.md
+|-- ISSUES.md
+|-- knip-unused.json
+|-- Makefile
+|-- package.json
+|-- package-lock.json
+|-- paper_test_api.py
+|-- Purge-To-AllNotes.ps1
+|-- pyrightconfig.json
+|-- start-ziggy.bat
+|-- start-ziggy.ps1
+|-- TASK.md
+|-- test_decision_log.py
+|-- test_explain_server.py
+|-- test_news_websocket.py
+|-- test_paper_import.py
+|-- test_websocket.py
+|-- websocket_debug.html
+|-- ZiggyAI_valuation_note.txt
+|-- .git
+|-- .github
+|   `-- workflows
+|       `-- ci.yml
+|-- .next
+|-- .pytest_cache
+|-- .ruff_cache
+|   |-- .gitignore
+|   |-- CACHEDIR.TAG
+|   `-- 0.14.3
+|       |-- 11385038558397787409
+|       |-- 14046632018847996257
+|       |-- 15691891160100148110
+|       |-- 15804820671324824549
+|       |-- 15920125885065828986
+|       |-- 16343852926827876343
+|       |-- 16458021738296763903
+|       |-- 17017142850722685537
+|       |-- 1779330461380459612
+|       |-- 18042398543289062144
+|       |-- 3660475767526787915
+|       |-- 5635475509735528770
+|       |-- 7587466272887993899
+|       |-- 889124484540731292
+|       |-- 9062121831047624508
+|       `-- 9562951797028360895
+|-- .venv
+|-- .vscode
+|   |-- launch.json
+|   |-- settings.json
+|   `-- tasks.json
+|-- artifacts
+|   |-- backend
+|   |-- frontend
+|   `-- ui
+|-- backend
+|   |-- .env
+|   |-- .env.example
+|   |-- acceptance_test.py
+|   |-- debug_memory.py
+|   |-- Dockerfile
+|   |-- Makefile
+|   |-- pyproject.toml
+|   |-- pytest.ini
+|   |-- quick_websocket_test.py
+|   |-- requirements.txt
+|   |-- restart_portfolio.py
+|   |-- server.err.log
+|   |-- server.log
+|   |-- test_alert_monitoring.py
+|   |-- test_brain_data_flow.py
+|   |-- test_brain_flow_simple.py
+|   |-- test_decision_log.py
+|   |-- test_enhanced_news.py
+|   |-- test_event_store_metrics.py
+|   |-- test_events.jsonl
+|   |-- test_feedback_events.jsonl
+|   |-- test_frontend_news_websocket.py
+|   |-- test_full_alert_flow.py
+|   |-- test_integration.py
+|   |-- test_integration_api.py
+|   |-- test_learning_system.py
+|   |-- test_news_streaming.py
+|   |-- test_news_streaming_debug.py
+|   |-- test_portfolio_market.py
+|   |-- test_realtime_brain.py
+|   |-- test_rss_quick.py
+|   |-- test_simple_hub.py
+|   |-- test_start_news_streaming.py
+|   |-- test_startup_fix.py
+|   |-- test_universal_data_hub.py
+|   |-- test_websocket_robustness.py
+|   |-- trading.db
+|   |-- ziggy.db
+|   |-- ziggy_dev.db
+|   |-- ziggy_dev.db-shm
+|   |-- ziggy_dev.db-wal
+|   |-- .mypy_cache
+|   |-- .pytest_cache
+|   |-- .ruff_cache
+|   |   |-- .gitignore
+|   |   |-- CACHEDIR.TAG
+|   |   `-- 0.14.1
+|   |       |-- 13077876967193872763
+|   |       |-- 13772126718658709791
+|   |       |-- 14494737937682036407
+|   |       |-- 16838172096254418951
+|   |       |-- 16970377686242193965
+|   |       `-- 4470307362263675903
+|   |-- .venv
+|   |-- __pycache__
+|   |-- app
+|   |   |-- __init__.py
+|   |   |-- db.py
+|   |   |-- main.py
+|   |   |-- __pycache__
+|   |   |-- agent
+|   |   |   |-- __init__.py
+|   |   |   |-- agent.py
+|   |   |   |-- tools.py
+|   |   |   `-- __pycache__
+|   |   |-- api
+|   |   |   |-- __init__.py
+|   |   |   |-- api.js
+|   |   |   |-- routes.py
+|   |   |   |-- routes_alerts.py
+|   |   |   |-- routes_chat.py
+|   |   |   |-- routes_crypto.py
+|   |   |   |-- routes_dev.py
+|   |   |   |-- routes_explain.py
+|   |   |   |-- routes_feedback.py
+|   |   |   |-- routes_integration.py
+|   |   |   |-- routes_learning.py
+|   |   |   |-- routes_market.py
+|   |   |   |-- routes_market_calendar.py
+|   |   |   |-- routes_news.py
+|   |   |   |-- routes_paper.py
+|   |   |   |-- routes_risk_lite.py
+|   |   |   |-- routes_screener.py
+|   |   |   |-- routes_signals.py
+|   |   |   |-- routes_trace.py
+|   |   |   |-- routes_trading.py
+|   |   |   `-- __pycache__
+|   |   |-- backtest
+|   |   |   |-- __init__.py
+|   |   |   `-- engine.py
+|   |   |-- brokers
+|   |   |   |-- __init__.py
+|   |   |   |-- paper_broker.py
+|   |   |   `-- __pycache__
+|   |   |-- core
+|   |   |   |-- circuit_breaker.py
+|   |   |   |-- config.py
+|   |   |   |-- exceptions.py
+|   |   |   |-- health.py
+|   |   |   |-- logging.py
+|   |   |   |-- rate_limiting.py
+|   |   |   |-- retry.py
+|   |   |   |-- security.py
+|   |   |   |-- websocket.py
+|   |   |   `-- __pycache__
+|   |   |-- data
+|   |   |   |-- microstructure.py
+|   |   |   |-- __pycache__
+|   |   |   |-- features
+|   |   |   |   |-- __init__.py
+|   |   |   |   |-- features.py
+|   |   |   |   `-- __pycache__
+|   |   |   `-- fixtures
+|   |   |       |-- news.json
+|   |   |       |-- news_sources.json
+|   |   |       |-- ohlc.json
+|   |   |       `-- signals.json
+|   |   |-- dev
+|   |   |   |-- __init__.py
+|   |   |   |-- bootstrap_user.py
+|   |   |   |-- portfolio_setup.py
+|   |   |   `-- __pycache__
+|   |   |-- llm
+|   |   |   |-- openai_llm.py
+|   |   |   `-- __pycache__
+|   |   |-- memory
+|   |   |   |-- __init__.py
+|   |   |   |-- events.py
+|   |   |   |-- vecdb.py
+|   |   |   `-- __pycache__
+|   |   |-- middleware
+|   |   |   |-- __init__.py
+|   |   |   |-- rate_limit.py
+|   |   |   |-- request_logging.py
+|   |   |   `-- __pycache__
+|   |   |-- models
+|   |   |   |-- __init__.py
+|   |   |   |-- base.py
+|   |   |   |-- calibration.json
+|   |   |   |-- market.py
+|   |   |   |-- paper.py
+|   |   |   |-- system.py
+|   |   |   |-- trading.py
+|   |   |   |-- users.py
+|   |   |   `-- __pycache__
+|   |   |-- paper
+|   |   |   |-- __init__.py
+|   |   |   |-- allocator.py
+|   |   |   |-- engine.py
+|   |   |   |-- features.py
+|   |   |   |-- ingest.py
+|   |   |   |-- labels.py
+|   |   |   |-- learner.py
+|   |   |   |-- learner_gateway.py
+|   |   |   |-- __pycache__
+|   |   |   `-- theories
+|   |   |       |-- __init__.py
+|   |   |       `-- __pycache__
+|   |   |-- persistence
+|   |   |   |-- audit_log.py
+|   |   |   |-- models.py
+|   |   |   |-- rehydrate.py
+|   |   |   |-- repository.py
+|   |   |   |-- shutdown.py
+|   |   |   |-- snapshotter.py
+|   |   |   `-- __pycache__
+|   |   |-- rag
+|   |   |   |-- __init__.py
+|   |   |   |-- chunking.py
+|   |   |   |-- embeddings.py
+|   |   |   |-- ingest_pdf.py
+|   |   |   |-- ingest_web.py
+|   |   |   |-- retriever.py
+|   |   |   |-- vectorstore.py
+|   |   |   `-- __pycache__
+|   |   |-- services
+|   |   |   |-- __init__.py
+|   |   |   |-- alert_monitoring.py
+|   |   |   |-- alerts.py
+|   |   |   |-- backtest.py
+|   |   |   |-- brain_integration.py
+|   |   |   |-- calibration.py
+|   |   |   |-- chart_streaming.py
+|   |   |   |-- contracts.py
+|   |   |   |-- crypto_providers.py
+|   |   |   |-- data_log.py
+|   |   |   |-- decision_log.py
+|   |   |   |-- evaluation.py
+|   |   |   |-- explain.py
+|   |   |   |-- filings.py
+|   |   |   |-- iex_cloud_provider.py
+|   |   |   |-- integration_hub.py
+|   |   |   |-- learner.py
+|   |   |   |-- macro.py
+|   |   |   |-- market_providers.py
+|   |   |   |-- news.py
+|   |   |   |-- news_nlp.py
+|   |   |   |-- news_streaming.py
+|   |   |   |-- portfolio_streaming.py
+|   |   |   |-- position_sizing.py
+|   |   |   |-- provider_factory.py
+|   |   |   |-- provider_health.py
+|   |   |   |-- quarantine.py
+|   |   |   |-- regime.py
+|   |   |   |-- rss_news_provider.py
+|   |   |   |-- sandbox.py
+|   |   |   |-- screener.py
+|   |   |   |-- social_sentiment.py
+|   |   |   |-- telemetry.py
+|   |   |   |-- ticker_linker.py
+|   |   |   |-- timezone_utils.py
+|   |   |   |-- trace.py
+|   |   |   |-- __pycache__
+|   |   |   |-- fusion
+|   |   |   |   |-- __init__.py
+|   |   |   |   |-- ensemble.py
+|   |   |   |   `-- __pycache__
+|   |   |   `-- market_brain
+|   |   |       |-- __init__.py
+|   |   |       |-- backtest.py
+|   |   |       |-- data_hub.py
+|   |   |       |-- executor.py
+|   |   |       |-- features.py
+|   |   |       |-- market_data_fetcher.py
+|   |   |       |-- regime.py
+|   |   |       |-- signals.py
+|   |   |       |-- simple_data_hub.py
+|   |   |       |-- sizer.py
+|   |   |       `-- __pycache__
+|   |   |-- tasks
+|   |   |   |-- __init__.py
+|   |   |   |-- learn.py
+|   |   |   |-- paper_worker.py
+|   |   |   |-- scheduler.py
+|   |   |   |-- telegram.py
+|   |   |   |-- tg_log.py
+|   |   |   `-- __pycache__
+|   |   |-- trading
+|   |   |   |-- __init__.py
+|   |   |   |-- adapter_factory.py
+|   |   |   |-- brackets.py
+|   |   |   |-- config.py
+|   |   |   |-- guardrails.py
+|   |   |   |-- journal.py
+|   |   |   |-- kill_switch.py
+|   |   |   |-- models.py
+|   |   |   |-- oms.py
+|   |   |   |-- policy.py
+|   |   |   |-- quality.py
+|   |   |   |-- risk.py
+|   |   |   |-- router.py
+|   |   |   |-- signals.py
+|   |   |   |-- sizing.py
+|   |   |   |-- __pycache__
+|   |   |   |-- adapters
+|   |   |   |   |-- __init__.py
+|   |   |   |   |-- alpaca.py
+|   |   |   |   |-- base.py
+|   |   |   |   |-- ibkr.py
+|   |   |   |   `-- __pycache__
+|   |   |   `-- backtest
+|   |   |       |-- __init__.py
+|   |   |       |-- datasets.py
+|   |   |       `-- engine.py
+|   |   |-- utils
+|   |   |   |-- isolation.py
+|   |   |   |-- text.py
+|   |   |   |-- time.py
+|   |   |   `-- __pycache__
+|   |   `-- web
+|   |       |-- __init__.py
+|   |       |-- browse_router.py
+|   |       `-- __pycache__
+|   |-- data
+|   |   |-- alerts.db
+|   |   |-- paper_events.jsonl
+|   |   |-- telegram_log.jsonl
+|   |   |-- trading.db
+|   |   |-- decisions
+|   |   |   `-- 2025-10
+|   |   |       |-- decision_log-20251018.jsonl
+|   |   |       `-- decision_log-20251021.jsonl
+|   |   |-- learning
+|   |   |-- logs
+|   |   |-- macro_history
+|   |   |   `-- TEST.json
+|   |   |-- memory
+|   |   |   `-- events.jsonl
+|   |   `-- rules
+|   |-- scripts
+|   |   |-- backend_health_audit.py
+|   |   `-- run_schemathesis.py
+|   |-- test_data
+|   |   `-- logs
+|   `-- tests
+|       |-- test_api_cognitive.py
+|       |-- test_cognitive_core.py
+|       |-- test_dev_sqlite_health_label.py
+|       |-- test_dev_user_bootstrap.py
+|       |-- test_endpoints_smoke.py
+|       |-- test_event_store_metrics.py
+|       |-- test_health.py
+|       |-- test_integration.py
+|       |-- test_market_macro_history.py
+|       |-- test_paper_lab.py
+|       |-- test_perception_layer.py
+|       |-- test_portfolio_change_detection.py
+|       |-- test_provider_retry.py
+|       |-- test_rss_cache_fallback.py
+|       |-- test_runner.py
+|       |-- test_sandbox_smoke.py
+|       |-- test_trade_ohlc_batch.py
+|       |-- test_trade_ohlc_timeout.py
+|       |-- test_trade_safety_middleware.py
+|       |-- test_websocket_layer.py
+|       |-- __pycache__
+|       |-- api
+|       |   |-- test_feedback_routes.py
+|       |   |-- test_signal_with_rag.py
+|       |   `-- __pycache__
+|       |-- memory
+|       |   |-- test_events_store.py
+|       |   |-- test_rag_blend.py
+|       |   |-- test_vecdb.py
+|       |   `-- __pycache__
+|       `-- tasks
+|           |-- test_learn_brier.py
+|           `-- __pycache__
+|-- data
+|   |-- alerts.db
+|   |-- paper_events.jsonl
+|   |-- 2025-10
+|   |-- decisions
+|   |   `-- 2025-10
+|   |       `-- decision_log-20251018.jsonl
+|   |-- macro_history
+|   |   `-- TEST.json
+|   `-- memory
+|-- docs
+|   |-- _blueprint_log.md
+|   |-- api-coverage-report.md
+|   |-- Bot Information.txt
+|   |-- IntegrationSystem.md
+|   |-- LearningSystem.md
+|   |-- UI_AUDIT_SYSTEM.md
+|   |-- ziggy_brain_index.json
+|   |-- ziggy_brain_review.md
+|   |-- ZiggyContext.md
+|   `-- _raw
+|       |-- _files.txt
+|       `-- _tree.txt
+|-- frontend
+|   |-- .env.example
+|   |-- .env.local
+|   |-- .eslintrc.strict.json
+|   |-- .gitignore
+|   |-- AUTHENTICATION.md
+|   |-- eslint.config.mjs
+|   |-- jest.config.ts
+|   |-- jest.setup.ts
+|   |-- jscpd.config.json
+|   |-- knip.json
+|   |-- next.config.ts
+|   |-- next-env.d.ts
+|   |-- package.json
+|   |-- package-lock.json
+|   |-- playwright.config.ts
+|   |-- playwright.e2e.config.ts
+|   |-- postcss.config.mjs
+|   |-- README.md
+|   |-- tailwind.config.ts
+|   |-- tsconfig.json
+|   |-- tsconfig.strict.json
+|   |-- tsconfig.strict.tsbuildinfo
+|   |-- tsconfig.tsbuildinfo
+|   |-- UI.md
+|   |-- .github
+|   |   `-- copilot-instructions.md
+|   |-- .next
+|   |-- .swc
+|   |   `-- plugins
+|   |       `-- windows_x86_64_18.0.0
+|   |-- .vscode
+|   |   `-- tasks.json
+|   |-- artifacts
+|   |   |-- e2e
+|   |   |   |-- playwright-results.json
+|   |   |   `-- playwright-report
+|   |   |       |-- index.html
+|   |   |       `-- data
+|   |   |           |-- 604852d1bc0ca7f34713651b9f4f853764e10145.md
+|   |   |           `-- a6de29274cc35017e721095e9737567e33690208.png
+|   |   |-- test-results
+|   |   |   |-- .playwright-artifacts-1
+|   |   |   |   |-- 91b1b5c330fb35d2cb81fa53f2053570.png
+|   |   |   |   |-- e5c3d24fc7b4585ca50a756988585d1f.png
+|   |   |   |   `-- traces
+|   |   |   `-- ui_audit-UI-Audit---Route-Health-Check-Route-home--chromium
+|   |   |       |-- error-context.md
+|   |   |       `-- test-failed-1.png
+|   |   `-- ui
+|   |       |-- alerts.png
+|   |       |-- axe_test.json
+|   |       |-- chat.png
+|   |       |-- home.png
+|   |       |-- lh_test.json
+|   |       |-- market.png
+|   |       |-- paper-trading.png
+|   |       |-- playwright-results.json
+|   |       |-- portfolio.png
+|   |       |-- settings.png
+|   |       |-- status.png
+|   |       |-- ui_audit_results.json
+|   |       |-- ui_audit_summary.json
+|   |       `-- playwright-report
+|   |           |-- index.html
+|   |           `-- data
+|   |               |-- 64a2c41e7f9febec720bfdc0600d3a46c034f7e7.md
+|   |               `-- b63ed154b8afdd2f33cf9b3bdb9aff93fd99028f.png
+|   |-- node_modules
+|   |-- public
+|   |   |-- file.svg
+|   |   |-- globe.svg
+|   |   |-- next.svg
+|   |   |-- vercel.svg
+|   |   `-- window.svg
+|   |-- scripts
+|   |   |-- .endpoint-usage.json
+|   |   |-- axe_audit.mjs
+|   |   |-- endpoint-coverage.config.json
+|   |   |-- generate_ui_health_report.mjs
+|   |   |-- lighthouse_audit.mjs
+|   |   |-- lighthouse_audit_improved.mjs
+|   |   |-- test_axe_system.mjs
+|   |   |-- test_fetch.mjs
+|   |   |-- test_lighthouse.mjs
+|   |   |-- test_lighthouse_system.mjs
+|   |   |-- test_routes.mjs
+|   |   |-- ui_audit.spec.ts
+|   |   `-- verify-endpoint-coverage.ts
+|   |-- src
+|   |   |-- __tests__
+|   |   |   `-- test-utils.tsx
+|   |   |-- app
+|   |   |   |-- error.tsx
+|   |   |   |-- favicon.ico
+|   |   |   |-- globals.css
+|   |   |   |-- layout.tsx
+|   |   |   |-- loading.tsx
+|   |   |   |-- not-found.tsx
+|   |   |   |-- page.tsx
+|   |   |   |-- account
+|   |   |   |   |-- page.tsx
+|   |   |   |   |-- billing
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   |-- devices
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   |-- profile
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   `-- security
+|   |   |   |       `-- page.tsx
+|   |   |   |-- alerts
+|   |   |   |   `-- page.tsx
+|   |   |   |-- api
+|   |   |   |   |-- _lib
+|   |   |   |   |   `-- proxy.ts
+|   |   |   |   |-- market
+|   |   |   |   |   `-- overview
+|   |   |   |   |       `-- route.ts
+|   |   |   |   |-- news
+|   |   |   |   |   |-- headlines
+|   |   |   |   |   |   `-- route.ts
+|   |   |   |   |   |-- sentiment
+|   |   |   |   |   |   `-- route.ts
+|   |   |   |   |   `-- sources
+|   |   |   |   |       `-- route.ts
+|   |   |   |   |-- paper
+|   |   |   |   |   |-- health
+|   |   |   |   |   |   `-- route.ts
+|   |   |   |   |   `-- status
+|   |   |   |   |       `-- detailed
+|   |   |   |   |           `-- route.ts
+|   |   |   |   |-- signals
+|   |   |   |   |   `-- watchlist
+|   |   |   |   |       `-- route.ts
+|   |   |   |   `-- trade
+|   |   |   |       `-- ohlc
+|   |   |   |           `-- route.ts
+|   |   |   |-- auth
+|   |   |   |   |-- forgot-password
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   |-- reset-password
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   |-- signin
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   |-- signup
+|   |   |   |   |   `-- page.tsx
+|   |   |   |   `-- verify
+|   |   |   |       `-- page.tsx
+|   |   |   |-- chat
+|   |   |   |   `-- page.tsx
+|   |   |   |-- crypto
+|   |   |   |   |-- page.tsx
+|   |   |   |   `-- page_old.tsx.backup
+|   |   |   |-- demo
+|   |   |   |   `-- page.tsx
+|   |   |   |-- dev
+|   |   |   |   `-- api-coverage
+|   |   |   |       `-- page.tsx
+|   |   |   |-- learning
+|   |   |   |   |-- page.tsx
+|   |   |   |   `-- page_old.tsx.backup
+|   |   |   |-- live
+|   |   |   |   `-- page.tsx
+|   |   |   |-- market
+|   |   |   |   |-- loading.tsx
+|   |   |   |   `-- page.tsx
+|   |   |   |-- news
+|   |   |   |   |-- loading.tsx
+|   |   |   |   `-- page.tsx
+|   |   |   |-- paper
+|   |   |   |   `-- status
+|   |   |   |       `-- page.tsx
+|   |   |   |-- paper-trading
+|   |   |   |   `-- page.tsx
+|   |   |   |-- portfolio
+|   |   |   |   |-- loading.tsx
+|   |   |   |   `-- page.tsx
+|   |   |   |-- predictions
+|   |   |   |   `-- page.tsx
+|   |   |   |-- trading
+|   |   |   |   |-- loading.tsx
+|   |   |   |   |-- page.tsx
+|   |   |   |   `-- page_old.tsx.backup
+|   |   |   `-- websocket-test
+|   |   |       `-- page.tsx
+|   |   |-- components
+|   |   |   |-- AdvancedDashboard.tsx
+|   |   |   |-- alerts
+|   |   |   |-- auth
+|   |   |   |   |-- AdminGuard.tsx
+|   |   |   |   |-- AuthCard.tsx
+|   |   |   |   |-- AuthGuard.tsx
+|   |   |   |   |-- DevLoginButton.tsx
+|   |   |   |   |-- OtpInput.tsx
+|   |   |   |   `-- PasswordField.tsx
+|   |   |   |-- charts
+|   |   |   |-- chat
+|   |   |   |   |-- ChatInterface.tsx
+|   |   |   |   |-- MessageInput.tsx
+|   |   |   |   `-- MessageList.tsx
+|   |   |   |-- crypto
+|   |   |   |-- dashboard
+|   |   |   |   |-- AdvancedPortfolioMetrics.tsx
+|   |   |   |   |-- AIInsightsPanel.tsx
+|   |   |   |   |-- LiveDataStatus.tsx
+|   |   |   |   |-- LiveQuotesWidget.tsx
+|   |   |   |   |-- MarketStatusIndicators.tsx
+|   |   |   |   |-- PaperHealthWidget.tsx
+|   |   |   |   |-- PerformanceVisualization.tsx
+|   |   |   |   `-- QuickActionsPanel.tsx
+|   |   |   |-- debug
+|   |   |   |-- layout
+|   |   |   |   `-- PageLayout.tsx
+|   |   |   |-- learning
+|   |   |   |-- market
+|   |   |   |   |-- QuoteCard.tsx
+|   |   |   |   `-- __tests__
+|   |   |   |       `-- QuoteCard.test.tsx
+|   |   |   |-- news
+|   |   |   |-- portfolio
+|   |   |   |-- predictions
+|   |   |   |   `-- PredictionsHub.tsx
+|   |   |   |-- sentiment
+|   |   |   |-- trading
+|   |   |   |   |-- AIScanner.tsx
+|   |   |   |   |-- FeeEstimator.tsx
+|   |   |   |   |-- PatternEngine.tsx
+|   |   |   |   |-- SignalsList.tsx
+|   |   |   |   |-- StrategyLab.tsx
+|   |   |   |   |-- StrategyMarketplace.tsx
+|   |   |   |   `-- __tests__
+|   |   |   |       `-- SignalsList.test.tsx
+|   |   |   `-- ui
+|   |   |       |-- AccountMenu.tsx
+|   |   |       |-- BackendStatusBanner.tsx
+|   |   |       |-- Badge.tsx
+|   |   |       |-- Button.tsx
+|   |   |       |-- Card.tsx
+|   |   |       |-- EmptyState.tsx
+|   |   |       |-- ErrorBoundary.tsx
+|   |   |       |-- Loading.tsx
+|   |   |       |-- Sidebar.tsx
+|   |   |       `-- WsStatusPill.tsx
+|   |   |-- config
+|   |   |-- features
+|   |   |   |-- account
+|   |   |   |   |-- AccountLayout.tsx
+|   |   |   |   |-- BillingTab.tsx
+|   |   |   |   |-- DevicesTab.tsx
+|   |   |   |   |-- index.ts
+|   |   |   |   |-- ProfileTab.tsx
+|   |   |   |   `-- SecurityTab.tsx
+|   |   |   |-- auth
+|   |   |   |   |-- ForgotPassword.tsx
+|   |   |   |   |-- ResetPassword.tsx
+|   |   |   |   |-- SignIn.tsx
+|   |   |   |   |-- SignUp.tsx
+|   |   |   |   `-- VerifyEmail.tsx
+|   |   |   |-- intro
+|   |   |   |   |-- index.ts
+|   |   |   |   |-- IntroGate.tsx
+|   |   |   |   |-- IntroOverlay.tsx
+|   |   |   |   |-- logo.svg
+|   |   |   |   |-- README.md
+|   |   |   |   `-- usePrefersReducedMotion.ts
+|   |   |   `-- paper
+|   |   |       `-- PaperStatus.tsx
+|   |   |-- hooks
+|   |   |   |-- index.ts
+|   |   |   |-- useAccessibility.tsx
+|   |   |   |-- useLiveData.ts
+|   |   |   |-- useResponsiveSidebar.ts
+|   |   |   `-- __tests__
+|   |   |       `-- useAccessibility.test.ts
+|   |   |-- lib
+|   |   |   |-- apiClient.ts
+|   |   |   |-- guardRealData.ts
+|   |   |   `-- normalizePath.ts
+|   |   |-- mocks
+|   |   |   |-- agentQueue.ts
+|   |   |   |-- evidence.ts
+|   |   |   |-- index.ts
+|   |   |   |-- plans.ts
+|   |   |   |-- predictions.ts
+|   |   |   `-- types.ts
+|   |   |-- providers
+|   |   |   `-- ThemeProvider.tsx
+|   |   |-- routes
+|   |   |   `-- RequireAuth.tsx
+|   |   |-- services
+|   |   |   |-- api.ts
+|   |   |   |-- contract.ts
+|   |   |   |-- liveData.ts
+|   |   |   |-- mockData.ts
+|   |   |   |-- paperTradingApi.ts
+|   |   |   |-- websocket.ts
+|   |   |   |-- wsClient.ts
+|   |   |   `-- auth
+|   |   |       |-- localAuthProvider.ts
+|   |   |       `-- mockAuthProvider.ts
+|   |   |-- store
+|   |   |   |-- authStore.ts
+|   |   |   |-- chatStore.ts
+|   |   |   |-- index.ts
+|   |   |   `-- __tests__
+|   |   |       `-- store.integration.test.ts
+|   |   |-- styles
+|   |   |   `-- themes.ts
+|   |   |-- types
+|   |   |   |-- api.ts
+|   |   |   `-- backend.d.ts
+|   |   `-- utils
+|   |       `-- index.ts
+|   |-- test-results
+|   |   |-- .last-run.json
+|   |   `-- sandbox-smoke-home-loads-w-cfc3a-rs-and-core-widgets-present-chromium
+|   |       |-- error-context.md
+|   |       `-- test-failed-1.png
+|   `-- tests
+|       |-- artifacts
+|       |   |-- .gitkeep
+|       |   |-- _.har
+|       |   |-- _account.har
+|       |   |-- _account_billing.har
+|       |   |-- _account_devices.har
+|       |   |-- _account_profile.har
+|       |   |-- _account_security.har
+|       |   |-- _alerts.har
+|       |   |-- _auth_forgot-password.har
+|       |   |-- _auth_reset-password.har
+|       |   |-- _auth_signin.har
+|       |   |-- _auth_signup.har
+|       |   |-- _auth_verify.har
+|       |   |-- _chat.har
+|       |   |-- _crypto.har
+|       |   |-- _demo.har
+|       |   |-- _dev_api-coverage.har
+|       |   |-- _learning.har
+|       |   |-- _live.har
+|       |   |-- _market.har
+|       |   |-- _news.har
+|       |   |-- _paper_status.har
+|       |   |-- _paper-trading.har
+|       |   |-- _portfolio.har
+|       |   |-- _predictions.har
+|       |   |-- _trading.har
+|       |   `-- _websocket-test.har
+|       `-- e2e
+|           |-- sandbox-smoke.spec.ts
+|           `-- smoke.spec.ts
+|-- implements
+|   |-- API_FIXES_COMPLETE.md
+|   |-- AUDIT_README.md
+|   |-- BACKEND_IMPROVEMENTS_SUMMARY.md
+|   |-- BKimplements.txt
+|   |-- CLEANUP_REPORT.md
+|   |-- COGNITIVE_CORE_COMPLETE.md
+|   |-- DASHBOARD_ASSESSMENT.md
+|   |-- DASHBOARD_ENHANCEMENTS.md
+|   |-- DATA_INTEGRATION_PROGRESS_REPORT.md
+|   |-- DEPS_UNIFICATION_PLAN.md
+|   |-- EMOTIVE_INTERFACE_COMPLETE.md
+|   |-- ENDPOINTS_AUDIT.md
+|   |-- ENDPOINTS_README.md
+|   |-- Frontend_Backend_Integration_Session_Lessons_Learned.txt
+|   |-- FRONTEND_DATA_AUDIT_COMPLETE.md
+|   |-- futurenotes.txt
+|   |-- futurenotes2.txt
+|   |-- LIVE_DATA_ARCHITECTURE.md
+|   |-- LIVE_DATA_ASSESSMENT.md
+|   |-- LIVE_DATA_COMPLETE.md
+|   |-- LIVE_DATA_INTEGRATION_PROGRESS.md
+|   |-- LIVE_DATA_SUCCESS_REPORT.md
+|   |-- MEMORY_IMPLEMENTATION_COMPLETE.md
+|   |-- PERCEPTION_LAYER_COMPLETE.md
+|   |-- PRODUCTION_DEPLOYMENT_COMPLETE.md
+|   |-- PROTECT.md
+|   |-- rate-limiting-setup.md
+|   |-- README-dev.md
+|   |-- Routes_Signals_Type_Errors_Fixed.txt
+|   |-- ssl-setup.md
+|   |-- STARTUP_README.md
+|   |-- UIimplements.txt
+|   |-- ZiggyAI_Backend_Functionality_Explained.txt
+|   |-- ZiggyAI_FULL_WRITEUP.md
+|   |-- ZiggyAI_Platform_Analysis.txt
+|   |-- ZiggyAI_Project_Assessment_Next_Steps.txt
+|   `-- ZiggyFileMap_20251013_124421.txt
+|-- node_modules
+|-- reports
+|   |-- code_health_report_20251021_200506.json
+|   `-- ui_ux_review_20251103.md
+|-- scripts
+|   |-- build_indexes.ps1
+|   |-- code_health_deep_dive.py
+|   |-- collect_deps.ps1
+|   |-- detect_duplicates.py
+|   |-- dev_clean_env.ps1
+|   |-- dev_db_check.ps1
+|   |-- dev-all.ps1
+|   |-- export_backend_routes.ps1
+|   |-- export_frontend_routes.ps1
+|   |-- generate_code_health_report.py
+|   |-- generate_ui_report.py
+|   |-- preflight.ps1
+|   |-- render_blueprint.ps1
+|   |-- run_blueprint_full.ps1
+|   |-- run_code_health.ps1
+|   |-- run_lighthouse.ps1
+|   |-- scan_repo.ps1
+|   |-- seed-dev.ps1
+|   |-- setup_ui_audit.ps1
+|   |-- ui_audit.spec.ts
+|   |-- validate_code_health_system.py
+|   |-- verify_endpoints.py
+|   `-- __pycache__
+|-- stubs
+|   |-- pandas
+|   |   `-- __init__.pyi
+|   `-- yfinance
+|       `-- __init__.pyi
+|-- test-results
+|   |-- .last-run.json
+|   `-- frontend-tests-e2e-sandbox-649c8-rs-and-core-widgets-present
+|       `-- error-context.md
+`-- tools
+    |-- build-issues-report.js
+    |-- compare-openapi.ts
+    |-- scan-frontend.ts
+    `-- out
+        |-- .gitkeep
+        |-- api-diff.json
+        `-- frontend-calls.json

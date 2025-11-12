@@ -1,0 +1,60 @@
+﻿For variant 'global', will try loading '/etc/xdg/pip/pip.conf'
+For variant 'global', will try loading '/etc/pip.conf'
+For variant 'user', will try loading '/root/.pip/pip.conf'
+For variant 'user', will try loading '/root/.config/pip/pip.conf'
+For variant 'site', will try loading '/usr/local/pip.conf'
+:env:.disable-pip-version-check='1'
+:env:.extra-index-url='https://download.pytorch.org/whl/cpu'
+:env:.no-cache-dir='1'
+pip version: pip 24.0 from /usr/local/lib/python3.11/site-packages/pip (python 3.11)
+sys.version: 3.11.14 (main, Nov  4 2025, 04:28:22) [GCC 14.2.0]
+sys.executable: /usr/local/bin/python
+sys.getdefaultencoding: utf-8
+sys.getfilesystemencoding: utf-8
+locale.getpreferredencoding: UTF-8
+sys.platform: linux
+sys.implementation:
+  name: cpython
+'cert' config value: global
+REQUESTS_CA_BUNDLE: None
+CURL_CA_BUNDLE: None
+pip._vendor.certifi.where(): /usr/local/lib/python3.11/site-packages/pip/_vendor/certifi/cacert.pem
+pip._vendor.DEBUNDLED: False
+vendored library versions:
+  CacheControl==0.13.1
+  colorama==0.4.6
+  distlib==0.3.8
+  distro==1.8.0
+  msgpack==1.0.5
+  packaging==21.3
+  platformdirs==3.8.1
+  pyparsing==3.1.0
+  pyproject-hooks==1.0.0
+  requests==2.31.0
+  certifi==2023.07.22
+  chardet==5.1.0
+  idna==3.4
+  urllib3==1.26.17
+  rich==13.4.2 (Unable to locate actual module version, using vendor.txt specified version)
+  pygments==2.15.1
+  typing_extensions==4.7.1 (Unable to locate actual module version, using vendor.txt specified version)
+  resolvelib==1.0.1
+  setuptools==68.0.0 (Unable to locate actual module version, using vendor.txt specified version)
+  six==1.16.0
+  tenacity==8.2.2 (Unable to locate actual module version, using vendor.txt specified version)
+  tomli==2.0.1
+  truststore==0.8.0
+  webencodings==0.5.1 (Unable to locate actual module version, using vendor.txt specified version)
+Compatible tags: 1039
+  cp311-cp311-manylinux_2_41_x86_64
+  cp311-cp311-manylinux_2_40_x86_64
+  cp311-cp311-manylinux_2_39_x86_64
+  cp311-cp311-manylinux_2_38_x86_64
+  cp311-cp311-manylinux_2_37_x86_64
+  cp311-cp311-manylinux_2_36_x86_64
+  cp311-cp311-manylinux_2_35_x86_64
+  cp311-cp311-manylinux_2_34_x86_64
+  cp311-cp311-manylinux_2_33_x86_64
+  cp311-cp311-manylinux_2_32_x86_64
+  ...
+  [First 10 tags shown. Pass --verbose to show all.]

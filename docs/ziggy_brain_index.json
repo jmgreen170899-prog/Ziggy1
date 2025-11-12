@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "generated_at": "2025-11-03T00:00:00Z",
+  "modules": [
+    {
+      "path": "backend/app/core/websocket.py",
+      "role": "websocket_manager",
+      "keyAPIs": ["ConnectionManager.broadcast", "ConnectionManager.register", "MarketDataStreamer.start"],
+      "inputs": ["channel_messages", "market_data", "heartbeats"],
+      "outputs": ["client_broadcasts", "metrics"],
+      "storage": ["in_memory_queues"],
+      "tags": ["ws", "async", "backpressure", "metrics"]
+    },
+    {
+      "path": "backend/app/main.py",
+      "role": "app_bootstrap",
+      "keyAPIs": ["FastAPI app", "startup", "shutdown"],
+      "inputs": ["settings"],
+      "outputs": ["http_endpoints", "ws_endpoints"],
+      "storage": [],
+      "tags": ["fastapi", "startup", "routes"]
+    },
+    {
+      "path": "backend/app/services/market_brain/market_data_fetcher.py",
+      "role": "data_provider_fallback",
+      "keyAPIs": ["get_recent_ohlcv", "get_realtime_quote"],
+      "inputs": ["providers", "tickers"],
+      "outputs": ["DataFrame", "quote"],
+      "storage": ["in_memory_cache"],
+      "tags": ["providers", "timeouts", "cache"]
+    },
+    {
+      "path": "backend/app/services/market_brain/features.py",
+      "role": "feature_computation",
+      "keyAPIs": ["FeatureComputer.get_features"],
+      "inputs": ["ohlcv"],
+      "outputs": ["feature_set"],
+      "storage": ["ttl_cache"],
+      "tags": ["features", "ta", "cache"]
+    },
+    {
+      "path": "backend/app/services/market_brain/signals.py",
+      "role": "signal_generation",
+      "keyAPIs": ["SignalGenerator.generate_signal"],
+      "inputs": ["features", "regime"],
+      "outputs": ["signal"],
+      "storage": [],
+      "tags": ["signals", "rules"]
+    },
+    {
+      "path": "backend/app/services/market_brain/regime.py",
+      "role": "regime_detection",
+      "keyAPIs": ["label_regime"],
+      "inputs": ["features"],
+      "outputs": ["regime_label", "confidence"],
+      "storage": [],
+      "tags": ["regime"]
+    },
+    {
+      "path": "backend/app/services/market_brain/simple_data_hub.py",
+      "role": "enhancement_facade",
+      "keyAPIs": ["SimpleDataHub.overview"],
+      "inputs": ["market", "news"],
+      "outputs": ["enriched_structures"],
+      "storage": [],
+      "tags": ["enhancement"]
+    },
+    {
+      "path": "backend/app/services/news_streaming.py",
+      "role": "news_streaming",
+      "keyAPIs": ["start", "stop"],
+      "inputs": ["rss", "providers"],
+      "outputs": ["ws_broadcasts"],
+      "storage": [],
+      "tags": ["streaming", "backoff"]
+    },
+    {
+      "path": "backend/app/services/chart_streaming.py",
+      "role": "chart_streaming",
+      "keyAPIs": ["start", "stop"],
+      "inputs": ["symbol", "timeframe"],
+      "outputs": ["ws_broadcasts"],
+      "storage": [],
+      "tags": ["streaming", "indicators"]
+    },
+    {
+      "path": "backend/app/services/portfolio_streaming.py",
+      "role": "portfolio_streaming",
+      "keyAPIs": ["start", "stop"],
+      "inputs": ["positions", "balances"],
+      "outputs": ["ws_broadcasts"],
+      "storage": [],
+      "tags": ["streaming", "backoff"]
+    },
+    {
+      "path": "backend/app/services/provider_health.py",
+      "role": "provider_health",
+      "keyAPIs": ["record_success", "record_failure", "order_providers"],
+      "inputs": ["call_outcomes", "latency"],
+      "outputs": ["health_scores"],
+      "storage": [],
+      "tags": ["health", "failover"]
+    },
+    {
+      "path": "backend/app/services/brain_integration.py",
+      "role": "memory_writer",
+      "keyAPIs": ["enqueue", "flush"],
+      "inputs": ["events"],
+      "outputs": ["jsonl_rows", "sqlite_rows", "vector_upserts"],
+      "storage": ["jsonl", "sqlite", "qdrant", "redis"],
+      "tags": ["memory", "batch"]
+    },
+    {
+      "path": "backend/app/services/integration_hub.py",
+      "role": "orchestrator",
+      "keyAPIs": ["build_integrated_decision"],
+      "inputs": ["signals", "memory", "health"],
+      "outputs": ["integrated_decision"],
+      "storage": [],
+      "tags": ["glue"]
+    },
+    {
+      "path": "backend/app/memory/events.py",
+      "role": "event_store",
+      "keyAPIs": ["append_event", "iter_events", "build_durable_event"],
+      "inputs": ["event_dicts"],
+      "outputs": ["rows"],
+      "storage": ["jsonl", "sqlite"],
+      "tags": ["durable", "append_only"]
+    },
+    {
+      "path": "backend/app/memory/vecdb.py",
+      "role": "vector_memory",
+      "keyAPIs": ["build_embedding", "upsert_event", "search_similar"],
+      "inputs": ["text"],
+      "outputs": ["neighbors"],
+      "storage": ["qdrant", "redis", "off"],
+      "tags": ["vector", "embedding"]
+    },
+    {
+      "path": "backend/app/paper/ingest.py",
+      "role": "trade_ingest_queue",
+      "keyAPIs": ["enqueue_trade_event"],
+      "inputs": ["trade_executions"],
+      "outputs": ["events_for_learner"],
+      "storage": ["deque"],
+      "tags": ["paper", "queue"]
+    },
+    {
+      "path": "backend/app/paper/learner_gateway.py",
+      "role": "learner_drain",
+      "keyAPIs": ["drain_batches_loop"],
+      "inputs": ["ingest_events"],
+      "outputs": ["partial_fit_calls"],
+      "storage": [],
+      "tags": ["paper", "learning"]
+    }
+  ]
+}

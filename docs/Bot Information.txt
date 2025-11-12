@@ -1,0 +1,24 @@
+Bot Information
+
+BotFather - Telegram
+t.me/ZiggyAI1bot
+ID: 8293756886
+Token:7573886563:AAFk0EJY9vJiFOltGazKLxMeDdkzv3gkWEM
+
+Fred Key:62e4ed334ca0ce09a449574af8bff3f0
+
+password: Gagfarffarfgag11@
+Emergency Bypass Key:1dc99ef7-0ca7-41b0-920f-c87647773f0c
+Alpacca Key:PKQ0WOAQFQYE0KXS51D7
+Alpaca Secret Key:xlU7ucSWOSZHdA5zzOa9BPgooh
+
+Pollygon Key:_A350sNsqJraBJ8MLzo5wghdPhmzM5rx
+
+
+# Alpaca — should return JSON with latest quote
+$AK = 'PKQ0WOAQFQYE0KXS51D7'
+$AS = 'xlU7ucSWOSZHdA5zzOa9BPgooh'
+irm "https://data.alpaca.markets/v2/stocks/AAPL/quotes/latest" -Headers @{
+  "PKQ0WOAQFQYE0KXS51D7" = $AK
+  "xlU7ucSWOSZHdA5zzOa9BPgooh" = $AS
+}

@@ -1,0 +1,23 @@
+{
+  "name": "ziggy-root",
+  "private": true,
+  "dependencies": {
+    "recharts": "^3.2.1"
+  },
+  "devDependencies": {
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "node-fetch": "^2.7.0",
+    "openapi-typescript": "^7.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "dev:all": "powershell -ExecutionPolicy Bypass -File scripts/dev-all.ps1",
+    "audit:scan": "ts-node -T tools/scan-frontend.ts",
+    "audit:openapi": "ts-node -T tools/compare-openapi.ts",
+    "audit:e2e": "npm run e2e --prefix frontend",
+    "audit:report": "node tools/build-issues-report.js",
+    "types:backend": "openapi-typescript http://127.0.0.1:8000/openapi.json -o frontend/src/types/backend.d.ts"
+  }
+}

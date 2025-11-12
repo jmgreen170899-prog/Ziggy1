@@ -1,0 +1,159 @@
+# Alert Configuration Template
+# 
+# This file defines alert rules for monitoring ZiggyAI production services.
+# Alerts are based on SLO targets and critical system metrics.
+#
+# Integration: Can be used with Prometheus AlertManager, Grafana, or custom alerting systems.
+
+alerts:
+  # WebSocket Delivery Latency Alert
+  - name: WebSocketDeliveryLatencySLO
+    description: WebSocket message delivery latency exceeds SLO target (p95 > 100ms)
+    severity: warning
+    condition:
+      metric: websocket.channels.*.send_latency_ms
+      aggregation: p95
+      threshold: 100
+      operator: ">"
+      duration: 5m
+    actions:
+      - notify: ops-team
+      - page: on-call
+    labels:
+      component: websocket
+      slo: ws_delivery_latency_p95
+
+  # Queue Drop Rate Alert
+  - name: QueueDropRateSLO
+    description: Message queue drop rate exceeds SLO target (> 0.1%)
+    severity: critical
+    condition:
+      metric: websocket.channels.*.dropped_msgs
+      aggregation: rate
+      threshold: 0.1
+      operator: ">"
+      duration: 5m
+    actions:
+      - notify: ops-team
+      - page: on-call
+      - escalate: 15m
+    labels:
+      component: websocket
+      slo: queue_drop_rate
+
+  # Provider Availability Alert
+  - name: ProviderAvailabilitySLO
+    description: Provider availability drops below SLO target (< 99.5%)
+    severity: warning
+    condition:
+      metric: providers.*.availability_pct
+      aggregation: avg
+      threshold: 99.5
+      operator: "<"
+      duration: 10m
+    actions:
+      - notify: ops-team
+    labels:
+      component: providers
+      slo: provider_availability
+
+  # Individual Provider Health Alerts
+  - name: PolygonProviderDown
+    description: Polygon API provider is unhealthy
+    severity: critical
+    condition:
+      metric: providers.polygon.health_score
+      threshold: 0.7
+      operator: "<"
+      duration: 5m
+    actions:
+      - notify: ops-team
+      - page: on-call
+    labels:
+      component: providers
+      provider: polygon
+
+  - name: AlpacaProviderDown
+    description: Alpaca API provider is unhealthy
+    severity: critical
+    condition:
+      metric: providers.alpaca.health_score
+      threshold: 0.7
+      operator: "<"
+      duration: 5m
+    actions:
+      - notify: ops-team
+      - page: on-call
+    labels:
+      component: providers
+      provider: alpaca
+
+  - name: NewsProviderDegraded
+    description: News provider performance degraded
+    severity: warning
+    condition:
+      metric: providers.news.health_score
+      threshold: 0.8
+      operator: "<"
+      duration: 10m
+    actions:
+      - notify: ops-team
+    labels:
+      component: providers
+      provider: news
+
+  # WebSocket Connection Alerts
+  - name: WebSocketConnectionsDrop
+    description: Significant drop in WebSocket connections detected
+    severity: warning
+    condition:
+      metric: websocket.total_connections
+      change: -30%
+      duration: 5m
+    actions:
+      - notify: ops-team
+    labels:
+      component: websocket
+
+  - name: WebSocketQueueBacklog
+    description: WebSocket queue experiencing backlog
+    severity: warning
+    condition:
+      metric: websocket.channels.*.queue_len
+      threshold: 80
+      operator: ">"
+      duration: 3m
+    actions:
+      - notify: ops-team
+    labels:
+      component: websocket
+
+  # Provider Failover Alert
+  - name: ProviderFailoverIncreased
+    description: Provider failover rate has increased significantly
+    severity: warning
+    condition:
+      metric: providers.global.failover_count
+      rate: 5m
+      threshold: 10
+      operator: ">"
+    actions:
+      - notify: ops-team
+    labels:
+      component: providers
+
+# Notification Channels
+notification_channels:
+  ops-team:
+    type: slack
+    webhook_url: "${SLACK_WEBHOOK_OPS}"
+    channel: "#ziggy-alerts"
+
+  on-call:
+    type: pagerduty
+    integration_key: "${PAGERDUTY_INTEGRATION_KEY}"
+
+# Alert Throttling
+throttling:
+  default_interval: 5m
+  max_alerts_per_hour: 20

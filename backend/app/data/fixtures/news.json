@@ -1,0 +1,29 @@
+[
+  {
+    "id": "fx-1",
+    "source": "Fixture News",
+    "title": "Apple expands AI features across product line",
+    "url": "https://example.com/news/apple-ai",
+    "published": "2025-10-23T13:00:00Z",
+    "summary": "Apple announced new AI integrations for iPhone and Mac aimed at productivity.",
+    "tickers": ["AAPL"]
+  },
+  {
+    "id": "fx-2",
+    "source": "Fixture News",
+    "title": "Microsoft partners with startup on cloud optimization",
+    "url": "https://example.com/news/microsoft-cloud",
+    "published": "2025-10-23T14:30:00Z",
+    "summary": "The collaboration targets better GPU utilization for enterprise customers.",
+    "tickers": ["MSFT", "NVDA"]
+  },
+  {
+    "id": "fx-3",
+    "source": "Fixture News",
+    "title": "NVIDIA unveils next-gen GPU architecture",
+    "url": "https://example.com/news/nvidia-gpu",
+    "published": "2025-10-22T10:15:00Z",
+    "summary": "Performance gains of up to 3x on key AI workloads.",
+    "tickers": ["NVDA"]
+  }
+]

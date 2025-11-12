@@ -1,0 +1,40 @@
+# Ziggy Clean – root .dockerignore
+
+# Ignore everything that shouldn't enter Docker build context
+
+# VCS / editor / OS
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Python env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node build cache
+node_modules/
+dist/
+build/
+
+# Logs / temporary
+*.log
+*.tmp
+*.bak
+*.old
+
+# Local data / secrets
+.env
+.env.*
+data/
+*.db
+*.sqlite3
+
+# Other non-deploy artefacts
+tests/
+docs/

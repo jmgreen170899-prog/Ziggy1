@@ -1,0 +1,180 @@
+{
+  "generatedAt": "2025-11-04T00:59:11.933Z",
+  "apiBase": "http://127.0.0.1:8000",
+  "endpoints": {
+    "POST /query": {
+      "usedBy": [
+        "src\\services\\api.ts:63"
+      ],
+      "placeholdersFound": 0
+    },
+    "POST /agent": {
+      "usedBy": [
+        "src\\services\\api.ts:68"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /browse/search": {
+      "usedBy": [
+        "src\\services\\api.ts:224",
+        "src\\services\\api.ts:224"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /trade/screener": {
+      "usedBy": [
+        "src\\services\\api.ts:373",
+        "src\\services\\api.ts:373"
+      ],
+      "placeholdersFound": 0
+    },
+    "POST /trade/explain": {
+      "usedBy": [
+        "src\\services\\api.ts:682"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /trade/ohlc": {
+      "usedBy": [
+        "src\\services\\api.ts:133",
+        "src\\services\\api.ts:133"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /market/risk": {
+      "usedBy": [
+        "src\\services\\api.ts:143",
+        "src\\services\\api.ts:143"
+      ],
+      "placeholdersFound": 0
+    },
+    "POST /trading/backtest": {
+      "usedBy": [
+        "src\\services\\api.ts:687"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /trade/orders": {
+      "usedBy": [
+        "src\\services\\api.ts:348"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /trade/positions": {
+      "usedBy": [
+        "src\\services\\api.ts:300"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /trade/portfolio": {
+      "usedBy": [
+        "src\\services\\api.ts:291",
+        "src\\services\\api.ts:299"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /market/overview": {
+      "usedBy": [
+        "src\\services\\api.ts:81",
+        "src\\services\\api.ts:107"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /news/headlines": {
+      "usedBy": [
+        "src\\services\\api.ts:379",
+        "src\\services\\api.ts:384",
+        "src\\services\\api.ts:379",
+        "src\\services\\api.ts:384"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /news/sentiment": {
+      "usedBy": [
+        "src\\services\\api.ts:405",
+        "src\\services\\api.ts:405"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /crypto/quotes": {
+      "usedBy": [
+        "src\\services\\api.ts:465",
+        "src\\services\\api.ts:469"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /crypto/ohlc": {
+      "usedBy": [
+        "src\\services\\api.ts:507",
+        "src\\services\\api.ts:507"
+      ],
+      "placeholdersFound": 0
+    },
+    "POST /alerts/stop": {
+      "usedBy": [
+        "src\\services\\api.ts:545"
+      ],
+      "placeholdersFound": 0
+    },
+    "POST /alerts/create": {
+      "usedBy": [
+        "src\\services\\api.ts:533",
+        "src\\services\\api.ts:539"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /alerts/list": {
+      "usedBy": [
+        "src\\services\\api.ts:513",
+        "src\\services\\api.ts:513"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /learning/status": {
+      "usedBy": [
+        "src\\services\\api.ts:555",
+        "src\\services\\api.ts:674",
+        "src\\services\\api.ts:555",
+        "src\\services\\api.ts:674"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /learning/data/summary": {
+      "usedBy": [
+        "src\\services\\api.ts:572",
+        "src\\services\\api.ts:572"
+      ],
+      "placeholdersFound": 0
+    },
+    "POST /learning/run": {
+      "usedBy": [
+        "src\\services\\api.ts:551",
+        "src\\services\\api.ts:560",
+        "src\\services\\api.ts:639"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /learning/results/latest": {
+      "usedBy": [
+        "src\\services\\api.ts:599",
+        "src\\services\\api.ts:599"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /learning/results/history": {
+      "usedBy": [
+        "src\\services\\api.ts:600",
+        "src\\services\\api.ts:600"
+      ],
+      "placeholdersFound": 0
+    },
+    "GET /health": {
+      "usedBy": [
+        "src\\services\\api.ts:74",
+        "src\\services\\api.ts:74"
+      ],
+      "placeholdersFound": 0
+    }
+  },
+  "placeholders": {}
+}

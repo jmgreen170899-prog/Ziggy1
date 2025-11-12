@@ -1,0 +1,22 @@
+{
+  "excludePaths": [
+    "^/(integration|signals|paper|dev)(?:/|$)",
+    "^/telegram/callback$",
+    "^/trade/(?:health|notify(?:/.*)?|scan(?:/.*)?|market|execute|mode/.*|bracket|panic|resume|quality)$",
+    "^/trade/orders/\\{order_id\\}$",
+    "^/(trading|backtest|strategy/backtest)$",
+    "^/ingest/(?:web|pdf)$",
+    "^/reset$",
+    "^/tasks(?:/|$)",
+    "^/browse$",
+    "^/chat/(?:complete|health|config)$",
+    "^/news/(?:sources|filings(?:/recent)?|headwind|ping)$",
+    "^/alerts/(?:status|start|ping/test|sma50|moving-average/50|production/status|history|\\{alert_id\\}.*)$",
+    "^/market/(?:calendar|breadth|risk-lite|macro/history|holidays|earnings|economic|schedule|indicators|fred/.*)$",
+    "^/market-risk-lite$",
+    "^/learning/(?:rules/(?:current|history)|evaluate/current|calibration/(?:status|build)|health|gates)$",
+    "^/signal/explain(?:/|$)",
+    "^/core/health$",
+    "^/$"
+  ]
+}

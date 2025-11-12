@@ -1,0 +1,13 @@
+{
+  "typeStubSearchPaths": ["./stubs"],
+  "reportMissingTypeStubs": false,
+  "ignore": [
+    "backend/app/paper/learner.py"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "./backend",
+      "extraPaths": ["./backend"]
+    }
+  ]
+}

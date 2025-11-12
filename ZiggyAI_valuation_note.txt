@@ -1,0 +1,67 @@
+ZiggyAI Valuation Note (November 4, 2025)
+
+One-liner
+Continuous, restart-proof, online-learning trading assistant with DB fallback and audit-grade durability—ready for paper pilots and rapid iteration.
+
+Product state (today)
+- Continuous online learning: learning loop runs in dev; resumes after restarts via rehydration.
+- Durability: periodic snapshots + final on shutdown; JSONL dual-write; DB-first with SQLite fallback.
+- Resilience: app boots and operates even when Postgres is down; clean 503s on DB-backed routes; background retries.
+- Observability & CI: dev endpoints for snapshot/state summary; frontend endpoint coverage guard in CI; no placeholders.
+- Scope: paper trading and learning; modular FastAPI backend; Next.js frontend.
+
+Technology snapshot & moat
+- Persistence architecture: Snapshotter + AuditLog JSONL + Repository to durable_* tables; boot-time rehydrate with DB->SQLite fallback.
+- Service state API: engine, bandit, learner, worker expose get_state/set_state for targeted checkpoints.
+- Operational safety: lifespan hooks, graceful shutdown, dual-write audit trail, endpoint coverage dashboard.
+- Extensibility: modular services (worker/engine/allocator/learner), easy to add model variants or data sources.
+
+Valuation frameworks (range, not a formal appraisal)
+1) Replacement-cost basis
+   - Engineering effort: ~12–24 engineer-months to rebuild backend services, persistence, UI, and CI/ops.
+   - Cost: $15k–$22k per eng-month → $180k–$530k.
+   - Overhead (PM/UX/QA/infra) 20–40% → $220k–$740k.
+   - Practical asset/IP sale often discounts to: $250k–$750k.
+
+2) Early-stage market comps
+   - Pre-seed (working prototype, no pilots): $3M–$7M post-money.
+   - Seed (1–2 pilots, basic observability/ops): $8M–$15M post-money.
+
+3) Strategic/option value (buyer: fintech/prop/broker/platform)
+   - No pilots/customers: $0.5M–$2M.
+   - With credible pilots + model health/ops maturity: $2M–$5M.
+   - With verifiable trading lift (even paper) and repeatable deployment: $5M–$12M.
+
+Suggested positioning & target ranges
+- Fundraising: target $4M–$8M post-money at pre-seed shortly after pilot readiness; $8M–$15M at seed with 1–2 active pilots and model-health reporting.
+- Asset/IP sale (no team transfer): $250k–$750k.
+- Strategic sale (light pilots): $2M–$5M; upside to $5M–$12M with hard evidence of lift and deployment playbook.
+
+Fastest levers to 2–3x valuation
+- Convert durability to production proof: run with live DATABASE_URL or SQLite fallback; show persisted=true snapshots and clean restart/rehydrate demo.
+- Model Health panel (UI): calibration (Brier score), reliability curves, drift indicators, last update time, checkpoint freshness; pause/resume learning control.
+- Pilot readiness: 1–2 design partners; paper-only guardrails; metrics (precision/recall, hit rate, latency, PnL proxy) and weekly report.
+- Offline replay training (from JSONL): backfills training; reproducible calibration trendlines.
+- Security/ops hygiene: secrets handling, role scoping for dev routes, log redaction; basic “SOC2-lite” checklist.
+
+Key risks & mitigations
+- Limited production evidence → pilots + replay training + calibration reports.
+- ML drift/calibration risk → add drift sentinels and reliability curves; alerting.
+- Data provider fragility → circuit breakers, failover providers, cached features.
+- Regulatory/ops risk → paper-only pilots, audit logs retained/archived, clear risk caps.
+- Maintainability (learner code style) → targeted lint/typing cleanup after pilots land.
+
+30-day execution plan (pilot-ready)
+- Week 1: Enable DB persisted=true locally; acceptance: crash → auto-restore demo + screencast.
+- Week 2: Model Health panel MVP; acceptance: calibration curve + drift signals + last update in UI.
+- Week 3: Pilot playbook (deploy doc, knobs, risk caps) + first design partner outreach.
+- Week 4: JSONL replay job + weekly calibration report; begin A/B (shadow) learner.
+
+Proof pack to share
+- Short demo: manual snapshot + restart + rehydrate + state summary.
+- Screens: Model Health panel; Snapshot timeline; Endpoint coverage dashboard.
+- One-pager: product, tech moat, metrics tracked, pilot plan, target KPIs.
+
+Notes
+- Ranges reflect current market norms and recent AI infra/fintech rounds; actual pricing varies with team continuity, IP assignment, and buyer urgency.
+- This is a directional valuation note for planning, not an investment fairness opinion.

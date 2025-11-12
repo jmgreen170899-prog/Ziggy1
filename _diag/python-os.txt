@@ -1,0 +1,8 @@
+﻿platform: Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.41
+python: 3.11.14 (main, Nov  4 2025, 04:28:22) [GCC 14.2.0]
+pip: 24.0
+sys.prefix: /usr/local
+PIP_CONSTRAINT: None
+PIP_REQUIRE_VIRTUALENV: None
+PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu
+PIP_INDEX_URL: None

@@ -1,0 +1,129 @@
+###############################################
+# ZiggyClean root .gitignore (amended)
+# Purpose: Exclude transient/build/cache artifacts while
+# retaining source, configuration, generated blueprint docs.
+# NOTE: Previously contained an accidental PowerShell here-string.
+# That has been removed.
+###############################################
+
+############### Python ###############
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.egg-info/
+*.db
+*.sqlite3
+.venv/
+venv/
+env/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+
+# SQLite journal files
+/backend/*.db-shm
+/backend/*.db-wal
+
+# Local environment & secrets (values never committed)
+.env
+.env.*
+*.pem
+*.key
+*.p12
+
+############### Node / Frontend ###############
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+.parcel-cache/
+.cache/
+.pnpm-store/
+coverage/
+
+# Test results and artifacts
+/test-results/
+/frontend/test-results/
+/frontend/artifacts/
+
+############### Logs / Temp / Backup ###############
+*.log
+logs/
+tmp/
+temp/
+*.bak
+*.backup
+*.tmp
+*.old
+*.swp
+*.swo
+
+############### OS / Misc ###############
+.DS_Store
+Thumbs.db
+desktop.ini
+
+############### IDE / Editor ###############
+.vscode/
+.idea/
+*.iml
+
+############### Test Results ###############
+test-results/
+playwright-report/
+artifacts/
+reports/*.json
+reports/*.html
+
+############### Package / Lock (Python) ###############
+poetry.lock
+requirements-merged.txt
+
+############### Docker / Runtime PIDs ###############
+*.pid
+*.pid.lock
+*.tar
+
+############### Archives (usually generated) ###############
+*.zip
+*.7z
+*.tar.gz
+
+############### Unused Source Maps (retain if needed) ###############
+*.map
+
+############### Generated Reports and Tool Output ###############
+/reports/
+/tools/out/
+
+###############################################
+# Explicitly KEEP (not ignored) blueprint outputs (default keep).
+# Listing for clarity only; negation not required since no patterns above match them.
+# docs/PROJECT_BLUEPRINT.md
+# docs/BLUEPRINT_CHANGELOG.md
+# docs/blueprint_index.json
+# docs/api_catalog.json
+# docs/component_map.json
+# docs/env_catalog.json
+# docs/unnecessary_files.csv
+# docs/_scan_manifest.json
+# docs/_blueprint_log.md
+# docs/_raw/
+# docs/BLUEPRINT_DATASET.md
+###############################################
+
+############### App data generated locally ###############
+backend/data/paper_events.jsonl
+backend/test_events.jsonl
+backend/test_feedback_events.jsonl
+backend/data/decisions/**
+
+############### Built wheels ###############
+backend/wheelhouse/*.whl
+
+############### Test artifacts ###############
+test_learn_report.json

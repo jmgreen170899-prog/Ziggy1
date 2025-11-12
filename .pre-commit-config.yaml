@@ -1,0 +1,41 @@
+# Ziggy Clean – pre-commit configuration
+# Run "pre-commit install" after cloning.
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-added-large-files
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [pydantic]
+
+  - repo: local
+    hooks:
+      - id: check-repo-integrity
+        name: Check Repository Integrity
+        entry: python scripts/check_repo_integrity.py
+        language: system
+        pass_filenames: false
+        always_run: true
