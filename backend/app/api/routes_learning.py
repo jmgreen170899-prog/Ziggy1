@@ -76,7 +76,7 @@ class LearningConfigModel(BaseModel):
 # API Endpoints
 
 
-@router.get("/learning/status")
+@router.get("/status")
 def get_learning_status():
     """Get current learning system status."""
     logger = get_logger()
@@ -108,7 +108,7 @@ def get_learning_status():
     }
 
 
-@router.get("/learning/data/summary")
+@router.get("/data/summary")
 def get_learning_data_summary(days: int = Query(90, ge=7, le=365)):
     """Get summary of available learning data."""
     logger = get_logger()
@@ -152,7 +152,7 @@ def get_learning_data_summary(days: int = Query(90, ge=7, le=365)):
     return summary
 
 
-@router.get("/learning/rules/current")
+@router.get("/rules/current")
 def get_current_rules():
     """Get the currently active rule set."""
     learner = get_learner()
@@ -181,7 +181,7 @@ def get_current_rules():
     }
 
 
-@router.get("/learning/rules/history")
+@router.get("/rules/history")
 def get_rules_history():
     """Get history of all rule versions."""
     learner = get_learner()
@@ -209,7 +209,7 @@ def get_rules_history():
     return {"rules": history, "total_versions": len(history)}
 
 
-@router.post("/learning/run")
+@router.post("/run")
 def run_learning_iteration(background_tasks: BackgroundTasks):
     """Run a single learning iteration."""
     learner = get_learner()
@@ -234,7 +234,7 @@ def run_learning_iteration(background_tasks: BackgroundTasks):
     }
 
 
-@router.get("/learning/results/latest")
+@router.get("/results/latest")
 def get_latest_learning_result():
     """Get the most recent learning result."""
     learner = get_learner()
@@ -258,7 +258,7 @@ def get_latest_learning_result():
         raise HTTPException(status_code=500, detail=f"Failed to load learning result: {e}")
 
 
-@router.get("/learning/results/history")
+@router.get("/results/history")
 def get_learning_history(limit: int = Query(20, ge=1, le=100)):
     """Get history of learning results."""
     learner = get_learner()
@@ -292,7 +292,7 @@ def get_learning_history(limit: int = Query(20, ge=1, le=100)):
     return {"results": results, "total_found": len(result_files)}
 
 
-@router.get("/learning/evaluate/current")
+@router.get("/evaluate/current")
 def evaluate_current_performance(days: int = Query(30, ge=7, le=180)):
     """Evaluate current rule performance."""
     logger = get_logger()
@@ -312,14 +312,14 @@ def evaluate_current_performance(days: int = Query(30, ge=7, le=180)):
     }
 
 
-@router.get("/learning/gates")
+@router.get("/gates")
 def get_learning_gates():
     """Get current validation gates configuration."""
     learner = get_learner()
     return learner.gates.to_dict()
 
 
-@router.put("/learning/gates")
+@router.put("/gates")
 def update_learning_gates(gates: StrictGatesModel):
     """Update validation gates configuration."""
     learner = get_learner()
@@ -338,7 +338,7 @@ def update_learning_gates(gates: StrictGatesModel):
     return {"message": "Gates updated successfully", "gates": learner.gates.to_dict()}
 
 
-@router.get("/learning/calibration/status")
+@router.get("/calibration/status")
 def get_calibration_status():
     """Get probability calibration status."""
     from pathlib import Path
@@ -355,7 +355,7 @@ def get_calibration_status():
     }
 
 
-@router.post("/learning/calibration/build")
+@router.post("/calibration/build")
 def build_calibration_model(
     background_tasks: BackgroundTasks, days: int = Query(90, ge=30, le=365)
 ):
@@ -391,7 +391,7 @@ def build_calibration_model(
     }
 
 
-@router.get("/learning/health")
+@router.get("/health")
 def get_learning_health():
     """Get overall health status of the learning system."""
     logger = get_logger()

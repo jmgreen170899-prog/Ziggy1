@@ -321,7 +321,7 @@ def _fetch_feed(url: str) -> list[dict[str, Any]]:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/news/sources")
+@router.get("/sources")
 def news_sources():
     """
     Return the configured/default RSS sources.
@@ -351,7 +351,7 @@ def news_sources():
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/news/headlines")
+@router.get("/headlines")
 def news_headlines(
     # NEW: compatibility with UI calling ?symbol=SYM
     symbol: str | None = Query(None, description="Single ticker (compat)"),
@@ -644,7 +644,7 @@ def news_headlines(
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/news/filings")
+@router.get("/filings")
 def news_filings(
     symbols: str | None = Query(
         None,
@@ -710,7 +710,7 @@ def news_filings(
 
 
 # NEW: compatibility alias the UI expects: /news/filings/recent?ticker=SYM&limit=5
-@router.get("/news/filings/recent")
+@router.get("/filings/recent")
 def news_filings_recent(
     ticker: str | None = Query(None, description="Single ticker (compat)"),
     limit: int = Query(5, ge=1, le=200),
@@ -910,7 +910,7 @@ def _get_articles_for_sentiment(
     return items
 
 
-@router.get("/news/sentiment")
+@router.get("/sentiment")
 def news_sentiment(
     ticker: str | None = Query(None, description="Primary ticker (alias: symbol)"),
     symbol: str | None = Query(None, description="Alias for ticker"),
@@ -1007,7 +1007,7 @@ def news_sentiment(
 
 
 # Alias for tolerant clients (frontend maps to /news/sentiment anyway, but keep this):
-@router.get("/news/headwind")
+@router.get("/headwind")
 def news_headwind(
     ticker: str | None = Query(None, description="Primary ticker (alias: symbol)"),
     symbol: str | None = Query(None, description="Alias for ticker"),
@@ -1025,6 +1025,6 @@ def news_headwind(
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/news/ping")
+@router.get("/ping")
 def news_ping():
     return {"status": "ok", "asof": time.time()}

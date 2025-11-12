@@ -60,7 +60,7 @@ def _get_crypto_provider():
 # ---- QUOTES -----------------------------------------------------------------
 
 
-@router.get("/crypto/quotes")
+@router.get("/quotes")
 async def crypto_quotes(
     symbols: str = Query(..., description="Comma-separated symbols like BTC-USD,ETH-USD,SOL-USD"),
 ):
@@ -162,7 +162,7 @@ async def crypto_quotes(
 # ---- OHLC -------------------------------------------------------------------
 
 
-@router.get("/crypto/ohlc")
+@router.get("/ohlc")
 async def crypto_ohlc(
     symbols: str = Query(..., description="Comma-separated symbols"),
     interval: str = Query("1m", pattern="^(1m|5m)$"),
