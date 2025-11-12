@@ -5,61 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  backend:
+  verify:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-
-      - name: Install backend dependencies
-        run: |
-          cd backend
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install fastapi uvicorn
-          fi
-
-      - name: Start backend server
-        env:
-          DOCS_ENABLED: "true"
-        run: |
-          cd backend
-          python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-          echo $! > /tmp/backend.pid
-          
-      - name: Wait for backend health
-        run: |
-          timeout=60
-          elapsed=0
-          while [ $elapsed -lt $timeout ]; do
-            if curl -f http://localhost:8000/health 2>/dev/null; then
-              echo "Backend is healthy!"
-              exit 0
-            fi
-            echo "Waiting for backend... ($elapsed/$timeout)"
-            sleep 2
-            elapsed=$((elapsed + 2))
-          done
-          echo "Backend failed to start within $timeout seconds"
-          exit 1
-
-      - name: Keep backend running
-        run: |
-          # Keep this job alive while frontend runs
-          sleep 300 &
-          wait
-
-  frontend-and-crawl:
-    runs-on: ubuntu-latest
-    needs: backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,7 +18,7 @@ jobs:
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Setup Python (for backend)
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -81,11 +28,7 @@ jobs:
         run: |
           cd backend
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install fastapi uvicorn
-          fi
+          pip install fastapi uvicorn httpx numpy pandas sqlalchemy || pip install fastapi uvicorn
 
       - name: Start backend server
         env:
@@ -95,19 +38,23 @@ jobs:
           python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
           echo $! > /tmp/backend.pid
 
-      - name: Wait for backend
+      - name: Wait for backend health
         run: |
           timeout=60
           elapsed=0
           while [ $elapsed -lt $timeout ]; do
             if curl -f http://localhost:8000/health 2>/dev/null; then
-              echo "Backend is healthy!"
+              echo "✓ Backend is healthy!"
               break
             fi
             echo "Waiting for backend... ($elapsed/$timeout)"
             sleep 2
             elapsed=$((elapsed + 2))
           done
+          if [ $elapsed -ge $timeout ]; then
+            echo "✗ Backend failed to start"
+            exit 1
+          fi
 
       - name: Install frontend dependencies
         run: |
@@ -117,12 +64,17 @@ jobs:
       - name: Build frontend
         run: |
           cd frontend
-          npm run build || true
+          npm run build || echo "Build failed, will use dev server"
 
-      - name: Start frontend preview server
+      - name: Start frontend server
         run: |
           cd frontend
-          npx next start -p 5173 &
+          # Try production server first, fallback to dev
+          if [ -d .next ]; then
+            npx next start -p 5173 &
+          else
+            PORT=5173 npm run dev &
+          fi
           echo $! > /tmp/frontend.pid
 
       - name: Wait for frontend
@@ -131,13 +83,17 @@ jobs:
           elapsed=0
           while [ $elapsed -lt $timeout ]; do
             if curl -f http://localhost:5173 2>/dev/null; then
-              echo "Frontend is ready!"
+              echo "✓ Frontend is ready!"
               break
             fi
             echo "Waiting for frontend... ($elapsed/$timeout)"
             sleep 2
             elapsed=$((elapsed + 2))
           done
+          if [ $elapsed -ge $timeout ]; then
+            echo "✗ Frontend failed to start"
+            exit 1
+          fi
 
       - name: Install Playwright
         run: |
@@ -149,58 +105,34 @@ jobs:
           UI_URL: "http://localhost:5173"
           API_URL: "http://localhost:8000"
           SAFE_MODE: "true"
+          MIN_OPENAPI_PATHS: "175"
         run: |
           cd frontend
           node ./tests/verify.crawl.mjs
 
-      - name: Upload artifacts on failure
-        if: failure()
+      - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-artifacts
+          name: e2e-verification-results
           path: |
             frontend/tests/artifacts/**
-            playwright-report
           retention-days: 7
-
-      - name: Upload artifacts on success
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-trace
-          path: |
-            frontend/tests/artifacts/trace.zip
-            frontend/tests/artifacts/report.json
-          retention-days: 7
-
-  summary:
-    runs-on: ubuntu-latest
-    needs: [frontend-and-crawl]
-    if: always()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-trace
-          path: artifacts
-        continue-on-error: true
 
       - name: Generate summary
+        if: always()
         run: |
           echo "# Human E2E Verification Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          if [ -f artifacts/report.json ]; then
+          if [ -f frontend/tests/artifacts/report.json ]; then
             echo "## Results" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
-            OPENAPI_COUNT=$(cat artifacts/report.json | jq -r '.openapiCount // 0')
-            VISITED=$(cat artifacts/report.json | jq -r '.visited | join(", ")')
-            CONSOLE_ERRORS=$(cat artifacts/report.json | jq -r '.consoleErrors | length')
-            SERVER_5XX=$(cat artifacts/report.json | jq -r '.server5xx | length')
+            OPENAPI_COUNT=$(cat frontend/tests/artifacts/report.json | jq -r '.openapiCount // 0')
+            VISITED=$(cat frontend/tests/artifacts/report.json | jq -r '.visited | join(", ")')
+            CONSOLE_ERRORS=$(cat frontend/tests/artifacts/report.json | jq -r '.consoleErrors | length')
+            SERVER_5XX=$(cat frontend/tests/artifacts/report.json | jq -r '.server5xx | length')
             
             echo "- **OpenAPI Paths**: $OPENAPI_COUNT" >> $GITHUB_STEP_SUMMARY
             echo "- **Pages Visited**: $VISITED" >> $GITHUB_STEP_SUMMARY
@@ -210,15 +142,18 @@ jobs:
             
             if [ "$CONSOLE_ERRORS" -gt 0 ]; then
               echo "### Console Errors" >> $GITHUB_STEP_SUMMARY
-              cat artifacts/report.json | jq -r '.consoleErrors[]' | while read line; do
+              cat frontend/tests/artifacts/report.json | jq -r '.consoleErrors[]' | head -20 | while read line; do
                 echo "- $line" >> $GITHUB_STEP_SUMMARY
               done
+              if [ "$CONSOLE_ERRORS" -gt 20 ]; then
+                echo "- ... and $((CONSOLE_ERRORS - 20)) more" >> $GITHUB_STEP_SUMMARY
+              fi
               echo "" >> $GITHUB_STEP_SUMMARY
             fi
             
             if [ "$SERVER_5XX" -gt 0 ]; then
               echo "### 5xx Endpoints" >> $GITHUB_STEP_SUMMARY
-              cat artifacts/report.json | jq -r '.server5xx[] | "- \(.path): \(.status)"' >> $GITHUB_STEP_SUMMARY
+              cat frontend/tests/artifacts/report.json | jq -r '.server5xx[] | "- \(.path): \(.status)"' >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
             fi
             
@@ -226,7 +161,16 @@ jobs:
               echo "✅ **All checks passed!**" >> $GITHUB_STEP_SUMMARY
             else
               echo "❌ **Some checks failed**" >> $GITHUB_STEP_SUMMARY
+              if [ "$OPENAPI_COUNT" -lt 175 ]; then
+                echo "  - OpenAPI paths: $OPENAPI_COUNT < 175" >> $GITHUB_STEP_SUMMARY
+              fi
+              if [ "$CONSOLE_ERRORS" -gt 0 ]; then
+                echo "  - Console errors: $CONSOLE_ERRORS" >> $GITHUB_STEP_SUMMARY
+              fi
+              if [ "$SERVER_5XX" -gt 0 ]; then
+                echo "  - 5xx endpoints: $SERVER_5XX" >> $GITHUB_STEP_SUMMARY
+              fi
             fi
           else
-            echo "⚠️ Report file not found" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Report file not found - crawler may not have completed" >> $GITHUB_STEP_SUMMARY
           fi
