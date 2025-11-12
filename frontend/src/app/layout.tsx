@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// Temporarily disabled Google Fonts for offline build
+// import { Inter } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { ThemeProvider } from "@/providers/ThemeProvider";
@@ -9,7 +10,7 @@ import { AuthGuard } from "@/components/auth/AuthGuard";
 import { KeyboardShortcuts } from "@/components/ui/KeyboardShortcuts";
 import { ToastProvider } from "@/components/ui/Toast";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "ZiggyClean - Financial Trading Platform",
@@ -23,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className="font-sans">
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>

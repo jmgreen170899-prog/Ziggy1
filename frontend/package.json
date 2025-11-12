@@ -60,8 +60,8 @@
     "jscpd": "^4.0.5",
     "knip": "^5.37.0",
     "lighthouse": "^12.2.1",
-    
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "ts-prune": "^0.10.3",
     "tsx": "^4.19.2",
     "typescript": "^5"
