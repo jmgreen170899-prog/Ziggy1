@@ -48,40 +48,70 @@ class ZiggyEndpointVerifier:
         self.base_url = base_url
         self.client = httpx.AsyncClient(timeout=30.0)
 
-        # Core API endpoints to test
+        # Core API endpoints to test - Updated to match current API structure
         self.endpoints = [
             # Health & Status
             ("GET", "/health"),
-            ("GET", "/api/v1/health"),
+            ("GET", "/api/core/health"),
+            
             # Paper Trading System
-            ("GET", "/api/v1/paper/status"),
-            ("GET", "/api/v1/paper/health"),
-            ("GET", "/api/v1/paper/trades"),
-            ("GET", "/api/v1/paper/positions"),
-            ("GET", "/api/v1/paper/theories"),
-            ("GET", "/api/v1/paper/metrics"),
-            # Data & Market
-            ("GET", "/api/v1/market/status"),
-            ("GET", "/api/v1/market/symbols"),
-            ("GET", "/api/v1/data/news"),
-            ("GET", "/api/v1/data/sentiment"),
-            # Brain & Learning
-            ("GET", "/api/v1/brain/status"),
-            ("GET", "/api/v1/brain/queue"),
-            ("GET", "/api/v1/brain/insights"),
-            ("GET", "/api/v1/learning/stats"),
-            # Portfolio & Analytics
-            ("GET", "/api/v1/portfolio/overview"),
-            ("GET", "/api/v1/portfolio/performance"),
-            ("GET", "/api/v1/analytics/dashboard"),
-            # WebSocket endpoints (HTTP check)
-            ("GET", "/ws/news"),
-            ("GET", "/ws/alerts"),
-            ("GET", "/ws/portfolio"),
-            # Static/Frontend routes
-            ("GET", "/"),
+            ("GET", "/paper/health"),
+            ("GET", "/paper/runs"),
+            
+            # Market Data
+            ("GET", "/market/overview"),
+            ("GET", "/market/breadth"),
+            ("GET", "/market/calendar"),
+            ("GET", "/market/schedule"),
+            
+            # News
+            ("GET", "/news/sources"),
+            ("GET", "/news/headlines"),
+            ("GET", "/news/sentiment"),
+            
+            # Signals & Brain
+            ("GET", "/signals/status"),
+            ("GET", "/signals/regime"),
+            
+            # Alerts
+            ("GET", "/alerts/status"),
+            
+            # Learning
+            ("GET", "/learning/status"),
+            ("GET", "/learning/health"),
+            
+            # Crypto
+            ("GET", "/crypto/quotes?symbols=BTC-USD"),
+            
+            # Cognitive
+            ("GET", "/cognitive/health"),
+            ("GET", "/cognitive/status"),
+            
+            # Screener
+            ("GET", "/screener/health"),
+            
+            # Feedback
+            ("GET", "/feedback/health"),
+            ("GET", "/feedback/stats"),
+            
+            # Integration
+            ("GET", "/integration/health"),
+            ("GET", "/integration/status"),
+            
+            # Performance
+            ("GET", "/api/performance/health"),
+            ("GET", "/api/performance/metrics"),
+            
+            # Trading
+            ("GET", "/trading/trade/health"),
+            
+            # Dev (optional - may be disabled in production)
+            ("GET", "/dev/db/status"),
+            
+            # Static/Documentation routes
             ("GET", "/docs"),
             ("GET", "/redoc"),
+            ("GET", "/openapi.json"),
         ]
 
     async def test_endpoint(self, method: str, path: str) -> EndpointTest:
