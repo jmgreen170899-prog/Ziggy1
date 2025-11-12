@@ -108,26 +108,44 @@ class TestFeedbackRoutes:
 
     def test_submit_feedback_disabled(self):
         """Test submitting feedback when system is disabled."""
+        # Note: This test verifies the endpoint behavior when feedback is disabled,
+        # but since FEEDBACK_ENABLED is loaded at module import time, we can't
+        # change it dynamically without reloading modules. In production, this is
+        # controlled via environment variable at startup.
+        # For now, we skip this test if feedback is already enabled
+        import importlib
+        from app.api import routes_feedback
+        
         # Temporarily disable feedback
         original_enabled = os.environ.get("FEEDBACK_ENABLED")
         os.environ["FEEDBACK_ENABLED"] = "0"
 
         try:
+            # Reload the module to pick up the new environment variable
+            importlib.reload(routes_feedback)
+            
+            # Recreate the test client with the reloaded module
+            app_temp = FastAPI()
+            app_temp.include_router(routes_feedback.router)
+            client_temp = TestClient(app_temp)
+            
             event_id = append_event({"ticker": "AAPL", "p_up": 0.75})
 
             feedback_data = {"event_id": event_id, "rating": "GOOD"}
 
-            response = client.post("/feedback/decision", json=feedback_data)
+            response = client_temp.post("/feedback/decision", json=feedback_data)
 
             assert response.status_code == 503
             assert "disabled" in response.json()["detail"]
 
         finally:
-            # Restore original setting
+            # Restore original setting and reload module again
             if original_enabled:
                 os.environ["FEEDBACK_ENABLED"] = original_enabled
             else:
                 os.environ.pop("FEEDBACK_ENABLED", None)
+            # Reload again to restore original state
+            importlib.reload(routes_feedback)
 
     def test_get_event_feedback_basic(self):
         """Test getting feedback for an event."""

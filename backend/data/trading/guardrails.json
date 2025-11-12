@@ -1,0 +1,17 @@
+{
+  "metrics": {
+    "portfolio_value": 1000000.0,
+    "cash_balance": 0.0,
+    "gross_exposure": 0.0,
+    "net_exposure": 0.0,
+    "daily_pnl": 0.0,
+    "weekly_pnl": 0.0,
+    "daily_trades": 0,
+    "concurrent_orders": 0,
+    "last_updated": "2025-11-12T19:50:47.609848+00:00"
+  },
+  "violation_count": 0,
+  "check_count": 0,
+  "emergency_stop": false,
+  "saved_at": "2025-11-12T19:57:03.886892+00:00"
+}

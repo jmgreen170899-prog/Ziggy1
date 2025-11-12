@@ -1733,3 +1733,9 @@
 {"ts": 1762806593.559491, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762878476.076326, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762895018.9336245, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
+{"ts": 1762977047.6390622, "kind": "alerts-test", "text": "✅ Ziggy alerts test", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762977047.646901, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762977049.013996, "kind": "manual-test", "text": "✅ Ziggy test ping", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762977422.6792545, "kind": "alerts-test", "text": "✅ Ziggy alerts test", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762977422.6866891, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762977423.991546, "kind": "manual-test", "text": "✅ Ziggy test ping", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}

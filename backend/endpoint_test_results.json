@@ -1,0 +1,1412 @@
+{
+  "total": 182,
+  "success": 96,
+  "client_error": 53,
+  "server_error": 9,
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/alerts/alerts/create",
+      "name": "alerts_create",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 38
+    },
+    {
+      "method": "GET",
+      "path": "/alerts/alerts/history",
+      "name": "alerts_history",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 67
+    },
+    {
+      "method": "GET",
+      "path": "/alerts/alerts/list",
+      "name": "alerts_list",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 575
+    },
+    {
+      "method": "POST",
+      "path": "/alerts/alerts/moving-average/50",
+      "name": "alerts_ma50_alias",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 38
+    },
+    {
+      "method": "POST",
+      "path": "/alerts/alerts/ping/test",
+      "name": "alerts_ping_test",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 188
+    },
+    {
+      "method": "GET",
+      "path": "/alerts/alerts/production/status",
+      "name": "alerts_production_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 79
+    },
+    {
+      "method": "POST",
+      "path": "/alerts/alerts/sma50",
+      "name": "alerts_sma50",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 38
+    },
+    {
+      "method": "POST",
+      "path": "/alerts/alerts/start",
+      "name": "alerts_start",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 178
+    },
+    {
+      "method": "GET",
+      "path": "/alerts/alerts/status",
+      "name": "alerts_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 650
+    },
+    {
+      "method": "POST",
+      "path": "/alerts/alerts/stop",
+      "name": "alerts_stop",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 248
+    },
+    {
+      "method": "DELETE",
+      "path": "/alerts/alerts/{alert_id}",
+      "name": "delete_alert",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "PUT",
+      "path": "/alerts/alerts/{alert_id}/disable",
+      "name": "disable_alert",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "PUT",
+      "path": "/alerts/alerts/{alert_id}/enable",
+      "name": "enable_alert",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/api/agent",
+      "name": "api_agent",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 88
+    },
+    {
+      "method": "GET",
+      "path": "/api/browse",
+      "name": "browse_alias",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "GET",
+      "path": "/api/browse/search",
+      "name": "browse_search",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "GET",
+      "path": "/api/core/health",
+      "name": "core_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 126
+    },
+    {
+      "method": "POST",
+      "path": "/api/ingest/pdf",
+      "name": "api_ingest_pdf",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 89
+    },
+    {
+      "method": "POST",
+      "path": "/api/ingest/web",
+      "name": "api_ingest_web",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 88
+    },
+    {
+      "method": "GET",
+      "path": "/api/performance/benchmarks",
+      "name": "get_benchmark_results",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 37
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance/benchmarks/clear",
+      "name": "clear_benchmarks",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 49
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance/benchmarks/feature-computation",
+      "name": "run_feature_benchmark",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 1248
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance/benchmarks/signal-generation",
+      "name": "run_signal_benchmark",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 1248
+    },
+    {
+      "method": "GET",
+      "path": "/api/performance/health",
+      "name": "get_performance_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 290
+    },
+    {
+      "method": "GET",
+      "path": "/api/performance/metrics",
+      "name": "get_performance_metrics",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 13075
+    },
+    {
+      "method": "POST",
+      "path": "/api/performance/metrics/clear",
+      "name": "clear_metrics",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 51
+    },
+    {
+      "method": "GET",
+      "path": "/api/performance/metrics/summary",
+      "name": "get_metrics_summary",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 168
+    },
+    {
+      "method": "POST",
+      "path": "/api/query",
+      "name": "api_query",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 88
+    },
+    {
+      "method": "POST",
+      "path": "/api/reset",
+      "name": "api_reset",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 51
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/tasks",
+      "name": "api_tasks_cancel",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 82
+    },
+    {
+      "method": "GET",
+      "path": "/api/tasks",
+      "name": "api_tasks_list",
+      "status": "SERVER_ERROR",
+      "status_code": 501,
+      "response_size": 160
+    },
+    {
+      "method": "POST",
+      "path": "/api/tasks/watch",
+      "name": "api_tasks_watch",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 88
+    },
+    {
+      "method": "POST",
+      "path": "/chat/complete",
+      "name": "chat_complete",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 91
+    },
+    {
+      "method": "GET",
+      "path": "/chat/config",
+      "name": "chat_config",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 123
+    },
+    {
+      "method": "GET",
+      "path": "/chat/health",
+      "name": "chat_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 129
+    },
+    {
+      "method": "GET",
+      "path": "/cognitive/counterfactual/insights",
+      "name": "get_counterfactual_insights",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 89
+    },
+    {
+      "method": "POST",
+      "path": "/cognitive/enhance-decision",
+      "name": "enhance_decision",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 341
+    },
+    {
+      "method": "GET",
+      "path": "/cognitive/episodic-memory/stats",
+      "name": "get_episodic_memory_stats",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 52
+    },
+    {
+      "method": "GET",
+      "path": "/cognitive/health",
+      "name": "health_check",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 80
+    },
+    {
+      "method": "GET",
+      "path": "/cognitive/meta-learning/strategies",
+      "name": "get_meta_learning_strategies",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 467
+    },
+    {
+      "method": "POST",
+      "path": "/cognitive/record-outcome",
+      "name": "record_outcome",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 921
+    },
+    {
+      "method": "GET",
+      "path": "/cognitive/status",
+      "name": "get_cognitive_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 1864
+    },
+    {
+      "method": "GET",
+      "path": "/crypto/crypto/ohlc",
+      "name": "crypto_ohlc",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 93
+    },
+    {
+      "method": "GET",
+      "path": "/crypto/crypto/quotes",
+      "name": "crypto_quotes",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 93
+    },
+    {
+      "method": "POST",
+      "path": "/dev/db/init",
+      "name": "dev_db_init",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 18
+    },
+    {
+      "method": "GET",
+      "path": "/dev/db/status",
+      "name": "dev_db_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 74
+    },
+    {
+      "method": "POST",
+      "path": "/dev/portfolio/fund",
+      "name": "fund_dev_portfolio",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 101
+    },
+    {
+      "method": "POST",
+      "path": "/dev/portfolio/setup",
+      "name": "setup_dev_portfolio",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 34
+    },
+    {
+      "method": "GET",
+      "path": "/dev/portfolio/status",
+      "name": "get_dev_portfolio_status",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 341
+    },
+    {
+      "method": "POST",
+      "path": "/dev/snapshot/now",
+      "name": "snapshot_now",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 42
+    },
+    {
+      "method": "GET",
+      "path": "/dev/state/summary",
+      "name": "state_summary",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 42
+    },
+    {
+      "method": "POST",
+      "path": "/dev/trading/enable",
+      "name": "enable_autonomous_trading",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 35
+    },
+    {
+      "method": "GET",
+      "path": "/dev/user",
+      "name": "get_dev_user_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 102
+    },
+    {
+      "method": "POST",
+      "path": "/feedback/bulk",
+      "name": "submit_bulk_feedback",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 97
+    },
+    {
+      "method": "POST",
+      "path": "/feedback/decision",
+      "name": "submit_decision_feedback",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 168
+    },
+    {
+      "method": "GET",
+      "path": "/feedback/event/{event_id}",
+      "name": "get_event_feedback",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/feedback/health",
+      "name": "feedback_health_check",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 77
+    },
+    {
+      "method": "GET",
+      "path": "/feedback/stats",
+      "name": "get_feedback_stats",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 176
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "name": "health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 11
+    },
+    {
+      "method": "POST",
+      "path": "/integration/calibration/apply",
+      "name": "apply_calibration",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 96
+    },
+    {
+      "method": "GET",
+      "path": "/integration/context/market",
+      "name": "get_market_context",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 171
+    },
+    {
+      "method": "POST",
+      "path": "/integration/decision",
+      "name": "make_decision",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 253
+    },
+    {
+      "method": "POST",
+      "path": "/integration/enhance",
+      "name": "enhance_data",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 164
+    },
+    {
+      "method": "GET",
+      "path": "/integration/health",
+      "name": "get_system_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 329
+    },
+    {
+      "method": "POST",
+      "path": "/integration/outcome/update",
+      "name": "update_outcome",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 265
+    },
+    {
+      "method": "GET",
+      "path": "/integration/rules/active",
+      "name": "get_active_rules",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 200
+    },
+    {
+      "method": "GET",
+      "path": "/integration/status",
+      "name": "get_integration_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 469
+    },
+    {
+      "method": "POST",
+      "path": "/integration/test/decision",
+      "name": "test_decision",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 796
+    },
+    {
+      "method": "POST",
+      "path": "/learning/learning/calibration/build",
+      "name": "build_calibration_model",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 94
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/calibration/status",
+      "name": "get_calibration_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 131
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/data/summary",
+      "name": "get_learning_data_summary",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 132
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/evaluate/current",
+      "name": "evaluate_current_performance",
+      "status": "CLIENT_ERROR",
+      "status_code": 404,
+      "response_size": 45
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/gates",
+      "name": "get_learning_gates",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 279
+    },
+    {
+      "method": "PUT",
+      "path": "/learning/learning/gates",
+      "name": "update_learning_gates",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 328
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/health",
+      "name": "get_learning_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 309
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/results/history",
+      "name": "get_learning_history",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 30
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/results/latest",
+      "name": "get_latest_learning_result",
+      "status": "CLIENT_ERROR",
+      "status_code": 404,
+      "response_size": 38
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/rules/current",
+      "name": "get_current_rules",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 790
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/rules/history",
+      "name": "get_rules_history",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 31
+    },
+    {
+      "method": "POST",
+      "path": "/learning/learning/run",
+      "name": "run_learning_iteration",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 105
+    },
+    {
+      "method": "GET",
+      "path": "/learning/learning/status",
+      "name": "get_learning_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 532
+    },
+    {
+      "method": "GET",
+      "path": "/market/calendar",
+      "name": "get_full_calendar",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 1244
+    },
+    {
+      "method": "GET",
+      "path": "/market/earnings",
+      "name": "get_earnings_calendar",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 65
+    },
+    {
+      "method": "GET",
+      "path": "/market/economic",
+      "name": "get_economic_events",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 263
+    },
+    {
+      "method": "GET",
+      "path": "/market/fred/{series_id}",
+      "name": "get_fred_series",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/market/holidays",
+      "name": "get_holidays",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 653
+    },
+    {
+      "method": "GET",
+      "path": "/market/indicators",
+      "name": "get_economic_indicators",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 142
+    },
+    {
+      "method": "GET",
+      "path": "/market/market/breadth",
+      "name": "market_breadth",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 548
+    },
+    {
+      "method": "GET",
+      "path": "/market/market/macro/history",
+      "name": "market_macro_history",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 90
+    },
+    {
+      "method": "GET",
+      "path": "/market/market/overview",
+      "name": "market_overview",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 534
+    },
+    {
+      "method": "GET",
+      "path": "/market/schedule",
+      "name": "get_market_schedule",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 182
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/filings",
+      "name": "news_filings",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 88
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/filings/recent",
+      "name": "news_filings_recent",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 48
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/headlines",
+      "name": "news_headlines",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 48
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/headwind",
+      "name": "news_headwind",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 43
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/ping",
+      "name": "news_ping",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 41
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/sentiment",
+      "name": "news_sentiment",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 43
+    },
+    {
+      "method": "GET",
+      "path": "/news/news/sources",
+      "name": "news_sources",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 518
+    },
+    {
+      "method": "POST",
+      "path": "/paper/emergency/stop_all",
+      "name": "emergency_stop_all",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 34
+    },
+    {
+      "method": "GET",
+      "path": "/paper/health",
+      "name": "paper_lab_health",
+      "status": "SERVER_ERROR",
+      "status_code": 503,
+      "response_size": 17
+    },
+    {
+      "method": "GET",
+      "path": "/paper/runs",
+      "name": "list_paper_runs",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 42
+    },
+    {
+      "method": "POST",
+      "path": "/paper/runs",
+      "name": "create_paper_run",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "GET",
+      "path": "/paper/runs/{run_id}",
+      "name": "get_paper_run",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/paper/runs/{run_id}/models",
+      "name": "get_model_snapshots",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/paper/runs/{run_id}/stats",
+      "name": "get_run_stats",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/paper/runs/{run_id}/stop",
+      "name": "stop_paper_run",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/paper/runs/{run_id}/theories",
+      "name": "get_theory_performance",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/paper/runs/{run_id}/theories/{theory_name}/pause",
+      "name": "pause_theory",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/paper/runs/{run_id}/trades",
+      "name": "get_trades",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/risk/market-risk-lite",
+      "name": "risk_lite",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 70
+    },
+    {
+      "method": "GET",
+      "path": "/risk/market/risk-lite",
+      "name": "risk_lite_alias",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 70
+    },
+    {
+      "method": "GET",
+      "path": "/screener/health",
+      "name": "screener_health_check",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 198
+    },
+    {
+      "method": "GET",
+      "path": "/screener/presets/mean_reversion",
+      "name": "mean_reversion_screen",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 242
+    },
+    {
+      "method": "GET",
+      "path": "/screener/presets/momentum",
+      "name": "momentum_screen",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 4487
+    },
+    {
+      "method": "GET",
+      "path": "/screener/regime_summary",
+      "name": "get_regime_summary",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 776
+    },
+    {
+      "method": "POST",
+      "path": "/screener/scan",
+      "name": "screen_market",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 91
+    },
+    {
+      "method": "GET",
+      "path": "/screener/universe/nasdaq100",
+      "name": "get_nasdaq100_universe",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 435
+    },
+    {
+      "method": "GET",
+      "path": "/screener/universe/sp500",
+      "name": "get_sp500_universe",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 399
+    },
+    {
+      "method": "GET",
+      "path": "/signal/explain",
+      "name": "get_signal_explanation",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 92
+    },
+    {
+      "method": "POST",
+      "path": "/signal/explain/feedback",
+      "name": "submit_explanation_feedback",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 168
+    },
+    {
+      "method": "GET",
+      "path": "/signal/explain/health",
+      "name": "explain_health_check",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 181
+    },
+    {
+      "method": "GET",
+      "path": "/signal/trace",
+      "name": "get_signal_trace",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 94
+    },
+    {
+      "method": "GET",
+      "path": "/signal/trace/health",
+      "name": "trace_health_check",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 126
+    },
+    {
+      "method": "GET",
+      "path": "/signal/trace/list",
+      "name": "list_traces",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 93
+    },
+    {
+      "method": "GET",
+      "path": "/signals/backtest/analysis/{ticker}",
+      "name": "analyze_signal_quality",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/signals/backtest/quick/{ticker}",
+      "name": "run_quick_backtest",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/signals/cognitive/bulk",
+      "name": "generate_bulk_cognitive_signals",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 93
+    },
+    {
+      "method": "GET",
+      "path": "/signals/cognitive/health",
+      "name": "cognitive_health_check",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 286
+    },
+    {
+      "method": "GET",
+      "path": "/signals/cognitive/regime/{symbol}",
+      "name": "get_regime_analysis",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/signals/cognitive/signal",
+      "name": "generate_cognitive_signal",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 89
+    },
+    {
+      "method": "GET",
+      "path": "/signals/config",
+      "name": "get_system_config",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 789
+    },
+    {
+      "method": "PUT",
+      "path": "/signals/config",
+      "name": "update_system_config",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 77
+    },
+    {
+      "method": "GET",
+      "path": "/signals/execute/history",
+      "name": "get_execution_history",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 33
+    },
+    {
+      "method": "GET",
+      "path": "/signals/execute/stats",
+      "name": "get_execution_stats",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 128
+    },
+    {
+      "method": "GET",
+      "path": "/signals/execute/status/{request_id}",
+      "name": "get_trade_execution_status",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/signals/execute/trade",
+      "name": "execute_trade_from_signal",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 89
+    },
+    {
+      "method": "POST",
+      "path": "/signals/features/bulk",
+      "name": "get_bulk_features",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 90
+    },
+    {
+      "method": "GET",
+      "path": "/signals/features/{ticker}",
+      "name": "get_ticker_features_endpoint",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/signals/regime",
+      "name": "get_current_regime",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 413
+    },
+    {
+      "method": "GET",
+      "path": "/signals/regime/history",
+      "name": "get_regime_history",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 435
+    },
+    {
+      "method": "GET",
+      "path": "/signals/signal/{ticker}",
+      "name": "get_ticker_signal",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/signals/status",
+      "name": "get_system_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 221
+    },
+    {
+      "method": "POST",
+      "path": "/signals/trade/execute",
+      "name": "execute_trade",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 330
+    },
+    {
+      "method": "POST",
+      "path": "/signals/trade/plan",
+      "name": "create_trade_plan",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 89
+    },
+    {
+      "method": "POST",
+      "path": "/signals/watchlist",
+      "name": "get_watchlist_signals",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 90
+    },
+    {
+      "method": "POST",
+      "path": "/trade/bracket",
+      "name": "trade_bracket",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 389
+    },
+    {
+      "method": "GET",
+      "path": "/trade/health",
+      "name": "trade_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 220
+    },
+    {
+      "method": "POST",
+      "path": "/trade/market",
+      "name": "trade_market",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 238
+    },
+    {
+      "method": "POST",
+      "path": "/trade/panic",
+      "name": "trade_panic",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 139
+    },
+    {
+      "method": "GET",
+      "path": "/trade/quality",
+      "name": "trade_quality",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 92
+    },
+    {
+      "method": "POST",
+      "path": "/trade/resume",
+      "name": "resume_trading",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 43
+    },
+    {
+      "method": "POST",
+      "path": "/trading/backtest",
+      "name": "backtest_alias",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 38
+    },
+    {
+      "method": "GET",
+      "path": "/trading/market-risk-lite",
+      "name": "risk_lite_alias",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 70
+    },
+    {
+      "method": "GET",
+      "path": "/trading/market/breadth",
+      "name": "market_breadth",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 244
+    },
+    {
+      "method": "GET",
+      "path": "/trading/market/calendar",
+      "name": "market_calendar",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 740
+    },
+    {
+      "method": "GET",
+      "path": "/trading/market/risk",
+      "name": "risk_lite_alias2",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 70
+    },
+    {
+      "method": "GET",
+      "path": "/trading/market/risk-lite",
+      "name": "risk_lite",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 70
+    },
+    {
+      "method": "POST",
+      "path": "/trading/strategy/backtest",
+      "name": "backtest_alias2",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 38
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/execute",
+      "name": "execute_trade",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/explain",
+      "name": "explain_signal",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 89
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/health",
+      "name": "trade_health",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 154
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/market",
+      "name": "trade_market",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/mode/{mode}",
+      "name": "set_trading_mode",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/notify",
+      "name": "trade_notify",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/notify/diag",
+      "name": "trade_notify_diag",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 150
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/notify/probe",
+      "name": "trade_notify_probe",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 150
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/notify/test",
+      "name": "trade_notify_test",
+      "status": "SERVER_ERROR",
+      "status_code": 500,
+      "response_size": 161
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/ohlc",
+      "name": "get_ohlc",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 93
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/orders",
+      "name": "get_orders",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 13
+    },
+    {
+      "method": "DELETE",
+      "path": "/trading/trade/orders/{order_id}",
+      "name": "cancel_order",
+      "status": "SKIPPED",
+      "reason": "Path parameter required"
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/portfolio",
+      "name": "get_portfolio",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 149
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/positions",
+      "name": "get_positions",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 16
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trade/scan/enable",
+      "name": "scan_enable",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 93
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/scan/status",
+      "name": "scan_status",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 17
+    },
+    {
+      "method": "GET",
+      "path": "/trading/trade/screener",
+      "name": "get_screener",
+      "status": "SUCCESS",
+      "status_code": 200,
+      "response_size": 943
+    },
+    {
+      "method": "POST",
+      "path": "/trading/trading/backtest",
+      "name": "trading_backtest",
+      "status": "CLIENT_ERROR",
+      "status_code": 400,
+      "response_size": 38
+    },
+    {
+      "method": "GET",
+      "path": "/web/browse",
+      "name": "browse_alias",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    },
+    {
+      "method": "GET",
+      "path": "/web/browse/search",
+      "name": "browse_search",
+      "status": "CLIENT_ERROR",
+      "status_code": 422,
+      "response_size": 87
+    }
+  ]
+}

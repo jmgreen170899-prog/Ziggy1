@@ -672,7 +672,12 @@ def trade_notify_test():
         ok = False
 
     d = tg_diag()
-    delivered = bool(d.get("last_raw", {}).get("json", {}).get("ok") is True)
+    last_raw = d.get("last_raw")
+    delivered = bool(
+        last_raw 
+        and isinstance(last_raw, dict) 
+        and last_raw.get("json", {}).get("ok") is True
+    )
 
     if ok or delivered:
         return {"ok": True, "diag": d}
