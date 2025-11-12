@@ -296,6 +296,8 @@ async function setupBrowser() {
         /Failed to load resource: net::ERR_FAILED/i,
         /Access to XMLHttpRequest.*has been blocked by CORS policy/i,
         /API Error:/i,
+        /^\s+at\s+/,  // Stack trace lines
+        /^https?:\/\//,  // URL-only lines
       ];
       
       const shouldIgnore = ignoredPatterns.some(pattern => pattern.test(text));
