@@ -15,6 +15,7 @@ from email.utils import parsedate_to_datetime
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
 
 # Optional sandbox provider (fixtures via provider_factory)
 try:
@@ -38,6 +39,44 @@ except ImportError:
     _DataSource = None
 
 router = APIRouter()
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Response Models
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class SentimentSample(BaseModel):
+    """Individual article sentiment sample."""
+
+    source: str = Field(..., description="News source")
+    title: str = Field(..., description="Article title")
+    url: str = Field(..., description="Article URL")
+    published: str = Field(..., description="Publication date")
+    score: float = Field(..., description="Sentiment score [-1, 1]")
+    label: str = Field(..., description="Sentiment label (negative/neutral/positive)")
+
+
+class SentimentResponse(BaseModel):
+    """Sentiment analysis response."""
+
+    ticker: str = Field(..., description="Ticker symbol")
+    score: float = Field(..., description="Aggregated sentiment score [-1, 1]")
+    label: str = Field(..., description="Sentiment label (negative/neutral/positive)")
+    confidence: float = Field(..., description="Confidence score [0, 1]")
+    sample_count: int = Field(..., description="Number of articles analyzed")
+    updated_at: str = Field(..., description="Last update timestamp")
+    samples: list[SentimentSample] = Field(
+        default_factory=list, description="Individual article sentiments"
+    )
+
+
+class NewsPingResponse(BaseModel):
+    """News service ping response."""
+
+    status: str = Field(..., description="Service status")
+    asof: float = Field(..., description="Response timestamp")
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Simple in-memory cache (per-feed + per-response), TTL from CACHE_TTL_SECONDS
@@ -910,25 +949,27 @@ def _get_articles_for_sentiment(
     return items
 
 
-@router.get("/sentiment")
+@router.get("/sentiment", response_model=SentimentResponse)
 def news_sentiment(
     ticker: str | None = Query(None, description="Primary ticker (alias: symbol)"),
     symbol: str | None = Query(None, description="Alias for ticker"),
     lookback_days: int = Query(3, ge=1, le=30),
     limit: int = Query(40, ge=1, le=200),
-):
+) -> SentimentResponse:
     """
-    Return an NLP sentiment summary for recent headlines mentioning `ticker`.
-    Output shape (compact, UI-friendly):
-      {
-        "ticker": "AAPL",
-        "score": -0.18,               # mean score in [-1,1]
-        "label": "negative",          # negative|neutral|positive
-        "confidence": 0.66,           # heuristic 0..1
-        "sample_count": 12,
-        "updated_at": "2025-01-12T12:34:56Z",
-        "samples": [ { title, url, published, source, score, label }, ... ]
-      }
+    Return NLP sentiment summary for recent headlines mentioning ticker.
+    
+    Analyzes recent news articles and returns aggregated sentiment score,
+    label, and individual article sentiments.
+    
+    Output includes:
+    - ticker: Symbol analyzed
+    - score: Mean sentiment in [-1,1]
+    - label: negative/neutral/positive
+    - confidence: Heuristic confidence [0,1]
+    - sample_count: Number of articles
+    - updated_at: ISO timestamp
+    - samples: Individual article sentiments
     """
     t = (ticker or symbol or "").strip().upper()
     if not t:
@@ -1007,15 +1048,23 @@ def news_sentiment(
 
 
 # Alias for tolerant clients (frontend maps to /news/sentiment anyway, but keep this):
-@router.get("/headwind")
+@router.get(
+    "/headwind",
+    response_model=SentimentResponse,
+    deprecated=True,
+    summary="[DEPRECATED] Use /sentiment instead",
+)
 def news_headwind(
     ticker: str | None = Query(None, description="Primary ticker (alias: symbol)"),
     symbol: str | None = Query(None, description="Alias for ticker"),
     lookback_days: int = Query(3, ge=1, le=30),
     limit: int = Query(40, ge=1, le=200),
-):
+) -> SentimentResponse:
     """
-    Compatibility alias that returns the same payload as /news/sentiment.
+    **DEPRECATED:** This endpoint is maintained for backward compatibility only.
+    Please use `/sentiment` instead.
+    
+    This alias will be removed in a future version.
     """
     return news_sentiment(ticker=ticker, symbol=symbol, lookback_days=lookback_days, limit=limit)  # type: ignore[arg-type]
 
@@ -1025,6 +1074,7 @@ def news_headwind(
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/ping")
-def news_ping():
-    return {"status": "ok", "asof": time.time()}
+@router.get("/ping", response_model=NewsPingResponse)
+def news_ping() -> NewsPingResponse:
+    """Simple ping endpoint to check news service availability."""
+    return NewsPingResponse(status="ok", asof=time.time())
