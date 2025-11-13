@@ -87,6 +87,18 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "ziggy-secret-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    
+    # ---- Authentication Configuration ----
+    # Enable/disable authentication (disabled by default in development)
+    ENABLE_AUTH: bool = False
+    # Require auth for trading endpoints
+    REQUIRE_AUTH_TRADING: bool = False
+    # Require auth for paper trading
+    REQUIRE_AUTH_PAPER: bool = False
+    # Require auth for cognitive/decision endpoints
+    REQUIRE_AUTH_COGNITIVE: bool = False
+    # Require auth for integration/apply endpoints
+    REQUIRE_AUTH_INTEGRATION: bool = False
 
     # ---- Telegram ----
     TELEGRAM_BOT_TOKEN: str | None = None

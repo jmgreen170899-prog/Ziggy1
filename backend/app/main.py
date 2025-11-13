@@ -79,8 +79,9 @@ async def lifespan(app: FastAPI):
     logger.info("✅ ZiggyAI backend shutdown complete")
 
 
-# ---- FastAPI app with docs toggle ----
+# ---- FastAPI app with docs toggle and security schemes ----
 _docs_enabled = os.getenv("DOCS_ENABLED", "true").lower() not in {"false", "0", "no"}
+
 app = FastAPI(
     title="ZiggyAI",
     version="0.1.0",
@@ -89,6 +90,52 @@ app = FastAPI(
     openapi_url="/openapi.json" if _docs_enabled else None,
     lifespan=lifespan,
 )
+
+# ---- Add OpenAPI Security Schemes ----
+# These define the authentication methods available in the API
+def customize_openapi():
+    """Customize OpenAPI schema to include security schemes"""
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    from fastapi.openapi.utils import get_openapi
+    
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description="ZiggyAI Trading Platform API with optional authentication",
+        routes=app.routes,
+    )
+    
+    # Add security schemes to OpenAPI
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "JWT token obtained from /auth/login endpoint",
+        },
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-Key",
+            "description": "API key for programmatic access",
+        },
+    }
+    
+    # Add security info
+    openapi_schema["info"]["x-security-info"] = {
+        "authentication": "Optional authentication via JWT Bearer token or API Key",
+        "development": "Authentication disabled by default in development mode",
+        "production": "Authentication can be enabled via ENABLE_AUTH environment variable",
+        "public_endpoints": ["/health", "/health/detailed", "/docs", "/redoc", "/openapi.json"],
+    }
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = customize_openapi
 
 # ---- CORS Middleware ----
 app.add_middleware(
@@ -210,6 +257,9 @@ def register_router_safely(
         logger.error(f"❌ Unexpected error registering {router_module}: {e}")
         return False
 
+
+# ---- Authentication Routes ----
+register_router_safely("app.api.routes_auth", prefix="/api")
 
 # ---- Core API Routes ----
 register_router_safely("app.api.routes", prefix="/api")
