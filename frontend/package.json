@@ -21,6 +21,7 @@
     "audit:fe:report": "node scripts/generate_ui_health_report.mjs",
     "audit:fe:all": "npm run audit:fe:types && npm run audit:fe:lint && npm run audit:fe:dup && npm run audit:fe:unused",
     "verify:endpoints": "tsx scripts/verify-endpoint-coverage.ts",
+    "generate:api": "tsx scripts/generate-api-client.ts",
     "dev:coverage": "next dev --turbopack",
     "e2e": "playwright test -c playwright.e2e.config.ts",
     "playwright:install": "playwright install --with-deps",
