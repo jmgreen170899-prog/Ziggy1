@@ -449,3 +449,17 @@ def get_portfolio_streamer(connection_manager: ConnectionManager) -> PortfolioSt
     if portfolio_streamer is None:
         portfolio_streamer = PortfolioStreamer(connection_manager)
     return portfolio_streamer
+
+
+async def start_portfolio_streaming():
+    """Start portfolio streaming (call during app startup)"""
+    from app.core.websocket import connection_manager
+    streamer = get_portfolio_streamer(connection_manager)
+    await streamer.start_streaming()
+
+
+async def stop_portfolio_streaming():
+    """Stop portfolio streaming (call during app shutdown)"""
+    global portfolio_streamer
+    if portfolio_streamer:
+        await portfolio_streamer.stop_streaming()

@@ -9,11 +9,13 @@ import {
   AgentResponse
 } from '@/types/api';
 import { apiClient } from '@/services/api';
+import { streamChatCompletion } from '@/services/chatStream';
 
 interface ChatStore extends ChatState {
   // Actions
   addMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
   sendMessage: (content: string) => Promise<void>;
+  sendStreamingMessage: (content: string) => Promise<void>;
   sendRAGQuery: (content: string) => Promise<void>;
   sendAgentQuery: (content: string) => Promise<void>;
   clearMessages: () => void;
@@ -47,7 +49,7 @@ export const useChatStore = create<ChatStore>()(
       },
 
       sendMessage: async (content: string) => {
-        const { addMessage, sendRAGQuery } = get();
+        const { addMessage, sendStreamingMessage } = get();
         
         // Add user message
         addMessage({
@@ -55,8 +57,89 @@ export const useChatStore = create<ChatStore>()(
           role: 'user',
         });
 
-        // Use RAG query by default for Ollama integration
-        await sendRAGQuery(content);
+        // Use streaming chat by default for better UX
+        await sendStreamingMessage(content);
+      },
+
+      sendStreamingMessage: async (content: string) => {
+        const { messages, updateMessage } = get();
+        
+        set({ isLoading: true, error: null });
+
+        // Add loading assistant message
+        const assistantMessage: ChatMessage = {
+          id: generateId(),
+          content: '',
+          role: 'assistant',
+          timestamp: new Date().toISOString(),
+          isLoading: true,
+        };
+        
+        set((state) => ({
+          messages: [...state.messages, assistantMessage],
+        }));
+
+        try {
+          // Build message history for context
+          const chatMessages = messages
+            .filter(m => m.role === 'user' || m.role === 'assistant')
+            .map(m => ({
+              role: m.role as 'user' | 'assistant',
+              content: m.content
+            }));
+          
+          // Add the new user message
+          chatMessages.push({
+            role: 'user',
+            content
+          });
+
+          // Stream the response
+          await streamChatCompletion(
+            {
+              messages: chatMessages,
+              temperature: 0.7,
+              max_tokens: 2000,
+              stream: true,
+            },
+            {
+              onChunk: (chunk: string) => {
+                // Append chunk to assistant message
+                updateMessage(assistantMessage.id, {
+                  content: get().messages.find(m => m.id === assistantMessage.id)?.content + chunk || chunk,
+                });
+              },
+              onComplete: (fullContent: string) => {
+                // Finalize assistant message
+                updateMessage(assistantMessage.id, {
+                  content: fullContent,
+                  isLoading: false,
+                });
+                set({ isLoading: false });
+              },
+              onError: (error: Error) => {
+                console.error('Streaming failed:', error);
+                set({ error: `Failed to stream response: ${error.message}` });
+                
+                updateMessage(assistantMessage.id, {
+                  content: 'Sorry, I encountered an error while streaming the response. Please try again.',
+                  isLoading: false,
+                });
+                set({ isLoading: false });
+              },
+            }
+          );
+
+        } catch (error) {
+          console.error('Chat streaming error:', error);
+          set({ error: 'Failed to get response from ZiggyAI. Please try again.' });
+          
+          updateMessage(assistantMessage.id, {
+            content: 'Sorry, I encountered an error while processing your request. Please try again.',
+            isLoading: false,
+          });
+          set({ isLoading: false });
+        }
       },
 
       sendRAGQuery: async (content: string) => {

@@ -2,6 +2,7 @@
 
 import logging
 import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 # ---- logger must exist before optional imports/use ----
@@ -21,6 +22,59 @@ try:
 except Exception as e:
     logger.warning("Rate limiting disabled (slowapi unavailable): %s", e)
 
+
+# ---- Lifespan management for streaming services ----
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize and cleanup streaming services"""
+    logger.info("🚀 Starting ZiggyAI streaming services...")
+    
+    # Start news streaming
+    try:
+        from app.services.news_streaming import start_news_streaming
+        await start_news_streaming()
+        logger.info("✅ News streaming started")
+    except Exception as e:
+        logger.warning(f"⚠️ News streaming not started: {e}")
+    
+    # Start alert monitoring if available
+    try:
+        from app.services.alert_monitoring import start_alert_monitoring
+        await start_alert_monitoring()
+        logger.info("✅ Alert monitoring started")
+    except Exception as e:
+        logger.warning(f"⚠️ Alert monitoring not started: {e}")
+    
+    # Start portfolio streaming if available
+    try:
+        from app.services.portfolio_streaming import start_portfolio_streaming
+        await start_portfolio_streaming()
+        logger.info("✅ Portfolio streaming started")
+    except Exception as e:
+        logger.warning(f"⚠️ Portfolio streaming not started: {e}")
+    
+    logger.info("✅ ZiggyAI backend ready!")
+    
+    yield  # Server runs here
+    
+    # Cleanup on shutdown
+    logger.info("🛑 Shutting down ZiggyAI streaming services...")
+    
+    try:
+        from app.services.news_streaming import stop_news_streaming
+        await stop_news_streaming()
+    except Exception as e:
+        logger.debug(f"News streaming cleanup: {e}")
+    
+    try:
+        from app.core.websocket import connection_manager
+        await connection_manager.stop()
+    except Exception as e:
+        logger.debug(f"WebSocket cleanup: {e}")
+    
+    logger.info("✅ ZiggyAI backend shutdown complete")
+
+
 # ---- FastAPI app with docs toggle ----
 _docs_enabled = os.getenv("DOCS_ENABLED", "true").lower() not in {"false", "0", "no"}
 app = FastAPI(
@@ -29,6 +83,7 @@ app = FastAPI(
     docs_url="/docs" if _docs_enabled else None,
     redoc_url="/redoc" if _docs_enabled else None,
     openapi_url="/openapi.json" if _docs_enabled else None,
+    lifespan=lifespan,
 )
 
 # If SlowAPI is available, wire it up
@@ -123,6 +178,9 @@ app.include_router(browse_router)  # routes already include /web prefix
 
 from app.trading.router import router as trade_router
 app.include_router(trade_router)  # already has prefix="/trade"
+
+from app.api.routes_websocket import router as websocket_router
+app.include_router(websocket_router)  # WebSocket endpoints at /ws/*
 
 # ---- Auto-discovery fallback (catch missed routers) ----
 # Note: Auto-discovery is disabled because all routers are explicitly registered above.
