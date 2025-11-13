@@ -1733,3 +1733,10 @@
 {"ts": 1762806593.559491, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762878476.076326, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762895018.9336245, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
+{"ts": 1762983291.9044642, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762983291.910137, "kind": "scanner-error", "text": "⚠️ Scanner warm-cache error: ModuleNotFoundError(\"No module named 'yfinance'\")", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762983365.1210992, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762983365.125114, "kind": "scanner-error", "text": "⚠️ Scanner warm-cache error: ModuleNotFoundError(\"No module named 'yfinance'\")", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762983376.9336925, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762983376.9378095, "kind": "scanner-error", "text": "⚠️ Scanner warm-cache error: ModuleNotFoundError(\"No module named 'yfinance'\")", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
+{"ts": 1762983478.6026375, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}

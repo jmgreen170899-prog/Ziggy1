@@ -63,6 +63,9 @@ async def get_dev_user_status():
 
         return user_info
 
+    except HTTPException:
+        # Re-raise HTTPException (e.g., 503 for DB unavailable) without modification
+        raise
     except Exception as e:
         logger.error(f"Failed to get dev user status: {e}")
         raise HTTPException(status_code=500, detail="Internal server error") from e
@@ -106,7 +109,9 @@ async def get_dev_portfolio_status():
         status = get_portfolio_status()
 
         if status.get("status") == "error":
-            raise HTTPException(status_code=500, detail=status.get("error"))
+            # Return 503 for database or service unavailable errors
+            error_detail = status.get("error", "Service unavailable")
+            raise HTTPException(status_code=503, detail=error_detail)
 
         if status.get("status") == "not_found":
             raise HTTPException(status_code=404, detail="Portfolio not found")

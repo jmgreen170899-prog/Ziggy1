@@ -1678,10 +1678,7 @@ def _backtest_with_legacy_logic(symbol: str, body: BacktestIn) -> BacktestOut:
 
 
 # Aliases for flexibility (frontends may call these)
-@router.post("/backtest")
-def backtest_alias(body: BacktestIn):
-    return trading_backtest(body)
-
+# Note: /backtest is already defined above (line 1497)
 
 @router.post("/strategy/backtest")
 def backtest_alias2(body: BacktestIn):
