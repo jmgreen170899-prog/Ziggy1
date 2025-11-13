@@ -1726,10 +1726,7 @@
 {"ts": 1762646947.074815, "kind": "scheduler", "text": "Ziggy Screener Alerts:\nMSFT: SELL (59% conf) — SMA20>SMA50 & RSI<40\nAMZN: BUY (59% conf) — SMA20>SMA50 & RSI>60\nGOOGL: BUY (66% conf) — SMA20>SMA50 & RSI>60\nMETA: SELL (67% conf) — SMA20<SMA50 & RSI<30", "ok": false, "error": "Bad Request: can't parse entities: Unsupported start tag \"40\" at byte offset 66", "meta": {"count": 4}}
 {"ts": 1762682636.1150901, "kind": "scheduler", "text": "Ziggy Screener Alerts:\nMSFT: SELL (59% conf) — SMA20>SMA50 & RSI<40\nAMZN: BUY (59% conf) — SMA20>SMA50 & RSI>60\nGOOGL: BUY (66% conf) — SMA20>SMA50 & RSI>60\nMETA: SELL (67% conf) — SMA20<SMA50 & RSI<30", "ok": false, "error": "Bad Request: can't parse entities: Unsupported start tag \"40\" at byte offset 66", "meta": {"count": 4}}
 {"ts": 1762683538.1339777, "kind": "scheduler", "text": "Ziggy Screener Alerts:\nMSFT: SELL (59% conf) — SMA20>SMA50 & RSI<40\nAMZN: BUY (59% conf) — SMA20>SMA50 & RSI>60\nGOOGL: BUY (66% conf) — SMA20>SMA50 & RSI>60\nMETA: SELL (67% conf) — SMA20<SMA50 & RSI<30", "ok": false, "error": "Bad Request: can't parse entities: Unsupported start tag \"40\" at byte offset 66", "meta": {"count": 4}}
-<<<<<<< Updated upstream
-=======
 {"ts": 1762717811.2297199, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
->>>>>>> Stashed changes
 {"ts": 1762806593.559491, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762878476.076326, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762895018.9336245, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
