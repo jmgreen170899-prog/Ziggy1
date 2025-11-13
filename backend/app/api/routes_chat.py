@@ -13,6 +13,32 @@ from pydantic import BaseModel, Field, field_validator  # type: ignore
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
+
+# ──────────────────────────── Response Models ────────────────────────────
+
+
+class ChatHealthResponse(BaseModel):
+    """Chat service health check response."""
+
+    provider: str = Field(..., description="LLM provider (openai or local)")
+    base: str = Field(..., description="Base URL for the provider")
+    model: str = Field(..., description="Model being used")
+    ok: bool = Field(..., description="Health check passed")
+    status_code: int | None = Field(None, description="HTTP status code from provider")
+    detail: str | None = Field(None, description="Error details if health check failed")
+    error: str | None = Field(None, description="Exception error if check failed")
+
+
+class ChatConfigResponse(BaseModel):
+    """Chat service configuration response."""
+
+    provider: str = Field(..., description="LLM provider (openai or local)")
+    base: str = Field(..., description="Base URL for the provider")
+    default_model: str = Field(..., description="Default model name")
+    timeout_sec: float = Field(..., description="Request timeout in seconds")
+    use_openai: bool = Field(..., description="Whether OpenAI is being used")
+
+
 # ──────────────────────────── Config helpers ────────────────────────────
 
 
@@ -173,10 +199,12 @@ async def chat_complete(req: ChatRequest):
     return StreamingResponse(sse_iter(), media_type="text/event-stream")
 
 
-@router.get("/health")
-async def chat_health():
+@router.get("/health", response_model=ChatHealthResponse)
+async def chat_health() -> ChatHealthResponse:
     """
-    Quick connectivity probe against the configured provider using a tiny no-op call.
+    Quick connectivity probe against the configured provider.
+    
+    Tests LLM provider with a minimal no-op call.
     Does NOT consume tokens on local servers; on OpenAI this is a minimal request.
     """
     try:
@@ -190,37 +218,44 @@ async def chat_health():
         resp = await _post_chat(payload, stream=False)
         ok = bool(resp.status_code == 200)
         detail = None if ok else await _safe_text(resp)
-        return {
-            "provider": "openai" if USE_OPENAI else "local",
-            "base": _provider_base(),
-            "model": _provider_model(),
-            "ok": ok,
-            "status_code": resp.status_code,
-            "detail": (detail[:400] if detail else None),
-        }
+        return ChatHealthResponse(
+            provider="openai" if USE_OPENAI else "local",
+            base=_provider_base(),
+            model=_provider_model(),
+            ok=ok,
+            status_code=resp.status_code,
+            detail=(detail[:400] if detail else None),
+            error=None,
+        )
     except HTTPException as he:
         raise he
     except Exception as e:
-        return {
-            "provider": "openai" if USE_OPENAI else "local",
-            "base": _provider_base(),
-            "model": _provider_model(),
-            "ok": False,
-            "error": str(e),
-        }
+        return ChatHealthResponse(
+            provider="openai" if USE_OPENAI else "local",
+            base=_provider_base(),
+            model=_provider_model(),
+            ok=False,
+            status_code=None,
+            detail=None,
+            error=str(e),
+        )
 
 
-@router.get("/config")
-async def chat_config():
-    """Non-sensitive config snapshot for debugging."""
-    return {
-        "provider": "openai" if USE_OPENAI else "local",
-        "base": _provider_base(),
-        "default_model": _provider_model(),
-        "timeout_sec": REQUEST_TIMEOUT,
-        "use_openai": USE_OPENAI,
-        # never return API keys
-    }
+@router.get("/config", response_model=ChatConfigResponse)
+async def chat_config() -> ChatConfigResponse:
+    """
+    Get non-sensitive chat configuration snapshot.
+    
+    Returns current LLM provider configuration for debugging.
+    Note: Never returns API keys.
+    """
+    return ChatConfigResponse(
+        provider="openai" if USE_OPENAI else "local",
+        base=_provider_base(),
+        default_model=_provider_model(),
+        timeout_sec=REQUEST_TIMEOUT,
+        use_openai=USE_OPENAI,
+    )
 
 
 # ──────────────────────────── Utils ────────────────────────────

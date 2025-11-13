@@ -5,7 +5,7 @@ import os
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -109,8 +109,60 @@ if HAVE_SLOWAPI:
     async def _rate_limit_handler(request, exc):
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded"},
+            content={"detail": "Rate limit exceeded", "code": "rate_limit_exceeded", "meta": {}},
         )
+
+
+# ---- Global Exception Handlers for Standardized Error Responses ----
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc: HTTPException):
+    """
+    Standardize HTTPException responses to use ErrorResponse format.
+    
+    Converts HTTPException detail to standardized {detail, code, meta} format.
+    """
+    from app.models import ErrorResponse
+
+    # If detail is already a dict with our format, use it
+    if isinstance(exc.detail, dict):
+        detail_str = exc.detail.get("detail", str(exc.detail.get("error", "An error occurred")))
+        code = exc.detail.get("code", f"http_{exc.status_code}")
+        meta = exc.detail.get("meta", exc.detail.copy())
+        # Remove standard keys from meta to avoid duplication
+        meta.pop("detail", None)
+        meta.pop("code", None)
+    else:
+        # Simple string detail
+        detail_str = str(exc.detail)
+        code = f"http_{exc.status_code}"
+        meta = {}
+
+    error_response = ErrorResponse(detail=detail_str, code=code, meta=meta)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=error_response.model_dump(),
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc: Exception):
+    """
+    Catch-all handler for unexpected exceptions.
+    
+    Returns standardized error response for internal server errors.
+    """
+    from app.models import ErrorResponse
+
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    error_response = ErrorResponse(
+        detail="An internal server error occurred",
+        code="internal_server_error",
+        meta={"type": type(exc).__name__},
+    )
+    return JSONResponse(
+        status_code=500,
+        content=error_response.model_dump(),
+    )
 
 
 # ---- Router Registration with Error Handling ----
