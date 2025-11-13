@@ -22,7 +22,10 @@
     "audit:fe:all": "npm run audit:fe:types && npm run audit:fe:lint && npm run audit:fe:dup && npm run audit:fe:unused",
     "verify:endpoints": "tsx scripts/verify-endpoint-coverage.ts",
     "dev:coverage": "next dev --turbopack",
-    "e2e": "playwright test -c playwright.e2e.config.ts"
+    "e2e": "playwright test -c playwright.e2e.config.ts",
+    "playwright:install": "playwright install --with-deps",
+    "test:e2e": "playwright test",
+    "verify:crawl": "node ./tests/verify.crawl.mjs"
   },
   "dependencies": {
     "axios": "^1.12.2",
