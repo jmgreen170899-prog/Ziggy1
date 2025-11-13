@@ -34,6 +34,10 @@ class Settings(BaseSettings):
 
     # ---- Development Configuration ----
     SEED_DEV_USER: bool = False
+    
+    # ---- Demo Mode ----
+    # Enable demo mode for safe demonstrations with deterministic data
+    DEMO_MODE: bool = False
 
     # ---- API Configuration ----
     API_HOST: str = "0.0.0.0"
