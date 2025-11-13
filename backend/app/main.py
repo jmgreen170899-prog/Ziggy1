@@ -293,6 +293,7 @@ register_router_safely("app.api.routes_feedback")  # Has its own /feedback prefi
 # ---- Development & Monitoring Routes ----
 register_router_safely("app.api.routes_dev", prefix="/api")
 register_router_safely("app.api.routes_performance")  # Has its own /api/performance prefix
+register_router_safely("app.api.routes_ops")  # Has its own /ops prefix
 
 # ---- Web Browsing Routes ----
 register_router_safely("app.web.browse_router")
