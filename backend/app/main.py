@@ -124,6 +124,9 @@ app.include_router(browse_router)  # routes already include /web prefix
 from app.trading.router import router as trade_router
 app.include_router(trade_router)  # already has prefix="/trade"
 
+from app.api.routes_websocket import router as websocket_router
+app.include_router(websocket_router)  # WebSocket endpoints at /ws/*
+
 # ---- Auto-discovery fallback (catch missed routers) ----
 # Note: Auto-discovery is disabled because all routers are explicitly registered above.
 # The auto-discovery system is available in app.core.router_auto if needed in the future.
