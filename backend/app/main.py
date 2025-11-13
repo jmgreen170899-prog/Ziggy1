@@ -2,12 +2,9 @@
 
 import logging
 import os
-<<<<<<< HEAD
 from contextlib import asynccontextmanager
-=======
 from typing import Any
 
->>>>>>> d295850 (Resolve merge conflict in backend/app/main.py)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -200,15 +197,23 @@ register_router_safely("app.web.browse_router")
 
 
 # ---- Basic Health Endpoint ----
-@app.get("/health")
-async def health():
-    return {"ok": True}
+from app.models import AckResponse, HealthResponse
+
+
+@app.get("/health", response_model=AckResponse)
+async def health() -> AckResponse:
+    """Basic health check endpoint."""
+    return AckResponse(ok=True, message=None)
 
 
 # ---- Enhanced Health Check ----
-@app.get("/health/detailed")
-async def detailed_health() -> dict[str, Any]:
-    """Detailed health check with router information."""
+@app.get("/health/detailed", response_model=HealthResponse)
+async def detailed_health() -> HealthResponse:
+    """
+    Detailed health check with router information.
+    
+    Returns service status, version, and registered routes.
+    """
     routes_info: list[dict[str, Any]] = []
     for route in app.routes:
         if hasattr(route, "path") and hasattr(route, "methods"):
@@ -222,14 +227,16 @@ async def detailed_health() -> dict[str, Any]:
                 }
             )
 
-    return {
-        "status": "ok",
-        "service": "ZiggyAI Backend",
-        "version": "0.1.0",
-        "total_routes": len(routes_info),
-        "routes": routes_info[:10],  # First 10 for brevity
-        "has_slowapi": HAVE_SLOWAPI,
-    }
+    return HealthResponse(
+        status="ok",
+        details={
+            "service": "ZiggyAI Backend",
+            "version": "0.1.0",
+            "total_routes": len(routes_info),
+            "routes": routes_info[:10],  # First 10 for brevity
+            "has_slowapi": HAVE_SLOWAPI,
+        },
+    )
 
 
 # ---- Explicit router includes ----
@@ -237,76 +244,6 @@ async def detailed_health() -> dict[str, Any]:
 # Note: Routers with their own prefix are registered as-is
 # Routers without prefix get a sensible default based on their module name
 
-<<<<<<< HEAD
-from app.api.routes import router as core_router
-app.include_router(core_router, prefix="/api")
-
-from app.api.routes_alerts import router as alerts_router
-app.include_router(alerts_router, prefix="/alerts")
-
-from app.api.routes_chat import router as chat_router
-app.include_router(chat_router)  # already has prefix="/chat"
-
-from app.api.routes_cognitive import router as cognitive_router
-app.include_router(cognitive_router)  # already has prefix="/cognitive"
-
-from app.api.routes_crypto import router as crypto_router
-app.include_router(crypto_router, prefix="/crypto")
-
-from app.api.routes_dev import router as dev_router
-app.include_router(dev_router, prefix="/dev")
-
-from app.api.routes_explain import router as explain_router
-app.include_router(explain_router)  # already has prefix="/signal"
-
-from app.api.routes_feedback import router as feedback_router
-app.include_router(feedback_router)  # already has prefix="/feedback"
-
-from app.api.routes_integration import router as integration_router
-app.include_router(integration_router)  # already has prefix="/integration"
-
-from app.api.routes_learning import router as learning_router
-app.include_router(learning_router, prefix="/learning")
-
-from app.api.routes_market import router as market_router
-app.include_router(market_router, prefix="/market")
-
-from app.api.routes_market_calendar import router as market_calendar_router
-app.include_router(market_calendar_router)  # already has prefix="/market"
-
-from app.api.routes_news import router as news_router
-app.include_router(news_router, prefix="/news")
-
-from app.api.routes_paper import router as paper_router
-app.include_router(paper_router, prefix="/paper")
-
-from app.api.routes_performance import router as performance_router
-app.include_router(performance_router)  # already has prefix="/api/performance"
-
-from app.api.routes_risk_lite import router as risk_router
-app.include_router(risk_router, prefix="/risk")
-
-from app.api.routes_screener import router as screener_router
-app.include_router(screener_router)  # already has prefix="/screener"
-
-from app.api.routes_signals import router as signals_router
-app.include_router(signals_router)  # already has prefix="/signals"
-
-from app.api.routes_trace import router as trace_router
-app.include_router(trace_router)  # already has prefix="/signal"
-
-from app.api.routes_trading import router as trading_router
-app.include_router(trading_router, prefix="/trading")
-
-from app.web.browse_router import router as browse_router
-app.include_router(browse_router)  # routes already include /web prefix
-
-from app.trading.router import router as trade_router
-app.include_router(trade_router)  # already has prefix="/trade"
-
-from app.api.routes_websocket import router as websocket_router
-app.include_router(websocket_router)  # WebSocket endpoints at /ws/*
-=======
 try:
     from app.api.routes import router as core_router
 
@@ -462,7 +399,6 @@ try:
     app.include_router(trade_router)  # already has prefix="/trade"
 except Exception as e:
     logger.warning("Failed to include trade router: %s", e)
->>>>>>> d295850 (Resolve merge conflict in backend/app/main.py)
 
 # ---- Auto-discovery fallback (catch missed routers) ----
 # Note: Auto-discovery is disabled because all routers are explicitly registered above.
