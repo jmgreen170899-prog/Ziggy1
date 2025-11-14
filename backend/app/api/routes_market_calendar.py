@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/market", tags=["market_calendar"])
 
 
-@router.get("/calendar")
+@router.get("/calendar", response_model=None)
 async def get_full_calendar():
     """Get comprehensive market calendar data including holidays, earnings, and economic events."""
     try:
@@ -48,7 +48,7 @@ async def get_full_calendar():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/holidays")
+@router.get("/holidays", response_model=None)
 async def get_holidays(year: int | None = Query(None)):
     """Get market holidays for specified year."""
     try:
@@ -61,7 +61,7 @@ async def get_holidays(year: int | None = Query(None)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/earnings")
+@router.get("/earnings", response_model=None)
 async def get_earnings_calendar(
     start_date: str | None = Query(None), end_date: str | None = Query(None)
 ):
@@ -78,7 +78,7 @@ async def get_earnings_calendar(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/economic")
+@router.get("/economic", response_model=None)
 async def get_economic_events(
     start_date: str | None = Query(None), end_date: str | None = Query(None)
 ):
@@ -105,7 +105,7 @@ async def get_economic_events(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/schedule")
+@router.get("/schedule", response_model=None)
 async def get_market_schedule(date: str | None = Query(None)):
     """Get market schedule for specific date."""
     try:
@@ -118,7 +118,7 @@ async def get_market_schedule(date: str | None = Query(None)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/indicators")
+@router.get("/indicators", response_model=None)
 async def get_economic_indicators():
     """Get key economic indicators from FRED."""
     try:
@@ -129,7 +129,7 @@ async def get_economic_indicators():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/fred/{series_id}")
+@router.get("/fred/{series_id}", response_model=None)
 async def get_fred_series(series_id: str, limit: int = Query(100, ge=1, le=1000)):
     """Get specific FRED economic data series."""
     try:

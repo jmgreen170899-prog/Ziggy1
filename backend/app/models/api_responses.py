@@ -756,3 +756,182 @@ class LearningHealthResponse(BaseModel):
     status: str = Field(..., description="Overall health status")
     components: dict[str, bool] | None = Field(None, description="Component status")
     errors: list[str] | None = Field(None, description="Error messages if any")
+
+
+# ── Integration Endpoint Response Models ──────────────────────────────────────
+
+class IntegrationHealthResponse(BaseModel):
+    """Response for integration health endpoint."""
+    
+    status: str = Field(..., description="Health status")
+    data: dict[str, Any] = Field(..., description="Health data")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+class EnhanceDataResponse(BaseModel):
+    """Response for data enhancement endpoint."""
+    
+    status: str = Field(..., description="Response status")
+    data: dict[str, Any] = Field(..., description="Enhanced data")
+    source: str = Field(..., description="Data source")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+class MarketContextResponse(BaseModel):
+    """Response for market context endpoint."""
+    
+    status: str = Field(..., description="Response status")
+    data: dict[str, Any] = Field(..., description="Market context data")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+class ActiveRulesResponse(BaseModel):
+    """Response for active rules endpoint."""
+    
+    status: str = Field(..., description="Response status")
+    data: dict[str, Any] = Field(..., description="Active rules data")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+class CalibrationApplyResponse(BaseModel):
+    """Response for calibration apply endpoint."""
+    
+    status: str = Field(..., description="Response status")
+    data: dict[str, Any] = Field(..., description="Calibration results")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+class OutcomeUpdateResponse(BaseModel):
+    """Response for outcome update endpoint."""
+    
+    status: str = Field(..., description="Response status")
+    message: str = Field(..., description="Update message")
+    decision_timestamp: float = Field(..., description="Decision timestamp")
+    timestamp: float = Field(..., description="Response timestamp")
+
+
+class IntegrationStatusResponse(BaseModel):
+    """Response for integration status endpoint."""
+    
+    integration_available: bool = Field(..., description="Whether integration is available")
+    timestamp: float = Field(..., description="Timestamp")
+    components: dict[str, Any] | None = Field(None, description="Component status")
+    integration_score: float | None = Field(None, description="Integration score")
+    overall_status: str | None = Field(None, description="Overall system status")
+    capabilities: dict[str, bool] | None = Field(None, description="Available capabilities")
+    error: str | None = Field(None, description="Error message if any")
+
+
+class IntegrationTestResponse(BaseModel):
+    """Response for integration test endpoint."""
+    
+    status: str = Field(..., description="Test status")
+    message: str = Field(..., description="Test message")
+    test_decision: dict[str, Any] | None = Field(None, description="Test decision result")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+# ── Feedback Endpoint Response Models ──────────────────────────────────────
+
+
+class FeedbackStatsResponse(BaseModel):
+    """Response for feedback stats endpoint."""
+    
+    enabled: bool = Field(..., description="Whether feedback is enabled")
+    total_feedback: int = Field(..., description="Total feedback count")
+    rating_distribution: dict[str, int] = Field(..., description="Rating distribution")
+    top_tags: list[tuple[str, int]] = Field(..., description="Top feedback tags")
+    recent_activity_7d: int = Field(..., description="Recent activity count (7 days)")
+    feedback_coverage_pct: float = Field(..., description="Feedback coverage percentage")
+    events_with_feedback: int = Field(..., description="Events with feedback count")
+    total_decision_events: int = Field(..., description="Total decision events count")
+
+
+class FeedbackHealthResponse(BaseModel):
+    """Response for feedback health endpoint."""
+    
+    status: str = Field(..., description="Health status")
+    enabled: bool = Field(..., description="Whether feedback is enabled")
+    timestamp: str = Field(..., description="ISO timestamp")
+
+
+# ── Ops Endpoint Response Models ──────────────────────────────────────
+
+
+class OpsStatusResponse(BaseModel):
+    """Response for ops status endpoint."""
+    
+    overall_status: str = Field(..., description="Overall operational status")
+    timestamp: float = Field(..., description="Timestamp")
+    check_duration_ms: float = Field(..., description="Health check duration in ms")
+    summary: dict[str, int] = Field(..., description="Subsystem summary")
+    subsystems: list[dict[str, Any]] = Field(..., description="Individual subsystem statuses")
+    metadata: dict[str, str] = Field(..., description="System metadata")
+
+
+class TimeoutAuditResponse(BaseModel):
+    """Response for timeout audit endpoint."""
+    
+    external_calls: dict[str, Any] = Field(..., description="External call timeouts")
+    internal_operations: dict[str, Any] = Field(..., description="Internal operation timeouts")
+    database: dict[str, Any] = Field(..., description="Database timeouts")
+    recommendations: list[str] = Field(..., description="Timeout recommendations")
+    timestamp: float = Field(..., description="Timestamp")
+
+
+# ── Performance Endpoint Response Models ──────────────────────────────────────
+
+
+class PerformanceMetricsResponse(BaseModel):
+    """Response for performance metrics endpoint."""
+    
+    ok: bool = Field(..., description="Request status")
+    summary: dict[str, Any] = Field(..., description="Performance summary")
+    recent_operations: list[dict[str, Any]] = Field(..., description="Recent operations")
+    count: int = Field(..., description="Number of operations")
+
+
+class MetricsSummaryResponse(BaseModel):
+    """Response for metrics summary endpoint."""
+    
+    ok: bool = Field(..., description="Request status")
+    metrics: dict[str, Any] = Field(..., description="Summary metrics")
+
+
+class MetricsClearResponse(BaseModel):
+    """Response for metrics clear endpoint."""
+    
+    ok: bool = Field(..., description="Request status")
+    message: str = Field(..., description="Confirmation message")
+
+
+class BenchmarkResultsResponse(BaseModel):
+    """Response for benchmark results endpoint."""
+    
+    ok: bool = Field(..., description="Request status")
+    benchmarks: list[dict[str, Any]] = Field(..., description="Benchmark results")
+    count: int = Field(..., description="Number of benchmarks")
+
+
+class BenchmarkRunResponse(BaseModel):
+    """Response for benchmark run endpoints."""
+    
+    ok: bool = Field(..., description="Request status")
+    comparison: dict[str, Any] = Field(..., description="Benchmark comparison results")
+
+
+class BenchmarkClearResponse(BaseModel):
+    """Response for benchmark clear endpoint."""
+    
+    ok: bool = Field(..., description="Request status")
+    message: str = Field(..., description="Confirmation message")
+
+
+class PerformanceHealthResponse(BaseModel):
+    """Response for performance health endpoint."""
+    
+    ok: bool = Field(..., description="Request status")
+    healthy: bool = Field(..., description="Whether system is healthy")
+    status: str = Field(..., description="Health status")
+    issues: list[str] = Field(..., description="Health issues")
+    metrics: dict[str, Any] | None = Field(None, description="Performance metrics")

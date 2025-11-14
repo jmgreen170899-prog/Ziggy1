@@ -110,6 +110,7 @@ async def check_subsystem_health(
 
 @router.get(
     "/status",
+    response_model=None,
     summary="Unified operational status",
     description="""
     Aggregate health status from all ZiggyAI subsystems.
@@ -207,6 +208,7 @@ async def get_operational_status() -> dict[str, Any]:
 
 @router.get(
     "/timeout-audit",
+    response_model=None,
     summary="Audit timeout configuration",
     description="""
     Audit all external call timeout configurations.

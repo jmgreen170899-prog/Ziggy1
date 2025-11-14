@@ -192,7 +192,7 @@ async def get_event_feedback(event_id: str) -> FeedbackSummary:
         )
 
 
-@router.get("/stats")
+@router.get("/stats", response_model=None)
 async def get_feedback_stats() -> dict[str, Any]:
     """
     Get overall feedback statistics.
@@ -372,7 +372,7 @@ async def submit_bulk_feedback(request: BulkFeedbackRequest) -> BulkFeedbackResp
 
 
 # Health check endpoint
-@router.get("/health")
+@router.get("/health", response_model=None)
 async def feedback_health_check() -> dict[str, Any]:
     """
     Check feedback system health.

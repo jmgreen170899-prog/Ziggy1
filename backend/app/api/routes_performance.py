@@ -23,7 +23,7 @@ logger = get_logger("ziggy.api.performance")
 router = APIRouter(prefix="/api/performance", tags=["performance"])
 
 
-@router.get("/metrics")
+@router.get("/metrics", response_model=None)
 async def get_performance_metrics(last_n: int = Query(100, ge=1, le=1000)) -> dict[str, Any]:
     """
     Get recent performance metrics from async feature computer.
@@ -51,7 +51,7 @@ async def get_performance_metrics(last_n: int = Query(100, ge=1, le=1000)) -> di
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/metrics/summary")
+@router.get("/metrics/summary", response_model=None)
 async def get_metrics_summary() -> dict[str, Any]:
     """
     Get summary statistics for async feature execution.
@@ -73,7 +73,7 @@ async def get_metrics_summary() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/metrics/clear")
+@router.post("/metrics/clear", response_model=None)
 async def clear_metrics() -> dict[str, Any]:
     """
     Clear collected performance metrics.
@@ -95,7 +95,7 @@ async def clear_metrics() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/benchmarks")
+@router.get("/benchmarks", response_model=None)
 async def get_benchmark_results() -> dict[str, Any]:
     """
     Get all benchmark results.
@@ -118,7 +118,7 @@ async def get_benchmark_results() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/benchmarks/feature-computation")
+@router.post("/benchmarks/feature-computation", response_model=None)
 async def run_feature_benchmark(num_operations: int = Query(100, ge=10, le=1000)) -> dict[str, Any]:
     """
     Run feature computation benchmark.
@@ -146,7 +146,7 @@ async def run_feature_benchmark(num_operations: int = Query(100, ge=10, le=1000)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/benchmarks/signal-generation")
+@router.post("/benchmarks/signal-generation", response_model=None)
 async def run_signal_benchmark(num_operations: int = Query(100, ge=10, le=1000)) -> dict[str, Any]:
     """
     Run signal generation benchmark.
@@ -174,7 +174,7 @@ async def run_signal_benchmark(num_operations: int = Query(100, ge=10, le=1000))
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/benchmarks/clear")
+@router.post("/benchmarks/clear", response_model=None)
 async def clear_benchmarks() -> dict[str, Any]:
     """
     Clear all benchmark results.
@@ -196,7 +196,7 @@ async def clear_benchmarks() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/health")
+@router.get("/health", response_model=None)
 async def get_performance_health() -> dict[str, Any]:
     """
     Get health status of async feature execution system.

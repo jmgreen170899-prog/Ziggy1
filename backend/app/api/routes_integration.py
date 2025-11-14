@@ -107,7 +107,7 @@ class IntegratedDecisionResponse(BaseModel):
         )
 
 
-@router.get("/health")
+@router.get("/health", response_model=None)
 async def get_system_health():
     """
     Get integrated system health status.
@@ -153,7 +153,7 @@ async def make_decision(request: DecisionRequest):
         raise HTTPException(status_code=500, detail=f"Failed to make decision: {e!s}")
 
 
-@router.post("/enhance")
+@router.post("/enhance", response_model=None)
 async def enhance_data(request: EnhanceDataRequest):
     """
     Enhance data with brain intelligence.
@@ -184,7 +184,7 @@ async def enhance_data(request: EnhanceDataRequest):
         raise HTTPException(status_code=500, detail=f"Failed to enhance data: {e!s}")
 
 
-@router.get("/context/market")
+@router.get("/context/market", response_model=None)
 async def get_market_context():
     """
     Get current market context from brain intelligence.
@@ -206,7 +206,7 @@ async def get_market_context():
         raise HTTPException(status_code=500, detail=f"Failed to get market context: {e!s}")
 
 
-@router.get("/rules/active")
+@router.get("/rules/active", response_model=None)
 async def get_active_rules():
     """
     Get currently active trading rules and parameters.
@@ -228,7 +228,7 @@ async def get_active_rules():
         raise HTTPException(status_code=500, detail=f"Failed to get active rules: {e!s}")
 
 
-@router.post("/calibration/apply")
+@router.post("/calibration/apply", response_model=None)
 async def apply_calibration(probabilities: list[float]):
     """
     Apply learned probability calibration to raw probabilities.
@@ -257,7 +257,7 @@ async def apply_calibration(probabilities: list[float]):
         raise HTTPException(status_code=500, detail=f"Failed to apply calibration: {e!s}")
 
 
-@router.post("/outcome/update")
+@router.post("/outcome/update", response_model=None)
 async def update_outcome(request: UpdateOutcomeRequest):
     """
     Update decision outcome for learning system.
@@ -296,7 +296,7 @@ async def update_outcome(request: UpdateOutcomeRequest):
         raise HTTPException(status_code=500, detail=f"Failed to update outcome: {e!s}")
 
 
-@router.get("/status")
+@router.get("/status", response_model=None)
 async def get_integration_status():
     """
     Get integration system status and capabilities.
@@ -349,7 +349,7 @@ async def get_integration_status():
     return status
 
 
-@router.post("/test/decision")
+@router.post("/test/decision", response_model=None)
 async def test_decision():
     """
     Test integrated decision making with sample data.
