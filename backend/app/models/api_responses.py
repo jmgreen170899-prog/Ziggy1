@@ -144,3 +144,184 @@ class MacroHistoryResponse(BaseModel):
     """Response for macro history endpoint."""
 
     data: dict[str, Any] = Field(..., description="Macro economic history data")
+
+
+# ── Signals Endpoint Response Models ─────────────────────────────────────────
+
+
+class TickerFeaturesResponse(BaseModel):
+    """Response for ticker features endpoint."""
+
+    ticker: str = Field(..., description="Stock symbol")
+    features: dict[str, Any] = Field(..., description="Technical features")
+    status: str = Field(..., description="Response status")
+    
+    class Config:
+        extra = "allow"
+
+
+class BulkFeaturesResponse(BaseModel):
+    """Response for bulk features endpoint."""
+
+    features: dict[str, dict[str, Any] | None] = Field(..., description="Features by ticker")
+    count: int = Field(..., description="Number of tickers with features")
+    status: str = Field(..., description="Response status")
+
+
+class RegimeResponse(BaseModel):
+    """Response for current regime endpoint."""
+
+    regime: dict[str, Any] = Field(..., description="Current market regime information")
+    status: str = Field(..., description="Response status")
+
+
+class RegimeHistoryResponse(BaseModel):
+    """Response for regime history endpoint."""
+
+    history: list[dict[str, Any]] = Field(..., description="Historical regime data")
+    days: int = Field(..., description="Number of days of history")
+    count: int = Field(..., description="Number of history records")
+    status: str = Field(..., description="Response status")
+
+
+class TickerSignalResponse(BaseModel):
+    """Response for ticker signal endpoint."""
+
+    ticker: str = Field(..., description="Stock symbol")
+    signal: dict[str, Any] | None = Field(None, description="Trading signal data")
+    has_signal: bool = Field(..., description="Whether signal is available")
+    features: dict[str, Any] | None = Field(None, description="Optional raw features")
+    regime: dict[str, Any] | None = Field(None, description="Optional regime context")
+    explanation: str | None = Field(None, description="Optional signal explanation")
+    status: str = Field(..., description="Response status")
+    
+    class Config:
+        extra = "allow"
+
+
+class WatchlistSignalsResponse(BaseModel):
+    """Response for watchlist signals endpoint."""
+
+    signals: list[dict[str, Any]] = Field(..., description="List of signals for watchlist")
+    total: int = Field(..., description="Total number of tickers processed")
+    with_signals: int = Field(..., description="Number of tickers with signals")
+    regime: dict[str, Any] | None = Field(None, description="Optional regime context")
+    status: str = Field(..., description="Response status")
+
+
+class TradePlanResponse(BaseModel):
+    """Response for trade plan endpoint."""
+
+    ticker: str = Field(..., description="Stock symbol")
+    plan: dict[str, Any] = Field(..., description="Trade plan details")
+    position_size: dict[str, Any] | None = Field(None, description="Position sizing recommendation")
+    risk_assessment: dict[str, Any] | None = Field(None, description="Risk assessment")
+    status: str = Field(..., description="Response status")
+
+
+class TradeExecutionResponse(BaseModel):
+    """Response for trade execution endpoint."""
+
+    request_id: str = Field(..., description="Execution request ID")
+    ticker: str = Field(..., description="Stock symbol")
+    status: str = Field(..., description="Execution status")
+    order_id: str | None = Field(None, description="Broker order ID if executed")
+    filled_quantity: int | None = Field(None, description="Number of shares filled")
+    filled_price: float | None = Field(None, description="Average fill price")
+    executed_value: float | None = Field(None, description="Total execution value")
+    message: str | None = Field(None, description="Status message")
+
+
+class ExecutionStatusResponse(BaseModel):
+    """Response for execution status endpoint."""
+
+    request_id: str = Field(..., description="Execution request ID")
+    status: str = Field(..., description="Current status")
+    ticker: str = Field(..., description="Stock symbol")
+    filled_quantity: int = Field(..., description="Number of shares filled")
+    filled_price: float | None = Field(None, description="Average fill price")
+    executed_value: float | None = Field(None, description="Total execution value")
+    timestamp: str | None = Field(None, description="Last update timestamp")
+    validation_errors: list[str] | None = Field(None, description="Validation errors if any")
+
+
+class ExecutionHistoryResponse(BaseModel):
+    """Response for execution history endpoint."""
+
+    executions: list[dict[str, Any]] = Field(..., description="List of execution records")
+    total_count: int = Field(..., description="Total number of executions")
+    error: str | None = Field(None, description="Error message if service unavailable")
+
+
+class ExecutionStatsResponse(BaseModel):
+    """Response for execution statistics endpoint."""
+
+    daily_stats: dict[str, Any] = Field(..., description="Daily execution statistics")
+    error: str | None = Field(None, description="Error message if service unavailable")
+
+
+class BacktestResponse(BaseModel):
+    """Response for backtest endpoint."""
+
+    ticker: str = Field(..., description="Stock symbol")
+    period: str = Field(..., description="Backtest period")
+    performance: dict[str, Any] = Field(..., description="Performance metrics")
+    trades: list[dict[str, Any]] | None = Field(None, description="Trade history")
+    error: str | None = Field(None, description="Error message if service unavailable")
+
+
+class BacktestAnalysisResponse(BaseModel):
+    """Response for backtest analysis endpoint."""
+
+    ticker: str = Field(..., description="Stock symbol")
+    period: str = Field(..., description="Analysis period")
+    signal_quality: dict[str, Any] = Field(..., description="Signal quality metrics")
+    detailed_metrics: dict[str, Any] | None = Field(None, description="Detailed analysis")
+    error: str | None = Field(None, description="Error message if service unavailable")
+
+
+class SystemStatusResponse(BaseModel):
+    """Response for system status endpoint."""
+
+    status: str = Field(..., description="Overall system status")
+    components: dict[str, bool] = Field(..., description="Component availability status")
+    current_regime: str | None = Field(None, description="Current market regime")
+    regime_confidence: float | None = Field(None, description="Regime detection confidence")
+    timestamp: str | None = Field(None, description="Status timestamp")
+    error: str | None = Field(None, description="Error message if degraded")
+
+
+class SystemConfigResponse(BaseModel):
+    """Response for system config endpoint."""
+
+    regime_thresholds: dict[str, Any] = Field(..., description="Regime detection thresholds")
+    signal_parameters: dict[str, Any] = Field(..., description="Signal generation parameters")
+    position_sizing_config: dict[str, Any] = Field(..., description="Position sizing configuration")
+    account_size: float = Field(..., description="Account size for position sizing")
+
+
+class ConfigUpdateResponse(BaseModel):
+    """Response for config update endpoint."""
+
+    status: str = Field(..., description="Update status")
+    updated_components: list[str] = Field(..., description="List of updated components")
+    message: str = Field(..., description="Status message")
+
+
+class CognitiveBulkResponse(BaseModel):
+    """Response for cognitive bulk signal generation."""
+
+    signals: list[dict[str, Any]] = Field(..., description="List of cognitive signals")
+    total: int = Field(..., description="Total symbols processed")
+    successful: int = Field(..., description="Number of successful signals")
+    failed: int = Field(..., description="Number of failed signals")
+
+
+class CognitiveRegimeResponse(BaseModel):
+    """Response for cognitive regime detection."""
+
+    symbol: str = Field(..., description="Stock symbol")
+    regime: str = Field(..., description="Detected regime")
+    confidence: float = Field(..., description="Regime confidence")
+    features: dict[str, Any] | None = Field(None, description="Features used for detection")
+    timestamp: str = Field(..., description="Detection timestamp")

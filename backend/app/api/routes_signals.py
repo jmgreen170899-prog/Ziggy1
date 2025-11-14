@@ -192,7 +192,7 @@ class TradeExecutionRequest(BaseModel):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/features/{ticker}")
+@router.get("/features/{ticker}", response_model=None)
 @limiter.limit("60/minute")
 def get_ticker_features_endpoint(
     request: Request,
@@ -213,7 +213,7 @@ def get_ticker_features_endpoint(
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.post("/features/bulk")
+@router.post("/features/bulk", response_model=None)
 def get_bulk_features(request: BulkFeaturesRequest):
     """Get features for multiple tickers."""
     try:
@@ -251,7 +251,7 @@ def get_bulk_features(request: BulkFeaturesRequest):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/regime")
+@router.get("/regime", response_model=None)
 def get_current_regime(
     force_refresh: bool = Query(False, description="Force refresh of regime calculation"),
 ):
@@ -266,7 +266,7 @@ def get_current_regime(
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/regime/history")
+@router.get("/regime/history", response_model=None)
 def get_regime_history(days: int = Query(5, ge=1, le=30, description="Number of days of history")):
     """Get regime history."""
     try:
@@ -284,7 +284,7 @@ def get_regime_history(days: int = Query(5, ge=1, le=30, description="Number of 
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/signal/{ticker}")
+@router.get("/signal/{ticker}", response_model=None)
 @limiter.limit("20/minute")
 def get_ticker_signal(
     request: Request,
@@ -337,7 +337,7 @@ def get_ticker_signal(
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.post("/watchlist")
+@router.post("/watchlist", response_model=None)
 def get_watchlist_signals(request: WatchlistSignalsRequest):
     """Generate signals for a watchlist of tickers."""
     try:
@@ -403,7 +403,7 @@ def get_watchlist_signals(request: WatchlistSignalsRequest):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.post("/trade/plan")
+@router.post("/trade/plan", response_model=None)
 def create_trade_plan(request: TradePlanRequest):
     """Validate and create a complete trade plan with position sizing."""
     try:
@@ -465,7 +465,7 @@ def create_trade_plan(request: TradePlanRequest):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.post("/trade/execute")
+@router.post("/trade/execute", response_model=None)
 def execute_trade(request: TradeExecutionRequest):
     """Execute a trade (integration with existing trading system)."""
     try:
@@ -507,7 +507,7 @@ def execute_trade(request: TradeExecutionRequest):
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/status")
+@router.get("/status", response_model=None)
 def get_system_status():
     """Get market brain system status."""
     try:
@@ -542,7 +542,7 @@ def get_system_status():
         }
 
 
-@router.get("/config")
+@router.get("/config", response_model=None)
 def get_system_config():
     """Get current system configuration."""
     return {
@@ -553,7 +553,7 @@ def get_system_config():
     }
 
 
-@router.put("/config")
+@router.put("/config", response_model=None)
 def update_system_config(config_updates: dict[str, Any]):
     """Update system configuration."""
     try:
@@ -602,7 +602,7 @@ class ExecuteTradeRequest(BaseModel):
     skip_risk_checks: bool = False
 
 
-@router.post("/execute/trade")
+@router.post("/execute/trade", response_model=None)
 def execute_trade_from_signal(request: ExecuteTradeRequest):
     """Execute a trade based on current signal."""
     try:
@@ -669,7 +669,7 @@ def execute_trade_from_signal(request: ExecuteTradeRequest):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/execute/status/{request_id}")
+@router.get("/execute/status/{request_id}", response_model=None)
 def get_trade_execution_status(request_id: str):
     """Get status of a trade execution."""
     try:
@@ -705,7 +705,7 @@ def get_trade_execution_status(request_id: str):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/execute/history")
+@router.get("/execute/history", response_model=None)
 def get_execution_history(ticker: str | None = None, limit: int = 50):
     """Get execution history."""
     try:
@@ -735,7 +735,7 @@ def get_execution_history(ticker: str | None = None, limit: int = 50):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/execute/stats")
+@router.get("/execute/stats", response_model=None)
 def get_execution_stats():
     """Get daily execution statistics."""
     try:
@@ -764,7 +764,7 @@ def get_execution_stats():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-@router.get("/backtest/quick/{ticker}")
+@router.get("/backtest/quick/{ticker}", response_model=None)
 @limiter.limit("5/minute")
 def run_quick_backtest(request: Request, ticker: str, period: str = "3M"):
     """Run quick backtest for a ticker."""
@@ -829,7 +829,7 @@ def run_quick_backtest(request: Request, ticker: str, period: str = "3M"):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/backtest/analysis/{ticker}")
+@router.get("/backtest/analysis/{ticker}", response_model=None)
 def analyze_signal_quality(ticker: str, period: str = "3M"):
     """Analyze signal quality for a ticker."""
     try:
@@ -1076,7 +1076,7 @@ async def generate_cognitive_signal(request: CognitiveSignalRequest):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/cognitive/regime/{symbol}")
+@router.get("/cognitive/regime/{symbol}", response_model=None)
 async def get_regime_analysis(
     symbol: str,
     interval: str = Query("1D", description="Time interval"),
@@ -1112,7 +1112,7 @@ async def get_regime_analysis(
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.post("/cognitive/bulk")
+@router.post("/cognitive/bulk", response_model=None)
 async def generate_bulk_cognitive_signals(
     symbols: list[str] = Query(..., description="List of symbols"),
     interval: str = Query("1D", description="Time interval"),
@@ -1208,7 +1208,7 @@ async def generate_bulk_cognitive_signals(
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/cognitive/health")
+@router.get("/cognitive/health", response_model=None)
 async def cognitive_health_check():
     """Health check for cognitive core components."""
 
