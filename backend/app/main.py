@@ -344,7 +344,7 @@ except Exception as e:
 try:
     from app.api.routes_learning import router as learning_router
 
-    app.include_router(learning_router, prefix="/learning")
+    app.include_router(learning_router, prefix="/api/learning")
 except Exception as e:
     logger.warning("Failed to include learning router: %s", e)
 

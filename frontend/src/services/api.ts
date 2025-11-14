@@ -244,8 +244,8 @@ class APIClient {
   }
 
   async searchSymbols(query: string): Promise<{ symbol: string; name: string; type: string }[]> {
-    // Use the browse/search endpoint for symbol search
-    const response = await this.client.get('/browse/search', {
+    // Use the web/browse/search endpoint for symbol search
+    const response = await this.client.get('/web/browse/search', {
       params: { q: query }
     });
     return response.data;
