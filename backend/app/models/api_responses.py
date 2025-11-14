@@ -505,3 +505,52 @@ class TradeModeResponse(BaseModel):
     ok: bool = Field(..., description="Whether mode update was successful")
     mode: str = Field(..., description="Trading mode (paper/live)")
     message: str | None = Field(None, description="Status message")
+
+
+# ── Paper Trading Endpoint Response Models ───────────────────────────────────
+
+
+class PaperRunStopResponse(BaseModel):
+    """Response for stopping a paper run."""
+
+    status: str = Field(..., description="Stop status")
+    ended_at: str | None = Field(None, description="Run end timestamp")
+
+
+class TheoryPauseResponse(BaseModel):
+    """Response for pausing a theory."""
+
+    status: str = Field(..., description="Pause status")
+    theory_name: str = Field(..., description="Theory name")
+
+
+class PaperRunStatsResponse(BaseModel):
+    """Response for paper run statistics."""
+
+    run_id: int = Field(..., description="Run ID")
+    stats: dict[str, Any] = Field(..., description="Detailed statistics")
+    health: dict[str, Any] | None = Field(None, description="Health metrics")
+
+
+class ModelSnapshotsResponse(BaseModel):
+    """Response for model snapshots."""
+
+    snapshots: list[dict[str, Any]] = Field(..., description="Model snapshots")
+    count: int = Field(..., description="Number of snapshots")
+
+
+class EmergencyStopResponse(BaseModel):
+    """Response for emergency stop all."""
+
+    stopped_count: int = Field(..., description="Number of runs stopped")
+    message: str = Field(..., description="Status message")
+
+
+class PaperLabHealthResponse(BaseModel):
+    """Response for paper lab health check."""
+
+    status: str = Field(..., description="Overall health status")
+    active_runs: int | None = Field(None, description="Number of active runs")
+    total_trades: int | None = Field(None, description="Total trades")
+    db_connected: bool | None = Field(None, description="Database connection status")
+    details: dict[str, Any] | None = Field(None, description="Additional health details")
