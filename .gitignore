@@ -118,6 +118,7 @@ requirements-merged.txt
 
 ############### App data generated locally ###############
 backend/data/paper_events.jsonl
+backend/data/telegram_log.jsonl
 backend/test_events.jsonl
 backend/test_feedback_events.jsonl
 backend/data/decisions/**
