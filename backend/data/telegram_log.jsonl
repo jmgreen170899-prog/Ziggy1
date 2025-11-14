@@ -1742,3 +1742,4 @@
 {"ts": 1762978778.7483277, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": true, "error": null, "meta": null}
 {"ts": 1762979431.711274, "kind": "heartbeat-hourly", "text": "👍", "ok": true, "error": null, "meta": null}
 >>>>>>> d295850 (Resolve merge conflict in backend/app/main.py)
+{"ts": 1763136499.9054577, "kind": "heartbeat", "text": "Ziggy online ✅", "ok": false, "error": "missing TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID or httpx not available", "meta": null}
