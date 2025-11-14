@@ -24,6 +24,43 @@ except ImportError:
 
 router = APIRouter()
 
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Response Models
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class AlertRecord(BaseModel):
+    """Alert record details."""
+
+    id: str = Field(..., description="Alert identifier")
+    symbol: str = Field(..., description="Symbol/ticker")
+    type: str = Field(..., description="Alert type")
+    params: dict[str, Any] = Field(default_factory=dict, description="Alert parameters")
+    created_at: float = Field(..., description="Creation timestamp")
+    status: str = Field(..., description="Alert status")
+    engine: str = Field(..., description="Alert engine used")
+    error: str | None = Field(None, description="Error message if failed")
+
+
+class AlertResponse(BaseModel):
+    """Standard alert operation response."""
+
+    ok: bool = Field(..., description="Operation succeeded")
+    message: str = Field(..., description="Response message")
+    alert: AlertRecord | dict[str, Any] | None = Field(None, description="Alert record")
+    asof: float = Field(..., description="Response timestamp")
+
+
+class AlertStatusResponse(BaseModel):
+    """Alert system status response."""
+
+    ok: bool = Field(True, description="Status check succeeded")
+    enabled: bool = Field(..., description="Whether alerts are enabled")
+    status: dict[str, Any] | None = Field(None, description="Detailed status information")
+    asof: float = Field(..., description="Response timestamp")
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Production Alert System Integration
 # ──────────────────────────────────────────────────────────────────────────────
@@ -203,10 +240,12 @@ def alerts_status():
     return result
 
 
-@router.post("/start")
-def alerts_start():
+@router.post("/start", response_model=AlertStatusResponse)
+def alerts_start() -> AlertStatusResponse:
     """
-    Start (or ensure) the background scan loop and enable it.
+    Start the background scan loop and enable alerts.
+    
+    Side effects: Starts alert scanner service and updates enabled flag.
     """
     try:
         try:
@@ -220,12 +259,12 @@ def alerts_start():
             st = scanner_status()  # type: ignore
         except Exception:
             st = {}
-        return {
-            "ok": True,
-            "enabled": bool(get_scan_enabled()),
-            "status": st or None,
-            "asof": time.time(),
-        }
+        return AlertStatusResponse(
+            ok=True,
+            enabled=bool(get_scan_enabled()),
+            status=st or None,
+            asof=time.time(),
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -233,11 +272,14 @@ def alerts_start():
         )
 
 
-@router.post("/stop")
-def alerts_stop():
+@router.post("/stop", response_model=AlertStatusResponse)
+def alerts_stop() -> AlertStatusResponse:
     """
-    Disable the background scan loop. If stop_scanner is available, call it;
-    otherwise we just flip the enable flag to pause alerts.
+    Disable the background scan loop.
+    
+    Stops scanner if available, otherwise just flips the enable flag to pause alerts.
+    
+    Side effects: Stops alert scanner service and updates enabled flag.
     """
     try:
         set_scan_enabled(False)
@@ -251,12 +293,12 @@ def alerts_stop():
             st = scanner_status()  # type: ignore
         except Exception:
             st = {}
-        return {
-            "ok": True,
-            "enabled": bool(get_scan_enabled()),
-            "status": st or None,
-            "asof": time.time(),
-        }
+        return AlertStatusResponse(
+            ok=True,
+            enabled=bool(get_scan_enabled()),
+            status=st or None,
+            asof=time.time(),
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -400,11 +442,14 @@ async def alerts_create(body: AlertCreateIn):
         )
 
 
-@router.post("/sma50")
-def alerts_sma50(body: dict[str, Any]):
+@router.post("/sma50", response_model=AlertResponse)
+def alerts_sma50(body: dict[str, Any]) -> AlertResponse:
     """
-    Convenience endpoint: create a 50DMA cross alert.
+    Create a 50DMA cross alert.
+    
     Accepts { symbol | ticker } and optional rule override.
+    
+    Side effects: Creates alert in alert system or in-memory store.
     """
     symbol = _normalize_symbol(body.get("symbol"), body.get("ticker"))
     if not symbol:
@@ -412,17 +457,25 @@ def alerts_sma50(body: dict[str, Any]):
     rule = (body.get("rule") or "cross").strip().lower()
     try:
         rec = _create_alert(symbol, "sma", {"window": 50, "rule": rule})
-        return {"ok": True, "message": "50DMA alert set", "alert": rec, "asof": time.time()}
+        return AlertResponse(ok=True, message="50DMA alert set", alert=rec, asof=time.time())
     except Exception as e:
         raise HTTPException(
             status_code=500, detail={"error": "failed to set 50DMA alert", "reason": str(e)}
         )
 
 
-@router.post("/moving-average/50")
-def alerts_ma50_alias(body: dict[str, Any]):
+@router.post(
+    "/moving-average/50",
+    response_model=AlertResponse,
+    deprecated=True,
+    summary="[DEPRECATED] Use /sma50 instead",
+)
+def alerts_ma50_alias(body: dict[str, Any]) -> AlertResponse:
     """
-    Alias for /alerts/sma50.
+    **DEPRECATED:** This endpoint is maintained for backward compatibility only.
+    Please use `/sma50` instead.
+    
+    This alias will be removed in a future version.
     """
     return alerts_sma50(body)
 

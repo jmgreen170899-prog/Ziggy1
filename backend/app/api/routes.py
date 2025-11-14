@@ -65,6 +65,50 @@ class CancelReq(BaseModel):
     job_id: str
 
 
+class CoreHealthResponse(BaseModel):
+    """Core health check response with dependencies status."""
+
+    status: str = Field(..., description="Overall status")
+    details: dict[str, Any] = Field(..., description="Status of each dependency")
+
+
+class IngestPdfResponse(BaseModel):
+    """PDF ingestion response."""
+
+    chunks_indexed: int = Field(0, description="Number of chunks indexed")
+    filename: str | None = Field(None, description="Original filename")
+    source_url: str | None = Field(None, description="Source URL if provided")
+
+
+class ResetResponse(BaseModel):
+    """Vector store reset response."""
+
+    status: str = Field(..., description="Operation status")
+    message: str = Field(..., description="Status message")
+
+
+class TaskScheduleResponse(BaseModel):
+    """Task scheduling response."""
+
+    status: str = Field(..., description="Scheduling status")
+    job_id: str = Field(..., description="Job identifier")
+    topic: str = Field(..., description="Watch topic")
+    cron: str = Field(..., description="Cron schedule expression")
+
+
+class TaskListResponse(BaseModel):
+    """Task list response."""
+
+    jobs: list[dict[str, Any]] = Field(default_factory=list, description="List of scheduled jobs")
+
+
+class TaskCancelResponse(BaseModel):
+    """Task cancellation response."""
+
+    status: str = Field(..., description="Cancellation status")
+    job_id: str = Field(..., description="Cancelled job identifier")
+
+
 # ───────────────────────────── Helpers ─────────────────────────────
 
 
@@ -87,11 +131,14 @@ def _get_settings():
 
 # ───────────────────────────── Health / Debug ─────────────────────────────
 # Use a different path than the root /health defined in main.py
-@router.get("/core/health")
-def core_health():
+@router.get("/core/health", response_model=CoreHealthResponse)
+def core_health() -> CoreHealthResponse:
     """
-    Checks FastAPI + optional dependencies (Qdrant, Postgres, Redis, Scheduler).
-    Returns {"status":"ok","details":{...}}.
+    Checks FastAPI and optional dependencies (Qdrant, Postgres, Redis, Scheduler).
+    
+    Returns status of each dependency component.
+    
+    Side effects: May start scheduler if not already running.
     """
     s = _get_settings()
     details: dict[str, Any] = {"fastapi": "ok"}
@@ -144,7 +191,7 @@ def core_health():
     except Exception as e:
         details["scheduler"] = f"unavailable: {e!s}"
 
-    return {"status": "ok", "details": details}
+    return CoreHealthResponse(status="ok", details=details)
 
 
 # ───────────────────────────── RAG Query ─────────────────────────────
@@ -193,8 +240,18 @@ def api_ingest_web(req: WebIngestRequest) -> WebIngestResponse:
     return WebIngestResponse(**res)
 
 
-@router.post("/ingest/pdf")
-def api_ingest_pdf(file: UploadFile = File(...), source_url: str | None = Form(None)):
+@router.post("/ingest/pdf", response_model=IngestPdfResponse)
+def api_ingest_pdf(
+    file: UploadFile = File(...), source_url: str | None = Form(None)
+) -> IngestPdfResponse:
+    """
+    Ingest PDF document into vector store.
+    
+    Accepts PDF file upload and optional source URL.
+    Extracts text, chunks it, and indexes in vector store.
+    
+    Side effects: Adds document chunks to vector store.
+    """
     try:
         from app.rag.ingest_pdf import ingest_pdf  # type: ignore
     except Exception as e:
@@ -210,6 +267,13 @@ def api_ingest_pdf(file: UploadFile = File(...), source_url: str | None = Form(N
         path = tmp.name
     try:
         res = ingest_pdf(path, source_url=source_url)
+        # Ensure response matches model
+        if isinstance(res, dict):
+            return IngestPdfResponse(
+                chunks_indexed=res.get("chunks_indexed", 0),
+                filename=file.filename,
+                source_url=source_url,
+            )
         return res
     finally:
         try:
@@ -218,8 +282,15 @@ def api_ingest_pdf(file: UploadFile = File(...), source_url: str | None = Form(N
             pass
 
 
-@router.post("/reset")
-def api_reset():
+@router.post("/reset", response_model=ResetResponse)
+def api_reset() -> ResetResponse:
+    """
+    Reset the vector store collection.
+    
+    Deletes all documents and recreates the collection.
+    
+    Side effects: Removes all indexed documents from vector store.
+    """
     try:
         from app.rag.vectorstore import get_client, reset_collection  # type: ignore
     except Exception as e:
@@ -227,7 +298,7 @@ def api_reset():
 
     client = get_client()
     reset_collection(client)
-    return {"status": "ok", "message": "Qdrant collection reset"}
+    return ResetResponse(status="ok", message="Qdrant collection reset")
 
 
 # ───────────────────────────── Agent (optional) ─────────────────────────────
@@ -257,14 +328,17 @@ def api_agent(req: AgentRequest):
 # ───────────────────────────── Scheduler / tasks (optional) ─────────────────────────────
 
 
-@router.post("/tasks/watch")
-def api_tasks_watch(req: WatchReq):
+@router.post("/tasks/watch", response_model=TaskScheduleResponse)
+def api_tasks_watch(req: WatchReq) -> TaskScheduleResponse:
     """
     Schedule a repeating agent run for a topic.
-    cron examples:
+    
+    Cron examples:
       - '0 9 * * *'     -> every day at 09:00
       - '0 */2 * * *'   -> every 2 hours
       - '30 8 * * 1-5'  -> 08:30 on weekdays
+    
+    Side effects: Creates scheduled job in task scheduler.
     """
     try:
         from app.tasks.scheduler import schedule_watch_topic, start_scheduler  # type: ignore
@@ -273,24 +347,32 @@ def api_tasks_watch(req: WatchReq):
 
     start_scheduler()
     jid = schedule_watch_topic(req.topic, req.cron, req.job_id)
-    return {"status": "scheduled", "job_id": jid, "topic": req.topic, "cron": req.cron}
+    return TaskScheduleResponse(status="scheduled", job_id=jid, topic=req.topic, cron=req.cron)
 
 
-@router.get("/tasks")
-def api_tasks_list():
-    """List scheduled jobs."""
+@router.get("/tasks", response_model=TaskListResponse)
+def api_tasks_list() -> TaskListResponse:
+    """
+    List all scheduled jobs.
+    
+    Returns list of scheduled tasks with their IDs, topics, and schedules.
+    """
     try:
         from app.tasks.scheduler import list_jobs, start_scheduler  # type: ignore
     except Exception as e:
         raise HTTPException(status_code=501, detail=f"Scheduler not available: {e!s}")
 
     start_scheduler()
-    return {"jobs": list_jobs()}
+    return TaskListResponse(jobs=list_jobs())
 
 
-@router.delete("/tasks")
-def api_tasks_cancel(req: CancelReq):
-    """Cancel a job by id."""
+@router.delete("/tasks", response_model=TaskCancelResponse)
+def api_tasks_cancel(req: CancelReq) -> TaskCancelResponse:
+    """
+    Cancel a scheduled job by ID.
+    
+    Side effects: Removes job from task scheduler.
+    """
     try:
         from app.tasks.scheduler import remove_job, start_scheduler  # type: ignore
     except Exception as e:
@@ -298,7 +380,7 @@ def api_tasks_cancel(req: CancelReq):
 
     start_scheduler()
     remove_job(req.job_id)
-    return {"status": "cancelled", "job_id": req.job_id}
+    return TaskCancelResponse(status="cancelled", job_id=req.job_id)
 
 
 # ───────────────────────────── Simple web browse (search) ─────────────────────────────

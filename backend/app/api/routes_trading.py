@@ -17,6 +17,7 @@ import pandas as pd
 from fastapi import APIRouter, Header, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from app.api.routes_risk_lite import RiskLiteResponse, CPCData
 from app.services.screener import run_screener
 from app.tasks.scheduler import get_scan_enabled, set_scan_enabled
 from app.tasks.telegram import tg_diag, tg_send
@@ -1171,12 +1172,15 @@ _CPC_CACHE: dict[str, Any] = {"ts": 0.0, "data": None}
 _CPC_TTL = 300  # 5 minutes
 
 
-@router.get("/market/risk-lite")
-def risk_lite():
+@router.get("/market/risk-lite", response_model=RiskLiteResponse)
+def risk_lite() -> RiskLiteResponse:
     """
     Lightweight risk bar feed: CBOE Put/Call Index (^CPC).
+    
     Falls back to ^CPCE (equity-only P/C) if ^CPC is unavailable.
     Returns last value, 20-day mean, 20-day z-score, last date, and which ticker was used.
+    
+    Side effects: Updates in-memory cache on successful data fetch.
     """
     import yfinance as yf
 
@@ -1184,7 +1188,6 @@ def risk_lite():
     if _CPC_CACHE["data"] and (now - _CPC_CACHE["ts"] < _CPC_TTL):
         return _CPC_CACHE["data"]
 
-    payload: dict[str, Any]
     tickers_try = ["^CPC", "^CPCE"]
 
     series = None
@@ -1204,7 +1207,7 @@ def risk_lite():
             continue
 
     if series is None:
-        payload = {"cpc": None, "error": "No data for ^CPC/^CPCE (blocked or unavailable)"}
+        payload = RiskLiteResponse(cpc=None, error="No data for ^CPC/^CPCE (blocked or unavailable)")
     else:
         last = float(series.iloc[-1])
         tail = series.tail(20)
@@ -1212,7 +1215,8 @@ def risk_lite():
         std20 = float(tail.std()) or 1e-9
         z20 = (last - ma20) / std20
         date = str(series.index[-1].date())
-        payload = {"cpc": {"ticker": used, "last": last, "ma20": ma20, "z20": z20, "date": date}}
+        cpc_data = CPCData(ticker=used, last=last, ma20=ma20, z20=z20, date=date)
+        payload = RiskLiteResponse(cpc=cpc_data, error=None)
 
     _CPC_CACHE["ts"] = now
     _CPC_CACHE["data"] = payload
@@ -1220,13 +1224,35 @@ def risk_lite():
 
 
 # Backward-compatibility aliases (frontends might hit either)
-@router.get("/market-risk-lite")
-def risk_lite_alias():
+@router.get(
+    "/market-risk-lite",
+    response_model=RiskLiteResponse,
+    deprecated=True,
+    summary="[DEPRECATED] Use /market/risk-lite instead",
+)
+def risk_lite_alias() -> RiskLiteResponse:
+    """
+    **DEPRECATED:** This endpoint is maintained for backward compatibility only.
+    Please use `/market/risk-lite` instead.
+    
+    This alias will be removed in a future version.
+    """
     return risk_lite()
 
 
-@router.get("/market/risk")
-def risk_lite_alias2():
+@router.get(
+    "/market/risk",
+    response_model=RiskLiteResponse,
+    deprecated=True,
+    summary="[DEPRECATED] Use /market/risk-lite instead",
+)
+def risk_lite_alias2() -> RiskLiteResponse:
+    """
+    **DEPRECATED:** This endpoint is maintained for backward compatibility only.
+    Please use `/market/risk-lite` instead.
+    
+    This alias will be removed in a future version.
+    """
     return risk_lite()
 
 
@@ -1494,12 +1520,14 @@ def _read_throttle_from_meta_or_headers(
     return comp
 
 
-@router.post("/backtest")
-def trading_backtest(body: BacktestIn):
+@router.post("/backtest", response_model=BacktestOut)
+def trading_backtest(body: BacktestIn) -> BacktestOut:
     """
     Lightweight backtest intended for quick UI feedback.
-    Now enhanced with Market Brain when available.
-    Falls back to legacy SMA cross strategy if brain unavailable.
+    
+    Enhanced with Market Brain when available, falls back to legacy SMA cross strategy.
+    
+    Side effects: None (read-only simulation).
     """
     try:
         symbol = _norm_symbol(body.symbol, body.ticker)
@@ -1678,10 +1706,21 @@ def _backtest_with_legacy_logic(symbol: str, body: BacktestIn) -> BacktestOut:
 
 
 # Aliases for flexibility (frontends may call these)
-# Note: /backtest is already defined above (line 1497)
+# Note: /backtest is already defined above
 
-@router.post("/strategy/backtest")
-def backtest_alias2(body: BacktestIn):
+@router.post(
+    "/strategy/backtest",
+    response_model=BacktestOut,
+    deprecated=True,
+    summary="[DEPRECATED] Use /backtest instead",
+)
+def backtest_alias2(body: BacktestIn) -> BacktestOut:
+    """
+    **DEPRECATED:** This endpoint is maintained for backward compatibility only.
+    Please use `/backtest` instead.
+    
+    This alias will be removed in a future version.
+    """
     return trading_backtest(body)
 
 

@@ -2,13 +2,10 @@
 
 import logging
 import os
-<<<<<<< HEAD
 from contextlib import asynccontextmanager
-=======
 from typing import Any
 
->>>>>>> d295850 (Resolve merge conflict in backend/app/main.py)
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -82,8 +79,9 @@ async def lifespan(app: FastAPI):
     logger.info("✅ ZiggyAI backend shutdown complete")
 
 
-# ---- FastAPI app with docs toggle ----
+# ---- FastAPI app with docs toggle and security schemes ----
 _docs_enabled = os.getenv("DOCS_ENABLED", "true").lower() not in {"false", "0", "no"}
+
 app = FastAPI(
     title="ZiggyAI",
     version="0.1.0",
@@ -92,6 +90,52 @@ app = FastAPI(
     openapi_url="/openapi.json" if _docs_enabled else None,
     lifespan=lifespan,
 )
+
+# ---- Add OpenAPI Security Schemes ----
+# These define the authentication methods available in the API
+def customize_openapi():
+    """Customize OpenAPI schema to include security schemes"""
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    from fastapi.openapi.utils import get_openapi
+    
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description="ZiggyAI Trading Platform API with optional authentication",
+        routes=app.routes,
+    )
+    
+    # Add security schemes to OpenAPI
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+            "description": "JWT token obtained from /auth/login endpoint",
+        },
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-Key",
+            "description": "API key for programmatic access",
+        },
+    }
+    
+    # Add security info
+    openapi_schema["info"]["x-security-info"] = {
+        "authentication": "Optional authentication via JWT Bearer token or API Key",
+        "development": "Authentication disabled by default in development mode",
+        "production": "Authentication can be enabled via ENABLE_AUTH environment variable",
+        "public_endpoints": ["/health", "/health/detailed", "/docs", "/redoc", "/openapi.json"],
+    }
+    
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = customize_openapi
 
 # ---- CORS Middleware ----
 app.add_middleware(
@@ -112,8 +156,60 @@ if HAVE_SLOWAPI:
     async def _rate_limit_handler(request, exc):
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded"},
+            content={"detail": "Rate limit exceeded", "code": "rate_limit_exceeded", "meta": {}},
         )
+
+
+# ---- Global Exception Handlers for Standardized Error Responses ----
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request, exc: HTTPException):
+    """
+    Standardize HTTPException responses to use ErrorResponse format.
+    
+    Converts HTTPException detail to standardized {detail, code, meta} format.
+    """
+    from app.models import ErrorResponse
+
+    # If detail is already a dict with our format, use it
+    if isinstance(exc.detail, dict):
+        detail_str = exc.detail.get("detail", str(exc.detail.get("error", "An error occurred")))
+        code = exc.detail.get("code", f"http_{exc.status_code}")
+        meta = exc.detail.get("meta", exc.detail.copy())
+        # Remove standard keys from meta to avoid duplication
+        meta.pop("detail", None)
+        meta.pop("code", None)
+    else:
+        # Simple string detail
+        detail_str = str(exc.detail)
+        code = f"http_{exc.status_code}"
+        meta = {}
+
+    error_response = ErrorResponse(detail=detail_str, code=code, meta=meta)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=error_response.model_dump(),
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request, exc: Exception):
+    """
+    Catch-all handler for unexpected exceptions.
+    
+    Returns standardized error response for internal server errors.
+    """
+    from app.models import ErrorResponse
+
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    error_response = ErrorResponse(
+        detail="An internal server error occurred",
+        code="internal_server_error",
+        meta={"type": type(exc).__name__},
+    )
+    return JSONResponse(
+        status_code=500,
+        content=error_response.model_dump(),
+    )
 
 
 # ---- Router Registration with Error Handling ----
@@ -162,6 +258,9 @@ def register_router_safely(
         return False
 
 
+# ---- Authentication Routes ----
+register_router_safely("app.api.routes_auth", prefix="/api")
+
 # ---- Core API Routes ----
 register_router_safely("app.api.routes", prefix="/api")
 
@@ -194,21 +293,31 @@ register_router_safely("app.api.routes_feedback")  # Has its own /feedback prefi
 # ---- Development & Monitoring Routes ----
 register_router_safely("app.api.routes_dev", prefix="/api")
 register_router_safely("app.api.routes_performance")  # Has its own /api/performance prefix
+register_router_safely("app.api.routes_ops")  # Has its own /ops prefix
+register_router_safely("app.api.routes_demo")  # Has its own /demo prefix
 
 # ---- Web Browsing Routes ----
 register_router_safely("app.web.browse_router")
 
 
 # ---- Basic Health Endpoint ----
-@app.get("/health")
-async def health():
-    return {"ok": True}
+from app.models import AckResponse, HealthResponse
+
+
+@app.get("/health", response_model=AckResponse)
+async def health() -> AckResponse:
+    """Basic health check endpoint."""
+    return AckResponse(ok=True, message=None)
 
 
 # ---- Enhanced Health Check ----
-@app.get("/health/detailed")
-async def detailed_health() -> dict[str, Any]:
-    """Detailed health check with router information."""
+@app.get("/health/detailed", response_model=HealthResponse)
+async def detailed_health() -> HealthResponse:
+    """
+    Detailed health check with router information.
+    
+    Returns service status, version, and registered routes.
+    """
     routes_info: list[dict[str, Any]] = []
     for route in app.routes:
         if hasattr(route, "path") and hasattr(route, "methods"):
@@ -222,14 +331,16 @@ async def detailed_health() -> dict[str, Any]:
                 }
             )
 
-    return {
-        "status": "ok",
-        "service": "ZiggyAI Backend",
-        "version": "0.1.0",
-        "total_routes": len(routes_info),
-        "routes": routes_info[:10],  # First 10 for brevity
-        "has_slowapi": HAVE_SLOWAPI,
-    }
+    return HealthResponse(
+        status="ok",
+        details={
+            "service": "ZiggyAI Backend",
+            "version": "0.1.0",
+            "total_routes": len(routes_info),
+            "routes": routes_info[:10],  # First 10 for brevity
+            "has_slowapi": HAVE_SLOWAPI,
+        },
+    )
 
 
 # ---- Explicit router includes ----
@@ -237,76 +348,6 @@ async def detailed_health() -> dict[str, Any]:
 # Note: Routers with their own prefix are registered as-is
 # Routers without prefix get a sensible default based on their module name
 
-<<<<<<< HEAD
-from app.api.routes import router as core_router
-app.include_router(core_router, prefix="/api")
-
-from app.api.routes_alerts import router as alerts_router
-app.include_router(alerts_router, prefix="/alerts")
-
-from app.api.routes_chat import router as chat_router
-app.include_router(chat_router)  # already has prefix="/chat"
-
-from app.api.routes_cognitive import router as cognitive_router
-app.include_router(cognitive_router)  # already has prefix="/cognitive"
-
-from app.api.routes_crypto import router as crypto_router
-app.include_router(crypto_router, prefix="/crypto")
-
-from app.api.routes_dev import router as dev_router
-app.include_router(dev_router, prefix="/dev")
-
-from app.api.routes_explain import router as explain_router
-app.include_router(explain_router)  # already has prefix="/signal"
-
-from app.api.routes_feedback import router as feedback_router
-app.include_router(feedback_router)  # already has prefix="/feedback"
-
-from app.api.routes_integration import router as integration_router
-app.include_router(integration_router)  # already has prefix="/integration"
-
-from app.api.routes_learning import router as learning_router
-app.include_router(learning_router, prefix="/learning")
-
-from app.api.routes_market import router as market_router
-app.include_router(market_router, prefix="/market")
-
-from app.api.routes_market_calendar import router as market_calendar_router
-app.include_router(market_calendar_router)  # already has prefix="/market"
-
-from app.api.routes_news import router as news_router
-app.include_router(news_router, prefix="/news")
-
-from app.api.routes_paper import router as paper_router
-app.include_router(paper_router, prefix="/paper")
-
-from app.api.routes_performance import router as performance_router
-app.include_router(performance_router)  # already has prefix="/api/performance"
-
-from app.api.routes_risk_lite import router as risk_router
-app.include_router(risk_router, prefix="/risk")
-
-from app.api.routes_screener import router as screener_router
-app.include_router(screener_router)  # already has prefix="/screener"
-
-from app.api.routes_signals import router as signals_router
-app.include_router(signals_router)  # already has prefix="/signals"
-
-from app.api.routes_trace import router as trace_router
-app.include_router(trace_router)  # already has prefix="/signal"
-
-from app.api.routes_trading import router as trading_router
-app.include_router(trading_router, prefix="/trading")
-
-from app.web.browse_router import router as browse_router
-app.include_router(browse_router)  # routes already include /web prefix
-
-from app.trading.router import router as trade_router
-app.include_router(trade_router)  # already has prefix="/trade"
-
-from app.api.routes_websocket import router as websocket_router
-app.include_router(websocket_router)  # WebSocket endpoints at /ws/*
-=======
 try:
     from app.api.routes import router as core_router
 
@@ -462,7 +503,6 @@ try:
     app.include_router(trade_router)  # already has prefix="/trade"
 except Exception as e:
     logger.warning("Failed to include trade router: %s", e)
->>>>>>> d295850 (Resolve merge conflict in backend/app/main.py)
 
 # ---- Auto-discovery fallback (catch missed routers) ----
 # Note: Auto-discovery is disabled because all routers are explicitly registered above.

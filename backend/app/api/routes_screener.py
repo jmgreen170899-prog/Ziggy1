@@ -62,6 +62,18 @@ class ScreenerResponse(BaseModel):
     regime_breakdown: dict[str, int]
 
 
+class ScreenerHealthResponse(BaseModel):
+    """Screener health check response."""
+
+    cognitive_core_available: bool = Field(
+        ..., description="Whether cognitive core is available"
+    )
+    supported_universes: list[str] = Field(..., description="Supported symbol universes")
+    max_symbols_per_request: int = Field(..., description="Maximum symbols per request")
+    available_presets: list[str] = Field(..., description="Available screening presets")
+    timestamp: str = Field(..., description="Response timestamp")
+
+
 @router.post("/scan", response_model=ScreenerResponse)
 async def screen_market(request: ScreenerRequest):
     """
@@ -445,13 +457,17 @@ async def get_regime_summary(universe: str = Query("sp500", description="Univers
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/health")
-async def screener_health_check():
-    """Health check for screener functionality."""
-    return {
-        "cognitive_core_available": COGNITIVE_CORE_AVAILABLE,
-        "supported_universes": ["sp500", "nasdaq100"],
-        "max_symbols_per_request": 500,
-        "available_presets": ["momentum", "mean_reversion"],
-        "timestamp": datetime.now().isoformat(),
-    }
+@router.get("/health", response_model=ScreenerHealthResponse)
+async def screener_health_check() -> ScreenerHealthResponse:
+    """
+    Health check for screener functionality.
+    
+    Returns availability status and configuration information.
+    """
+    return ScreenerHealthResponse(
+        cognitive_core_available=COGNITIVE_CORE_AVAILABLE,
+        supported_universes=["sp500", "nasdaq100"],
+        max_symbols_per_request=500,
+        available_presets=["momentum", "mean_reversion"],
+        timestamp=datetime.now().isoformat(),
+    )
