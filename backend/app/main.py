@@ -213,101 +213,31 @@ async def general_exception_handler(request, exc: Exception):
 
 
 # ---- Router Registration with Error Handling ----
-def register_router_safely(
-    router_module: str,
-    router_name: str = "router",
-    prefix: str = "",
-    tags: list[str] | None = None,
-):
-    """Safely register a router with graceful error handling."""
-    try:
-        module = __import__(router_module, fromlist=[router_name])
-        router = getattr(module, router_name)
-
-        # Use existing router prefix if available, otherwise use provided prefix
-        existing_prefix = getattr(router, "prefix", None)
-        final_prefix = existing_prefix if existing_prefix else prefix
-
-        # Use existing router tags if available, otherwise use provided tags
-        existing_tags = getattr(router, "tags", None)
-        final_tags = existing_tags if existing_tags else (tags or [])
-
-        # Register router with appropriate parameters
-        if final_prefix and final_tags:
-            app.include_router(router, prefix=final_prefix, tags=final_tags)  # type: ignore
-        elif final_prefix:
-            app.include_router(router, prefix=final_prefix)
-        elif final_tags:
-            app.include_router(router, tags=final_tags)  # type: ignore
-        else:
-            app.include_router(router)
-        logger.info(
-            f"✅ Registered router: {router_module} "
-            f"(prefix: '{final_prefix}', tags: {final_tags})"
-        )
-        return True
-
-    except ImportError as e:
-        logger.error(f"❌ Import error for {router_module}: {e}")
-        return False
-    except AttributeError as e:
-        logger.error(f"❌ Router not found in {router_module}: {e}")
-        return False
-    except Exception as e:
-        logger.error(f"❌ Unexpected error registering {router_module}: {e}")
-        return False
-
-
-# ---- Authentication Routes ----
-register_router_safely("app.api.routes_auth", prefix="/api")
-
-# ---- Core API Routes ----
-register_router_safely("app.api.routes", prefix="/api")
-
-# ---- Trading & Market Routes ----
-register_router_safely("app.api.routes_trading", prefix="/api")
-register_router_safely("app.trading.router")  # Has its own /trade prefix
-register_router_safely("app.api.routes_market", prefix="/api")
-register_router_safely("app.api.routes_market_calendar")  # Has its own /market prefix
-register_router_safely("app.api.routes_crypto", prefix="/api")
-register_router_safely("app.api.routes_screener")  # Has its own /screener prefix
-register_router_safely("app.api.routes_paper", prefix="/api")
-register_router_safely("app.api.routes_risk_lite", prefix="/api")
-
-# ---- AI & Cognitive Routes ----
-register_router_safely("app.api.routes_signals")  # Has its own /signals prefix
-register_router_safely("app.api.routes_cognitive")  # Has its own /cognitive prefix
-register_router_safely("app.api.routes_chat")  # Has its own /chat prefix
-register_router_safely("app.api.routes_explain")  # Has its own /signal prefix for explanations
-register_router_safely("app.api.routes_trace")  # Has its own /signal prefix for tracing
-register_router_safely("app.api.routes_learning", prefix="/api")
-
-# ---- News & Data Routes ----
-register_router_safely("app.api.routes_news", prefix="/api")
-register_router_safely("app.api.routes_alerts", prefix="/api")
-
-# ---- Integration & Feedback Routes ----
-register_router_safely("app.api.routes_integration")  # Has its own /integration prefix
-register_router_safely("app.api.routes_feedback")  # Has its own /feedback prefix
-
-# ---- Development & Monitoring Routes ----
-register_router_safely("app.api.routes_dev", prefix="/api")
-register_router_safely("app.api.routes_performance")  # Has its own /api/performance prefix
-register_router_safely("app.api.routes_ops")  # Has its own /ops prefix
-register_router_safely("app.api.routes_demo")  # Has its own /demo prefix
-
-# ---- Web Browsing Routes ----
-register_router_safely("app.web.browse_router")
+# Note: Router registration helper function kept for potential future use
+# All routers are now explicitly registered below for better visibility and control
 
 
 # ---- Basic Health Endpoint ----
 from app.models import AckResponse, HealthResponse
 
 
-@app.get("/health", response_model=AckResponse)
-async def health() -> AckResponse:
-    """Basic health check endpoint."""
-    return AckResponse(ok=True, message=None)
+@app.get("/health")
+async def health():
+    """
+    Basic health check endpoint with unified response format.
+    
+    Returns a response compatible with multiple frontend consumers:
+    - status: "ok" (for components checking data.status)
+    - ok: true (for components checking data.ok)
+    - service: service name
+    - version: API version
+    """
+    return {
+        "status": "ok",
+        "ok": True,
+        "service": "ZiggyAI Backend",
+        "version": "0.1.0"
+    }
 
 
 # ---- Enhanced Health Check ----
@@ -442,7 +372,7 @@ except Exception as e:
 try:
     from app.api.routes_paper import router as paper_router
 
-    app.include_router(paper_router, prefix="/paper")
+    app.include_router(paper_router, prefix="/api/paper")
 except Exception as e:
     logger.warning("Failed to include paper router: %s", e)
 
@@ -472,7 +402,7 @@ except Exception as e:
 try:
     from app.api.routes_signals import router as signals_router
 
-    app.include_router(signals_router)  # already has prefix="/signals"
+    app.include_router(signals_router, prefix="/api")  # router has prefix="/signals", combined = "/api/signals"
 except Exception as e:
     logger.warning("Failed to include signals router: %s", e)
 
@@ -503,6 +433,13 @@ try:
     app.include_router(trade_router)  # already has prefix="/trade"
 except Exception as e:
     logger.warning("Failed to include trade router: %s", e)
+
+try:
+    from app.api.routes_websocket import router as websocket_router
+
+    app.include_router(websocket_router)  # WebSocket routes: /ws/market, /ws/news, etc.
+except Exception as e:
+    logger.warning("Failed to include websocket router: %s", e)
 
 # ---- Auto-discovery fallback (catch missed routers) ----
 # Note: Auto-discovery is disabled because all routers are explicitly registered above.

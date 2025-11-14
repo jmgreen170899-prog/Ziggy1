@@ -109,7 +109,8 @@ class LiveDataService {
   this.connectSignals();
   this.connectPortfolio();
   this.connectCharts();
-  this.connectSentiment();
+  // Note: /ws/sentiment endpoint not yet implemented in backend
+  // this.connectSentiment();
   }
 
   /**

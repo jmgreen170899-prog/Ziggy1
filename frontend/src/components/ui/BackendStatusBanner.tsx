@@ -20,8 +20,18 @@ export function BackendStatusBanner() {
         return;
       }
       const json = await res.json();
-      // Consider healthy if endpoint responds OK and paper_enabled or db_ok is truthy
-      if (json && (json.paper_enabled || json.db_ok || json.status === 'ok')) {
+      // Consider healthy if any of these conditions are true:
+      // - status === "ok" or status === "healthy"
+      // - ok === true
+      // - paper_enabled === true
+      // - db_ok === true
+      if (json && (
+        json.status === 'ok' || 
+        json.status === 'healthy' ||
+        json.ok === true || 
+        json.paper_enabled === true || 
+        json.db_ok === true
+      )) {
         setState('ok');
       } else {
         setState('down');
