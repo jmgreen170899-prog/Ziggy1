@@ -325,3 +325,80 @@ class CognitiveRegimeResponse(BaseModel):
     confidence: float = Field(..., description="Regime confidence")
     features: dict[str, Any] | None = Field(None, description="Features used for detection")
     timestamp: str = Field(..., description="Detection timestamp")
+
+
+# ── Screener Endpoint Response Models ────────────────────────────────────────
+
+
+class UniverseResponse(BaseModel):
+    """Response for universe endpoints."""
+
+    universe: str = Field(..., description="Universe name (sp500, nasdaq100, etc)")
+    symbols: list[str] = Field(..., description="List of symbols in universe")
+    count: int = Field(..., description="Number of symbols")
+    last_updated: str = Field(..., description="Last update timestamp")
+
+
+class RegimeSummaryResponse(BaseModel):
+    """Response for regime summary endpoint."""
+
+    universe: str = Field(..., description="Universe analyzed")
+    total_symbols: int = Field(..., description="Total symbols analyzed")
+    regime_breakdown: dict[str, int] = Field(..., description="Count by regime")
+    regime_percentages: dict[str, float] = Field(..., description="Percentage by regime")
+    timestamp: str = Field(..., description="Analysis timestamp")
+
+
+# ── Cognitive Endpoint Response Models ───────────────────────────────────────
+
+
+class CognitiveStatusResponse(BaseModel):
+    """Response for cognitive system status."""
+
+    meta_learning: dict[str, Any] = Field(..., description="Meta-learning system status")
+    episodic_memory: dict[str, Any] = Field(..., description="Episodic memory statistics")
+    counterfactual: dict[str, Any] = Field(..., description="Counterfactual analysis status")
+    timestamp: str = Field(..., description="Status timestamp")
+
+
+class OutcomeRecordResponse(BaseModel):
+    """Response for recording decision outcome."""
+
+    status: str = Field(..., description="Recording status")
+    message: str = Field(..., description="Status message")
+    outcome_id: str | None = Field(None, description="Outcome record ID")
+
+
+class MetaLearningStrategiesResponse(BaseModel):
+    """Response for meta-learning strategies."""
+
+    strategies: list[dict[str, Any]] = Field(..., description="Available strategies")
+    current_strategy: str | None = Field(None, description="Currently selected strategy")
+    performance_history: dict[str, Any] | None = Field(None, description="Strategy performance")
+
+
+class CounterfactualInsightsResponse(BaseModel):
+    """Response for counterfactual insights."""
+
+    insights: list[dict[str, Any]] = Field(..., description="Counterfactual analysis insights")
+    total: int = Field(..., description="Total insights available")
+    timestamp: str = Field(..., description="Analysis timestamp")
+
+
+class EpisodicMemoryStatsResponse(BaseModel):
+    """Response for episodic memory statistics."""
+
+    total_episodes: int = Field(..., description="Total episodes stored")
+    memory_size_mb: float | None = Field(None, description="Memory size in megabytes")
+    oldest_episode: str | None = Field(None, description="Oldest episode timestamp")
+    newest_episode: str | None = Field(None, description="Newest episode timestamp")
+    statistics: dict[str, Any] = Field(..., description="Additional statistics")
+
+
+class CognitiveHealthResponse(BaseModel):
+    """Response for cognitive health check."""
+
+    status: str = Field(..., description="Overall health status")
+    components: dict[str, bool] = Field(..., description="Component availability")
+    uptime_seconds: float | None = Field(None, description="System uptime")
+    timestamp: str = Field(..., description="Health check timestamp")
