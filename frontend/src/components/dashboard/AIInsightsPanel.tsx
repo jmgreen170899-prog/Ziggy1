@@ -248,13 +248,13 @@ export function AIInsightsPanel() {
   const getSeverityStyles = (severity: string) => {
     switch (severity) {
       case 'success':
-        return 'bg-green-50 border-l-green-400 text-green-800 dark:bg-green-900/20 dark:border-l-green-400 dark:text-green-200';
+        return 'bg-green-50 border-l-success text-green-800 dark:bg-green-900/20 dark:border-l-success dark:text-green-200';
       case 'warning':
-        return 'bg-yellow-50 border-l-yellow-400 text-yellow-800 dark:bg-yellow-900/20 dark:border-l-yellow-400 dark:text-yellow-200';
+        return 'bg-yellow-50 border-l-warning text-yellow-800 dark:bg-yellow-900/20 dark:border-l-warning dark:text-yellow-200';
       case 'error':
-        return 'bg-red-50 border-l-red-400 text-red-800 dark:bg-red-900/20 dark:border-l-red-400 dark:text-red-200';
+        return 'bg-red-50 border-l-danger text-red-800 dark:bg-red-900/20 dark:border-l-danger dark:text-red-200';
       default:
-        return 'bg-blue-50 border-l-blue-400 text-blue-800 dark:bg-blue-900/20 dark:border-l-blue-400 dark:text-blue-200';
+        return 'bg-blue-50 border-l-primary-tech-blue text-blue-800 dark:bg-blue-900/20 dark:border-l-secondary-cyan dark:text-blue-200';
     }
   };
 
@@ -278,8 +278,8 @@ export function AIInsightsPanel() {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-950 border-indigo-200 dark:border-indigo-800 shadow-lg hover:shadow-xl transition-all duration-300">
-      <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-t-lg">
+    <Card className="bg-gradient-to-br from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-950 border-ai-purple/30 dark:border-ai-purple/50 shadow-lg hover:shadow-xl transition-all duration-300">
+      <CardHeader className="bg-gradient-to-r from-primary-tech-blue to-ai-purple text-white rounded-t-lg">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
@@ -287,9 +287,9 @@ export function AIInsightsPanel() {
             </div>
             <div>
               <span className="text-xl font-bold">ZiggyAI Insights</span>
-              <div className="text-indigo-100 text-sm">
+              <div className="text-blue-100 text-sm">
                 Explainable AI • Net-of-Fees Analysis • Coach Mode
-                {coachModeEnabled && <span className="ml-2 px-2 py-0.5 bg-green-500/20 rounded-full text-xs">🧠 Coach Active</span>}
+                {coachModeEnabled && <span className="ml-2 px-2 py-0.5 bg-success/20 rounded-full text-xs">🧠 Coach Active</span>}
               </div>
             </div>
             {isGenerating && (
@@ -307,12 +307,12 @@ export function AIInsightsPanel() {
             <Button
               onClick={() => setCoachModeEnabled(!coachModeEnabled)}
               className={`text-xs px-3 py-1 ${coachModeEnabled 
-                ? 'bg-green-500/20 hover:bg-green-500/30 text-green-100 border-green-400/30' 
+                ? 'bg-success/20 hover:bg-success/30 text-green-100 border-success/30' 
                 : 'bg-white/20 hover:bg-white/30 text-white border-white/30'}`}
             >
               🧠 Coach Mode
             </Button>
-            <span className="text-xs text-indigo-100 bg-white/10 px-2 py-1 rounded-full">
+            <span className="text-xs text-blue-100 bg-white/10 px-2 py-1 rounded-full">
               Updated: {lastUpdated?.toLocaleTimeString?.([], { hour: '2-digit', minute: '2-digit' })}
             </span>
             <Button
@@ -329,7 +329,7 @@ export function AIInsightsPanel() {
         <div className="space-y-4">
           {/* Error banner */}
           {error && (
-            <div className="p-3 rounded-lg border-l-4 bg-red-50 border-l-red-400 text-red-800 dark:bg-red-900/20 dark:border-l-red-400 dark:text-red-200">
+            <div className="p-3 rounded-lg border-l-4 bg-red-50 border-l-danger text-red-800 dark:bg-red-900/20 dark:border-l-danger dark:text-red-200">
               Failed to load live insights: {error}. Showing placeholders.
             </div>
           )}
@@ -345,12 +345,12 @@ export function AIInsightsPanel() {
                     <span className="text-lg">{getIconForType(insight.type)}</span>
                     <h4 className="font-semibold">{insight.title}</h4>
                     {insight.explainability && (
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-ai-purple/10 dark:bg-ai-purple/20 text-ai-purple dark:text-ai-purple px-2 py-0.5 rounded-full font-mono">
                         {Math.round(insight.explainability.confidence * 100)}% confidence
                       </span>
                     )}
                     {insight.explainability?.netOfFees && (
-                      <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-success/10 dark:bg-success/20 text-success dark:text-success px-2 py-0.5 rounded-full">
                         Net of Fees
                       </span>
                     )}
@@ -361,13 +361,13 @@ export function AIInsightsPanel() {
                   
                   {/* Coach Mode Suggestions */}
                   {coachModeEnabled && insight.coachMode && (
-                    <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="mt-3 p-3 bg-ai-purple/10 dark:bg-ai-purple/20 border border-ai-purple/30 dark:border-ai-purple/50 rounded-lg">
                       <div className="flex items-start space-x-2">
-                        <span className="text-blue-600 dark:text-blue-400">🧠</span>
+                        <span className="text-ai-purple dark:text-ai-purple">🧠</span>
                         <div>
-                          <div className="font-medium text-blue-800 dark:text-blue-200 text-sm">Coach Recommendation:</div>
-                          <div className="text-blue-700 dark:text-blue-300 text-sm">{insight.coachMode.suggestion}</div>
-                          <div className="text-blue-600 dark:text-blue-400 text-xs mt-1">{insight.coachMode.rationale}</div>
+                          <div className="font-medium text-ai-purple dark:text-ai-purple text-sm">Coach Recommendation:</div>
+                          <div className="text-gray-700 dark:text-gray-300 text-sm">{insight.coachMode.suggestion}</div>
+                          <div className="text-gray-600 dark:text-gray-400 text-xs mt-1">{insight.coachMode.rationale}</div>
                         </div>
                       </div>
                     </div>
@@ -410,30 +410,30 @@ export function AIInsightsPanel() {
           ))}
           
           {/* Safety & Transparency Banner */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-            <h4 className="font-semibold mb-3 flex items-center space-x-2 text-emerald-800 dark:text-emerald-200">
+          <div className="mt-6 p-4 bg-gradient-to-r from-success/10 to-emerald-50 dark:from-success/10 dark:to-emerald-900/20 border border-success/30 dark:border-success/50 rounded-lg">
+            <h4 className="font-semibold mb-3 flex items-center space-x-2 text-success dark:text-success">
               <span>🛡️</span>
               <span>Safety Rails & Transparency</span>
             </h4>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-emerald-700 dark:text-emerald-300">Risk Controls:</span>
-                <span className="ml-2 font-medium">Always Active</span>
+                <span className="text-fg-muted">Risk Controls:</span>
+                <span className="ml-2 font-medium text-fg">Always Active</span>
               </div>
               <div>
-                <span className="text-emerald-700 dark:text-emerald-300">Fee Disclosure:</span>
-                <span className="ml-2 font-medium">Full Transparency</span>
+                <span className="text-fg-muted">Fee Disclosure:</span>
+                <span className="ml-2 font-medium text-fg">Full Transparency</span>
               </div>
               <div>
-                <span className="text-emerald-700 dark:text-emerald-300">AI Explainability:</span>
-                <span className="ml-2 font-medium">Required for All Signals</span>
+                <span className="text-fg-muted">AI Explainability:</span>
+                <span className="ml-2 font-medium text-fg">Required for All Signals</span>
               </div>
               <div>
-                <span className="text-emerald-700 dark:text-emerald-300">Conflict Protection:</span>
-                <span className="ml-2 font-medium">Churn Penalties Active</span>
+                <span className="text-fg-muted">Conflict Protection:</span>
+                <span className="ml-2 font-medium text-fg">Churn Penalties Active</span>
               </div>
             </div>
-            <div className="mt-3 text-xs text-emerald-600 dark:text-emerald-400">
+            <div className="mt-3 text-xs text-success dark:text-success">
               ⚠️ All performance metrics include fees, slippage, and borrowing costs. AI recommendations prioritize risk-adjusted, net-of-fee outcomes.
             </div>
           </div>
@@ -447,19 +447,19 @@ export function AIInsightsPanel() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-fg-muted">Market Sentiment:</span>
-                <span className="ml-2 font-medium text-yellow-600">Cautious (High Vol)</span>
+                <span className="ml-2 font-medium text-warning">Cautious (High Vol)</span>
               </div>
               <div>
                 <span className="text-fg-muted">Avg Signal Quality:</span>
-                <span className="ml-2 font-medium">87% (Post-Fee)</span>
+                <span className="ml-2 font-medium font-mono text-fg">87% (Post-Fee)</span>
               </div>
               <div>
                 <span className="text-fg-muted">Top Opportunity:</span>
-                <span className="ml-2 font-medium">Value Rotation (+5.2% net)</span>
+                <span className="ml-2 font-medium text-success">Value Rotation (<span className="font-mono">+5.2%</span> net)</span>
               </div>
               <div>
                 <span className="text-fg-muted">Trades Filtered:</span>
-                <span className="ml-2 font-medium">12/18 (Coach Mode)</span>
+                <span className="ml-2 font-medium font-mono text-fg">12/18 (Coach Mode)</span>
               </div>
             </div>
           </div>
