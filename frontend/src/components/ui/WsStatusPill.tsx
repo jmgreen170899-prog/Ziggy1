@@ -20,7 +20,18 @@ export function WsStatusPill() {
         return;
       }
       const json = await res.json();
-      if (json && (json.status === 'ok' || json.paper_enabled || json.db_ok)) {
+      // Consider online if any of these conditions are true:
+      // - status === "ok" or status === "healthy"
+      // - ok === true
+      // - paper_enabled === true
+      // - db_ok === true
+      if (json && (
+        json.status === 'ok' || 
+        json.status === 'healthy' ||
+        json.ok === true || 
+        json.paper_enabled === true || 
+        json.db_ok === true
+      )) {
         setStatus('online');
       } else {
         setStatus('degraded');
