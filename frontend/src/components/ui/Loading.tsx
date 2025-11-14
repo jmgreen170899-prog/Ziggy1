@@ -217,18 +217,18 @@ export function DataLoading({
 
     return (
       <div className="flex flex-col items-center justify-center p-8 space-y-4">
-        <div className="text-red-500 text-2xl">⚠️</div>
+        <div className="text-danger text-2xl">⚠️</div>
         <div className="text-center">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="font-medium text-fg mb-2">
             Failed to load data
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-sm text-fg-muted mb-4">
             {errorMessage}
           </p>
           {retryAction && (
             <button
               onClick={retryAction}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-gradient-to-r from-primary-tech-blue to-ai-purple text-white rounded-md hover:shadow-lg transition-all"
             >
               Try Again
             </button>

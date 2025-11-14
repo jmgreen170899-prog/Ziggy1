@@ -39,11 +39,11 @@ const QuoteDetails = React.memo(({ quote }: { quote: Quote }) => {
     <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
       {details.map(({ label, value, tooltip }) => (
         <div key={label}>
-          <span className="text-gray-500 inline-flex items-center">
+          <span className="text-fg-muted inline-flex items-center">
             {label}:
             <InlineTooltip content={tooltip} />
           </span>
-          <span className="ml-2 font-medium">{value}</span>
+          <span className="ml-2 font-medium font-mono text-fg">{value}</span>
         </div>
       ))}
     </div>
@@ -81,7 +81,7 @@ export const QuoteCard = React.memo(({ quote, showDetails = false, onRemove }: Q
               {quote.symbol}
             </h3>
             <div 
-              className="text-xl sm:text-2xl font-bold truncate"
+              className="text-xl sm:text-2xl font-bold font-mono truncate"
               aria-labelledby={`quote-symbol-${quote.symbol}`}
               aria-describedby={`quote-change-${quote.symbol}`}
             >
@@ -91,14 +91,14 @@ export const QuoteCard = React.memo(({ quote, showDetails = false, onRemove }: Q
           
           <div className="text-right ml-2 flex-shrink-0">
             <div 
-              className={`text-xs sm:text-sm font-medium ${changeColor} truncate`}
+              className={`text-xs sm:text-sm font-medium font-mono ${changeColor} truncate`}
               id={`quote-change-${quote.symbol}`}
               aria-label={`Price change: ${isPositive ? 'up' : 'down'} ${formattedChange}`}
             >
               {isPositive ? '+' : ''}{formattedChange}
             </div>
             <div 
-              className={`text-xs sm:text-sm ${changeColor} truncate`}
+              className={`text-xs sm:text-sm font-mono ${changeColor} truncate`}
               aria-label={`Percentage change: ${isPositive ? 'up' : 'down'} ${formattedChangePercent}`}
             >
               {formattedChangePercent}
@@ -116,7 +116,7 @@ export const QuoteCard = React.memo(({ quote, showDetails = false, onRemove }: Q
             <span className="status-dot status-dot-success"></span>
             Live
           </span>
-          <span className="text-fg-muted font-medium">{formattedTimestamp}</span>
+          <span className="text-fg-muted font-medium font-mono">{formattedTimestamp}</span>
         </div>
       </CardContent>
       

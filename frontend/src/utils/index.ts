@@ -95,10 +95,10 @@ export function timeAgo(dateString: string): string {
   return formatDate(dateString);
 }
 
-// Color helpers for market data
+// Color helpers for market data - using Quantum Blue theme colors
 export function getPriceColor(change: number): string {
-  if (change > 0) return 'text-green-500';
-  if (change < 0) return 'text-red-500';
+  if (change > 0) return 'text-success';
+  if (change < 0) return 'text-danger';
   return 'text-gray-500';
 }
 

@@ -25,8 +25,20 @@ const config: Config = {
           '"Segoe UI Emoji"',
           '"Segoe UI Symbol"',
         ],
+        mono: [
+          'var(--font-mono)',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          '"Liberation Mono"',
+          '"Courier New"',
+          'monospace',
+        ],
       },
       colors: {
+        // Base semantic colors
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         surface: 'var(--surface)',
@@ -41,6 +53,13 @@ const config: Config = {
         warning: 'var(--warning)',
         danger: 'var(--danger)',
         info: 'var(--info)',
+        
+        // Quantum Blue palette
+        'primary-deep-blue': 'var(--primary-deep-blue)',
+        'primary-tech-blue': 'var(--primary-tech-blue)',
+        'secondary-cyan': 'var(--secondary-cyan)',
+        'secondary-aqua': 'var(--secondary-aqua)',
+        'ai-purple': 'var(--ai-purple)',
       },
       transitionDuration: {
         fast: 'var(--transition-fast)',

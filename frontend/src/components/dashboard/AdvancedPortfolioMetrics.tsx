@@ -82,13 +82,13 @@ export function AdvancedPortfolioMetrics({ portfolioValue }: AdvancedPortfolioMe
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'excellent':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return 'text-success bg-success/10 border-success/30';
       case 'good':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return 'text-primary-tech-blue bg-primary-tech-blue/10 border-primary-tech-blue/30';
       case 'fair':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+        return 'text-warning bg-warning/10 border-warning/30';
       default:
-        return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-danger bg-danger/10 border-danger/30';
     }
   };
 
@@ -166,16 +166,16 @@ export function AdvancedPortfolioMetrics({ portfolioValue }: AdvancedPortfolioMe
                       } 
                     />
                   </div>
-                  <p className="text-2xl font-bold mb-1">
+                  <p className="text-2xl font-bold font-mono mb-1">
                     {formatValue(metric.value, metric.format)}
                   </p>
                   
                   {metric.benchmark && (
                     <div className="flex items-center space-x-2 text-xs">
                       <span className="text-fg-muted">vs benchmark:</span>
-                      <span className={`font-medium ${
-                        metric.value > metric.benchmark ? 'text-green-600' : 
-                        metric.value < metric.benchmark ? 'text-red-600' : 'text-gray-600'
+                      <span className={`font-medium font-mono ${
+                        metric.value > metric.benchmark ? 'text-success' : 
+                        metric.value < metric.benchmark ? 'text-danger' : 'text-gray-600'
                       }`}>
                         {formatValue(metric.benchmark, metric.format)}
                       </span>
@@ -209,7 +209,7 @@ export function AdvancedPortfolioMetrics({ portfolioValue }: AdvancedPortfolioMe
             <span>📈</span>
             <span>Risk-Return Profile</span>
           </h4>
-          <div className="relative h-32 bg-gradient-to-br from-blue-50 to-green-50 rounded-lg flex items-center justify-center border">
+          <div className="relative h-32 bg-gradient-to-br from-primary-tech-blue/5 to-success/5 rounded-lg flex items-center justify-center border border-border">
             <div className="text-center">
               <div className="text-2xl mb-2">📊</div>
               <p className="text-sm text-fg-muted">Risk-Return Scatter Plot</p>
@@ -217,9 +217,9 @@ export function AdvancedPortfolioMetrics({ portfolioValue }: AdvancedPortfolioMe
             </div>
             
             {/* Example data points */}
-            <div className="absolute top-4 right-8 w-2 h-2 bg-green-500 rounded-full" title="Your Portfolio"></div>
-            <div className="absolute bottom-8 left-12 w-2 h-2 bg-blue-500 rounded-full" title="S&P 500"></div>
-            <div className="absolute top-12 left-20 w-2 h-2 bg-red-500 rounded-full" title="High Risk Asset"></div>
+            <div className="absolute top-4 right-8 w-2 h-2 bg-success rounded-full" title="Your Portfolio"></div>
+            <div className="absolute bottom-8 left-12 w-2 h-2 bg-primary-tech-blue rounded-full" title="S&P 500"></div>
+            <div className="absolute top-12 left-20 w-2 h-2 bg-danger rounded-full" title="High Risk Asset"></div>
           </div>
           <div className="flex justify-between text-xs text-fg-muted mt-2">
             <span>Lower Risk →</span>
@@ -237,14 +237,14 @@ export function AdvancedPortfolioMetrics({ portfolioValue }: AdvancedPortfolioMe
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-fg-muted">52W High:</span>
-                <span className="font-semibold text-green-600">$135,420</span>
+                <span className="font-semibold font-mono text-success">$135,420</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div className="bg-accent rounded-full h-2" style={{ width: '78%' }}></div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="bg-gradient-to-r from-primary-tech-blue to-ai-purple rounded-full h-2" style={{ width: '78%' }}></div>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-fg-muted">52W Low:</span>
-                <span className="font-semibold text-red-600">$89,650</span>
+                <span className="font-semibold font-mono text-danger">$89,650</span>
               </div>
               <div className="text-center text-sm text-fg-muted">
                 Current: 78% of 52W range

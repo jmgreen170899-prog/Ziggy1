@@ -132,27 +132,27 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
   const config = {
     success: {
       icon: '✓',
-      iconBg: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
-      border: 'border-green-200 dark:border-green-800',
-      bg: 'bg-green-50 dark:bg-green-950/50'
+      iconBg: 'bg-success/10 dark:bg-success/20 text-success dark:text-success',
+      border: 'border-success/30 dark:border-success/50',
+      bg: 'bg-success/5 dark:bg-success/10'
     },
     error: {
       icon: '✕',
-      iconBg: 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
-      border: 'border-red-200 dark:border-red-800',
-      bg: 'bg-red-50 dark:bg-red-950/50'
+      iconBg: 'bg-danger/10 dark:bg-danger/20 text-danger dark:text-danger',
+      border: 'border-danger/30 dark:border-danger/50',
+      bg: 'bg-danger/5 dark:bg-danger/10'
     },
     warning: {
       icon: '⚠',
-      iconBg: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
-      border: 'border-yellow-200 dark:border-yellow-800',
-      bg: 'bg-yellow-50 dark:bg-yellow-950/50'
+      iconBg: 'bg-warning/10 dark:bg-warning/20 text-warning dark:text-warning',
+      border: 'border-warning/30 dark:border-warning/50',
+      bg: 'bg-warning/5 dark:bg-warning/10'
     },
     info: {
       icon: 'i',
-      iconBg: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-      border: 'border-blue-200 dark:border-blue-800',
-      bg: 'bg-blue-50 dark:bg-blue-950/50'
+      iconBg: 'bg-primary-tech-blue/10 dark:bg-secondary-cyan/20 text-primary-tech-blue dark:text-secondary-cyan',
+      border: 'border-primary-tech-blue/30 dark:border-secondary-cyan/50',
+      bg: 'bg-primary-tech-blue/5 dark:bg-secondary-cyan/10'
     }
   };
 

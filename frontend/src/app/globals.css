@@ -1,20 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafbfc;
-  --foreground: #0f172a;
+  /* Quantum Blue Palette - Light Mode */
+  /* Primary Colors */
+  --primary-deep-blue: #103A71;
+  --primary-tech-blue: #1B5FA7;
+  
+  /* Secondary Colors */
+  --secondary-cyan: #51C8F5;
+  --secondary-aqua: #2FA2C9;
+  
+  /* AI Accent */
+  --ai-purple: #7A4CE0;
+  
+  /* Semantic Colors */
+  --success: #2ECC71;
+  --danger: #E74C3C;
+  --warning: #F4C542;
+  
+  /* Backgrounds */
+  --background: #F6F7FA;
+  --foreground: #1C1E24;
   --surface: #ffffff;
   --surface-hover: #f8fafc;
+  
+  /* Borders */
   --border: #e2e8f0;
   --border-hover: #cbd5e1;
-  --accent: #2563eb;
+  
+  /* Accent (using primary tech blue) */
+  --accent: #1B5FA7;
   --accent-fg: #ffffff;
-  --fg: #0f172a;
-  --fg-muted: #64748b;
-  --success: #059669;
-  --warning: #d97706;
-  --danger: #dc2626;
-  --info: #0891b2;
+  
+  /* Text */
+  --fg: #1C1E24;
+  --fg-muted: #5C6270;
+  
+  /* Info (using secondary aqua) */
+  --info: #2FA2C9;
   
   /* Enhanced Animation System for Natural Flow */
   --transition-instant: 100ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -31,28 +54,55 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   
-  /* Natural Gradient Colors */
-  --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  --gradient-success: linear-gradient(135deg, #10b981, #059669);
-  --gradient-warning: linear-gradient(135deg, #f59e0b, #d97706);
-  --gradient-danger: linear-gradient(135deg, #ef4444, #dc2626);
+  /* Natural Gradient Colors - Updated with Quantum Blue palette */
+  --gradient-primary: linear-gradient(135deg, #1B5FA7, #7A4CE0);
+  --gradient-success: linear-gradient(135deg, #2ECC71, #10b981);
+  --gradient-warning: linear-gradient(135deg, #F4C542, #d97706);
+  --gradient-danger: linear-gradient(135deg, #E74C3C, #dc2626);
+  --gradient-ai: linear-gradient(135deg, #7A4CE0, #9370DB);
+  
+  /* Monospace Font for Numeric Data */
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
 }
 
 .dark {
-  --background: #0f172a;
+  /* Quantum Blue Palette - Dark Mode */
+  /* Primary Colors (adjusted for dark mode) */
+  --primary-deep-blue: #1B5FA7;
+  --primary-tech-blue: #51C8F5;
+  
+  /* Secondary Colors (brighter for dark mode) */
+  --secondary-cyan: #51C8F5;
+  --secondary-aqua: #2FA2C9;
+  
+  /* AI Accent (slightly brighter) */
+  --ai-purple: #9370DB;
+  
+  /* Semantic Colors (adjusted for dark backgrounds) */
+  --success: #2ECC71;
+  --danger: #E74C3C;
+  --warning: #F4C542;
+  
+  /* Backgrounds */
+  --background: #0E121A;
   --foreground: #f1f5f9;
   --surface: #1e293b;
   --surface-hover: #334155;
+  
+  /* Borders */
   --border: #334155;
   --border-hover: #475569;
-  --accent: #3b82f6;
-  --accent-fg: #ffffff;
+  
+  /* Accent (using brighter blue for dark mode) */
+  --accent: #51C8F5;
+  --accent-fg: #0E121A;
+  
+  /* Text */
   --fg: #f1f5f9;
   --fg-muted: #94a3b8;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --info: #06b6d4;
+  
+  /* Info */
+  --info: #51C8F5;
   
   /* Dark mode shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
