@@ -14,10 +14,10 @@ const Badge: React.FC<BadgeProps> = ({
   const baseClasses = 'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold border transition-all duration-200 hover:shadow-md';
   
   const variantClasses = {
-    default: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700',
-    destructive: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700',
+    default: 'bg-primary-tech-blue/10 text-primary-tech-blue border-primary-tech-blue/30 dark:bg-secondary-cyan/20 dark:text-secondary-cyan dark:border-secondary-cyan/50',
+    destructive: 'bg-danger/10 text-danger border-danger/30 dark:bg-danger/20 dark:text-danger dark:border-danger/50',
     secondary: 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600',
-    outline: 'bg-transparent border-2 border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300'
+    outline: 'bg-transparent border-2 border-border text-fg dark:border-border dark:text-fg'
   };
 
   return (

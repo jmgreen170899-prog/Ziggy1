@@ -85,13 +85,13 @@ export function MarketStatusIndicators() {
   const getConnectionStatusColor = (status: string) => {
     switch (status) {
       case 'connected':
-        return 'text-green-600 bg-green-100';
+        return 'text-success bg-success/10';
       case 'connecting':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-warning bg-warning/10';
       case 'disconnected':
         return 'text-gray-600 bg-gray-100';
       default:
-        return 'text-red-600 bg-red-100';
+        return 'text-danger bg-danger/10';
     }
   };
 
@@ -109,19 +109,19 @@ export function MarketStatusIndicators() {
   };
 
   const getLatencyColor = (latency: number) => {
-    if (latency < 50) return 'text-green-600';
-    if (latency < 100) return 'text-yellow-600';
-    return 'text-red-600';
+    if (latency < 50) return 'text-success';
+    if (latency < 100) return 'text-warning';
+    return 'text-danger';
   };
 
   return (
     <div className="space-y-4">
       {/* Connection Status */}
-      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-blue-200 dark:border-blue-800">
+      <Card className="bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-blue-950 border-secondary-aqua/30 dark:border-secondary-aqua/50">
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-bold text-lg flex items-center space-x-2 text-blue-800 dark:text-blue-200">
-              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-800 rounded-lg flex items-center justify-center">
+            <h4 className="font-bold text-lg flex items-center space-x-2 text-primary-tech-blue dark:text-secondary-cyan">
+              <div className="w-8 h-8 bg-primary-tech-blue/10 dark:bg-secondary-cyan/10 rounded-lg flex items-center justify-center">
                 <span>📡</span>
               </div>
               <span>Live Connection</span>
@@ -132,15 +132,15 @@ export function MarketStatusIndicators() {
           </div>
           
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg">
-              <span className="text-gray-600 dark:text-gray-400 text-sm">Latency:</span>
-              <div className={`text-xl font-bold ${getLatencyColor(connectionStatus.latency)}`}>
+            <div className="bg-surface/50 dark:bg-gray-800/50 p-3 rounded-lg border border-border">
+              <span className="text-fg-muted text-sm">Latency:</span>
+              <div className={`text-xl font-bold font-mono ${getLatencyColor(connectionStatus.latency)}`}>
                 {connectionStatus.latency}ms
               </div>
             </div>
-            <div className="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg">
-              <span className="text-gray-600 dark:text-gray-400 text-sm">Last Update:</span>
-              <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            <div className="bg-surface/50 dark:bg-gray-800/50 p-3 rounded-lg border border-border">
+              <span className="text-fg-muted text-sm">Last Update:</span>
+              <div className="text-sm font-medium font-mono text-fg">
                 {connectionStatus.lastUpdate.toLocaleTimeString([], { 
                   hour: '2-digit', 
                   minute: '2-digit',
@@ -154,10 +154,10 @@ export function MarketStatusIndicators() {
           <div className="mt-3">
             <div className="flex justify-between text-xs text-fg-muted mb-1">
               <span>Connection Quality</span>
-              <span>Excellent</span>
+              <span className="font-medium">Excellent</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-green-500 rounded-full h-2" style={{ width: '95%' }}></div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="bg-success rounded-full h-2" style={{ width: '95%' }}></div>
             </div>
           </div>
         </CardContent>
@@ -173,20 +173,20 @@ export function MarketStatusIndicators() {
           
           <div className="space-y-3">
             {marketSessions.map((session, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-surface border border-border rounded-lg">
+              <div key={index} className="flex items-center justify-between p-3 bg-surface border border-border rounded-lg hover:border-primary-tech-blue/50 transition-colors">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-3 h-3 rounded-full ${session.isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
+                  <div className={`w-3 h-3 rounded-full ${session.isOpen ? 'bg-success animate-pulse' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
                   <div>
-                    <p className="font-medium">{session.name}</p>
-                    <p className="text-xs text-fg-muted">
+                    <p className="font-medium text-fg">{session.name}</p>
+                    <p className="text-xs text-fg-muted font-mono">
                       {session.openTime} - {session.closeTime} {session.timezone}
                     </p>
                   </div>
                 </div>
                 
                 <div className="text-right">
-                  <p className="font-medium">{session.currentTime}</p>
-                  <p className={`text-xs ${session.isOpen ? 'text-green-600' : 'text-fg-muted'}`}>
+                  <p className="font-medium font-mono text-fg">{session.currentTime}</p>
+                  <p className={`text-xs ${session.isOpen ? 'text-success font-medium' : 'text-fg-muted'}`}>
                     {session.isOpen ? 'OPEN' : session.nextSession}
                   </p>
                 </div>
@@ -210,24 +210,24 @@ export function MarketStatusIndicators() {
               <h5 className="text-sm font-medium text-fg-muted mb-2">Major Indices</h5>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">S&P 500</span>
+                  <span className="text-sm text-fg-muted">S&P 500</span>
                   <div className="text-right">
-                    <span className="text-sm font-medium">4,567.89</span>
-                    <span className="text-xs text-green-600 ml-1">+0.85%</span>
+                    <span className="text-sm font-medium font-mono text-fg">4,567.89</span>
+                    <span className="text-xs text-success ml-1 font-mono">+0.85%</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">NASDAQ</span>
+                  <span className="text-sm text-fg-muted">NASDAQ</span>
                   <div className="text-right">
-                    <span className="text-sm font-medium">14,321.56</span>
-                    <span className="text-xs text-green-600 ml-1">+1.24%</span>
+                    <span className="text-sm font-medium font-mono text-fg">14,321.56</span>
+                    <span className="text-xs text-success ml-1 font-mono">+1.24%</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Dow Jones</span>
+                  <span className="text-sm text-fg-muted">Dow Jones</span>
                   <div className="text-right">
-                    <span className="text-sm font-medium">34,785.23</span>
-                    <span className="text-xs text-red-600 ml-1">-0.42%</span>
+                    <span className="text-sm font-medium font-mono text-fg">34,785.23</span>
+                    <span className="text-xs text-danger ml-1 font-mono">-0.42%</span>
                   </div>
                 </div>
               </div>
@@ -238,16 +238,16 @@ export function MarketStatusIndicators() {
               <h5 className="text-sm font-medium text-fg-muted mb-2">Market Sentiment</h5>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Fear & Greed</span>
-                  <span className="text-sm font-medium text-green-600">72 (Greed)</span>
+                  <span className="text-sm text-fg-muted">Fear & Greed</span>
+                  <span className="text-sm font-medium font-mono text-success">72 (Greed)</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">VIX</span>
-                  <span className="text-sm font-medium">18.45</span>
+                  <span className="text-sm text-fg-muted">VIX</span>
+                  <span className="text-sm font-medium font-mono text-fg">18.45</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Volume</span>
-                  <span className="text-sm font-medium text-blue-600">Above Avg</span>
+                  <span className="text-sm text-fg-muted">Volume</span>
+                  <span className="text-sm font-medium text-primary-tech-blue">Above Avg</span>
                 </div>
               </div>
             </div>
