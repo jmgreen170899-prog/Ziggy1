@@ -360,7 +360,7 @@ def _fetch_feed(url: str) -> list[dict[str, Any]]:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/sources")
+@router.get("/sources", response_model=None)
 def news_sources():
     """
     Return the configured/default RSS sources.
@@ -390,7 +390,7 @@ def news_sources():
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/headlines")
+@router.get("/headlines", response_model=None)
 def news_headlines(
     # NEW: compatibility with UI calling ?symbol=SYM
     symbol: str | None = Query(None, description="Single ticker (compat)"),
@@ -683,7 +683,7 @@ def news_headlines(
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/filings")
+@router.get("/filings", response_model=None)
 def news_filings(
     symbols: str | None = Query(
         None,
@@ -749,7 +749,7 @@ def news_filings(
 
 
 # NEW: compatibility alias the UI expects: /news/filings/recent?ticker=SYM&limit=5
-@router.get("/filings/recent")
+@router.get("/filings/recent", response_model=None)
 def news_filings_recent(
     ticker: str | None = Query(None, description="Single ticker (compat)"),
     limit: int = Query(5, ge=1, le=200),

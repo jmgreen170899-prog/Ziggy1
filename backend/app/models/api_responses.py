@@ -554,3 +554,205 @@ class PaperLabHealthResponse(BaseModel):
     total_trades: int | None = Field(None, description="Total trades")
     db_connected: bool | None = Field(None, description="Database connection status")
     details: dict[str, Any] | None = Field(None, description="Additional health details")
+
+
+# ── News Endpoint Response Models ────────────────────────────────────────────
+
+
+class NewsSourcesResponse(BaseModel):
+    """Response for news sources endpoint."""
+
+    sources: list[dict[str, Any]] = Field(..., description="List of news sources")
+    count: int = Field(..., description="Number of sources")
+
+
+class NewsHeadlinesResponse(BaseModel):
+    """Response for news headlines endpoint."""
+
+    headlines: list[dict[str, Any]] = Field(..., description="List of headlines")
+    count: int = Field(..., description="Number of headlines")
+    source: str | None = Field(None, description="News source")
+    ticker: str | None = Field(None, description="Ticker symbol if filtered")
+
+
+class FilingsResponse(BaseModel):
+    """Response for SEC filings endpoint."""
+
+    filings: list[dict[str, Any]] = Field(..., description="List of filings")
+    count: int = Field(..., description="Number of filings")
+    ticker: str | None = Field(None, description="Ticker symbol")
+
+
+class RecentFilingsResponse(BaseModel):
+    """Response for recent filings endpoint."""
+
+    filings: list[dict[str, Any]] = Field(..., description="Recent filings")
+    count: int = Field(..., description="Number of filings")
+    days: int | None = Field(None, description="Days covered")
+
+
+class NewsSearchResponse(BaseModel):
+    """Response for news search endpoint."""
+
+    results: list[dict[str, Any]] = Field(..., description="Search results")
+    count: int = Field(..., description="Number of results")
+    query: str | None = Field(None, description="Search query")
+
+
+# ── Alerts Endpoint Response Models ──────────────────────────────────────────
+
+
+class AlertsStatusResponse(BaseModel):
+    """Response for alerts status endpoint."""
+
+    status: str = Field(..., description="Alert system status")
+    enabled: bool = Field(..., description="Whether alerts are enabled")
+    active_alerts: int | None = Field(None, description="Number of active alerts")
+
+
+class AlertCreateResponse(BaseModel):
+    """Response for alert creation."""
+
+    alert_id: str = Field(..., description="Created alert ID")
+    message: str = Field(..., description="Creation status message")
+    alert: dict[str, Any] | None = Field(None, description="Alert details")
+
+
+class AlertListResponse(BaseModel):
+    """Response for alert list endpoint."""
+
+    alerts: list[dict[str, Any]] = Field(..., description="List of alerts")
+    count: int = Field(..., description="Number of alerts")
+
+
+class AlertHistoryResponse(BaseModel):
+    """Response for alert history endpoint."""
+
+    history: list[dict[str, Any]] = Field(..., description="Alert history entries")
+    count: int = Field(..., description="Number of history entries")
+
+
+class AlertDeleteResponse(BaseModel):
+    """Response for alert deletion."""
+
+    deleted: bool = Field(..., description="Whether deletion was successful")
+    alert_id: str = Field(..., description="Deleted alert ID")
+    message: str | None = Field(None, description="Status message")
+
+
+class AlertUpdateResponse(BaseModel):
+    """Response for alert enable/disable."""
+
+    updated: bool = Field(..., description="Whether update was successful")
+    alert_id: str = Field(..., description="Alert ID")
+    enabled: bool = Field(..., description="New enabled status")
+
+
+class AlertProductionStatusResponse(BaseModel):
+    """Response for production status endpoint."""
+
+    production: bool = Field(..., description="Whether in production mode")
+    status: str | None = Field(None, description="Status message")
+
+
+class AlertPingTestResponse(BaseModel):
+    """Response for alert ping test."""
+
+    success: bool = Field(..., description="Whether ping was successful")
+    message: str | None = Field(None, description="Status message")
+
+
+# ── Learning Endpoint Response Models ─────────────────────────────────────────
+
+
+class LearningStatusResponse(BaseModel):
+    """Response for learning status endpoint."""
+
+    status: str = Field(..., description="Learning system status")
+    enabled: bool = Field(..., description="Whether learning is enabled")
+    last_run: str | None = Field(None, description="Last run timestamp")
+    stats: dict[str, Any] | None = Field(None, description="Learning statistics")
+
+
+class DataSummaryResponse(BaseModel):
+    """Response for data summary endpoint."""
+
+    summary: dict[str, Any] = Field(..., description="Data summary statistics")
+    total_records: int | None = Field(None, description="Total records")
+    date_range: dict[str, Any] | None = Field(None, description="Date range covered")
+
+
+class RulesResponse(BaseModel):
+    """Response for rules endpoints."""
+
+    rules: list[dict[str, Any]] = Field(..., description="List of rules")
+    count: int = Field(..., description="Number of rules")
+    version: str | None = Field(None, description="Rules version")
+
+
+class RulesHistoryResponse(BaseModel):
+    """Response for rules history endpoint."""
+
+    history: list[dict[str, Any]] = Field(..., description="Rules history")
+    count: int = Field(..., description="Number of history entries")
+
+
+class LearningRunResponse(BaseModel):
+    """Response for learning run endpoint."""
+
+    run_id: str = Field(..., description="Run ID")
+    status: str = Field(..., description="Run status")
+    message: str | None = Field(None, description="Status message")
+
+
+class LearningResultsResponse(BaseModel):
+    """Response for learning results endpoints."""
+
+    results: dict[str, Any] | list[dict[str, Any]] = Field(..., description="Learning results")
+    count: int | None = Field(None, description="Number of results if list")
+
+
+class EvaluationResponse(BaseModel):
+    """Response for evaluation endpoint."""
+
+    evaluation: dict[str, Any] = Field(..., description="Evaluation metrics")
+    accuracy: float | None = Field(None, description="Accuracy score")
+    timestamp: str | None = Field(None, description="Evaluation timestamp")
+
+
+class GatesResponse(BaseModel):
+    """Response for gates endpoint."""
+
+    gates: dict[str, Any] = Field(..., description="Gate configurations")
+    count: int | None = Field(None, description="Number of gates")
+
+
+class GatesUpdateResponse(BaseModel):
+    """Response for gates update."""
+
+    updated: bool = Field(..., description="Whether update was successful")
+    gates: dict[str, Any] | None = Field(None, description="Updated gates")
+
+
+class CalibrationStatusResponse(BaseModel):
+    """Response for calibration status."""
+
+    status: str = Field(..., description="Calibration status")
+    last_calibration: str | None = Field(None, description="Last calibration timestamp")
+    metrics: dict[str, Any] | None = Field(None, description="Calibration metrics")
+
+
+class CalibrationBuildResponse(BaseModel):
+    """Response for calibration build."""
+
+    success: bool = Field(..., description="Whether build was successful")
+    message: str | None = Field(None, description="Status message")
+    calibration_id: str | None = Field(None, description="Calibration ID")
+
+
+class LearningHealthResponse(BaseModel):
+    """Response for learning health check."""
+
+    status: str = Field(..., description="Overall health status")
+    components: dict[str, bool] | None = Field(None, description="Component status")
+    errors: list[str] | None = Field(None, description="Error messages if any")

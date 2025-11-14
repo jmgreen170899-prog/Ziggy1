@@ -208,7 +208,7 @@ def _create_alert(symbol: str, atype: str, params: dict[str, Any]) -> dict[str, 
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/status")
+@router.get("/status", response_model=None)
 def alerts_status():
     """
     Return current scanning status. If full scheduler status is available,
@@ -306,7 +306,7 @@ def alerts_stop() -> AlertStatusResponse:
         )
 
 
-@router.post("/ping/test")
+@router.post("/ping/test", response_model=None)
 def alerts_ping_test():
     """
     Send a Telegram test message.
@@ -371,7 +371,7 @@ def _build_params(body: AlertCreateIn) -> dict[str, Any]:
     return params
 
 
-@router.post("/create")
+@router.post("/create", response_model=None)
 async def alerts_create(body: AlertCreateIn):
     """
     Generic alert creator - now uses production alert system.
@@ -481,7 +481,7 @@ def alerts_ma50_alias(body: dict[str, Any]) -> AlertResponse:
 
 
 # Optional: simple list for debugging the in-memory store (no auth changes)
-@router.get("/list")
+@router.get("/list", response_model=None)
 def alerts_list():
     """
     Returns alerts from production system or in-memory fallback.
@@ -532,7 +532,7 @@ def alerts_list():
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-@router.get("/production/status")
+@router.get("/production/status", response_model=None)
 def alerts_production_status():
     """Check if production alert system is available."""
     return {
@@ -542,7 +542,7 @@ def alerts_production_status():
     }
 
 
-@router.get("/history")
+@router.get("/history", response_model=None)
 def alerts_history(alert_id: str | None = None, symbol: str | None = None, limit: int = 100):
     """Get alert trigger history."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
@@ -573,7 +573,7 @@ def alerts_history(alert_id: str | None = None, symbol: str | None = None, limit
         }
 
 
-@router.delete("/{alert_id}")
+@router.delete("/{alert_id}", response_model=None)
 def delete_alert(alert_id: str):
     """Delete a specific alert."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
@@ -596,7 +596,7 @@ def delete_alert(alert_id: str):
         )
 
 
-@router.put("/{alert_id}/enable")
+@router.put("/{alert_id}/enable", response_model=None)
 def enable_alert(alert_id: str):
     """Enable a specific alert."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
@@ -619,7 +619,7 @@ def enable_alert(alert_id: str):
         )
 
 
-@router.put("/{alert_id}/disable")
+@router.put("/{alert_id}/disable", response_model=None)
 def disable_alert(alert_id: str):
     """Disable a specific alert."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
