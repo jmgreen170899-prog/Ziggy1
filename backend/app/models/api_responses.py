@@ -402,3 +402,106 @@ class CognitiveHealthResponse(BaseModel):
     components: dict[str, bool] = Field(..., description="Component availability")
     uptime_seconds: float | None = Field(None, description="System uptime")
     timestamp: str = Field(..., description="Health check timestamp")
+
+
+# ── Trading Endpoint Response Models ─────────────────────────────────────────
+
+
+class TradeHealthResponse(BaseModel):
+    """Response for trade health endpoint."""
+
+    ok: bool = Field(..., description="Overall health status")
+    service: str = Field(..., description="Service name")
+    scan: bool = Field(..., description="Whether scanning is enabled")
+    providers: list[str] = Field(..., description="List of market data providers")
+    provider_mode: str | None = Field(None, description="Provider mode (live/demo)")
+    telegram: dict[str, Any] | None = Field(None, description="Telegram bot status")
+
+
+class NotifyResponse(BaseModel):
+    """Response for notification endpoints."""
+
+    ok: bool = Field(..., description="Whether notification was successful")
+    message: str | None = Field(None, description="Status message")
+    error: str | None = Field(None, description="Error message if failed")
+
+
+class ScanStatusResponse(BaseModel):
+    """Response for scan status endpoint."""
+
+    enabled: bool = Field(..., description="Whether scanning is enabled")
+    status: str | None = Field(None, description="Status message")
+
+
+class MarketCalendarResponse(BaseModel):
+    """Response for market calendar endpoint."""
+
+    is_open: bool | None = Field(None, description="Whether market is currently open")
+    next_open: str | None = Field(None, description="Next market open time")
+    next_close: str | None = Field(None, description="Next market close time")
+    schedule: dict[str, Any] | None = Field(None, description="Market schedule")
+
+
+class OHLCResponse(BaseModel):
+    """Response for OHLC data endpoint."""
+
+    symbol: str = Field(..., description="Stock symbol")
+    data: list[dict[str, Any]] = Field(..., description="OHLC data points")
+    count: int = Field(..., description="Number of data points")
+    timeframe: str | None = Field(None, description="Data timeframe")
+    provider: str | None = Field(None, description="Data provider")
+
+
+class OrdersResponse(BaseModel):
+    """Response for orders endpoint."""
+
+    orders: list[dict[str, Any]] = Field(..., description="List of orders")
+    count: int = Field(..., description="Number of orders")
+    error: str | None = Field(None, description="Error message if unavailable")
+
+
+class PositionsResponse(BaseModel):
+    """Response for positions endpoint."""
+
+    positions: list[dict[str, Any]] = Field(..., description="List of positions")
+    count: int = Field(..., description="Number of positions")
+    error: str | None = Field(None, description="Error message if unavailable")
+
+
+class PortfolioResponse(BaseModel):
+    """Response for portfolio endpoint."""
+
+    portfolio: dict[str, Any] = Field(..., description="Portfolio summary")
+    positions: list[dict[str, Any]] | None = Field(None, description="List of positions")
+    cash: float | None = Field(None, description="Available cash")
+    equity: float | None = Field(None, description="Total equity")
+    error: str | None = Field(None, description="Error message if unavailable")
+
+
+class OrderCancelResponse(BaseModel):
+    """Response for order cancellation."""
+
+    ok: bool = Field(..., description="Whether cancellation was successful")
+    order_id: str = Field(..., description="Order ID")
+    message: str | None = Field(None, description="Status message")
+    error: str | None = Field(None, description="Error message if failed")
+
+
+class TradeExecutionResponse(BaseModel):
+    """Response for trade execution endpoint."""
+
+    ok: bool = Field(..., description="Whether execution was successful")
+    order_id: str | None = Field(None, description="Order ID if successful")
+    message: str | None = Field(None, description="Status message")
+    symbol: str | None = Field(None, description="Stock symbol")
+    quantity: int | None = Field(None, description="Order quantity")
+    side: str | None = Field(None, description="Order side (buy/sell)")
+    error: str | None = Field(None, description="Error message if failed")
+
+
+class TradeModeResponse(BaseModel):
+    """Response for trading mode update."""
+
+    ok: bool = Field(..., description="Whether mode update was successful")
+    mode: str = Field(..., description="Trading mode (paper/live)")
+    message: str | None = Field(None, description="Status message")
