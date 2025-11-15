@@ -64,7 +64,8 @@ def format_signal_message(signal_data: dict[str, Any]) -> str:
         "signal_type", signal_data.get("type", signal_data.get("brain_signal_type", ""))
     )
     regime = signal_data.get(
-        "regime_context", signal_data.get("regime", signal_data.get("market_regime", ""))
+        "regime_context",
+        signal_data.get("regime", signal_data.get("market_regime", "")),
     )
 
     if signal_type:
@@ -331,7 +332,9 @@ def _calculate_expiry(time_horizon: str) -> str:
 
 
 # Convenience function for backward compatibility
-def format_screener_alert(ticker: str, signal: str, confidence: float, reason: str = "") -> str:
+def format_screener_alert(
+    ticker: str, signal: str, confidence: float, reason: str = ""
+) -> str:
     """
     Format a basic screener alert (backward compatible).
 

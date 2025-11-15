@@ -12,7 +12,9 @@ SYSTEM = (
 )
 
 
-def run_agent(query: str, max_steps: int = 5, approvals: bool = False) -> dict[str, Any]:
+def run_agent(
+    query: str, max_steps: int = 5, approvals: bool = False
+) -> dict[str, Any]:
     """
     Simple tool-using loop:
       - send user query
@@ -46,11 +48,16 @@ def run_agent(query: str, max_steps: int = 5, approvals: bool = False) -> dict[s
         # Optional approval gate
         if approvals:
             # For real apps, persist and wait for user confirmation via UI/webhook.
-            return {"pending_approval": {"tool": tool, "args": args}, "steps": transcript_steps}
+            return {
+                "pending_approval": {"tool": tool, "args": args},
+                "steps": transcript_steps,
+            }
 
         # Execute tool
         observation = call_tool(tool, args)
-        transcript_steps.append({"tool": tool, "args": args, "observation": observation})
+        transcript_steps.append(
+            {"tool": tool, "args": args, "observation": observation}
+        )
 
         # Feed observation back to model
         messages.append(
@@ -66,6 +73,8 @@ def run_agent(query: str, max_steps: int = 5, approvals: bool = False) -> dict[s
                 ],
             }
         )
-        messages.append({"role": "tool", "name": tool, "content": json.dumps(observation)})
+        messages.append(
+            {"role": "tool", "name": tool, "content": json.dumps(observation)}
+        )
 
     return {"final": "(step limit reached)", "steps": transcript_steps}

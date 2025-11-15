@@ -15,7 +15,9 @@ import httpx
 
 
 class BackendHealthAudit:
-    def __init__(self, backend_path: str = ".", base_url: str = "http://localhost:8000"):
+    def __init__(
+        self, backend_path: str = ".", base_url: str = "http://localhost:8000"
+    ):
         self.backend_path = Path(backend_path)
         self.base_url = base_url
         self.artifacts_dir = Path("../artifacts/backend")
@@ -25,7 +27,11 @@ class BackendHealthAudit:
         """Run a shell command and capture output"""
         try:
             result = subprocess.run(
-                command, cwd=cwd or self.backend_path, capture_output=True, text=True, timeout=300
+                command,
+                cwd=cwd or self.backend_path,
+                capture_output=True,
+                text=True,
+                timeout=300,
             )
 
             return {
@@ -376,7 +382,9 @@ class BackendHealthAudit:
 
         audits = results["audits"]
         total_audits = len(audits)
-        successful_audits = sum(1 for audit in audits.values() if audit.get("success", False))
+        successful_audits = sum(
+            1 for audit in audits.values() if audit.get("success", False)
+        )
 
         report = f"""# Backend API Health Report
 
@@ -419,9 +427,13 @@ API URL: {results["base_url"]}
         for audit_name, audit_result in audits.items():
             if not audit_result.get("success", False):
                 if audit_name in ["endpoint_smoke", "health_endpoint"]:
-                    p0_issues.append(f"**{audit_name}**: {audit_result.get('error', 'Failed')}")
+                    p0_issues.append(
+                        f"**{audit_name}**: {audit_result.get('error', 'Failed')}"
+                    )
                 else:
-                    p1_issues.append(f"**{audit_name}**: {audit_result.get('error', 'Failed')}")
+                    p1_issues.append(
+                        f"**{audit_name}**: {audit_result.get('error', 'Failed')}"
+                    )
 
         if p0_issues:
             report += "## 🚨 P0 Issues (Critical)\n\n"
@@ -451,12 +463,16 @@ All detailed reports are available in: `{results["artifacts_dir"]}/`
 """
 
         for i, issue in enumerate(p0_issues, 1):
-            report += f"- [ ] **P0-{i}**: {issue.replace('**', '').replace(':', ' -')}\\n"
+            report += (
+                f"- [ ] **P0-{i}**: {issue.replace('**', '').replace(':', ' -')}\\n"
+            )
 
         report += "\\n### High Priority (P1)\\n"
 
         for i, issue in enumerate(p1_issues, 1):
-            report += f"- [ ] **P1-{i}**: {issue.replace('**', '').replace(':', ' -')}\\n"
+            report += (
+                f"- [ ] **P1-{i}**: {issue.replace('**', '').replace(':', ' -')}\\n"
+            )
 
         return report
 

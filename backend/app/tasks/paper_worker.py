@@ -176,7 +176,9 @@ class PaperWorker:
             return run_id
 
         except Exception as e:
-            logger.error("Failed to start paper trading worker", extra={"error": str(e)})
+            logger.error(
+                "Failed to start paper trading worker", extra={"error": str(e)}
+            )
             self.is_running = False
             raise
 
@@ -253,7 +255,9 @@ class PaperWorker:
                     self.last_data_fetch.isoformat() if self.last_data_fetch else None
                 ),
                 "last_learning_update": (
-                    self.last_learning_update.isoformat() if self.last_learning_update else None
+                    self.last_learning_update.isoformat()
+                    if self.last_learning_update
+                    else None
                 ),
             },
             "allocator_performance": self.allocator.get_performance_summary(),
@@ -274,7 +278,9 @@ class PaperWorker:
         task = asyncio.create_task(self._health_monitoring_loop())
         self.worker_tasks.append(task)
 
-        logger.info("Background tasks started", extra={"task_count": len(self.worker_tasks)})
+        logger.info(
+            "Background tasks started", extra={"task_count": len(self.worker_tasks)}
+        )
 
     async def _data_processing_loop(self) -> None:
         """Main data processing loop."""
@@ -288,7 +294,9 @@ class PaperWorker:
 
                 except Exception as e:
                     await self._handle_error("data_processing", e)
-                    await asyncio.sleep(min(60, self.data_fetch_interval * 2))  # Backoff
+                    await asyncio.sleep(
+                        min(60, self.data_fetch_interval * 2)
+                    )  # Backoff
 
         except asyncio.CancelledError:
             logger.info("Data processing loop cancelled")
@@ -328,13 +336,17 @@ class PaperWorker:
 
         # Get universe from engine parameters
         engine_status = await self.engine.get_status()
-        universe = engine_status.get("params", {}).get("universe", ["AAPL", "MSFT", "NVDA"])
+        universe = engine_status.get("params", {}).get(
+            "universe", ["AAPL", "MSFT", "NVDA"]
+        )
 
         # Generate synthetic price data
         for symbol in universe:
             # Simple random walk simulation
             base_price = 100.0 if not symbol.startswith("^") else 4000.0
-            price_change = (hash(symbol + str(current_time.minute)) % 1000 - 500) / 10000.0
+            price_change = (
+                hash(symbol + str(current_time.minute)) % 1000 - 500
+            ) / 10000.0
 
             price = base_price * (1 + price_change)
             volume = 1000000 + (hash(symbol + str(current_time.second)) % 500000)
@@ -451,7 +463,9 @@ class PaperWorker:
         self.learning_updates += 1
         self.last_learning_update = datetime.utcnow()
 
-        logger.debug("Learning update completed", extra={"update_count": self.learning_updates})
+        logger.debug(
+            "Learning update completed", extra={"update_count": self.learning_updates}
+        )
 
     async def _health_monitoring_loop(self) -> None:
         """Health monitoring and error recovery loop."""

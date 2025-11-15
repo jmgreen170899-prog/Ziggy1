@@ -24,7 +24,9 @@ logger = logging.getLogger(__name__)
 MAX_DD_DAY = float(os.getenv("MAX_DD_DAY", "0.03"))  # 3% daily drawdown
 MAX_DD_WEEK = float(os.getenv("MAX_DD_WEEK", "0.06"))  # 6% weekly drawdown
 MAX_EXPOSURE = float(os.getenv("MAX_EXPOSURE", "1.50"))  # 150% gross exposure
-MAX_SINGLE_TRADE_RISK = float(os.getenv("MAX_SINGLE_TRADE_RISK", "0.01"))  # 1% per trade
+MAX_SINGLE_TRADE_RISK = float(
+    os.getenv("MAX_SINGLE_TRADE_RISK", "0.01")
+)  # 1% per trade
 MAX_DAILY_TRADES = int(os.getenv("MAX_DAILY_TRADES", "100"))
 MAX_CONCURRENT_ORDERS = int(os.getenv("MAX_CONCURRENT_ORDERS", "50"))
 
@@ -33,7 +35,9 @@ INITIAL_PORTFOLIO_VALUE = float(os.getenv("INITIAL_PORTFOLIO_VALUE", "1000000"))
 MIN_CASH_RESERVE = float(os.getenv("MIN_CASH_RESERVE", "0.05"))  # 5% cash reserve
 
 # Regime-based controls
-REGIME_KILL_SWITCHES = os.getenv("REGIME_KILL_SWITCHES", "crash_mode,vol_hi_liq_lo").split(",")
+REGIME_KILL_SWITCHES = os.getenv(
+    "REGIME_KILL_SWITCHES", "crash_mode,vol_hi_liq_lo"
+).split(",")
 REGIME_EXPOSURE_LIMITS = json.loads(
     os.getenv("REGIME_EXPOSURE_LIMITS", '{"vol_hi": 0.75, "liq_lo": 0.50}')
 )
@@ -183,7 +187,9 @@ class GuardrailSystem:
                 violations.append(GuardrailViolation.WEEKLY_DRAWDOWN_EXCEEDED)
 
             # 3. Check exposure limits
-            exposure_check = self._check_exposure_limits(symbol, quantity, estimated_price)
+            exposure_check = self._check_exposure_limits(
+                symbol, quantity, estimated_price
+            )
             check_details["exposure"] = exposure_check
             if not exposure_check["ok"]:
                 violations.append(GuardrailViolation.EXPOSURE_LIMIT_EXCEEDED)
@@ -275,7 +281,9 @@ class GuardrailSystem:
             "portfolio_value": self.current_metrics.portfolio_value,
         }
 
-    def _check_exposure_limits(self, symbol: str, quantity: float, price: float) -> dict[str, Any]:
+    def _check_exposure_limits(
+        self, symbol: str, quantity: float, price: float
+    ) -> dict[str, Any]:
         """Check exposure limits after proposed trade."""
         trade_value = quantity * price  # Signed value
 
@@ -332,7 +340,9 @@ class GuardrailSystem:
             "ok": ok,
             "current_orders": self.current_metrics.concurrent_orders,
             "max_orders": MAX_CONCURRENT_ORDERS,
-            "remaining": max(0, MAX_CONCURRENT_ORDERS - self.current_metrics.concurrent_orders),
+            "remaining": max(
+                0, MAX_CONCURRENT_ORDERS - self.current_metrics.concurrent_orders
+            ),
         }
 
     def _check_cash_reserve(self, required_cash: float) -> dict[str, Any]:
@@ -358,7 +368,9 @@ class GuardrailSystem:
 
         # Check kill switches
         kill_switch_active = any(
-            ks.strip().lower() in regime_lower for ks in REGIME_KILL_SWITCHES if ks.strip()
+            ks.strip().lower() in regime_lower
+            for ks in REGIME_KILL_SWITCHES
+            if ks.strip()
         )
 
         # Check regime exposure limits

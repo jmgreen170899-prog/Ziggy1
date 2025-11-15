@@ -15,7 +15,9 @@ def pytest_collection_modifyitems(config, items):
     Automatically skip tests marked `performance` unless RUN_PERF_TESTS=1.
     """
     if os.environ.get("RUN_PERF_TESTS") != "1":
-        skip_perf = pytest.mark.skip(reason="Skip performance tests unless RUN_PERF_TESTS=1")
+        skip_perf = pytest.mark.skip(
+            reason="Skip performance tests unless RUN_PERF_TESTS=1"
+        )
         for item in items:
             if "performance" in item.keywords:
                 item.add_marker(skip_perf)

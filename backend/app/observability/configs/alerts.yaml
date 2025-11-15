@@ -1,5 +1,5 @@
 # Alert Configuration Template
-# 
+#
 # This file defines alert rules for monitoring ZiggyAI production services.
 # Alerts are based on SLO targets and critical system metrics.
 #

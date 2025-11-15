@@ -90,7 +90,9 @@ class Signal:
     raw_confidence: float | None = None  # Original confidence before calibration
     confidence_adjustment: float | None = None  # How much calibration changed it
     decision_quality: dict[str, Any] = field(default_factory=dict)  # Quality metrics
-    similar_outcomes: dict[str, Any] = field(default_factory=dict)  # Similar past decisions
+    similar_outcomes: dict[str, Any] = field(
+        default_factory=dict
+    )  # Similar past decisions
     lessons_learned: list[str] = field(default_factory=list)  # Key insights
 
     def __post_init__(self):
@@ -99,7 +101,9 @@ class Signal:
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for API serialization."""
-        ts = self.timestamp.isoformat() if isinstance(self.timestamp, datetime) else None
+        ts = (
+            self.timestamp.isoformat() if isinstance(self.timestamp, datetime) else None
+        )
         return {
             "ticker": self.ticker,
             "direction": self.direction.value,
@@ -189,11 +193,20 @@ class SignalGenerator:
             # Defensive: handle None, status dict, or missing keys
             if (
                 features is None
-                or (isinstance(features, dict) and features.get("status") == "insufficient_data")
+                or (
+                    isinstance(features, dict)
+                    and features.get("status") == "insufficient_data"
+                )
                 or not isinstance(features, dict)
             ):
-                logger.warning(f"[SIGNALS] Skipping {ticker}: insufficient/invalid features")
-                return {"ticker": ticker, "signal": None, "reason": "insufficient_features"}
+                logger.warning(
+                    f"[SIGNALS] Skipping {ticker}: insufficient/invalid features"
+                )
+                return {
+                    "ticker": ticker,
+                    "signal": None,
+                    "reason": "insufficient_features",
+                }
 
             # List required features for signal generation
             required_keys = [
@@ -206,10 +219,18 @@ class SignalGenerator:
                 "slope_20d",
                 "new_high_20d",
             ]
-            missing = [k for k in required_keys if k not in features or features[k] is None]
+            missing = [
+                k for k in required_keys if k not in features or features[k] is None
+            ]
             if missing:
-                logger.warning(f"[SIGNALS] Skipping {ticker}: missing features {missing}")
-                return {"ticker": ticker, "signal": None, "reason": f"missing_features: {missing}"}
+                logger.warning(
+                    f"[SIGNALS] Skipping {ticker}: missing features {missing}"
+                )
+                return {
+                    "ticker": ticker,
+                    "signal": None,
+                    "reason": f"missing_features: {missing}",
+                }
 
             if regime is None:
                 regime = get_regime_state()
@@ -271,15 +292,19 @@ class SignalGenerator:
             )
 
             # Confidence based on regime
-            base_confidence = self.win_rates[SignalType.MEAN_REVERSION].get(regime.regime, 0.5)
+            base_confidence = self.win_rates[SignalType.MEAN_REVERSION].get(
+                regime.regime, 0.5
+            )
 
             # Adjust based on signal strength
-            rsi_strength = (self.params["mr_rsi_oversold"] - features["rsi_14"]) / self.params[
-                "mr_rsi_oversold"
-            ]
+            rsi_strength = (
+                self.params["mr_rsi_oversold"] - features["rsi_14"]
+            ) / self.params["mr_rsi_oversold"]
             z_strength = abs(features["z_score_20"]) / 2.0  # Normalize to 0-1
 
-            confidence = base_confidence * (0.5 + 0.25 * rsi_strength + 0.25 * z_strength)
+            confidence = base_confidence * (
+                0.5 + 0.25 * rsi_strength + 0.25 * z_strength
+            )
             confidence = min(confidence, 0.95)  # Cap at 95%
 
         # Short signal conditions (only in risk-on or chop)
@@ -296,7 +321,9 @@ class SignalGenerator:
                 f"Z-score {features['z_score_20']:.2f} above {self.params['mr_z_score_short']}"
             )
 
-            base_confidence = self.win_rates[SignalType.MEAN_REVERSION].get(regime.regime, 0.5)
+            base_confidence = self.win_rates[SignalType.MEAN_REVERSION].get(
+                regime.regime, 0.5
+            )
             confidence = base_confidence * 0.8  # Lower confidence for shorts
 
         if signal_direction == SignalDirection.FLAT:
@@ -354,7 +381,9 @@ class SignalGenerator:
             reasons.append(f"Strong uptrend: {features['slope_20d']:.2f}% slope")
 
             # Higher confidence in risk-on regime
-            base_confidence = self.win_rates[SignalType.MOMENTUM].get(regime.regime, 0.5)
+            base_confidence = self.win_rates[SignalType.MOMENTUM].get(
+                regime.regime, 0.5
+            )
 
             # Adjust for trend strength
             trend_strength = min(features["slope_20d"] / 2.0, 1.0)  # Normalize
@@ -404,7 +433,9 @@ class SignalGenerator:
         same_direction = [s for s in signals if s.direction == best_signal.direction]
         if len(same_direction) > 1:
             confidence_boost = 0.1 * (len(same_direction) - 1)
-            best_signal.confidence = min(best_signal.confidence + confidence_boost, 0.95)
+            best_signal.confidence = min(
+                best_signal.confidence + confidence_boost, 0.95
+            )
 
             # Update reason to reflect combination
             signal_types = [s.signal_type.value for s in same_direction]
@@ -429,7 +460,9 @@ class SignalGenerator:
 
         return stop_loss, take_profit
 
-    def _enrich_signal_with_context(self, signal: Signal, features: dict[str, Any]) -> Signal:
+    def _enrich_signal_with_context(
+        self, signal: Signal, features: dict[str, Any]
+    ) -> Signal:
         """
         Enrich signal with decision context for improved decision-making.
 
@@ -479,13 +512,18 @@ class SignalGenerator:
             signal.lessons_learned = context.lessons_learned
 
             # Update reason to include calibration info
-            if signal.confidence_adjustment and abs(signal.confidence_adjustment) > 0.05:
+            if (
+                signal.confidence_adjustment
+                and abs(signal.confidence_adjustment) > 0.05
+            ):
                 adjustment_str = (
                     f"increased by {signal.confidence_adjustment:.1%}"
                     if signal.confidence_adjustment > 0
                     else f"decreased by {abs(signal.confidence_adjustment):.1%}"
                 )
-                signal.reason += f" | Confidence {adjustment_str} based on historical performance"
+                signal.reason += (
+                    f" | Confidence {adjustment_str} based on historical performance"
+                )
 
             return signal
 

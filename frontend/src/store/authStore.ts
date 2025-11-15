@@ -1,19 +1,19 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { 
-  User, 
-  AuthTokens, 
-  SecurityEvent, 
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import {
+  User,
+  AuthTokens,
+  SecurityEvent,
   DeviceSession,
-  SignUpRequest, 
-  SignInRequest, 
-  PasswordResetRequest, 
+  SignUpRequest,
+  SignInRequest,
+  PasswordResetRequest,
   ResetPasswordRequest,
   UpdateProfileRequest,
   UpdateEmailRequest,
   UpdatePasswordRequest,
-  createAuthProvider
-} from '@/services/auth/localAuthProvider';
+  createAuthProvider,
+} from "@/services/auth/localAuthProvider";
 
 interface AuthState {
   // State
@@ -23,7 +23,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   requireTotp: boolean;
-  
+
   // Actions
   signUp: (data: SignUpRequest) => Promise<{ needEmailVerify: boolean }>;
   verifyEmail: (email: string, code: string) => Promise<void>;
@@ -31,7 +31,11 @@ interface AuthState {
   signOut: () => Promise<void>;
   requestPasswordReset: (data: PasswordResetRequest) => Promise<void>;
   resetPassword: (data: ResetPasswordRequest) => Promise<void>;
-  enableTotp: () => Promise<{ secret: string; otpauthUrl: string; recoveryCodes: string[] }>;
+  enableTotp: () => Promise<{
+    secret: string;
+    otpauthUrl: string;
+    recoveryCodes: string[];
+  }>;
   verifyTotp: (code: string) => Promise<void>;
   disableTotp: (code: string) => Promise<void>;
   updateProfile: (data: UpdateProfileRequest) => Promise<void>;
@@ -48,8 +52,8 @@ interface AuthState {
 
 // Get auth provider based on environment
 const getAuthProvider = () => {
-  const providerType = process.env.NEXT_PUBLIC_AUTH_PROVIDER || 'local';
-  return createAuthProvider(providerType as 'local' | 'api');
+  const providerType = process.env.NEXT_PUBLIC_AUTH_PROVIDER || "local";
+  return createAuthProvider(providerType as "local" | "api");
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -72,9 +76,9 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: false });
           return { needEmailVerify: result.needEmailVerify };
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Sign up failed' 
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : "Sign up failed",
           });
           throw error;
         }
@@ -86,15 +90,18 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           const result = await authProvider.verifyEmail({ email, code });
-          set({ 
+          set({
             user: result.user,
             isAuthenticated: true,
-            isLoading: false 
+            isLoading: false,
           });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Email verification failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Email verification failed",
           });
           throw error;
         }
@@ -106,37 +113,39 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           const result = await authProvider.signIn(data);
-          
+
           if (result.requireTotp) {
-            set({ 
+            set({
               requireTotp: true,
-              isLoading: false 
+              isLoading: false,
             });
             return;
           }
 
           // Calculate expiration based on Remember Me preference
-          const sessionTTL = process.env.NEXT_PUBLIC_AUTH_SESSION_TTL_MIN 
+          const sessionTTL = process.env.NEXT_PUBLIC_AUTH_SESSION_TTL_MIN
             ? parseInt(process.env.NEXT_PUBLIC_AUTH_SESSION_TTL_MIN) * 60 * 1000
-            : (data.remember ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000); // 30 days or 1 day
-            
+            : data.remember
+              ? 30 * 24 * 60 * 60 * 1000
+              : 24 * 60 * 60 * 1000; // 30 days or 1 day
+
           const tokens: AuthTokens = {
             accessToken: result.accessToken,
             refreshToken: result.refreshToken,
             expiresAt: Date.now() + sessionTTL,
           };
 
-          set({ 
+          set({
             user: result.user,
             tokens,
             isAuthenticated: true,
             isLoading: false,
-            requireTotp: false
+            requireTotp: false,
           });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Sign in failed' 
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : "Sign in failed",
           });
           throw error;
         }
@@ -148,18 +157,18 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           await authProvider.signOut();
-          set({ 
+          set({
             user: null,
             tokens: null,
             isAuthenticated: false,
             isLoading: false,
             error: null,
-            requireTotp: false
+            requireTotp: false,
           });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Sign out failed' 
+          set({
+            isLoading: false,
+            error: error instanceof Error ? error.message : "Sign out failed",
           });
           throw error;
         }
@@ -173,9 +182,12 @@ export const useAuthStore = create<AuthState>()(
           await authProvider.requestPasswordReset(data);
           set({ isLoading: false });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Password reset request failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Password reset request failed",
           });
           throw error;
         }
@@ -189,9 +201,10 @@ export const useAuthStore = create<AuthState>()(
           await authProvider.resetPassword(data);
           set({ isLoading: false });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Password reset failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error ? error.message : "Password reset failed",
           });
           throw error;
         }
@@ -206,9 +219,10 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: false });
           return result;
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Failed to enable 2FA' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error ? error.message : "Failed to enable 2FA",
           });
           throw error;
         }
@@ -220,19 +234,22 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           await authProvider.verifyTotp({ code });
-          
+
           // Update user in state
           const { user } = get();
           if (user) {
-            set({ 
+            set({
               user: { ...user, totpEnabled: true },
-              isLoading: false 
+              isLoading: false,
             });
           }
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : '2FA verification failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "2FA verification failed",
           });
           throw error;
         }
@@ -244,19 +261,20 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           await authProvider.disableTotp({ code });
-          
+
           // Update user in state
           const { user } = get();
           if (user) {
-            set({ 
+            set({
               user: { ...user, totpEnabled: false },
-              isLoading: false 
+              isLoading: false,
             });
           }
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Failed to disable 2FA' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error ? error.message : "Failed to disable 2FA",
           });
           throw error;
         }
@@ -268,14 +286,15 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           const result = await authProvider.updateProfile(data);
-          set({ 
+          set({
             user: result.user,
-            isLoading: false 
+            isLoading: false,
           });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Profile update failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error ? error.message : "Profile update failed",
           });
           throw error;
         }
@@ -287,14 +306,15 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           const result = await authProvider.updateEmail(data);
-          set({ 
+          set({
             user: result.user,
-            isLoading: false 
+            isLoading: false,
           });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Email update failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error ? error.message : "Email update failed",
           });
           throw error;
         }
@@ -308,9 +328,10 @@ export const useAuthStore = create<AuthState>()(
           await authProvider.updatePassword(data);
           set({ isLoading: false });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Password update failed' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error ? error.message : "Password update failed",
           });
           throw error;
         }
@@ -322,8 +343,11 @@ export const useAuthStore = create<AuthState>()(
           const authProvider = getAuthProvider();
           return await authProvider.getSecurityLog();
         } catch (error) {
-          set({ 
-            error: error instanceof Error ? error.message : 'Failed to load security log' 
+          set({
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to load security log",
           });
           throw error;
         }
@@ -335,8 +359,9 @@ export const useAuthStore = create<AuthState>()(
           const authProvider = getAuthProvider();
           return await authProvider.getDevices();
         } catch (error) {
-          set({ 
-            error: error instanceof Error ? error.message : 'Failed to load devices' 
+          set({
+            error:
+              error instanceof Error ? error.message : "Failed to load devices",
           });
           throw error;
         }
@@ -350,9 +375,12 @@ export const useAuthStore = create<AuthState>()(
           await authProvider.revokeDevice({ sessionId });
           set({ isLoading: false });
         } catch (error) {
-          set({ 
-            isLoading: false, 
-            error: error instanceof Error ? error.message : 'Failed to revoke device' 
+          set({
+            isLoading: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to revoke device",
           });
           throw error;
         }
@@ -363,18 +391,18 @@ export const useAuthStore = create<AuthState>()(
         try {
           const { tokens } = get();
           if (!tokens) {
-            throw new Error('No refresh token available');
+            throw new Error("No refresh token available");
           }
 
           const authProvider = getAuthProvider();
           const newTokens = await authProvider.refresh();
-          
-          set({ 
+
+          set({
             tokens: {
               accessToken: newTokens.accessToken,
               refreshToken: newTokens.refreshToken,
               expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-            }
+            },
           });
         } catch (error) {
           // If refresh fails, sign out user
@@ -388,31 +416,31 @@ export const useAuthStore = create<AuthState>()(
         try {
           const authProvider = getAuthProvider();
           const session = await authProvider.getSession();
-          
+
           if (session.user && session.accessToken) {
             const tokens: AuthTokens = {
               accessToken: session.accessToken,
-              refreshToken: session.refreshToken || '',
+              refreshToken: session.refreshToken || "",
               expiresAt: Date.now() + 24 * 60 * 60 * 1000,
             };
 
-            set({ 
+            set({
               user: session.user,
               tokens,
-              isAuthenticated: true 
+              isAuthenticated: true,
             });
           } else {
-            set({ 
+            set({
               user: null,
               tokens: null,
-              isAuthenticated: false 
+              isAuthenticated: false,
             });
           }
         } catch {
-          set({ 
+          set({
             user: null,
             tokens: null,
-            isAuthenticated: false 
+            isAuthenticated: false,
           });
         }
       },
@@ -424,18 +452,18 @@ export const useAuthStore = create<AuthState>()(
       setLoading: (loading: boolean) => set({ isLoading: loading }),
     }),
     {
-      name: 'ziggy_auth_store',
+      name: "ziggy_auth_store",
       partialize: (state) => ({
         user: state.user,
         tokens: state.tokens,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );
 
 // Auto-check session on app load
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   useAuthStore.getState().checkSession();
 }
 

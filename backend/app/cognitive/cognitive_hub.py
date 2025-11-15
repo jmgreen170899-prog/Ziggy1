@@ -63,21 +63,31 @@ class CognitiveHub:
         self.episodic_memory: EpisodicMemory | None = None
 
         if enable_meta_learning:
-            self.meta_learner = MetaLearner(strategies_dir=self.data_dir / "meta_learning")
+            self.meta_learner = MetaLearner(
+                strategies_dir=self.data_dir / "meta_learning"
+            )
             logger.info("Meta-learning system: ACTIVE")
 
         if enable_counterfactual:
-            self.counterfactual_engine = CounterfactualEngine(enable_shadow_portfolios=True)
+            self.counterfactual_engine = CounterfactualEngine(
+                enable_shadow_portfolios=True
+            )
             logger.info("Counterfactual reasoning: ACTIVE")
 
         if enable_episodic_memory:
-            self.episodic_memory = EpisodicMemory(memory_dir=self.data_dir / "episodic_memory")
+            self.episodic_memory = EpisodicMemory(
+                memory_dir=self.data_dir / "episodic_memory"
+            )
             logger.info("Episodic memory: ACTIVE")
 
         logger.info("CognitiveHub initialized successfully")
 
     def enhance_decision(
-        self, ticker: str, proposed_action: str, market_context: dict[str, Any], confidence: float
+        self,
+        ticker: str,
+        proposed_action: str,
+        market_context: dict[str, Any],
+        confidence: float,
     ) -> dict[str, Any]:
         """
         Enhance a trading decision with cognitive intelligence.
@@ -121,7 +131,9 @@ class CognitiveHub:
 
         # Episodic memory: Find similar past situations
         if self.episodic_memory:
-            similar_episodes = self.episodic_memory.recall_similar_episodes(market_context, k=3)
+            similar_episodes = self.episodic_memory.recall_similar_episodes(
+                market_context, k=3
+            )
 
             if similar_episodes:
                 # Calculate success rate of similar episodes
@@ -135,11 +147,15 @@ class CognitiveHub:
                 }
 
                 # Get lessons from similar episodes
-                lessons = self.episodic_memory.get_lessons_from_similar_episodes(market_context)
+                lessons = self.episodic_memory.get_lessons_from_similar_episodes(
+                    market_context
+                )
                 enhanced["episodic_memory"]["lessons"] = lessons
 
                 for lesson in lessons[:2]:  # Top 2 lessons
-                    enhanced["cognitive_insights"].append(f"Historical lesson: {lesson}")
+                    enhanced["cognitive_insights"].append(
+                        f"Historical lesson: {lesson}"
+                    )
 
                 # Adjust confidence based on historical success
                 confidence_adjustment = (success_rate - 0.5) * 0.2
@@ -229,7 +245,9 @@ class CognitiveHub:
 
         # Perform counterfactual analysis
         if self.counterfactual_engine:
-            self.counterfactual_engine.analyze_decision(decision, outcome, current_prices)
+            self.counterfactual_engine.analyze_decision(
+                decision, outcome, current_prices
+            )
 
         # Store episode in memory
         if self.episodic_memory:
@@ -269,9 +287,9 @@ class CognitiveHub:
             status["subsystems"]["meta_learning"] = self.meta_learner.get_status()
 
         if self.counterfactual_engine:
-            status["subsystems"]["counterfactual"] = (
-                self.counterfactual_engine.get_aggregate_insights()
-            )
+            status["subsystems"][
+                "counterfactual"
+            ] = self.counterfactual_engine.get_aggregate_insights()
 
             if self.counterfactual_engine.enable_shadow_portfolios:
                 status["subsystems"]["shadow_portfolios"] = (

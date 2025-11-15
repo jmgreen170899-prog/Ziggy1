@@ -49,7 +49,13 @@ services:
         uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
       "
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').read()==b'ok' else 1)"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').read()==b'ok' else 1)",
+        ]
       interval: *health_interval
       timeout: *health_timeout
       retries: *health_retries
@@ -76,7 +82,13 @@ services:
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "node", "-e", "const http=require('http');const req=http.request({host:'localhost',port:5173,path:'/'},res=>{process.exit(res.statusCode>=200&&res.statusCode<500?0:1)});req.on('error',()=>process.exit(1));req.end();"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "const http=require('http');const req=http.request({host:'localhost',port:5173,path:'/'},res=>{process.exit(res.statusCode>=200&&res.statusCode<500?0:1)});req.on('error',()=>process.exit(1));req.end();",
+        ]
       interval: *health_interval
       timeout: *health_timeout
       retries: 20
@@ -91,7 +103,11 @@ services:
     volumes:
       - qdrant_storage:/qdrant/storage
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:6333/ready >/dev/null 2>&1 || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:6333/ready >/dev/null 2>&1 || exit 1",
+        ]
       interval: *health_interval
       timeout: *health_timeout
       retries: *health_retries
@@ -110,7 +126,11 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ziggy} -d ${POSTGRES_DB:-ziggy}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-ziggy} -d ${POSTGRES_DB:-ziggy}",
+        ]
       interval: *health_interval
       timeout: *health_timeout
       retries: *health_retries

@@ -50,7 +50,9 @@ def ensure_dev_user_portfolio(user_id: str = "dev-user") -> dict[str, Any]:
     db = SessionLocal()
     try:
         # Check if portfolio exists
-        portfolio = db.query(Portfolio).filter(Portfolio.name == f"{user_id}_portfolio").first()
+        portfolio = (
+            db.query(Portfolio).filter(Portfolio.name == f"{user_id}_portfolio").first()
+        )
 
         if portfolio:
             logger.info(f"Dev portfolio exists: ${portfolio.current_value:.2f} value")
@@ -71,7 +73,9 @@ def ensure_dev_user_portfolio(user_id: str = "dev-user") -> dict[str, Any]:
             initial_capital=Decimal(str(DEFAULT_PORTFOLIO_CONFIG["initial_capital"])),
             current_value=Decimal(str(DEFAULT_PORTFOLIO_CONFIG["initial_capital"])),
             cash_balance=Decimal(str(DEFAULT_PORTFOLIO_CONFIG["initial_capital"])),
-            max_position_size=Decimal(str(DEFAULT_PORTFOLIO_CONFIG["max_position_size"])),
+            max_position_size=Decimal(
+                str(DEFAULT_PORTFOLIO_CONFIG["max_position_size"])
+            ),
             risk_tolerance=DEFAULT_PORTFOLIO_CONFIG["risk_tolerance"],
             is_active=True,
             is_paper_trading=True,
@@ -124,7 +128,8 @@ def configure_autonomous_trading(portfolio_id: int) -> dict[str, Any]:
         # Configure risk parameters
         config = {
             "portfolio_id": portfolio_id,
-            "max_position_size_pct": DEFAULT_PORTFOLIO_CONFIG["max_position_size"] * 100,
+            "max_position_size_pct": DEFAULT_PORTFOLIO_CONFIG["max_position_size"]
+            * 100,
             "max_daily_loss": DEFAULT_PORTFOLIO_CONFIG["max_daily_loss"],
             "max_positions": DEFAULT_PORTFOLIO_CONFIG["max_positions"],
             "auto_trading": DEFAULT_PORTFOLIO_CONFIG["auto_trading_enabled"],
@@ -164,7 +169,9 @@ def get_portfolio_status(user_id: str = "dev-user") -> dict[str, Any]:
 
     db = SessionLocal()
     try:
-        portfolio = db.query(Portfolio).filter(Portfolio.name == f"{user_id}_portfolio").first()
+        portfolio = (
+            db.query(Portfolio).filter(Portfolio.name == f"{user_id}_portfolio").first()
+        )
 
         if not portfolio:
             return {"status": "not_found", "message": "Portfolio not found for user"}
@@ -202,7 +209,9 @@ def get_portfolio_status(user_id: str = "dev-user") -> dict[str, Any]:
         db.close()
 
 
-def fund_portfolio(user_id: str = "dev-user", additional_capital: float = 0.0) -> dict[str, Any]:
+def fund_portfolio(
+    user_id: str = "dev-user", additional_capital: float = 0.0
+) -> dict[str, Any]:
     """
     Add additional capital to the dev user's portfolio.
 
@@ -224,7 +233,9 @@ def fund_portfolio(user_id: str = "dev-user", additional_capital: float = 0.0) -
 
     db = SessionLocal()
     try:
-        portfolio = db.query(Portfolio).filter(Portfolio.name == f"{user_id}_portfolio").first()
+        portfolio = (
+            db.query(Portfolio).filter(Portfolio.name == f"{user_id}_portfolio").first()
+        )
 
         if not portfolio:
             return {"status": "error", "error": "Portfolio not found"}

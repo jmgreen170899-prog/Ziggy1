@@ -41,6 +41,7 @@ def execute_trade(...):
 ```
 
 **Key Features:**
+
 - ✅ Returns fake dev user when auth disabled
 - ✅ Enforces authentication when enabled
 - ✅ Checks scopes for authorized access
@@ -66,6 +67,7 @@ Updated `backend/app/main.py` to document security in OpenAPI:
 ```
 
 **Public Endpoints (Always Available):**
+
 - `/health` - Basic health check
 - `/health/detailed` - Detailed health
 - `/docs` - API documentation
@@ -78,13 +80,16 @@ Updated `backend/app/main.py` to document security in OpenAPI:
 Created `backend/app/api/routes_auth.py` with complete auth flow:
 
 **POST /api/auth/login**
+
 ```json
 {
   "username": "ziggy",
   "password": "secret"
 }
 ```
+
 Returns JWT token:
+
 ```json
 {
   "access_token": "eyJ...",
@@ -98,6 +103,7 @@ Returns JWT token:
 ```
 
 **GET /api/auth/status**
+
 ```json
 {
   "authenticated": false,
@@ -123,11 +129,13 @@ Refreshes JWT token.
 Leveraged existing `backend/app/core/security.py`:
 
 **Authentication Methods:**
+
 - ✅ JWT Bearer tokens
 - ✅ API Key (X-API-Key header)
 - ✅ Flexible auth (supports both)
 
 **User Scopes:**
+
 - `admin` - Full access
 - `trading` - Trading execution
 - `paper_trading` - Paper trading
@@ -136,6 +144,7 @@ Leveraged existing `backend/app/core/security.py`:
 - `read_only` - Read-only access
 
 **Default Users:**
+
 ```python
 # Username: ziggy, Password: secret
 # Scopes: admin, trading, market_data
@@ -202,6 +211,7 @@ curl -X POST http://localhost:8000/api/auth/login \
 ```
 
 Response:
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -244,19 +254,20 @@ Update `frontend/src/services/apiClient.ts` to use auth:
 
 ```typescript
 // After login, store token
-localStorage.setItem('auth_token', response.access_token);
+localStorage.setItem("auth_token", response.access_token);
 
 // Client automatically uses token from localStorage
 const backtest = await apiClient.runBacktest({
-  symbol: 'AAPL',
-  strategy: 'sma50_cross'
+  symbol: "AAPL",
+  strategy: "sma50_cross",
 });
 ```
 
 The existing client already has token injection:
+
 ```typescript
-if (typeof window !== 'undefined') {
-  const token = window.localStorage.getItem('auth_token');
+if (typeof window !== "undefined") {
+  const token = window.localStorage.getItem("auth_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -293,7 +304,7 @@ def create_paper_run(...):
 ```python
 from app.core.auth_dependencies import require_auth_cognitive
 
-@router.post("/cognitive/enhance-decision", 
+@router.post("/cognitive/enhance-decision",
              dependencies=[Depends(require_auth_cognitive)])
 def enhance_decision(...):
     """Enhance decision - requires dev_brain scope"""
@@ -305,7 +316,7 @@ def enhance_decision(...):
 ```python
 from app.core.auth_dependencies import require_auth_integration
 
-@router.post("/integration/apply", 
+@router.post("/integration/apply",
              dependencies=[Depends(require_auth_integration)])
 def apply_integration(...):
     """Apply integration - requires admin scope"""
@@ -393,12 +404,14 @@ curl http://localhost:8000/api/backtest \
 ## Migration Path
 
 ### Current State (Phase 4)
+
 - ✅ Auth infrastructure in place
 - ✅ Auth **disabled** by default
 - ✅ Easy to enable per environment
 - ✅ Dependencies ready to apply to routes
 
 ### Next Steps (When Ready)
+
 1. **Enable in Staging** - Set `ENABLE_AUTH=true` in staging
 2. **Test Authentication** - Verify all flows work
 3. **Apply to Routes** - Add `dependencies=[Depends(require_auth_*)]` to sensitive endpoints
@@ -408,15 +421,18 @@ curl http://localhost:8000/api/backtest \
 ## Files Created/Modified
 
 ### New Files
+
 - ✅ `backend/app/core/auth_dependencies.py` - Flexible auth dependencies
 - ✅ `backend/app/api/routes_auth.py` - Auth endpoints (login, status, etc.)
 - ✅ `PHASE_4_COMPLETE.md` - This documentation
 
 ### Modified Files
+
 - ✅ `backend/app/core/config/settings.py` - Added auth config settings
 - ✅ `backend/app/main.py` - Added OpenAPI security schemes, registered auth router
 
 ### Existing Files (Leveraged)
+
 - ✅ `backend/app/core/security.py` - JWT, API keys, user management
 
 ## Summary
@@ -431,7 +447,7 @@ curl http://localhost:8000/api/backtest \
 ✅ **Default: Auth OFF** - Great for local dev  
 ✅ **Per-Domain Control** - Toggle trading, paper, cognitive, integration  
 ✅ **Public Endpoints** - Health/docs always accessible  
-✅ **Ready to Apply** - Dependencies ready for sensitive routes  
+✅ **Ready to Apply** - Dependencies ready for sensitive routes
 
 **All four phases now complete!**
 

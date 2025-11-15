@@ -31,7 +31,9 @@ def open_or_resume_run(db: Session, meta: dict[str, Any]) -> str:
     # Find latest open (ended_at is NULL)
     run = (
         db.execute(
-            select(PaperRun).where(PaperRun.ended_at.is_(None)).order_by(PaperRun.started_at.desc())
+            select(PaperRun)
+            .where(PaperRun.ended_at.is_(None))
+            .order_by(PaperRun.started_at.desc())
         )
         .scalars()
         .first()
@@ -91,7 +93,9 @@ def upsert_position(
     ts = ts or datetime.utcnow()
     # Try existing by (run_id, symbol)
     existing = (
-        db.execute(select(Position).where(Position.run_id == run_id, Position.symbol == symbol))
+        db.execute(
+            select(Position).where(Position.run_id == run_id, Position.symbol == symbol)
+        )
         .scalars()
         .first()
     )
@@ -118,7 +122,9 @@ def upsert_position(
         db.rollback()
 
 
-def append_pnl_points(db: Session, run_id: str, points: Iterable[dict[str, Any]]) -> None:
+def append_pnl_points(
+    db: Session, run_id: str, points: Iterable[dict[str, Any]]
+) -> None:
     for pt in points:
         p = PnLPoint(
             run_id=run_id,
@@ -136,11 +142,19 @@ def save_bandit_snapshot(db: Session, run_id: str, payload: dict[str, Any]) -> N
 
 
 def save_learner_checkpoint(
-    db: Session, run_id: str, algo: str | None, model_bytes: bytes, meta: dict[str, Any] | None
+    db: Session,
+    run_id: str,
+    algo: str | None,
+    model_bytes: bytes,
+    meta: dict[str, Any] | None,
 ) -> None:
     db.add(
         LearnerCheckpoint(
-            run_id=run_id, ts=datetime.utcnow(), algo=algo or "", bytes=model_bytes, meta=meta
+            run_id=run_id,
+            ts=datetime.utcnow(),
+            algo=algo or "",
+            bytes=model_bytes,
+            meta=meta,
         )
     )
     db.commit()
@@ -152,7 +166,11 @@ def save_queue_snapshot(db: Session, run_id: str, payload: dict[str, Any]) -> No
 
 
 def load_latest_run(db: Session) -> PaperRun | None:
-    return db.execute(select(PaperRun).order_by(PaperRun.started_at.desc())).scalars().first()
+    return (
+        db.execute(select(PaperRun).order_by(PaperRun.started_at.desc()))
+        .scalars()
+        .first()
+    )
 
 
 def load_positions(db: Session, run_id: str) -> list[Position]:
@@ -164,14 +182,19 @@ def load_positions(db: Session, run_id: str) -> list[Position]:
 
 def load_trades(db: Session, run_id: str) -> list[Trade]:
     return cast(
-        list[Trade], db.execute(select(Trade).where(Trade.run_id == run_id)).scalars().all()
+        list[Trade],
+        db.execute(select(Trade).where(Trade.run_id == run_id)).scalars().all(),
     )
 
 
 def load_pnl_points(db: Session, run_id: str) -> list[PnLPoint]:
     return cast(
         list[PnLPoint],
-        db.execute(select(PnLPoint).where(PnLPoint.run_id == run_id).order_by(PnLPoint.ts.asc()))
+        db.execute(
+            select(PnLPoint)
+            .where(PnLPoint.run_id == run_id)
+            .order_by(PnLPoint.ts.asc())
+        )
         .scalars()
         .all(),
     )

@@ -227,16 +227,17 @@ Once approved:
 
 1. **GitHub Web UI**: Click "Merge pull request" button
 2. **Command Line**:
+
    ```bash
    # Switch to main branch
    git checkout main
-   
+
    # Pull latest changes
    git pull origin main
-   
+
    # Merge your feature branch
    git merge feature/your-feature-name
-   
+
    # Push to GitHub
    git push origin main
    ```
@@ -357,6 +358,7 @@ git log origin/main..HEAD --oneline
 ### 5. Use .gitignore Properly
 
 Never commit:
+
 - `node_modules/`
 - `.next/`
 - `__pycache__/`
@@ -454,6 +456,7 @@ git push origin your-branch
 ### Problem: "CI tests fail but work locally"
 
 **Reasons:**
+
 - Different environment (Python version, Node version)
 - Missing environment variables
 - Database state differences

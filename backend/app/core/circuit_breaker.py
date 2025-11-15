@@ -50,7 +50,9 @@ class CircuitBreaker:
         self.last_failure_time: float | None = None
         self.last_success_time: float | None = None
 
-        logger.info(f"Circuit breaker '{name}' initialized with threshold={failure_threshold}")
+        logger.info(
+            f"Circuit breaker '{name}' initialized with threshold={failure_threshold}"
+        )
 
     def _current_time(self) -> float:
         return time.time()

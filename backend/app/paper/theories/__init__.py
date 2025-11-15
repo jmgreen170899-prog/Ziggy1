@@ -102,7 +102,9 @@ class Theory(ABC):
         """
         pass
 
-    def update_state(self, signal: Signal, outcome: dict[str, Any] | None = None) -> None:
+    def update_state(
+        self, signal: Signal, outcome: dict[str, Any] | None = None
+    ) -> None:
         """
         Update theory state based on signal outcome.
 
@@ -152,8 +154,9 @@ class MeanReversionTheory(Theory):
         signals = []
 
         # Check for oversold condition (BUY signal)
-        if features.rsi <= self.rsi_oversold and features.price <= features.bollinger_lower * (
-            1 + self.bb_threshold
+        if (
+            features.rsi <= self.rsi_oversold
+            and features.price <= features.bollinger_lower * (1 + self.bb_threshold)
         ):
             confidence = min(1.0, (self.rsi_oversold - features.rsi) / 10.0)
 
@@ -173,8 +176,9 @@ class MeanReversionTheory(Theory):
             signals.append(signal)
 
         # Check for overbought condition (SELL signal)
-        elif features.rsi >= self.rsi_overbought and features.price >= features.bollinger_upper * (
-            1 - self.bb_threshold
+        elif (
+            features.rsi >= self.rsi_overbought
+            and features.price >= features.bollinger_upper * (1 - self.bb_threshold)
         ):
             confidence = min(1.0, (features.rsi - self.rsi_overbought) / 10.0)
 
@@ -253,9 +257,12 @@ class BreakoutTheory(Theory):
 
         # Upside breakout
         if (
-            features.price > sma_20 * (1 + self.breakout_threshold) and features.volume > 0
+            features.price > sma_20 * (1 + self.breakout_threshold)
+            and features.volume > 0
         ):  # Volume check placeholder
-            confidence = min(1.0, (features.price - sma_20) / sma_20 / self.breakout_threshold)
+            confidence = min(
+                1.0, (features.price - sma_20) / sma_20 / self.breakout_threshold
+            )
 
             signal = Signal(
                 theory_id=self.theory_id,
@@ -273,8 +280,13 @@ class BreakoutTheory(Theory):
             signals.append(signal)
 
         # Downside breakout
-        elif features.price < sma_20 * (1 - self.breakout_threshold) and features.volume > 0:
-            confidence = min(1.0, (sma_20 - features.price) / sma_20 / self.breakout_threshold)
+        elif (
+            features.price < sma_20 * (1 - self.breakout_threshold)
+            and features.volume > 0
+        ):
+            confidence = min(
+                1.0, (sma_20 - features.price) / sma_20 / self.breakout_threshold
+            )
 
             signal = Signal(
                 theory_id=self.theory_id,
@@ -390,7 +402,9 @@ class VolatilityRegimeTheory(Theory):
     Generates signals when volatility regime changes.
     """
 
-    def __init__(self, vol_breakout_threshold: float = 0.25, mean_revert_factor: float = 0.8):
+    def __init__(
+        self, vol_breakout_threshold: float = 0.25, mean_revert_factor: float = 0.8
+    ):
         super().__init__("vol_regime")
         self.vol_breakout_threshold = vol_breakout_threshold
         self.mean_revert_factor = mean_revert_factor
@@ -495,7 +509,11 @@ class IntradayMomentumTheory(Theory):
         signals = []
 
         # Calculate momentum (simplified - would use proper price history)
-        momentum = (features.price - features.sma_5) / features.sma_5 if features.sma_5 > 0 else 0
+        momentum = (
+            (features.price - features.sma_5) / features.sma_5
+            if features.sma_5 > 0
+            else 0
+        )
 
         # Upward momentum
         if momentum > self.momentum_threshold:
@@ -542,7 +560,11 @@ class IntradayMomentumTheory(Theory):
         base_size = 1.0
 
         # Increase size when momentum aligns with trend
-        momentum = (features.price - features.sma_5) / features.sma_5 if features.sma_5 > 0 else 0
+        momentum = (
+            (features.price - features.sma_5) / features.sma_5
+            if features.sma_5 > 0
+            else 0
+        )
 
         if (momentum > 0 and features.trend_regime == "up") or (
             momentum < 0 and features.trend_regime == "down"
@@ -589,7 +611,9 @@ class TheoryRegistry:
 
     def describe_all(self) -> dict[str, dict[str, Any]]:
         """Get descriptions of all theories."""
-        return {theory_id: theory.describe() for theory_id, theory in self.theories.items()}
+        return {
+            theory_id: theory.describe() for theory_id, theory in self.theories.items()
+        }
 
     def enable(self, theory_id: str) -> bool:
         """Enable a theory."""

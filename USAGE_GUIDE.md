@@ -24,6 +24,7 @@ Welcome! This guide explains how to use ZiggyAI even if you have zero trading ex
 ### Step 2: Sign In (Development Mode)
 
 **For Practice/Development**:
+
 - Username: `user`
 - Password: `user`
 
@@ -32,6 +33,7 @@ This gives you admin access to try all features including paper trading.
 ### Step 3: Explore the Dashboard
 
 After logging in, you'll see the main **Dashboard**. Take a moment to look around:
+
 - Left sidebar: Navigation menu
 - Center: Portfolio overview
 - Right: Quick actions and status
@@ -47,40 +49,48 @@ After logging in, you'll see the main **Dashboard**. Take a moment to look aroun
 Click on these icons to explore different sections:
 
 📊 **Dashboard** - Your home page with an overview of everything
+
 - See your portfolio value
 - View recent signals
 - Check market status
 
 📈 **Market** - Live stock prices and charts
+
 - Search for stocks
 - View real-time prices
 - See price history on charts
 
 💼 **Trading** - Trading signals and recommendations
+
 - AI-generated buy/sell suggestions
 - Confidence scores for each signal
 - Historical performance
 
 📰 **News** - Financial news feed
+
 - Latest market news
 - News about your watched stocks
 - Sentiment indicators (positive/negative)
 
 💰 **Portfolio** - Detailed portfolio view
+
 - All your positions
 - Performance metrics
 - Profit/loss breakdown
 
 🔔 **Alerts** - Price notifications
+
 - Set alerts for price movements
 - Get notified when conditions are met
 
 🤖 **Predictions** - AI forecasts
+
 - Future price predictions
 - Trend analysis
 - Pattern recognition
 
 ❓ **Help & Glossary** - Learning resources
+
 - Trading term definitions
 - Quick tips
 - Step-by-step guides
@@ -114,12 +124,14 @@ Paper trading uses fake money so you can practice without risk.
 ### Step 2: Find a Stock to Buy
 
 **Option A: Use the Watchlist**
+
 1. Go to **Market** page
 2. Search for a company you know (e.g., "AAPL" for Apple)
 3. Click "Add to Watchlist"
 4. View the signals for that stock
 
 **Option B: Use AI Recommendations**
+
 1. Go to **Trading** page
 2. Look at the signals list
 3. Find a "BUY" signal with high confidence (>70%)
@@ -129,11 +141,13 @@ Paper trading uses fake money so you can practice without risk.
 Before buying, check these details:
 
 **Signal Type**:
+
 - 🟢 BUY = AI suggests buying
 - 🔴 SELL = AI suggests selling (if you own it)
 - 🟡 HOLD = AI suggests keeping what you have
 
 **Confidence**: How sure the AI is (0-100%)
+
 - 90-100%: Very confident
 - 70-89%: Confident
 - 50-69%: Moderate confidence
@@ -143,6 +157,7 @@ Before buying, check these details:
 **Stop Loss**: Safety price - sell if it drops this low
 
 **Example Signal**:
+
 ```
 AAPL - BUY
 Confidence: 85%
@@ -152,6 +167,7 @@ Stop Loss: $165
 ```
 
 This means:
+
 - Buy Apple stock now at $175
 - AI expects it to reach $190
 - If it drops to $165, consider selling to limit loss
@@ -165,6 +181,7 @@ This means:
 5. Click "Confirm"
 
 **Order Types**:
+
 - **Market Order**: Buy immediately at current price (easiest for beginners)
 - **Limit Order**: Only buy at a specific price you set (more control)
 
@@ -178,6 +195,7 @@ This means:
 ### Step 6: When to Sell
 
 Sell when:
+
 - ✅ You reach your target price (profit!)
 - ✅ You get a SELL signal with high confidence
 - ✅ Price drops to your stop loss (limit loss)
@@ -225,6 +243,7 @@ Every signal shows:
 ### How to Use Signals
 
 **Good Practice**:
+
 1. ✅ Read the reasoning
 2. ✅ Check the confidence (>70% is better)
 3. ✅ Look at recent news about the stock
@@ -233,6 +252,7 @@ Every signal shows:
 6. ✅ Don't invest more than you can afford to lose
 
 **Avoid**:
+
 1. ❌ Following every signal blindly
 2. ❌ Ignoring low confidence signals
 3. ❌ Investing all your money in one stock
@@ -241,13 +261,13 @@ Every signal shows:
 
 ### Signal Confidence Guide
 
-| Confidence | Meaning | Action |
-|-----------|---------|--------|
-| 90-100% | Very Strong | Consider acting on it |
-| 70-89% | Strong | Worth considering |
-| 50-69% | Moderate | Be cautious |
-| 30-49% | Weak | Probably skip |
-| 0-29% | Very Weak | Definitely skip |
+| Confidence | Meaning     | Action                |
+| ---------- | ----------- | --------------------- |
+| 90-100%    | Very Strong | Consider acting on it |
+| 70-89%     | Strong      | Worth considering     |
+| 50-69%     | Moderate    | Be cautious           |
+| 30-49%     | Weak        | Probably skip         |
+| 0-29%      | Very Weak   | Definitely skip       |
 
 ---
 
@@ -256,6 +276,7 @@ Every signal shows:
 ### Viewing Your Positions
 
 **Portfolio Page** shows:
+
 - All stocks you own
 - How many shares
 - What you paid (cost basis)
@@ -265,6 +286,7 @@ Every signal shows:
 ### Understanding Portfolio Metrics
 
 **Simple Metrics**:
+
 - **Total Value**: What your portfolio is worth now
 - **Total Cost**: What you originally paid
 - **Total Gain/Loss**: Difference (profit or loss)
@@ -272,6 +294,7 @@ Every signal shows:
 - **% Return**: Gain/loss as percentage
 
 **Advanced Metrics** (with ℹ️ help icons):
+
 - **Sharpe Ratio**: How good your returns are vs. risk (higher is better)
 - **Beta**: How volatile compared to market (1.0 = average)
 - **Alpha**: How much you beat the market (positive is good)
@@ -282,12 +305,14 @@ Every signal shows:
 ### Portfolio Health Check
 
 **Good Signs** (Green):
+
 - ✅ Diversified (many different stocks)
 - ✅ Positive total return
 - ✅ Low volatility
 - ✅ Good Sharpe ratio (>1.0)
 
 **Warning Signs** (Yellow/Red):
+
 - ⚠️ Too concentrated (>20% in one stock)
 - ⚠️ High volatility
 - ⚠️ Many losing positions
@@ -296,11 +321,13 @@ Every signal shows:
 ### Rebalancing Your Portfolio
 
 **When to Rebalance**:
+
 - One stock becomes >25% of portfolio
 - You have too many (>30) or too few (<5) stocks
 - Risk level doesn't match your goals
 
 **How to Rebalance**:
+
 1. Sell some of your biggest positions
 2. Buy more of underrepresented sectors
 3. Follow AI recommendations for diversification
@@ -312,17 +339,20 @@ Every signal shows:
 ### In-App Help
 
 **Info Icons (ℹ️)**:
+
 - Found throughout the app
 - Click or hover to see explanations
 - Available on every complex term
 
 **Help Page**:
+
 - Click **Help & Glossary** in sidebar
 - Search for any trading term
 - Browse by category
 - See examples and definitions
 
 **Tooltips**:
+
 - Hover over any underlined term
 - Instant pop-up explanation
 - Works on desktop and mobile
@@ -429,23 +459,27 @@ A: Click on **Help & Glossary** in the sidebar and search for any term you don't
 ## Daily Routine
 
 ### Morning Check (5 minutes)
+
 1. Check market status (open/closed)
 2. Review overnight news
 3. Check for new signals
 4. Review portfolio performance
 
 ### Midday Check (5 minutes)
+
 1. Check major position changes
 2. Review any triggered alerts
 3. Check for new high-confidence signals
 
 ### Evening Review (10 minutes)
+
 1. Review day's performance
 2. Update watchlist
 3. Plan tomorrow's actions
 4. Set any new alerts
 
 ### Weekly Review (30 minutes)
+
 1. Review all positions
 2. Rebalance if needed
 3. Review closed trades (what worked/didn't work)
@@ -456,6 +490,7 @@ A: Click on **Help & Glossary** in the sidebar and search for any term you don't
 ## Safety Reminders
 
 ⚠️ **Always Remember**:
+
 - Paper trading is practice with fake money
 - Real trading involves real financial risk
 - Only invest money you can afford to lose
@@ -485,5 +520,5 @@ Remember: Everyone starts as a beginner. Take your time, use the help features, 
 
 ---
 
-*Last Updated: November 2025*
-*Version: 1.0*
+_Last Updated: November 2025_
+_Version: 1.0_

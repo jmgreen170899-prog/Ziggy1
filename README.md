@@ -48,13 +48,13 @@ cd frontend && npm run dev                     # Frontend only
 
 ### Essential Guides
 
-| Guide | Purpose | Time |
-|-------|---------|------|
-| **[SYNC_GUIDE.md](docs/SYNC_GUIDE.md)** | Quick reference for syncing GitHub changes | 5 min |
-| **[GITHUB_WORKFLOW.md](docs/GITHUB_WORKFLOW.md)** | Visual guide to GitHub workflows | 10 min |
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | Complete contributing guide | 20 min |
-| **[README-dev.md](implements/README-dev.md)** | Development environment setup | 15 min |
-| **[AUDIT_README.md](implements/AUDIT_README.md)** | Code health audit system | 10 min |
+| Guide                                             | Purpose                                    | Time   |
+| ------------------------------------------------- | ------------------------------------------ | ------ |
+| **[SYNC_GUIDE.md](docs/SYNC_GUIDE.md)**           | Quick reference for syncing GitHub changes | 5 min  |
+| **[GITHUB_WORKFLOW.md](docs/GITHUB_WORKFLOW.md)** | Visual guide to GitHub workflows           | 10 min |
+| **[CONTRIBUTING.md](CONTRIBUTING.md)**            | Complete contributing guide                | 20 min |
+| **[README-dev.md](implements/README-dev.md)**     | Development environment setup              | 15 min |
+| **[AUDIT_README.md](implements/AUDIT_README.md)** | Code health audit system                   | 10 min |
 
 📂 **Full Documentation:** [docs/README.md](docs/README.md)
 
@@ -87,18 +87,21 @@ ZiggyAI/
 ### Key Technologies
 
 **Backend:**
+
 - Python 3.11
 - FastAPI
 - SQLAlchemy
 - Paper Trading Engine
 
 **Frontend:**
+
 - React 18
 - TypeScript
 - Vite
 - Tailwind CSS
 
 **Infrastructure:**
+
 - Docker & Docker Compose
 - PostgreSQL
 - CI/CD via GitHub Actions
@@ -161,16 +164,19 @@ make audit-backend-full
 We welcome contributions! Here's how to get started:
 
 1. **Sync your local repository:**
+
    ```bash
    git pull origin main
    ```
 
 2. **Create a feature branch:**
+
    ```bash
    git checkout -b feature/your-feature
    ```
 
 3. **Make your changes and commit:**
+
    ```bash
    git add .
    git commit -m "feat: description"
@@ -240,6 +246,7 @@ Check [ISSUES.md](ISSUES.md) for current status and known issues.
 **Problem:** My local files don't have the latest GitHub changes
 
 **Solution:**
+
 ```bash
 git fetch origin
 git pull origin main
@@ -250,12 +257,13 @@ git pull origin main
 **Problem:** Dependencies are out of sync
 
 **Solution:**
+
 ```bash
 # Frontend
 rm -rf node_modules package-lock.json
 npm install
 
-# Backend  
+# Backend
 pip install --upgrade -r backend/requirements.lock
 ```
 
@@ -264,6 +272,7 @@ pip install --upgrade -r backend/requirements.lock
 **Problem:** Merge conflicts
 
 **Solution:**
+
 ```bash
 git pull origin main
 # Edit conflicted files (look for <<<<<<< markers)
@@ -280,6 +289,7 @@ git commit -m "merge: resolve conflicts"
 ## 📖 Additional Resources
 
 ### Documentation
+
 - [Task Overview](TASK.md)
 - [Issue Tracking](ISSUES.md)
 - [Architecture Details](implements/ZiggyAI_FULL_WRITEUP.md)
@@ -287,6 +297,7 @@ git commit -m "merge: resolve conflicts"
 - [Integration System](docs/IntegrationSystem.md)
 
 ### External Links
+
 - [Git Documentation](https://git-scm.com/doc)
 - [GitHub Flow](https://guides.github.com/introduction/flow/)
 - [FastAPI Docs](https://fastapi.tiangolo.com/)
@@ -297,17 +308,20 @@ git commit -m "merge: resolve conflicts"
 ## 🎯 Next Steps
 
 **New to the project?**
+
 1. Read [SYNC_GUIDE.md](docs/SYNC_GUIDE.md) (5 min)
 2. Set up your environment: [README-dev.md](implements/README-dev.md) (15 min)
 3. Run the sync script: `./scripts/sync-from-github.sh`
 
 **Ready to contribute?**
+
 1. Read [CONTRIBUTING.md](CONTRIBUTING.md) (20 min)
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
 
 **Debugging an issue?**
+
 1. Check [docs/SYNC_GUIDE.md - Troubleshooting](docs/SYNC_GUIDE.md#troubleshooting)
 2. Check [CONTRIBUTING.md - Troubleshooting](CONTRIBUTING.md#troubleshooting)
 3. Search existing issues on GitHub
@@ -336,6 +350,7 @@ Built with ❤️ by the ZiggyAI team.
 ---
 
 **Quick Links:**
+
 - 📖 [Complete Documentation Index](docs/README.md)
 - 🔄 [Sync Guide](docs/SYNC_GUIDE.md)
 - 🔀 [GitHub Workflow](docs/GITHUB_WORKFLOW.md)
@@ -346,6 +361,7 @@ Built with ❤️ by the ZiggyAI team.
 ---
 
 **Remember:** Syncing your local files with GitHub is as simple as:
+
 ```bash
 git pull origin main
 ```

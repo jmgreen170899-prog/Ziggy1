@@ -34,7 +34,9 @@ def example_basic_usage():
     event = {
         "ticker": "AAPL",
         "regime": "rally",
-        "explain": {"shap_top": [["momentum", 0.85], ["sentiment", 0.72], ["volume", 0.65]]},
+        "explain": {
+            "shap_top": [["momentum", 0.85], ["sentiment", 0.72], ["volume", 0.65]]
+        },
         "headlines": ["Apple stock surges on strong iPhone sales and AI announcements"],
     }
 
@@ -127,7 +129,9 @@ def example_storage_and_search():
     print(f"Status: {stats['status']}")
 
     if stats["backend"] == "OFF":
-        print("\n⚠️  Backend is OFF mode. To test storage, set VECDB_BACKEND=QDRANT or REDIS")
+        print(
+            "\n⚠️  Backend is OFF mode. To test storage, set VECDB_BACKEND=QDRANT or REDIS"
+        )
         return
 
     # Store some events
@@ -210,7 +214,9 @@ def example_model_versioning():
     print(f"  - Original metadata: {metadata}")
 
     # This allows filtering by version during searches
-    print("\nYou can filter searches to only use embeddings from specific model versions")
+    print(
+        "\nYou can filter searches to only use embeddings from specific model versions"
+    )
     print("Example: filter_metadata={'embed_model_version': 'v1.0-transformer'}")
 
 

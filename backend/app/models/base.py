@@ -98,7 +98,9 @@ def get_db():
     if not SessionLocal:
         # Return a clean 503 for DB-backed endpoints when DB is unavailable
         # FastAPI will serialize this as a JSON error response
-        raise HTTPException(status_code=503, detail={"status": "down", "reason": "db_unavailable"})
+        raise HTTPException(
+            status_code=503, detail={"status": "down", "reason": "db_unavailable"}
+        )
 
     db = SessionLocal()
     try:

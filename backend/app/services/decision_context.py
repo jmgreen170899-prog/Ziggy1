@@ -79,7 +79,9 @@ class DecisionContextEnricher:
     """
 
     def __init__(
-        self, data_dir: str = "./data/decisions", calibrators_dir: str = "./data/calibrators"
+        self,
+        data_dir: str = "./data/decisions",
+        calibrators_dir: str = "./data/calibrators",
     ):
         self.data_dir = Path(data_dir)
         self.calibrators_dir = Path(calibrators_dir)
@@ -143,7 +145,9 @@ class DecisionContextEnricher:
             reliability = self._calculate_reliability_score(historical_perf)
 
             # Calculate expected accuracy
-            expected_accuracy = historical_perf.win_rate if historical_perf else raw_confidence
+            expected_accuracy = (
+                historical_perf.win_rate if historical_perf else raw_confidence
+            )
 
             return DecisionContext(
                 ticker=ticker,
@@ -201,7 +205,11 @@ class DecisionContextEnricher:
             # Get decisions from last 90 days
             since = (datetime.now(UTC) - timedelta(days=90)).isoformat()
             result = self.decision_logger.query_events(
-                filters={"signal_name": signal_type, "regime": regime, "has_outcome": True},
+                filters={
+                    "signal_name": signal_type,
+                    "regime": regime,
+                    "has_outcome": True,
+                },
                 since=since,
                 limit=1000,
             )
@@ -213,11 +221,15 @@ class DecisionContextEnricher:
 
             # Calculate performance metrics
             total = len(events)
-            successful = sum(1 for e in events if e.get("outcome", {}).get("hit", False))
+            successful = sum(
+                1 for e in events if e.get("outcome", {}).get("hit", False)
+            )
             win_rate = successful / total if total > 0 else 0.0
 
             # Calculate average confidence
-            confidences = [e.get("confidence", 0.5) for e in events if e.get("confidence")]
+            confidences = [
+                e.get("confidence", 0.5) for e in events if e.get("confidence")
+            ]
             avg_confidence = np.mean(confidences) if confidences else 0.5
 
             # Calculate Brier score
@@ -272,14 +284,18 @@ class DecisionContextEnricher:
         # Check if we have enough data for calibration
         if historical_perf.total_signals < 30:
             # Use simple adjustment based on win rate
-            adjustment = (historical_perf.win_rate - historical_perf.avg_confidence) * 0.5
+            adjustment = (
+                historical_perf.win_rate - historical_perf.avg_confidence
+            ) * 0.5
             calibrated = raw_confidence + adjustment
             return np.clip(calibrated, 0.01, 0.99)
 
         # Try to load or build calibrator
         cache_key = (signal_type, regime)
         if cache_key not in self._calibrator_cache:
-            calibrator_path = self.calibrators_dir / f"calibrator_{signal_type}_{regime}.pkl"
+            calibrator_path = (
+                self.calibrators_dir / f"calibrator_{signal_type}_{regime}.pkl"
+            )
 
             calibrator = ProbabilityCalibrator(method="isotonic", min_samples=30)
 
@@ -300,17 +316,25 @@ class DecisionContextEnricher:
             return np.clip(calibrated, 0.01, 0.99)
         else:
             # Fallback to simple adjustment
-            adjustment = (historical_perf.win_rate - historical_perf.avg_confidence) * 0.5
+            adjustment = (
+                historical_perf.win_rate - historical_perf.avg_confidence
+            ) * 0.5
             calibrated = raw_confidence + adjustment
             return np.clip(calibrated, 0.01, 0.99)
 
-    def _build_calibrator(self, signal_type: str, regime: str) -> ProbabilityCalibrator | None:
+    def _build_calibrator(
+        self, signal_type: str, regime: str
+    ) -> ProbabilityCalibrator | None:
         """Build calibrator from historical data."""
         try:
             # Get historical events
             since = (datetime.now(UTC) - timedelta(days=180)).isoformat()
             result = self.decision_logger.query_events(
-                filters={"signal_name": signal_type, "regime": regime, "has_outcome": True},
+                filters={
+                    "signal_name": signal_type,
+                    "regime": regime,
+                    "has_outcome": True,
+                },
                 since=since,
                 limit=2000,
             )
@@ -395,7 +419,9 @@ class DecisionContextEnricher:
 
         try:
             total = len(similar_decisions)
-            successful = sum(1 for d in similar_decisions if d.get("outcome", {}).get("hit", False))
+            successful = sum(
+                1 for d in similar_decisions if d.get("outcome", {}).get("hit", False)
+            )
             win_rate = successful / total if total > 0 else 0.0
 
             # Average PnL if available
@@ -441,7 +467,9 @@ class DecisionContextEnricher:
                 if abs(historical_perf.brier_score - 0.25) < 0.05:
                     lessons.append("Well-calibrated predictions in this regime")
                 elif historical_perf.brier_score > 0.3:
-                    lessons.append("Predictions tend to be overconfident - adjusted downward")
+                    lessons.append(
+                        "Predictions tend to be overconfident - adjusted downward"
+                    )
 
             # Lessons from recent similar decisions
             if similar_decisions:
@@ -458,7 +486,9 @@ class DecisionContextEnricher:
 
         return lessons[:3]  # Limit to top 3 lessons
 
-    def _calculate_reliability_score(self, historical_perf: HistoricalPerformance | None) -> float:
+    def _calculate_reliability_score(
+        self, historical_perf: HistoricalPerformance | None
+    ) -> float:
         """
         Calculate reliability score based on sample size and consistency.
 
@@ -523,4 +553,6 @@ def enrich_decision(
 ) -> DecisionContext:
     """Convenience function to enrich a decision."""
     enricher = get_decision_context_enricher()
-    return enricher.enrich_decision(ticker, signal_type, regime, raw_confidence, features)
+    return enricher.enrich_decision(
+        ticker, signal_type, regime, raw_confidence, features
+    )

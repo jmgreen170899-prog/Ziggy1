@@ -3,6 +3,7 @@
 This report documents issues discovered and fixes applied during a complete end‑to‑end smoke test. It covers every major user action/service in the application and records repro steps, impact, suspected root cause, fixes (with file refs), and status.
 
 Contents
+
 - Startup and Environment
 - Health and Durability (Paper/Trade)
 - Authentication (mock)
@@ -208,19 +209,19 @@ Contents
 
 ## Repro Steps (quick)
 
-1) Start servers
+1. Start servers
    - VS Code: Run "Dev: All (w/ Browser)"
    - or PowerShell: `scripts/dev-all.ps1`
 
-2) Health
+2. Health
    - Backend: GET http://127.0.0.1:8000/paper/health → 503 (degraded)
    - Frontend: GET http://127.0.0.1:3000/api/paper/health → 200 JSON with status
 
-3) Signals
+3. Signals
    - Backend: POST http://127.0.0.1:8000/signals/watchlist with {"tickers":["AAPL","MSFT"],"include_regime":false} → 500 (routing fixed)
    - Frontend: POST http://127.0.0.1:3000/api/signals/watchlist → forwards backend status
 
-4) Trading (safety)
+4. Trading (safety)
    - Backend: POST http://127.0.0.1:8000/trade/market → 403 (expected in dev)
 
 ---

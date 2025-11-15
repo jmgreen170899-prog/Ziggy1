@@ -9,6 +9,7 @@
 ## Executive Summary
 
 Successfully completed systematic verification of Phase 3 endpoints covering all trading operations systems:
+
 - **Trading endpoints**: 24/24 verified
 - **Paper trading endpoints**: 11/11 verified
 - **Chat endpoints**: 3/3 verified
@@ -22,6 +23,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
 ### Response Models Created (11 new)
 
 1. **TradeHealthResponse** - Trade service health status
+
    ```python
    ok: bool
    service: str
@@ -32,6 +34,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 2. **NotifyResponse** - Notification result
+
    ```python
    ok: bool
    message: str | None
@@ -39,12 +42,14 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 3. **ScanStatusResponse** - Scanner status
+
    ```python
    enabled: bool
    status: str | None
    ```
 
 4. **MarketCalendarResponse** - Market calendar data (trading module)
+
    ```python
    is_open: bool | None
    next_open: str | None
@@ -53,6 +58,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 5. **OHLCResponse** - OHLC data response
+
    ```python
    symbol: str
    data: list[dict[str, Any]]
@@ -62,6 +68,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 6. **OrdersResponse** - Orders list
+
    ```python
    orders: list[dict[str, Any]]
    count: int
@@ -69,6 +76,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 7. **PositionsResponse** - Positions list
+
    ```python
    positions: list[dict[str, Any]]
    count: int
@@ -76,6 +84,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 8. **PortfolioResponse** - Portfolio summary
+
    ```python
    portfolio: dict[str, Any]
    positions: list[dict[str, Any]] | None
@@ -85,6 +94,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 9. **OrderCancelResponse** - Order cancellation result
+
    ```python
    ok: bool
    order_id: str
@@ -93,6 +103,7 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 10. **TradeExecutionResponse** - Trade execution result (trading module)
+
     ```python
     ok: bool
     order_id: str | None
@@ -120,38 +131,38 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
 
 ### Endpoints Verified
 
-| Category | Endpoint | Method | Response Model | Status |
-|----------|----------|--------|----------------|--------|
-| **Health & Status** | | | | |
-| | /trade/health | GET | response_model=None | ✅ |
-| | /trade/scan/status | GET | response_model=None | ✅ |
-| | /trade/scan/enable | POST | response_model=None | ✅ |
-| | /trade/screener | GET | ScreenerResponse | ✅ |
-| **Notifications** | | | | |
-| | /trade/notify | POST | response_model=None | ✅ |
-| | /trade/notify/diag | GET | response_model=None | ✅ |
-| | /trade/notify/probe | GET | response_model=None | ✅ |
-| | /trade/notify/test | POST | response_model=None | ✅ |
-| **Market Data** | | | | |
-| | /market/calendar | GET | response_model=None | ✅ |
-| | /trade/ohlc | GET | response_model=None | ✅ |
-| | /market/breadth | GET | response_model=None | ✅ |
-| | /market/risk-lite | GET | RiskLiteResponse | ✅ |
-| **Trading Operations** | | | | |
-| | /trade/explain | POST | ExplainOut | ✅ |
-| | /backtest | POST | BacktestOut | ✅ |
-| | /trade/market | POST | TradeOut | ✅ |
-| | /trade/orders | GET | response_model=None | ✅ |
-| | /trade/positions | GET | response_model=None | ✅ |
-| | /trade/portfolio | GET | response_model=None | ✅ |
-| | /trade/orders/{order_id} | DELETE | response_model=None | ✅ |
-| **Execution & Mode** | | | | |
-| | /trade/execute | POST | response_model=None | ✅ |
-| | /trade/mode/{mode} | POST | response_model=None | ✅ |
-| **Deprecated Aliases** | | | | |
-| | /market-risk-lite | GET | RiskLiteResponse | ✅ (deprecated) |
-| | /market/risk | GET | RiskLiteResponse | ✅ (deprecated) |
-| | /strategy/backtest | POST | BacktestOut | ✅ (deprecated) |
+| Category               | Endpoint                 | Method | Response Model      | Status          |
+| ---------------------- | ------------------------ | ------ | ------------------- | --------------- |
+| **Health & Status**    |                          |        |                     |                 |
+|                        | /trade/health            | GET    | response_model=None | ✅              |
+|                        | /trade/scan/status       | GET    | response_model=None | ✅              |
+|                        | /trade/scan/enable       | POST   | response_model=None | ✅              |
+|                        | /trade/screener          | GET    | ScreenerResponse    | ✅              |
+| **Notifications**      |                          |        |                     |                 |
+|                        | /trade/notify            | POST   | response_model=None | ✅              |
+|                        | /trade/notify/diag       | GET    | response_model=None | ✅              |
+|                        | /trade/notify/probe      | GET    | response_model=None | ✅              |
+|                        | /trade/notify/test       | POST   | response_model=None | ✅              |
+| **Market Data**        |                          |        |                     |                 |
+|                        | /market/calendar         | GET    | response_model=None | ✅              |
+|                        | /trade/ohlc              | GET    | response_model=None | ✅              |
+|                        | /market/breadth          | GET    | response_model=None | ✅              |
+|                        | /market/risk-lite        | GET    | RiskLiteResponse    | ✅              |
+| **Trading Operations** |                          |        |                     |                 |
+|                        | /trade/explain           | POST   | ExplainOut          | ✅              |
+|                        | /backtest                | POST   | BacktestOut         | ✅              |
+|                        | /trade/market            | POST   | TradeOut            | ✅              |
+|                        | /trade/orders            | GET    | response_model=None | ✅              |
+|                        | /trade/positions         | GET    | response_model=None | ✅              |
+|                        | /trade/portfolio         | GET    | response_model=None | ✅              |
+|                        | /trade/orders/{order_id} | DELETE | response_model=None | ✅              |
+| **Execution & Mode**   |                          |        |                     |                 |
+|                        | /trade/execute           | POST   | response_model=None | ✅              |
+|                        | /trade/mode/{mode}       | POST   | response_model=None | ✅              |
+| **Deprecated Aliases** |                          |        |                     |                 |
+|                        | /market-risk-lite        | GET    | RiskLiteResponse    | ✅ (deprecated) |
+|                        | /market/risk             | GET    | RiskLiteResponse    | ✅ (deprecated) |
+|                        | /strategy/backtest       | POST   | BacktestOut         | ✅ (deprecated) |
 
 ---
 
@@ -160,18 +171,21 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
 ### Response Models Created (6 new)
 
 1. **PaperRunStopResponse** - Stop result
+
    ```python
    status: str
    ended_at: str | None
    ```
 
 2. **TheoryPauseResponse** - Theory pause result
+
    ```python
    status: str
    theory_name: str
    ```
 
 3. **PaperRunStatsResponse** - Run statistics
+
    ```python
    run_id: int
    stats: dict[str, Any]
@@ -179,12 +193,14 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
    ```
 
 4. **ModelSnapshotsResponse** - Model snapshots
+
    ```python
    snapshots: list[dict[str, Any]]
    count: int
    ```
 
 5. **EmergencyStopResponse** - Emergency stop result
+
    ```python
    stopped_count: int
    message: str
@@ -207,19 +223,19 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
 
 ### Endpoints Verified
 
-| Endpoint | Method | Response Model | Status |
-|----------|--------|----------------|--------|
-| /runs | POST | PaperRunResponse | ✅ |
-| /runs | GET | list[PaperRunResponse] | ✅ |
-| /runs/{run_id} | GET | PaperRunResponse | ✅ |
-| /runs/{run_id}/stop | POST | response_model=None | ✅ |
-| /runs/{run_id}/trades | GET | list[TradeResponse] | ✅ |
-| /runs/{run_id}/theories | GET | list[TheoryPerfResponse] | ✅ |
-| /runs/{run_id}/theories/{theory}/pause | POST | response_model=None | ✅ |
-| /runs/{run_id}/stats | GET | response_model=None | ✅ |
-| /runs/{run_id}/models | GET | response_model=None | ✅ |
-| /emergency/stop_all | POST | response_model=None | ✅ |
-| /health | GET | response_model=None | ✅ |
+| Endpoint                               | Method | Response Model           | Status |
+| -------------------------------------- | ------ | ------------------------ | ------ |
+| /runs                                  | POST   | PaperRunResponse         | ✅     |
+| /runs                                  | GET    | list[PaperRunResponse]   | ✅     |
+| /runs/{run_id}                         | GET    | PaperRunResponse         | ✅     |
+| /runs/{run_id}/stop                    | POST   | response_model=None      | ✅     |
+| /runs/{run_id}/trades                  | GET    | list[TradeResponse]      | ✅     |
+| /runs/{run_id}/theories                | GET    | list[TheoryPerfResponse] | ✅     |
+| /runs/{run_id}/theories/{theory}/pause | POST   | response_model=None      | ✅     |
+| /runs/{run_id}/stats                   | GET    | response_model=None      | ✅     |
+| /runs/{run_id}/models                  | GET    | response_model=None      | ✅     |
+| /emergency/stop_all                    | POST   | response_model=None      | ✅     |
+| /health                                | GET    | response_model=None      | ✅     |
 
 ---
 
@@ -232,11 +248,11 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
 
 ### Endpoints Verified
 
-| Endpoint | Method | Response Model | Status |
-|----------|--------|----------------|--------|
-| /complete | POST | response_model=None | ✅ |
-| /health | GET | ChatHealthResponse | ✅ |
-| /config | GET | ChatConfigResponse | ✅ |
+| Endpoint  | Method | Response Model      | Status |
+| --------- | ------ | ------------------- | ------ |
+| /complete | POST   | response_model=None | ✅     |
+| /health   | GET    | ChatHealthResponse  | ✅     |
+| /config   | GET    | ChatConfigResponse  | ✅     |
 
 **Note:** The `/complete` endpoint supports both JSON and Server-Sent Events (SSE) streaming, so `response_model=None` is appropriate for flexibility.
 
@@ -245,13 +261,16 @@ Successfully completed systematic verification of Phase 3 endpoints covering all
 ## Implementation Patterns
 
 ### Response Model Strategy
+
 All endpoints use either:
+
 1. **Explicit Pydantic models** for well-defined structures (already existing)
 2. **response_model=None** for flexible/dynamic responses while documenting structure through separate model definitions
 
 ### Error Handling Patterns
 
 **Pattern 1: Service Unavailable with Fallback**
+
 ```python
 try:
     result = service.fetch_data()
@@ -262,6 +281,7 @@ except Exception as e:
 ```
 
 **Pattern 2: HTTPException for Critical Errors**
+
 ```python
 try:
     result = required_service()
@@ -272,6 +292,7 @@ except Exception as e:
 ```
 
 **Pattern 3: Health Check with Backoff**
+
 ```python
 # Used in paper lab health endpoint
 if not should_retry():
@@ -290,10 +311,12 @@ except Exception:
 ## Files Modified
 
 ### Models
+
 - `backend/app/models/api_responses.py` - Added 17 new response models
 - `backend/app/models/__init__.py` - Exported new models
 
 ### Route Files
+
 - `backend/app/api/routes_trading.py` - Updated 24 endpoints
 - `backend/app/api/routes_paper.py` - Updated 11 endpoints
 - `backend/app/api/routes_chat.py` - Updated 3 endpoints
@@ -303,17 +326,20 @@ except Exception:
 ## Quality Metrics
 
 ### Response Model Coverage
+
 - **Total endpoints in Phase 3**: 38
 - **With response_model declarations**: 38 (100%)
 - **With Pydantic documentation**: 38 (100%)
 - **With field descriptions**: 38 (100%)
 
 ### Error Handling
+
 - **With try/except blocks**: 38 (100%)
 - **With service unavailable handling**: 38 (100%)
 - **With appropriate status codes**: 38 (100%)
 
 ### Documentation
+
 - **With docstrings**: 38 (100%)
 - **With parameter descriptions**: 38 (100%)
 - **With return hints**: 38 (100%)
@@ -323,6 +349,7 @@ except Exception:
 ## Verification Checklist (Per Endpoint)
 
 For each endpoint verified:
+
 - ✅ Route exists in code and OpenAPI
 - ✅ Response model defined (existing or in api_responses.py)
 - ✅ response_model parameter set (None or specific model)
@@ -337,6 +364,7 @@ For each endpoint verified:
 ## Cumulative Progress
 
 ### By Phase
+
 - ✅ **Phase 1**: Market endpoints (11/11) - 100%
 - ✅ **Phase 2**: Trading Intelligence (35/35) - 100%
   - Signals: 21/21
@@ -348,12 +376,14 @@ For each endpoint verified:
   - Chat: 3/3
 
 ### By Status
+
 - **Fully Verified**: 84 endpoints
 - **Response Models Created**: 57 new models
 - **Response Models Verified**: 18 existing models
 - **Tests Created/Verified**: 60+
 
 ### Overall
+
 - **Total Progress**: 84/170+ endpoints (49%)
 - **Remaining**: ~86 endpoints
 
@@ -364,7 +394,9 @@ For each endpoint verified:
 ### Planned Verification (~33 endpoints)
 
 #### 4.1 News Endpoints (7)
+
 Located in `routes_news.py`:
+
 - News sources
 - Headlines
 - Filings
@@ -372,7 +404,9 @@ Located in `routes_news.py`:
 - Headwind tracking
 
 #### 4.2 Alerts Endpoints (13)
+
 Located in `routes_alerts.py`:
+
 - Alert creation
 - Alert management (list, delete, enable/disable)
 - Alert history
@@ -381,7 +415,9 @@ Located in `routes_alerts.py`:
 - Test alerts
 
 #### 4.3 Learning Endpoints (13)
+
 Located in `routes_learning.py`:
+
 - Learning status
 - Data summary
 - Rules (current, history)
@@ -398,6 +434,7 @@ Located in `routes_learning.py`:
 For remaining phases, follow this pattern per endpoint:
 
 ### 1. Check Existing Models
+
 ```python
 # Look in route file for existing models
 class ExistingResponse(BaseModel):
@@ -405,6 +442,7 @@ class ExistingResponse(BaseModel):
 ```
 
 ### 2. Create Missing Models
+
 ```python
 # Add to api_responses.py
 class NewEndpointResponse(BaseModel):
@@ -413,6 +451,7 @@ class NewEndpointResponse(BaseModel):
 ```
 
 ### 3. Update Route
+
 ```python
 @router.get("/endpoint", response_model=None)  # or specific model
 async def endpoint_name():
@@ -425,6 +464,7 @@ async def endpoint_name():
 ```
 
 ### 4. Export Models
+
 ```python
 # Update __init__.py
 from .api_responses import NewEndpointResponse
@@ -436,6 +476,7 @@ __all__ = [..., "NewEndpointResponse"]
 ## Success Metrics Achieved
 
 ### Phase 3 Goals Met
+
 - ✅ All 38 endpoints have response models
 - ✅ All 38 endpoints have error handling
 - ✅ All 38 endpoints properly documented
@@ -445,7 +486,9 @@ __all__ = [..., "NewEndpointResponse"]
 - ✅ Backward compatibility maintained
 
 ### Acceptance Criteria Met
+
 For all Phase 3 endpoints:
+
 - ✅ Route appears in OpenAPI with correct prefix
 - ✅ Returns valid response (200 or documented error)
 - ✅ Response shape predictable and typed
@@ -466,18 +509,21 @@ For all Phase 3 endpoints:
 ## Key Achievements
 
 ### Technical Excellence
+
 - **Comprehensive Coverage**: All trading operations endpoints verified
 - **Model Quality**: 17 new well-documented Pydantic models
 - **Error Handling**: 100% coverage with appropriate fallbacks
 - **Backward Compatibility**: All existing functionality preserved
 
 ### Pattern Consistency
+
 - Follows Phase 1 & 2 methodology exactly
 - Reusable response model patterns
 - Consistent error handling approaches
 - Uniform documentation standards
 
 ### Progress Milestone
+
 - **Halfway Point Reached**: 49% of all endpoints verified
 - **3 Major Phases Complete**: Market, Trading Intelligence, Trading Operations
 - **2 Phases Remaining**: Information & Learning, Infrastructure

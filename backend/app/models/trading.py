@@ -4,7 +4,17 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import JSON, Boolean, Column, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
 from sqlalchemy.orm import relationship
 
 from .base import Base
@@ -94,7 +104,9 @@ class Portfolio(Base):
 
     # Risk management
     max_position_size = Column(Numeric(5, 4), default=0.10)  # 10% max per position
-    risk_tolerance = Column(String(20), default="MODERATE")  # CONSERVATIVE, MODERATE, AGGRESSIVE
+    risk_tolerance = Column(
+        String(20), default="MODERATE"
+    )  # CONSERVATIVE, MODERATE, AGGRESSIVE
 
     # Status
     is_active = Column(Boolean, default=True)

@@ -125,12 +125,20 @@ def create_test_app():
             "status": "healthy",
             "components": {
                 "feature_store": {"status": "healthy", "cache_hit_rate": 0.85},
-                "regime_detector": {"status": "healthy", "last_update": "2024-01-15T10:30:00Z"},
+                "regime_detector": {
+                    "status": "healthy",
+                    "last_update": "2024-01-15T10:30:00Z",
+                },
                 "signal_ensemble": {"status": "healthy", "model_count": 4},
                 "position_sizer": {"status": "healthy", "risk_budget": 0.02},
                 "calibration": {"status": "healthy", "ece": 0.032},
             },
-            "latency_ms": {"features": 45, "regime": 18, "signals": 72, "positions": 12},
+            "latency_ms": {
+                "features": 45,
+                "regime": 18,
+                "signals": 72,
+                "positions": 12,
+            },
         }
 
     return app
@@ -157,7 +165,9 @@ class TestCognitiveAPI:
         latency_ms = (time.time() - start_time) * 1000
 
         assert response.status_code == 200
-        assert latency_ms < 150, f"API response took {latency_ms:.2f}ms, should be < 150ms"
+        assert (
+            latency_ms < 150
+        ), f"API response took {latency_ms:.2f}ms, should be < 150ms"
 
         data = response.json()
         assert "signal_probability" in data
@@ -187,9 +197,9 @@ class TestCognitiveAPI:
         # Validate regime weights sum to 1
         weights = data["regime_weights"]
         total_weight = sum(weights.values())
-        assert abs(total_weight - 1.0) < 0.01, (
-            f"Regime weights sum to {total_weight}, should be ~1.0"
-        )
+        assert (
+            abs(total_weight - 1.0) < 0.01
+        ), f"Regime weights sum to {total_weight}, should be ~1.0"
 
         # Validate confidence
         assert 0 <= data["confidence"] <= 1
@@ -207,9 +217,9 @@ class TestCognitiveAPI:
         latency_ms = (time.time() - start_time) * 1000
 
         assert response.status_code == 200
-        assert latency_ms < 300, (
-            f"Screening took {latency_ms:.2f}ms, should be < 300ms for 5 symbols"
-        )
+        assert (
+            latency_ms < 300
+        ), f"Screening took {latency_ms:.2f}ms, should be < 300ms for 5 symbols"
 
         data = response.json()
         assert "results" in data
@@ -298,20 +308,28 @@ class TestCognitiveAPI:
         # Make 10 concurrent requests
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
             futures = [executor.submit(make_request) for _ in range(10)]
-            results = [future.result() for future in concurrent.futures.as_completed(futures)]
+            results = [
+                future.result() for future in concurrent.futures.as_completed(futures)
+            ]
 
         # Validate all requests succeeded
         success_count = sum(1 for success, _ in results if success)
         latencies = [latency for success, latency in results if success]
 
-        assert success_count >= 8, f"Only {success_count}/10 concurrent requests succeeded"
+        assert (
+            success_count >= 8
+        ), f"Only {success_count}/10 concurrent requests succeeded"
 
         if latencies:
             avg_latency = np.mean(latencies)
             max_latency = max(latencies)
 
-            assert avg_latency < 200, f"Average concurrent latency {avg_latency:.2f}ms too high"
-            assert max_latency < 500, f"Max concurrent latency {max_latency:.2f}ms too high"
+            assert (
+                avg_latency < 200
+            ), f"Average concurrent latency {avg_latency:.2f}ms too high"
+            assert (
+                max_latency < 500
+            ), f"Max concurrent latency {max_latency:.2f}ms too high"
 
             print(
                 f"✓ Concurrent requests: {success_count}/10 success, avg latency: {avg_latency:.2f}ms"
@@ -353,9 +371,9 @@ class TestCognitiveAPI:
         # Validate feature importance values
         feature_importance = explanation["feature_importance"]
         for feature, importance in feature_importance.items():
-            assert isinstance(importance, (int, float)), (
-                f"Feature importance for {feature} not numeric"
-            )
+            assert isinstance(
+                importance, (int, float)
+            ), f"Feature importance for {feature} not numeric"
             assert importance >= 0, f"Feature importance for {feature} is negative"
 
 
@@ -391,9 +409,9 @@ class TestPerformanceBenchmarks:
 
         # Should handle at least 10 requests per second
         assert throughput >= 10, f"Throughput {throughput:.2f} RPS below minimum 10 RPS"
-        assert successful_requests >= num_requests * 0.9, (
-            f"Success rate {successful_requests / num_requests:.2%} too low"
-        )
+        assert (
+            successful_requests >= num_requests * 0.9
+        ), f"Success rate {successful_requests / num_requests:.2%} too low"
 
         print(
             f"✓ Throughput benchmark: {throughput:.2f} RPS, {successful_requests}/{num_requests} successful"

@@ -156,9 +156,13 @@ class MarketBrainDataHub:
                     {
                         "current": regime.regime.value if regime else "UNKNOWN",
                         "confidence": regime.confidence if regime else 0.0,
-                        "explanation": regime.explanation if regime else "No regime data",
+                        "explanation": (
+                            regime.explanation if regime else "No regime data"
+                        ),
                         "timestamp": (
-                            regime.timestamp.isoformat() if regime and regime.timestamp else None
+                            regime.timestamp.isoformat()
+                            if regime and regime.timestamp
+                            else None
                         ),
                     }
                     if regime
@@ -166,9 +170,13 @@ class MarketBrainDataHub:
                 ),
                 "market_context": {
                     "spy_rsi": spy_features.rsi_14 if spy_features else None,
-                    "spy_volatility": spy_features.volatility_20d if spy_features else None,
+                    "spy_volatility": (
+                        spy_features.volatility_20d if spy_features else None
+                    ),
                     "spy_z_score": spy_features.z_score_20 if spy_features else None,
-                    "market_stress": self._calculate_market_stress(spy_features, regime),
+                    "market_stress": self._calculate_market_stress(
+                        spy_features, regime
+                    ),
                 },
                 "brain_metadata": {
                     "enhanced": True,
@@ -220,7 +228,9 @@ class MarketBrainDataHub:
             enhanced_data = breadth_data.copy()
 
             # Add regime-aware breadth interpretation
-            enhanced_data["regime_analysis"] = self._analyze_breadth_vs_regime(breadth_data, regime)
+            enhanced_data["regime_analysis"] = self._analyze_breadth_vs_regime(
+                breadth_data, regime
+            )
 
             # Add brain metadata
             enhanced_data["brain_metadata"] = {
@@ -288,7 +298,9 @@ class MarketBrainDataHub:
             context.warnings.append(f"Enhancement failed: {e!s}")
             context.processing_time_ms = (time.time() - start_time) * 1000
 
-            return EnhancedData(original_data=risk_data, enhanced_data=risk_data, context=context)
+            return EnhancedData(
+                original_data=risk_data, enhanced_data=risk_data, context=context
+            )
 
     def enhance_calendar_data(self, calendar_data: dict[str, Any]) -> EnhancedData:
         """Enhance calendar data with market impact analysis."""
@@ -317,7 +329,9 @@ class MarketBrainDataHub:
             context.processing_time_ms = (time.time() - start_time) * 1000
 
             return EnhancedData(
-                original_data=calendar_data, enhanced_data=enhanced_data, context=context
+                original_data=calendar_data,
+                enhanced_data=enhanced_data,
+                context=context,
             )
 
         except Exception as e:
@@ -326,7 +340,9 @@ class MarketBrainDataHub:
             context.processing_time_ms = (time.time() - start_time) * 1000
 
             return EnhancedData(
-                original_data=calendar_data, enhanced_data=calendar_data, context=context
+                original_data=calendar_data,
+                enhanced_data=calendar_data,
+                context=context,
             )
 
     def _enhance_symbol_overview(
@@ -371,7 +387,9 @@ class MarketBrainDataHub:
             if regime:
                 enhanced["regime_context"] = {
                     "current_regime": regime.regime.value,
-                    "regime_suitability": self._assess_regime_suitability(signal, regime),
+                    "regime_suitability": self._assess_regime_suitability(
+                        signal, regime
+                    ),
                     "regime_confidence": regime.confidence,
                 }
 
@@ -509,7 +527,12 @@ class MarketBrainDataHub:
 
         # Combined risk score
         enhanced_risk["combined_risk_score"] = min(
-            (enhanced_risk["regime_risk_factor"] + enhanced_risk["volatility_risk_factor"]) / 2, 2.0
+            (
+                enhanced_risk["regime_risk_factor"]
+                + enhanced_risk["volatility_risk_factor"]
+            )
+            / 2,
+            2.0,
         )
 
         return enhanced_risk
@@ -524,13 +547,21 @@ class MarketBrainDataHub:
         warnings = []
 
         if regime and regime.regime == RegimeState.PANIC:
-            warnings.append("EXTREME CAUTION: Market in PANIC regime - avoid new positions")
+            warnings.append(
+                "EXTREME CAUTION: Market in PANIC regime - avoid new positions"
+            )
 
-        if spy_features and spy_features.volatility_20d and spy_features.volatility_20d > 30:
+        if (
+            spy_features
+            and spy_features.volatility_20d
+            and spy_features.volatility_20d > 30
+        ):
             warnings.append("HIGH VOLATILITY: Consider reducing position sizes")
 
         if regime and regime.confidence and regime.confidence < 0.5:
-            warnings.append("REGIME UNCERTAINTY: Low confidence in current regime classification")
+            warnings.append(
+                "REGIME UNCERTAINTY: Low confidence in current regime classification"
+            )
 
         return warnings
 
@@ -586,7 +617,9 @@ class MarketBrainDataHub:
         else:
             return "WEAK"
 
-    def _assess_regime_suitability(self, signal: Signal | None, regime: RegimeResult) -> str:
+    def _assess_regime_suitability(
+        self, signal: Signal | None, regime: RegimeResult
+    ) -> str:
         """Assess how suitable current regime is for the signal."""
         if not signal:
             return "NO_SIGNAL"
@@ -605,7 +638,9 @@ class MarketBrainDataHub:
 data_hub = MarketBrainDataHub()
 
 
-def enhance_market_data(data: dict[str, Any], source: DataSource, **kwargs) -> dict[str, Any]:
+def enhance_market_data(
+    data: dict[str, Any], source: DataSource, **kwargs
+) -> dict[str, Any]:
     """
     Universal function to enhance any market data through the brain hub.
 

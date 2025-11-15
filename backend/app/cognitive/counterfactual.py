@@ -137,7 +137,9 @@ class ShadowPortfolio:
     Maintains parallel trading history to compare against actual decisions.
     """
 
-    def __init__(self, name: str, strategy_description: str, initial_cash: float = 100000.0):
+    def __init__(
+        self, name: str, strategy_description: str, initial_cash: float = 100000.0
+    ):
         """
         Initialize shadow portfolio.
 
@@ -162,7 +164,12 @@ class ShadowPortfolio:
         self.total_trades = 0
 
     def execute_trade(
-        self, ticker: str, action: ActionType, quantity: float, price: float, timestamp: str
+        self,
+        ticker: str,
+        action: ActionType,
+        quantity: float,
+        price: float,
+        timestamp: str,
     ) -> bool:
         """
         Execute trade in shadow portfolio.
@@ -189,7 +196,10 @@ class ShadowPortfolio:
             self.positions[ticker]["cost_basis"] = new_basis
 
         elif action == ActionType.SELL or action == ActionType.CLOSE_LONG:
-            if ticker not in self.positions or self.positions[ticker]["quantity"] < quantity:
+            if (
+                ticker not in self.positions
+                or self.positions[ticker]["quantity"] < quantity
+            ):
                 return False
 
             # Calculate profit
@@ -244,7 +254,9 @@ class CounterfactualEngine:
     continuously compares actual decisions to counterfactual alternatives.
     """
 
-    def __init__(self, enable_shadow_portfolios: bool = True, track_all_alternatives: bool = True):
+    def __init__(
+        self, enable_shadow_portfolios: bool = True, track_all_alternatives: bool = True
+    ):
         """
         Initialize counterfactual engine.
 
@@ -288,7 +300,10 @@ class CounterfactualEngine:
             )
 
     def analyze_decision(
-        self, decision: TradingDecision, actual_outcome: Outcome, current_prices: dict[str, float]
+        self,
+        decision: TradingDecision,
+        actual_outcome: Outcome,
+        current_prices: dict[str, float],
     ) -> CounterfactualAnalysis:
         """
         Perform counterfactual analysis on a completed decision.
@@ -304,7 +319,9 @@ class CounterfactualEngine:
         decision_id = f"{decision.ticker}_{decision.timestamp}"
 
         # Generate counterfactual scenarios
-        counterfactuals = self._generate_counterfactuals(decision, actual_outcome, current_prices)
+        counterfactuals = self._generate_counterfactuals(
+            decision, actual_outcome, current_prices
+        )
 
         # Find best and worst alternatives
         best_alternative = None
@@ -380,7 +397,10 @@ class CounterfactualEngine:
         return analysis
 
     def _generate_counterfactuals(
-        self, decision: TradingDecision, actual_outcome: Outcome, current_prices: dict[str, float]
+        self,
+        decision: TradingDecision,
+        actual_outcome: Outcome,
+        current_prices: dict[str, float],
     ) -> list[CounterfactualScenario]:
         """Generate all counterfactual alternative scenarios."""
         counterfactuals = []
@@ -488,7 +508,9 @@ class CounterfactualEngine:
             # Find what we should have done
             best_cf = max(
                 (cf for cf in counterfactuals if cf.simulated_outcome),
-                key=lambda cf: cf.simulated_outcome.pnl if cf.simulated_outcome else -float("inf"),
+                key=lambda cf: (
+                    cf.simulated_outcome.pnl if cf.simulated_outcome else -float("inf")
+                ),
                 default=None,
             )
 
@@ -501,15 +523,25 @@ class CounterfactualEngine:
 
         # Lesson about position sizing
         half_size_cf = next(
-            (cf for cf in counterfactuals if cf.alternative_quantity < decision.quantity), None
+            (
+                cf
+                for cf in counterfactuals
+                if cf.alternative_quantity < decision.quantity
+            ),
+            None,
         )
         if half_size_cf and half_size_cf.simulated_outcome:
-            if actual_outcome.pnl < 0 and half_size_cf.simulated_outcome.pnl > actual_outcome.pnl:
+            if (
+                actual_outcome.pnl < 0
+                and half_size_cf.simulated_outcome.pnl > actual_outcome.pnl
+            ):
                 lessons.append("Smaller position size would have reduced loss")
 
         # Lesson about regime
         if actual_outcome.pnl < 0:
-            lessons.append(f"Strategy may not be optimal for {decision.market_regime} regime")
+            lessons.append(
+                f"Strategy may not be optimal for {decision.market_regime} regime"
+            )
 
         return lessons
 
@@ -523,7 +555,9 @@ class CounterfactualEngine:
 
         for name, portfolio in self.shadow_portfolios.items():
             if name == "always_buy" and decision.action != ActionType.HOLD:
-                portfolio.execute_trade(ticker, ActionType.BUY, decision.quantity, price, timestamp)
+                portfolio.execute_trade(
+                    ticker, ActionType.BUY, decision.quantity, price, timestamp
+                )
 
             elif name == "always_hold":
                 # Do nothing
@@ -537,7 +571,9 @@ class CounterfactualEngine:
                 }
                 opposite = opposite_actions.get(decision.action, ActionType.HOLD)
                 if opposite != ActionType.HOLD:
-                    portfolio.execute_trade(ticker, opposite, decision.quantity, price, timestamp)
+                    portfolio.execute_trade(
+                        ticker, opposite, decision.quantity, price, timestamp
+                    )
 
             elif name == "half_size" and decision.action != ActionType.HOLD:
                 portfolio.execute_trade(
@@ -607,7 +643,8 @@ class CounterfactualEngine:
             "total_regret": self.total_regret,
             "avg_regret": self.total_regret / self.decisions_analyzed,
             "total_opportunity_cost": self.total_opportunity_cost,
-            "avg_opportunity_cost": self.total_opportunity_cost / self.decisions_analyzed,
+            "avg_opportunity_cost": self.total_opportunity_cost
+            / self.decisions_analyzed,
             "should_have_acted_differently_percent": (
                 should_have_acted_differently_count / self.decisions_analyzed * 100
             ),

@@ -30,7 +30,9 @@ TOOL_SCHEMAS = [
             "description": "Fetch and extract main text from a URL.",
             "parameters": {
                 "type": "object",
-                "properties": {"url": {"type": "string", "description": "http/https URL"}},
+                "properties": {
+                    "url": {"type": "string", "description": "http/https URL"}
+                },
                 "required": ["url"],
             },
         },

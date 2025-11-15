@@ -5,7 +5,11 @@
     {
       "path": "backend/app/core/websocket.py",
       "role": "websocket_manager",
-      "keyAPIs": ["ConnectionManager.broadcast", "ConnectionManager.register", "MarketDataStreamer.start"],
+      "keyAPIs": [
+        "ConnectionManager.broadcast",
+        "ConnectionManager.register",
+        "MarketDataStreamer.start"
+      ],
       "inputs": ["channel_messages", "market_data", "heartbeats"],
       "outputs": ["client_broadcasts", "metrics"],
       "storage": ["in_memory_queues"],

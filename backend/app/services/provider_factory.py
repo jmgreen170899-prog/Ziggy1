@@ -68,7 +68,9 @@ SECONDARY_VENDOR = os.getenv("SECONDARY_VENDOR", "yfinance")
 PROVIDER_QUORUM = os.getenv("PROVIDER_QUORUM", "PRIMARY_THEN_SECONDARY")
 PROVIDER_TIMEOUT_MS = int(os.getenv("PROVIDER_TIMEOUT_MS", "1500"))
 STAMP_VENDOR_VERSION = bool(int(os.getenv("STAMP_VENDOR_VERSION", "1")))
-CACHE_STAMP_INCLUDE = os.getenv("CACHE_STAMP_INCLUDE", "vendor,version,source_tz").split(",")
+CACHE_STAMP_INCLUDE = os.getenv(
+    "CACHE_STAMP_INCLUDE", "vendor,version,source_tz"
+).split(",")
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +89,12 @@ def _create_vendor_stamp(provider_name: str, source_tz: str = "UTC") -> dict[str
     from datetime import datetime
 
     # Get provider version (basic implementation)
-    version_map = {"polygon": "1.0.0", "yfinance": "0.2.18", "alpaca": "1.0.0", "yahoo": "0.2.18"}
+    version_map = {
+        "polygon": "1.0.0",
+        "yfinance": "0.2.18",
+        "alpaca": "1.0.0",
+        "yahoo": "0.2.18",
+    }
 
     stamp = {
         "vendor": provider_name,
@@ -108,7 +115,9 @@ def _create_vendor_stamp(provider_name: str, source_tz: str = "UTC") -> dict[str
     return stamp
 
 
-def _record_provider_success(provider_name: str, latency_ms: int, contract_ok: bool = True) -> None:
+def _record_provider_success(
+    provider_name: str, latency_ms: int, contract_ok: bool = True
+) -> None:
     """Record successful provider event."""
     try:
         from app.services.provider_health import record_provider_event
@@ -121,12 +130,16 @@ def _record_provider_success(provider_name: str, latency_ms: int, contract_ok: b
         pass
 
 
-def _record_provider_failure(provider_name: str, latency_ms: int, error: Exception) -> None:
+def _record_provider_failure(
+    provider_name: str, latency_ms: int, error: Exception
+) -> None:
     """Record failed provider event."""
     try:
         from app.services.provider_health import record_provider_event
 
-        record_provider_event(provider_name, ok=False, latency_ms=latency_ms, contract_ok=False)
+        record_provider_event(
+            provider_name, ok=False, latency_ms=latency_ms, contract_ok=False
+        )
         logger.warning(f"Provider {provider_name} failed: {error}")
     except ImportError:
         # Health tracking not available
@@ -139,7 +152,9 @@ def _record_provider_failure(provider_name: str, latency_ms: int, error: Excepti
 class _TTLCache:
     def __init__(self, ttl_seconds: int | None = None, max_entries: int = 256):
         self.ttl: float = float(
-            ttl_seconds if ttl_seconds is not None else int(os.getenv("CACHE_TTL_SECONDS", "60"))
+            ttl_seconds
+            if ttl_seconds is not None
+            else int(os.getenv("CACHE_TTL_SECONDS", "60"))
         )
         self.max = max_entries
         self._store: dict[Any, tuple[float, Any]] = {}
@@ -249,14 +264,24 @@ class MultiProvider(MarketProvider):
         a tuple: (frames, sources).
         """
         tickers_norm = [t for t in tickers if t]
-        prov_names = tuple(getattr(p, "name", p.__class__.__name__).lower() for p in self.providers)
-        key = ("ohlc", tuple(sorted(tickers_norm)), int(period_days), bool(adjusted), prov_names)
+        prov_names = tuple(
+            getattr(p, "name", p.__class__.__name__).lower() for p in self.providers
+        )
+        key = (
+            "ohlc",
+            tuple(sorted(tickers_norm)),
+            int(period_days),
+            bool(adjusted),
+            prov_names,
+        )
         cached = _CACHE.get(key)
         if cached is not None:
             return (cached, {}) if return_source else cached
 
         # Pre-fill with normalized empty frames
-        result: dict[str, _PDDataFrame] = {t: MarketProvider._empty_frame() for t in tickers_norm}
+        result: dict[str, _PDDataFrame] = {
+            t: MarketProvider._empty_frame() for t in tickers_norm
+        }
         source: dict[str, str] = {}
         remaining = set(tickers_norm)
 
@@ -271,7 +296,9 @@ class MultiProvider(MarketProvider):
             if skip_until and skip_until > now:
                 # Treat as empty fetch to continue to next provider
                 logging.getLogger("ziggy").info(
-                    "[provider] skipping %s until %s due to recent failures", pname, skip_until
+                    "[provider] skipping %s until %s due to recent failures",
+                    pname,
+                    skip_until,
                 )
                 fetched = {t: MarketProvider._empty_frame() for t in batch}
             else:
@@ -288,9 +315,11 @@ class MultiProvider(MarketProvider):
                             # Enforce a timeout on async providers
                             fetched = await asyncio.wait_for(
                                 val,
-                                timeout=(PROVIDER_TIMEOUT_MS / 1000)
-                                if PROVIDER_TIMEOUT_MS > 0
-                                else None,
+                                timeout=(
+                                    (PROVIDER_TIMEOUT_MS / 1000)
+                                    if PROVIDER_TIMEOUT_MS > 0
+                                    else None
+                                ),
                             )  # type: ignore[assignment]
                         else:
                             fetched = val  # type: ignore[assignment]
@@ -344,7 +373,9 @@ class MultiProvider(MarketProvider):
                 if fetched is None:
                     # Fallback to empty frames if something unexpected happened
                     latency_ms = int((time.time() - start_time) * 1000)
-                    _record_provider_failure(pname, latency_ms, Exception("Unexpected failure"))
+                    _record_provider_failure(
+                        pname, latency_ms, Exception("Unexpected failure")
+                    )
                     fetched = {t: MarketProvider._empty_frame() for t in batch}
 
             # Accept per-ticker first non-empty
@@ -353,7 +384,9 @@ class MultiProvider(MarketProvider):
                 df = fetched.get(t)
                 if df is not None and hasattr(df, "empty") and not df.empty:
                     result[t] = df
-                    source[t] = getattr(provider, "name", provider.__class__.__name__).lower()
+                    source[t] = getattr(
+                        provider, "name", provider.__class__.__name__
+                    ).lower()
                 else:
                     still.append(t)
             remaining = set(still)
@@ -363,12 +396,16 @@ class MultiProvider(MarketProvider):
 
     def today_open_prices(self, tickers: list[str]) -> dict[str, float | None]:
         # First intraday-capable provider; soft fallback if all None/missing
-        intraday_chain = [p for p in self.providers if getattr(p, "supports_intraday", False)]
+        intraday_chain = [
+            p for p in self.providers if getattr(p, "supports_intraday", False)
+        ]
         if not intraday_chain:
             return dict.fromkeys(tickers)
 
         def _try_with(p: MarketProvider) -> dict[str, float | None]:
-            k = _key("open", getattr(p, "name", p.__class__.__name__), tuple(sorted(tickers)))
+            k = _key(
+                "open", getattr(p, "name", p.__class__.__name__), tuple(sorted(tickers))
+            )
             cached = _CACHE.get(k)
             if cached is None:
                 try:
@@ -427,7 +464,9 @@ def get_price_provider() -> MultiProvider:
       3) default "yfinance"
     """
     # Sandbox mode short-circuit to fixtures provider
-    if (os.getenv("PROVIDER_MODE", "live").strip().lower() == "sandbox") and _SANDBOX_AVAILABLE:
+    if (
+        os.getenv("PROVIDER_MODE", "live").strip().lower() == "sandbox"
+    ) and _SANDBOX_AVAILABLE:
         # Return a single sandbox provider (implements MarketProvider)
         try:
             return SandboxPriceProvider()  # type: ignore[return-value]
@@ -513,7 +552,10 @@ async def _write_data_to_brain(
 
         # Write to brain
         event_id = await write_market_data_to_brain(
-            data=data, data_type=data_type, vendor_stamp=vendor_stamp, timezone_info=timezone_info
+            data=data,
+            data_type=data_type,
+            vendor_stamp=vendor_stamp,
+            timezone_info=timezone_info,
         )
 
         return event_id

@@ -123,7 +123,9 @@ class PolicyEngine:
                 violations.append(PolicyViolation.TRADING_DISABLED)
 
             # 2. Parameter validation
-            if not self._validate_parameters(ticker, size, p_up, regime, spreads_bps, news_heat):
+            if not self._validate_parameters(
+                ticker, size, p_up, regime, spreads_bps, news_heat
+            ):
                 violations.append(PolicyViolation.INVALID_PARAMETERS)
 
             # 3. Market hours check
@@ -139,7 +141,9 @@ class PolicyEngine:
                 violations.append(PolicyViolation.SPREAD_TOO_WIDE)
 
             # 5. Liquidity check
-            liquidity_result = self._check_liquidity(ticker, market_value or abs(size) * 100)
+            liquidity_result = self._check_liquidity(
+                ticker, market_value or abs(size) * 100
+            )
             checks["liquidity"] = liquidity_result
             if not liquidity_result["ok"]:
                 violations.append(PolicyViolation.LIQUIDITY_TOO_LOW)
@@ -192,7 +196,11 @@ class PolicyEngine:
             }
 
             return PolicyCheckResult(
-                ok=ok, reason=reason, violations=violations, meta=meta, check_timestamp=check_ts
+                ok=ok,
+                reason=reason,
+                violations=violations,
+                meta=meta,
+                check_timestamp=check_ts,
             )
 
         except Exception as e:
@@ -240,7 +248,9 @@ class PolicyEngine:
                 from app.services.timezone_utils import get_market_hours
 
                 market_info = get_market_hours(exchange)
-                is_open = market_info.get("is_trading_day", True)  # Default open if can't determine
+                is_open = market_info.get(
+                    "is_trading_day", True
+                )  # Default open if can't determine
             except ImportError:
                 # Fallback: basic NYSE hours check
                 is_open = self._basic_market_hours_check()
@@ -304,7 +314,9 @@ class PolicyEngine:
                 "min_required": MIN_LIQUIDITY_USD,
                 "trade_value": trade_value_usd,
                 "liquidity_ratio": (
-                    estimated_daily_volume / MIN_LIQUIDITY_USD if MIN_LIQUIDITY_USD > 0 else 1.0
+                    estimated_daily_volume / MIN_LIQUIDITY_USD
+                    if MIN_LIQUIDITY_USD > 0
+                    else 1.0
                 ),
             }
         except Exception as e:
@@ -314,7 +326,17 @@ class PolicyEngine:
     def _estimate_daily_volume(self, ticker: str) -> float:
         """Estimate daily trading volume in USD."""
         # Simple heuristic - major tickers have high volume
-        major_tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA", "SPY", "QQQ"]
+        major_tickers = [
+            "AAPL",
+            "MSFT",
+            "GOOGL",
+            "AMZN",
+            "TSLA",
+            "META",
+            "NVDA",
+            "SPY",
+            "QQQ",
+        ]
         if ticker.upper() in major_tickers:
             return 1_000_000_000  # $1B daily volume
         else:
@@ -328,7 +350,9 @@ class PolicyEngine:
             "news_heat": news_heat,
             "red_threshold": NEWS_HEAT_RED,
             "heat_level": (
-                "red" if news_heat >= NEWS_HEAT_RED else "yellow" if news_heat >= 0.5 else "green"
+                "red"
+                if news_heat >= NEWS_HEAT_RED
+                else "yellow" if news_heat >= 0.5 else "green"
             ),
         }
 
@@ -343,16 +367,16 @@ class PolicyEngine:
             "confidence_level": (
                 "low"
                 if p_up < P_UP_MIN_CONFIDENCE
-                else "high"
-                if p_up > P_UP_MAX_CONFIDENCE
-                else "acceptable"
+                else "high" if p_up > P_UP_MAX_CONFIDENCE else "acceptable"
             ),
         }
 
     def _check_regime(self, regime: str) -> dict[str, Any]:
         """Check if current market regime allows trading."""
         regime_clean = regime.strip().lower()
-        blacklisted = regime_clean in [r.strip().lower() for r in REGIME_BLACKLIST if r.strip()]
+        blacklisted = regime_clean in [
+            r.strip().lower() for r in REGIME_BLACKLIST if r.strip()
+        ]
 
         return {
             "ok": not blacklisted,
@@ -361,7 +385,9 @@ class PolicyEngine:
             "is_blacklisted": blacklisted,
         }
 
-    def _check_trade_size(self, size: float, market_value: float | None) -> dict[str, Any]:
+    def _check_trade_size(
+        self, size: float, market_value: float | None
+    ) -> dict[str, Any]:
         """Check if trade size is within risk limits."""
         try:
             # Estimate trade value if not provided
@@ -427,7 +453,9 @@ def check(
     Returns:
         Tuple of (ok, reason, meta) for existing code
     """
-    result = policy_engine.check(ticker, size, p_up, regime, spreads_bps, news_heat, **kwargs)
+    result = policy_engine.check(
+        ticker, size, p_up, regime, spreads_bps, news_heat, **kwargs
+    )
     return result.ok, result.reason, result.meta
 
 
@@ -446,7 +474,9 @@ def check_detailed(
     Returns:
         PolicyCheckResult with complete violation analysis
     """
-    return policy_engine.check(ticker, size, p_up, regime, spreads_bps, news_heat, **kwargs)
+    return policy_engine.check(
+        ticker, size, p_up, regime, spreads_bps, news_heat, **kwargs
+    )
 
 
 def get_policy_stats() -> dict[str, Any]:

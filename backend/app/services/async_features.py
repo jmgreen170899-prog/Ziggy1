@@ -67,8 +67,8 @@ class AsyncFeatureComputer:
         self._thread_pool: ThreadPoolExecutor | None = None
         self._process_pool: ProcessPoolExecutor | None = None
         self._metrics: list[LatencyMetrics] = []
-        self._task_queue: asyncio.Queue[tuple[str, Callable, tuple, dict]] = asyncio.Queue(
-            maxsize=self.config.queue_size
+        self._task_queue: asyncio.Queue[tuple[str, Callable, tuple, dict]] = (
+            asyncio.Queue(maxsize=self.config.queue_size)
         )
         self._worker_tasks: list[asyncio.Task] = []
 
@@ -90,9 +90,11 @@ class AsyncFeatureComputer:
             "AsyncFeatureComputer started",
             extra={
                 "thread_workers": self.config.max_workers,
-                "process_workers": max(2, self.config.max_workers // 2)
-                if self.config.use_process_pool
-                else 0,
+                "process_workers": (
+                    max(2, self.config.max_workers // 2)
+                    if self.config.use_process_pool
+                    else 0
+                ),
             },
         )
 
@@ -137,7 +139,9 @@ class AsyncFeatureComputer:
 
             # Select appropriate executor
             executor = (
-                self._process_pool if use_process_pool and self._process_pool else self._thread_pool
+                self._process_pool
+                if use_process_pool and self._process_pool
+                else self._thread_pool
             )
 
             # Run in executor to avoid blocking event loop
@@ -154,7 +158,9 @@ class AsyncFeatureComputer:
         except Exception as e:
             metric.complete(success=False, error=str(e))
             self._metrics.append(metric)
-            logger.error(f"Error computing features for {ticker}", extra={"error": str(e)})
+            logger.error(
+                f"Error computing features for {ticker}", extra={"error": str(e)}
+            )
             return None
 
     async def compute_features_batch(
@@ -171,12 +177,15 @@ class AsyncFeatureComputer:
             Dictionary mapping ticker to features
         """
         metric = LatencyMetrics(
-            operation=f"compute_features_batch:{len(tickers)}", start_time=time.perf_counter()
+            operation=f"compute_features_batch:{len(tickers)}",
+            start_time=time.perf_counter(),
         )
 
         try:
             # Create concurrent tasks for all tickers
-            tasks = [self.compute_features_async(ticker, force_refresh) for ticker in tickers]
+            tasks = [
+                self.compute_features_async(ticker, force_refresh) for ticker in tickers
+            ]
 
             # Wait for all tasks to complete
             results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -186,7 +195,8 @@ class AsyncFeatureComputer:
             for ticker, result in zip(tickers, results):
                 if isinstance(result, Exception):
                     logger.error(
-                        f"Error computing features for {ticker}", extra={"error": str(result)}
+                        f"Error computing features for {ticker}",
+                        extra={"error": str(result)},
                     )
                     feature_dict[ticker] = None
                 else:
@@ -218,7 +228,8 @@ class AsyncFeatureComputer:
             Signal dictionary or None if generation fails
         """
         metric = LatencyMetrics(
-            operation=f"compute_signal:{ticker}:{signal_type}", start_time=time.perf_counter()
+            operation=f"compute_signal:{ticker}:{signal_type}",
+            start_time=time.perf_counter(),
         )
 
         try:
@@ -273,11 +284,15 @@ class AsyncFeatureComputer:
         Returns:
             Result of func execution
         """
-        metric = LatencyMetrics(operation=operation_name, start_time=time.perf_counter())
+        metric = LatencyMetrics(
+            operation=operation_name, start_time=time.perf_counter()
+        )
 
         try:
             loop = asyncio.get_running_loop()
-            result = await loop.run_in_executor(self._thread_pool, lambda: func(*args, **kwargs))
+            result = await loop.run_in_executor(
+                self._thread_pool, lambda: func(*args, **kwargs)
+            )
 
             metric.complete(success=True)
             self._metrics.append(metric)
@@ -288,11 +303,14 @@ class AsyncFeatureComputer:
             metric.complete(success=False, error=str(e))
             self._metrics.append(metric)
             logger.error(
-                f"Error executing blocking operation: {operation_name}", extra={"error": str(e)}
+                f"Error executing blocking operation: {operation_name}",
+                extra={"error": str(e)},
             )
             raise
 
-    async def enqueue_task(self, task_id: str, func: Callable, *args: Any, **kwargs: Any) -> None:
+    async def enqueue_task(
+        self, task_id: str, func: Callable, *args: Any, **kwargs: Any
+    ) -> None:
         """
         Enqueue a task for background processing.
 
@@ -321,12 +339,15 @@ class AsyncFeatureComputer:
 
                     # Execute task
                     metric = LatencyMetrics(
-                        operation=f"worker_task:{task_id}", start_time=time.perf_counter()
+                        operation=f"worker_task:{task_id}",
+                        start_time=time.perf_counter(),
                     )
 
                     try:
                         loop = asyncio.get_running_loop()
-                        await loop.run_in_executor(self._thread_pool, lambda: func(*args, **kwargs))
+                        await loop.run_in_executor(
+                            self._thread_pool, lambda: func(*args, **kwargs)
+                        )
                         metric.complete(success=True)
 
                     except Exception as e:
@@ -386,8 +407,12 @@ class AsyncFeatureComputer:
                 "max_latency_ms": 0.0,
             }
 
-        successful = [m for m in self._metrics if m.success and m.duration_ms is not None]
-        durations = sorted([m.duration_ms for m in successful if m.duration_ms is not None])
+        successful = [
+            m for m in self._metrics if m.success and m.duration_ms is not None
+        ]
+        durations = sorted(
+            [m.duration_ms for m in successful if m.duration_ms is not None]
+        )
 
         if not durations:
             return {
@@ -405,12 +430,16 @@ class AsyncFeatureComputer:
             "success_rate": len(successful) / len(self._metrics) * 100,
             "avg_latency_ms": sum(durations) / len(durations),
             "p50_latency_ms": durations[len(durations) // 2],
-            "p95_latency_ms": durations[int(len(durations) * 0.95)]
-            if len(durations) > 1
-            else durations[0],
-            "p99_latency_ms": durations[int(len(durations) * 0.99)]
-            if len(durations) > 1
-            else durations[0],
+            "p95_latency_ms": (
+                durations[int(len(durations) * 0.95)]
+                if len(durations) > 1
+                else durations[0]
+            ),
+            "p99_latency_ms": (
+                durations[int(len(durations) * 0.99)]
+                if len(durations) > 1
+                else durations[0]
+            ),
             "max_latency_ms": max(durations),
         }
 

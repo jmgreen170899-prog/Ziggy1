@@ -5,9 +5,21 @@
 
 declare namespace BackendAPI {
   // TODO: Replace with generated types from openapi-typescript
-  interface Health { status?: string; ok?: boolean }
-  interface MarketOverview { [key: string]: unknown }
-  interface OhlcBar { t?: string | number; o?: number | null; h?: number | null; l?: number | null; c?: number | null; v?: number | null }
+  interface Health {
+    status?: string;
+    ok?: boolean;
+  }
+  interface MarketOverview {
+    [key: string]: unknown;
+  }
+  interface OhlcBar {
+    t?: string | number;
+    o?: number | null;
+    h?: number | null;
+    l?: number | null;
+    c?: number | null;
+    v?: number | null;
+  }
 }
 
 export {};

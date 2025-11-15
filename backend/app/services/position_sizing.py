@@ -252,7 +252,11 @@ class PositionSizer:
         # Apply existing position constraints
         if existing_positions:
             final_quantity = self._apply_risk_constraints(
-                final_quantity, symbol, current_price, account_equity, existing_positions
+                final_quantity,
+                symbol,
+                current_price,
+                account_equity,
+                existing_positions,
             )
 
         # Ensure minimum viable quantity
@@ -318,7 +322,9 @@ class PositionSizer:
         max_total_exposure = account_equity * self.risk_budget.max_total_risk_pct
         if total_exposure > max_total_exposure:
             # Reduce position to fit within total risk budget
-            available_budget = max_total_exposure - (total_exposure - new_position_value)
+            available_budget = max_total_exposure - (
+                total_exposure - new_position_value
+            )
             if available_budget > 0:
                 max_quantity = int(available_budget / price)
                 quantity = min(quantity, max_quantity)
@@ -379,7 +385,8 @@ class PositionSizer:
         # Simple portfolio risk calculation
         total_exposure = sum(pos.dollar_amount for pos in positions.values())
         position_weights = {
-            symbol: pos.dollar_amount / total_exposure for symbol, pos in positions.items()
+            symbol: pos.dollar_amount / total_exposure
+            for symbol, pos in positions.items()
         }
 
         # Individual position variances (simplified)
@@ -406,18 +413,27 @@ class PositionSizer:
                     else:
                         # Covariance term
                         corr = correlations.get((symbol1, symbol2), 0.0)
-                        cov = corr * np.sqrt(individual_vars[symbol1] * individual_vars[symbol2])
+                        cov = corr * np.sqrt(
+                            individual_vars[symbol1] * individual_vars[symbol2]
+                        )
                         portfolio_var += (
-                            2 * position_weights[symbol1] * position_weights[symbol2] * cov
+                            2
+                            * position_weights[symbol1]
+                            * position_weights[symbol2]
+                            * cov
                         )
 
         # Diversification ratio
         sum_individual_risk = sum(
             np.sqrt(var) * weight
-            for (symbol, var), weight in zip(individual_vars.items(), position_weights.values())
+            for (symbol, var), weight in zip(
+                individual_vars.items(), position_weights.values()
+            )
         )
         portfolio_risk = np.sqrt(portfolio_var)
-        diversification_ratio = sum_individual_risk / portfolio_risk if portfolio_risk > 0 else 1.0
+        diversification_ratio = (
+            sum_individual_risk / portfolio_risk if portfolio_risk > 0 else 1.0
+        )
 
         return {
             "total_var": portfolio_var,

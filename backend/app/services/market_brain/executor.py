@@ -150,7 +150,9 @@ class TradeExecutor:
                 return result
 
             # Step 2: Risk checks
-            if not request.skip_risk_checks and not self._perform_risk_checks(request, result):
+            if not request.skip_risk_checks and not self._perform_risk_checks(
+                request, result
+            ):
                 result.status = ExecutionStatus.REJECTED
                 return result
 
@@ -175,10 +177,14 @@ class TradeExecutor:
         # Store execution history
         self.execution_history.append(result)
 
-        logger.info(f"Execution completed for {request.ticker} - Status: {result.status.value}")
+        logger.info(
+            f"Execution completed for {request.ticker} - Status: {result.status.value}"
+        )
         return result
 
-    def _validate_request(self, request: ExecutionRequest, result: ExecutionResult) -> bool:
+    def _validate_request(
+        self, request: ExecutionRequest, result: ExecutionResult
+    ) -> bool:
         """Validate execution request."""
 
         # Check signal validity
@@ -193,12 +199,16 @@ class TradeExecutor:
 
         # Check ticker match
         if request.ticker != request.signal.ticker:
-            result.validation_errors.append("Ticker mismatch between request and signal")
+            result.validation_errors.append(
+                "Ticker mismatch between request and signal"
+            )
             return False
 
         # Check order type
         if request.order_type not in ["market", "limit", "stop"]:
-            result.validation_errors.append(f"Unsupported order type: {request.order_type}")
+            result.validation_errors.append(
+                f"Unsupported order type: {request.order_type}"
+            )
             return False
 
         # Check limit price for limit orders
@@ -208,12 +218,16 @@ class TradeExecutor:
 
         return True
 
-    def _perform_risk_checks(self, request: ExecutionRequest, result: ExecutionResult) -> bool:
+    def _perform_risk_checks(
+        self, request: ExecutionRequest, result: ExecutionResult
+    ) -> bool:
         """Perform risk validation checks."""
 
         # Daily trade limit
         if self.daily_trades_count >= self.max_daily_trades:
-            result.validation_errors.append(f"Daily trade limit exceeded ({self.max_daily_trades})")
+            result.validation_errors.append(
+                f"Daily trade limit exceeded ({self.max_daily_trades})"
+            )
             return False
 
         # Position size limit
@@ -232,7 +246,9 @@ class TradeExecutor:
 
         # Signal confidence check
         if request.signal.confidence and request.signal.confidence < 0.3:
-            result.warnings.append(f"Low signal confidence: {request.signal.confidence:.2f}")
+            result.warnings.append(
+                f"Low signal confidence: {request.signal.confidence:.2f}"
+            )
 
         return True
 
@@ -278,7 +294,10 @@ class TradeExecutor:
         return order_details
 
     def _simulate_execution(
-        self, request: ExecutionRequest, result: ExecutionResult, order_details: dict[str, Any]
+        self,
+        request: ExecutionRequest,
+        result: ExecutionResult,
+        order_details: dict[str, Any],
     ) -> ExecutionResult:
         """Simulate order execution for dry run."""
 
@@ -304,7 +323,10 @@ class TradeExecutor:
         return result
 
     def _execute_real_order(
-        self, request: ExecutionRequest, result: ExecutionResult, order_details: dict[str, Any]
+        self,
+        request: ExecutionRequest,
+        result: ExecutionResult,
+        order_details: dict[str, Any],
     ) -> ExecutionResult:
         """Execute real order through trading adapter."""
 
@@ -326,7 +348,9 @@ class TradeExecutor:
                     result.status = ExecutionStatus.FILLED
                     result.filled_quantity = order_response.get("filled_quantity", 0)
                     result.filled_price = order_response.get("fill_price")
-                    result.executed_value = result.filled_quantity * (result.filled_price or 0)
+                    result.executed_value = result.filled_quantity * (
+                        result.filled_price or 0
+                    )
                     result.commission = order_response.get("commission", 0)
 
                     # Update counters
@@ -335,7 +359,9 @@ class TradeExecutor:
 
             else:
                 result.status = ExecutionStatus.REJECTED
-                result.validation_errors.append(order_response.get("error", "Order rejected"))
+                result.validation_errors.append(
+                    order_response.get("error", "Order rejected")
+                )
 
         except Exception as e:
             result.status = ExecutionStatus.ERROR
@@ -386,7 +412,10 @@ def execute_trade_signal(
 ) -> ExecutionResult:
     """Convenience function to execute a trade signal."""
     request = ExecutionRequest(
-        signal=signal, position_size=position_size, ticker=signal.ticker, dry_run=dry_run
+        signal=signal,
+        position_size=position_size,
+        ticker=signal.ticker,
+        dry_run=dry_run,
     )
     return trade_executor.execute_signal(request)
 

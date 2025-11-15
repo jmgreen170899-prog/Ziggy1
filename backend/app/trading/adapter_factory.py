@@ -15,7 +15,10 @@ def make_adapter() -> BrokerAdapter:
     """
     # Import isolation utilities
     try:
-        from app.utils.isolation import enforce_strict_isolation, should_enforce_isolation
+        from app.utils.isolation import (
+            enforce_strict_isolation,
+            should_enforce_isolation,
+        )
 
         # Enforce strict isolation if enabled
         if should_enforce_isolation():

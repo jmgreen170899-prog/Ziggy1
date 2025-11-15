@@ -323,9 +323,12 @@ def build_trace_summary(trace_data: dict[str, Any]) -> dict[str, Any]:
         "stage_count": len(nodes),
         "stage_types": stage_types,
         "prediction_flow": prediction_flow,
-        "has_feedback": any(edge.get("type") == "feedback" for edge in graph.get("edges", [])),
+        "has_feedback": any(
+            edge.get("type") == "feedback" for edge in graph.get("edges", [])
+        ),
         "pipeline_efficiency": round(
-            (total_latency - max_latency) / total_latency if total_latency > 0 else 0.0, 2
+            (total_latency - max_latency) / total_latency if total_latency > 0 else 0.0,
+            2,
         ),
     }
 
@@ -382,7 +385,9 @@ def validate_trace_integrity(trace_data: dict[str, Any]) -> dict[str, Any]:
 
     # Calculate integrity score
     total_checks = 4  # Graph, stages, edges, raw data
-    failed_checks = len([issue for issue in issues if not issue.startswith("missing_stages")])
+    failed_checks = len(
+        [issue for issue in issues if not issue.startswith("missing_stages")]
+    )
     integrity_score = max(0.0, (total_checks - failed_checks) / total_checks)
 
     return {

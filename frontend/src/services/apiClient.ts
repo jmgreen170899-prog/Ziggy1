@@ -1,20 +1,20 @@
 /**
  * Typed API Client for ZiggyAI Backend
- * 
+ *
  * Generated based on Phase 1 OpenAPI standardization
- * 
+ *
  * This client provides type-safe access to all backend endpoints with:
  * - Compile-time type checking
  * - Auto-completion in IDEs
  * - Standardized error handling
  * - Request/response transformation
- * 
+ *
  * Usage:
  *   import { apiClient } from '@/services/apiClient';
  *   const data = await apiClient.getRiskLite();
  */
 
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from "axios";
 import type {
   // Core responses
   ErrorResponse,
@@ -48,7 +48,7 @@ import type {
   // RAG
   RAGQueryRequest,
   QueryResponse,
-} from '@/types/api/generated';
+} from "@/types/api/generated";
 
 /**
  * API Client Configuration
@@ -65,21 +65,24 @@ export class ZiggyAPIClient {
   private client: AxiosInstance;
 
   constructor(config?: ApiClientConfig) {
-    const baseURL = config?.baseURL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    
+    const baseURL =
+      config?.baseURL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "http://localhost:8000";
+
     this.client = axios.create({
       baseURL,
       timeout: 30000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       ...config,
     });
 
     // Request interceptor for authentication
     this.client.interceptors.request.use((config) => {
-      if (typeof window !== 'undefined') {
-        const token = window.localStorage.getItem('auth_token');
+      if (typeof window !== "undefined") {
+        const token = window.localStorage.getItem("auth_token");
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -93,15 +96,15 @@ export class ZiggyAPIClient {
       (error: AxiosError<ErrorResponse>) => {
         // Standardized error handling
         const apiError: ErrorResponse = error.response?.data || {
-          detail: error.message || 'An unknown error occurred',
-          code: error.code || 'network_error',
+          detail: error.message || "An unknown error occurred",
+          code: error.code || "network_error",
           meta: {
             status: error.response?.status,
             statusText: error.response?.statusText,
           },
         };
 
-        console.error('API Error:', {
+        console.error("API Error:", {
           url: error.config?.url,
           method: error.config?.method,
           status: error.response?.status,
@@ -109,7 +112,7 @@ export class ZiggyAPIClient {
         });
 
         return Promise.reject(apiError);
-      }
+      },
     );
   }
 
@@ -122,7 +125,7 @@ export class ZiggyAPIClient {
    * GET /health
    */
   async getHealth(): Promise<AckResponse> {
-    const response = await this.client.get<AckResponse>('/health');
+    const response = await this.client.get<AckResponse>("/health");
     return response.data;
   }
 
@@ -131,7 +134,7 @@ export class ZiggyAPIClient {
    * GET /health/detailed
    */
   async getHealthDetailed(): Promise<HealthResponse> {
-    const response = await this.client.get<HealthResponse>('/health/detailed');
+    const response = await this.client.get<HealthResponse>("/health/detailed");
     return response.data;
   }
 
@@ -140,7 +143,8 @@ export class ZiggyAPIClient {
    * GET /api/core/health
    */
   async getCoreHealth(): Promise<CoreHealthResponse> {
-    const response = await this.client.get<CoreHealthResponse>('/api/core/health');
+    const response =
+      await this.client.get<CoreHealthResponse>("/api/core/health");
     return response.data;
   }
 
@@ -153,7 +157,10 @@ export class ZiggyAPIClient {
    * POST /api/query
    */
   async queryRAG(request: RAGQueryRequest): Promise<QueryResponse> {
-    const response = await this.client.post<QueryResponse>('/api/query', request);
+    const response = await this.client.post<QueryResponse>(
+      "/api/query",
+      request,
+    );
     return response.data;
   }
 
@@ -162,7 +169,7 @@ export class ZiggyAPIClient {
    * POST /api/ingest/web
    */
   async ingestWeb(data: { query: string; max_results?: number }): Promise<any> {
-    const response = await this.client.post('/api/ingest/web', data);
+    const response = await this.client.post("/api/ingest/web", data);
     return response.data;
   }
 
@@ -172,16 +179,20 @@ export class ZiggyAPIClient {
    */
   async ingestPDF(file: File, sourceUrl?: string): Promise<IngestPdfResponse> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
     if (sourceUrl) {
-      formData.append('source_url', sourceUrl);
+      formData.append("source_url", sourceUrl);
     }
 
-    const response = await this.client.post<IngestPdfResponse>('/api/ingest/pdf', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+    const response = await this.client.post<IngestPdfResponse>(
+      "/api/ingest/pdf",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+    );
     return response.data;
   }
 
@@ -190,7 +201,7 @@ export class ZiggyAPIClient {
    * POST /api/reset
    */
   async resetVectorStore(): Promise<ResetResponse> {
-    const response = await this.client.post<ResetResponse>('/api/reset');
+    const response = await this.client.post<ResetResponse>("/api/reset");
     return response.data;
   }
 
@@ -207,7 +218,10 @@ export class ZiggyAPIClient {
     cron?: string;
     job_id?: string;
   }): Promise<TaskScheduleResponse> {
-    const response = await this.client.post<TaskScheduleResponse>('/api/tasks/watch', data);
+    const response = await this.client.post<TaskScheduleResponse>(
+      "/api/tasks/watch",
+      data,
+    );
     return response.data;
   }
 
@@ -216,7 +230,7 @@ export class ZiggyAPIClient {
    * GET /api/tasks
    */
   async listTasks(): Promise<TaskListResponse> {
-    const response = await this.client.get<TaskListResponse>('/api/tasks');
+    const response = await this.client.get<TaskListResponse>("/api/tasks");
     return response.data;
   }
 
@@ -225,9 +239,12 @@ export class ZiggyAPIClient {
    * DELETE /api/tasks
    */
   async cancelTask(jobId: string): Promise<TaskCancelResponse> {
-    const response = await this.client.delete<TaskCancelResponse>('/api/tasks', {
-      data: { job_id: jobId },
-    });
+    const response = await this.client.delete<TaskCancelResponse>(
+      "/api/tasks",
+      {
+        data: { job_id: jobId },
+      },
+    );
     return response.data;
   }
 
@@ -244,7 +261,10 @@ export class ZiggyAPIClient {
     window?: number;
     use_cache?: boolean;
   }): Promise<RiskLiteResponse> {
-    const response = await this.client.get<RiskLiteResponse>('/market-risk-lite', { params });
+    const response = await this.client.get<RiskLiteResponse>(
+      "/market-risk-lite",
+      { params },
+    );
     return response.data;
   }
 
@@ -257,7 +277,7 @@ export class ZiggyAPIClient {
    * POST /backtest
    */
   async runBacktest(data: BacktestIn): Promise<BacktestOut> {
-    const response = await this.client.post<BacktestOut>('/backtest', data);
+    const response = await this.client.post<BacktestOut>("/backtest", data);
     return response.data;
   }
 
@@ -270,7 +290,8 @@ export class ZiggyAPIClient {
    * GET /alerts/status
    */
   async getAlertStatus(): Promise<AlertStatusResponse> {
-    const response = await this.client.get<AlertStatusResponse>('/alerts/status');
+    const response =
+      await this.client.get<AlertStatusResponse>("/alerts/status");
     return response.data;
   }
 
@@ -279,7 +300,8 @@ export class ZiggyAPIClient {
    * POST /alerts/start
    */
   async startAlerts(): Promise<AlertStatusResponse> {
-    const response = await this.client.post<AlertStatusResponse>('/alerts/start');
+    const response =
+      await this.client.post<AlertStatusResponse>("/alerts/start");
     return response.data;
   }
 
@@ -288,7 +310,8 @@ export class ZiggyAPIClient {
    * POST /alerts/stop
    */
   async stopAlerts(): Promise<AlertStatusResponse> {
-    const response = await this.client.post<AlertStatusResponse>('/alerts/stop');
+    const response =
+      await this.client.post<AlertStatusResponse>("/alerts/stop");
     return response.data;
   }
 
@@ -301,7 +324,10 @@ export class ZiggyAPIClient {
     ticker?: string;
     rule?: string;
   }): Promise<AlertResponse> {
-    const response = await this.client.post<AlertResponse>('/alerts/sma50', data);
+    const response = await this.client.post<AlertResponse>(
+      "/alerts/sma50",
+      data,
+    );
     return response.data;
   }
 
@@ -319,7 +345,10 @@ export class ZiggyAPIClient {
     lookback_days?: number;
     limit?: number;
   }): Promise<SentimentResponse> {
-    const response = await this.client.get<SentimentResponse>('/news/sentiment', { params });
+    const response = await this.client.get<SentimentResponse>(
+      "/news/sentiment",
+      { params },
+    );
     return response.data;
   }
 
@@ -328,7 +357,7 @@ export class ZiggyAPIClient {
    * GET /news/ping
    */
   async pingNews(): Promise<NewsPingResponse> {
-    const response = await this.client.get<NewsPingResponse>('/news/ping');
+    const response = await this.client.get<NewsPingResponse>("/news/ping");
     return response.data;
   }
 
@@ -349,7 +378,10 @@ export class ZiggyAPIClient {
     sort_by?: string;
     limit?: number;
   }): Promise<ScreenerResponse> {
-    const response = await this.client.post<ScreenerResponse>('/screener/scan', data);
+    const response = await this.client.post<ScreenerResponse>(
+      "/screener/scan",
+      data,
+    );
     return response.data;
   }
 
@@ -358,7 +390,8 @@ export class ZiggyAPIClient {
    * GET /screener/health
    */
   async getScreenerHealth(): Promise<ScreenerHealthResponse> {
-    const response = await this.client.get<ScreenerHealthResponse>('/screener/health');
+    const response =
+      await this.client.get<ScreenerHealthResponse>("/screener/health");
     return response.data;
   }
 
@@ -371,7 +404,7 @@ export class ZiggyAPIClient {
    * GET /chat/health
    */
   async getChatHealth(): Promise<ChatHealthResponse> {
-    const response = await this.client.get<ChatHealthResponse>('/chat/health');
+    const response = await this.client.get<ChatHealthResponse>("/chat/health");
     return response.data;
   }
 
@@ -380,7 +413,7 @@ export class ZiggyAPIClient {
    * GET /chat/config
    */
   async getChatConfig(): Promise<ChatConfigResponse> {
-    const response = await this.client.get<ChatConfigResponse>('/chat/config');
+    const response = await this.client.get<ChatConfigResponse>("/chat/config");
     return response.data;
   }
 
@@ -389,7 +422,7 @@ export class ZiggyAPIClient {
    * POST /chat/complete
    */
   async chatComplete(request: ChatCompletionRequest): Promise<any> {
-    const response = await this.client.post('/chat/complete', request);
+    const response = await this.client.post("/chat/complete", request);
     return response.data;
   }
 
@@ -408,7 +441,11 @@ export class ZiggyAPIClient {
   /**
    * Make a custom POST request
    */
-  async post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
     const response = await this.client.post<T>(url, data, config);
     return response.data;
   }
@@ -416,7 +453,11 @@ export class ZiggyAPIClient {
   /**
    * Make a custom PUT request
    */
-  async put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  async put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
     const response = await this.client.put<T>(url, data, config);
     return response.data;
   }
@@ -436,7 +477,7 @@ export class ZiggyAPIClient {
 
 /**
  * Default API client instance
- * 
+ *
  * Usage:
  *   import { apiClient } from '@/services/apiClient';
  *   const health = await apiClient.getHealth();
@@ -445,7 +486,7 @@ export const apiClient = new ZiggyAPIClient();
 
 /**
  * Create a new API client instance with custom configuration
- * 
+ *
  * Usage:
  *   import { createApiClient } from '@/services/apiClient';
  *   const customClient = createApiClient({ baseURL: 'https://api.ziggy.ai' });

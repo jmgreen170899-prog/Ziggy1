@@ -6,6 +6,7 @@
 ## 🚀 Quick Start
 
 ### Option 1: Using Make (Recommended)
+
 ```bash
 # Setup everything
 make dev-setup
@@ -18,6 +19,7 @@ open CODE_HEALTH_REPORT.md
 ```
 
 ### Option 2: Using PowerShell (Windows)
+
 ```powershell
 # Setup everything
 .\audit.ps1 dev-setup
@@ -30,12 +32,13 @@ notepad CODE_HEALTH_REPORT.md
 ```
 
 ### Option 3: Manual Commands
+
 ```bash
 # Frontend (Phase 1 - Priority)
 cd frontend
 npm install
 npm run audit:fe:types
-npm run audit:fe:lint  
+npm run audit:fe:lint
 npm run audit:fe:ui
 npm run audit:fe:lighthouse
 npm run audit:fe:report
@@ -53,14 +56,16 @@ python scripts/generate_code_health_report.py
 ## 🎯 Audit Philosophy
 
 ### Phase 1: Frontend UI (First & Priority)
+
 **Why First?** Users see UI issues immediately. Fix what's visible before what's hidden.
 
 - **Strict Type & Lint**: Zero TypeScript errors, zero ESLint warnings
 - **Route & Render Audit**: Every route loads, displays data, no console errors
-- **Performance & A11y**: Lighthouse scores >70% performance, >80% accessibility  
+- **Performance & A11y**: Lighthouse scores >70% performance, >80% accessibility
 - **Duplication & Unused**: Clean codebase with minimal technical debt
 
 ### Phase 2: Backend API (Second)
+
 **Why Second?** API issues are often hidden until they cause frontend failures.
 
 - **Smoke Test All Routes**: Every endpoint returns <400 for valid requests
@@ -72,13 +77,15 @@ python scripts/generate_code_health_report.py
 ## 📊 Issue Priority System
 
 ### 🚨 P0 (Critical) - Fix Before Production
+
 - Frontend routes completely broken
 - Console errors in UI
 - NaN/Infinity values displayed to users
 - API endpoints returning 5xx errors
 - Health endpoint failures
 
-### ⚠️ P1 (High Priority) - Fix This Sprint  
+### ⚠️ P1 (High Priority) - Fix This Sprint
+
 - Missing/empty data fields in UI
 - Network errors in frontend
 - Performance scores <70%
@@ -89,6 +96,7 @@ python scripts/generate_code_health_report.py
 - Security warnings
 
 ### 📝 P2 (Polish) - Technical Debt
+
 - Code duplication
 - Unused code/dependencies
 - Slow load times (>5s)
@@ -97,6 +105,7 @@ python scripts/generate_code_health_report.py
 ## 🛠️ Tools & Technologies
 
 ### Frontend Audit Stack
+
 - **TypeScript**: Strict type checking with `tsconfig.strict.json`
 - **ESLint**: Code quality and style enforcement
 - **Playwright**: Visual UI testing with screenshots
@@ -105,6 +114,7 @@ python scripts/generate_code_health_report.py
 - **knip/ts-prune/depcheck**: Unused code and dependency detection
 
 ### Backend Audit Stack
+
 - **Ruff**: Fast Python linting and formatting
 - **MyPy**: Static type checking
 - **Bandit**: Security vulnerability scanning
@@ -115,11 +125,13 @@ python scripts/generate_code_health_report.py
 ## 📁 Artifacts & Reports
 
 ### Generated Reports
+
 - `CODE_HEALTH_REPORT.md` - Consolidated P0/P1/P2 issues with action items
 - `UI_HEALTH_REPORT.md` - Frontend-specific findings with screenshots
 - `API_HEALTH_REPORT.md` - Backend-specific findings with endpoint analysis
 
 ### Artifacts Directory Structure
+
 ```
 artifacts/
 ├── ui/
@@ -141,13 +153,15 @@ artifacts/
 ## 🔧 Available Commands
 
 ### Quick Commands
+
 ```bash
 make audit-quick          # Fast type/lint checks only
-make audit-frontend-quick # Frontend types + lint only  
+make audit-frontend-quick # Frontend types + lint only
 make audit-backend-quick  # Backend syntax + types + security only
 ```
 
 ### Full Audits
+
 ```bash
 make audit-frontend-full  # Complete frontend audit with UI tests
 make audit-backend-full   # Complete backend audit with API tests
@@ -155,6 +169,7 @@ make audit-all           # Full audit (frontend → backend → report)
 ```
 
 ### Individual Components
+
 ```bash
 make audit-frontend-ui    # Playwright visual audit + screenshots
 make audit-frontend-perf  # Lighthouse performance audit
@@ -163,6 +178,7 @@ make audit-backend-fuzz   # Schemathesis API fuzzing
 ```
 
 ### Utilities
+
 ```bash
 make dev-setup           # Install all dependencies + create directories
 make clean              # Remove all artifacts and reports
@@ -171,9 +187,10 @@ make status             # Show current health status
 ```
 
 ### Shortcuts
+
 ```bash
 make fe    # = audit-frontend-full
-make be    # = audit-backend-full  
+make be    # = audit-backend-full
 make quick # = audit-quick
 make all   # = audit-all
 ```
@@ -183,6 +200,7 @@ make all   # = audit-all
 ### ✅ Ready for Production When:
 
 **Frontend (Phase 1)**
+
 - [ ] Zero P0 issues (broken routes, console errors, NaN values)
 - [ ] `audit:fe:types` and `audit:fe:lint` pass with zero warnings
 - [ ] All routes load successfully with data-loaded selectors
@@ -192,7 +210,8 @@ make all   # = audit-all
 - [ ] TTL badges properly indicate data freshness
 
 **Backend (Phase 2)**
-- [ ] Zero P0 issues (5xx errors, health endpoint failures) 
+
+- [ ] Zero P0 issues (5xx errors, health endpoint failures)
 - [ ] `ruff check`, `mypy`, and `bandit` pass cleanly
 - [ ] All endpoints return <400 status codes for valid requests
 - [ ] `/paper/health` returns 200 with required fields when active
@@ -201,6 +220,7 @@ make all   # = audit-all
 - [ ] Schemathesis fuzzing shows no critical failures
 
 **Integration**
+
 - [ ] Frontend receives real-time data from backend
 - [ ] WebSocket connections stable under load
 - [ ] Error boundaries handle API failures gracefully
@@ -210,23 +230,25 @@ make all   # = audit-all
 ## 🔄 Continuous Integration
 
 ### Pre-commit Hooks
+
 ```bash
 # Add to .git/hooks/pre-commit
 make audit-quick || exit 1
 ```
 
 ### GitHub Actions / CI Pipeline
+
 ```yaml
 # Recommended CI workflow
 - name: Frontend Health Check
   run: make ci-frontend
-  
-- name: Backend Health Check  
+
+- name: Backend Health Check
   run: make ci-backend
-  
+
 - name: Generate Health Report
   run: make report
-  
+
 - name: Fail on P0 Issues
   run: |
     if grep -q "🔴 CRITICAL" CODE_HEALTH_REPORT.md; then
@@ -240,25 +262,30 @@ make audit-quick || exit 1
 ### Common Issues
 
 **"UI audit failed"**
+
 - Ensure frontend dev server is running (`npm run dev`)
 - Check if port 3000 is available
 - Verify Playwright is installed (`npx playwright install`)
 
-**"API fuzzing failed"**  
+**"API fuzzing failed"**
+
 - Ensure backend server is running (`make run-backend`)
 - Check if port 8000 is available
 - Verify OpenAPI schema is accessible at `/openapi.json`
 
 **"Permission denied"**
+
 - On Windows: Run PowerShell as Administrator
 - On Mac/Linux: Use `sudo` for global package installs
 
 **"Command not found"**
+
 - Install make: `choco install make` (Windows) or `brew install make` (Mac)
 - Use PowerShell script alternative: `.\audit.ps1`
 - Run commands manually from the Quick Start section
 
 ### Debug Mode
+
 ```bash
 # Verbose output
 make audit-all VERBOSE=1
@@ -273,7 +300,7 @@ cd backend && python scripts/backend_health_audit.py --verbose
 ### Adding New Audit Checks
 
 1. **Frontend**: Add to `frontend/scripts/ui_audit.spec.ts`
-2. **Backend**: Add to `backend/scripts/backend_health_audit.py`  
+2. **Backend**: Add to `backend/scripts/backend_health_audit.py`
 3. **Report**: Update `scripts/generate_code_health_report.py`
 4. **Commands**: Add to `Makefile` and `audit.ps1`
 
@@ -290,7 +317,7 @@ cd backend && python scripts/backend_health_audit.py --verbose
 ## 📚 Further Reading
 
 - [Frontend Audit Deep Dive](frontend/scripts/README.md)
-- [Backend Audit Deep Dive](backend/scripts/README.md) 
+- [Backend Audit Deep Dive](backend/scripts/README.md)
 - [Playwright UI Testing Guide](https://playwright.dev/docs/intro)
 - [Lighthouse Performance Guide](https://developers.google.com/web/tools/lighthouse)
 - [Schemathesis API Testing](https://schemathesis.readthedocs.io/)

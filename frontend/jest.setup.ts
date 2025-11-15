@@ -1,7 +1,7 @@
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter() {
     return {
       push: jest.fn(),
@@ -16,7 +16,7 @@ jest.mock('next/navigation', () => ({
     return new URLSearchParams();
   },
   usePathname() {
-    return '/';
+    return "/";
   },
 }));
 
@@ -26,11 +26,19 @@ global.IntersectionObserver = class IntersectionObserver {
   disconnect() {}
   observe() {}
   unobserve() {}
-  takeRecords() { return []; }
-  
-  get root() { return null; }
-  get rootMargin() { return '0px'; }
-  get thresholds() { return []; }
+  takeRecords() {
+    return [];
+  }
+
+  get root() {
+    return null;
+  }
+  get rootMargin() {
+    return "0px";
+  }
+  get thresholds() {
+    return [];
+  }
 } as any;
 
 // Mock ResizeObserver
@@ -42,9 +50,9 @@ global.ResizeObserver = class ResizeObserver {
 };
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -70,8 +78,8 @@ const originalError = console.error;
 beforeAll(() => {
   console.error = (...args: any[]) => {
     if (
-      typeof args[0] === 'string' &&
-      (args[0].includes('Warning:') || args[0].includes('Error:'))
+      typeof args[0] === "string" &&
+      (args[0].includes("Warning:") || args[0].includes("Error:"))
     ) {
       return;
     }

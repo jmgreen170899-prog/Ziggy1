@@ -69,7 +69,9 @@ def telegram_notification_handler(trigger: AlertTrigger) -> bool:
         if success:
             logger.info(f"Telegram notification sent for alert {trigger.alert_id}")
         else:
-            logger.warning(f"Failed to send Telegram notification for alert {trigger.alert_id}")
+            logger.warning(
+                f"Failed to send Telegram notification for alert {trigger.alert_id}"
+            )
 
         return success
 

@@ -7,6 +7,7 @@ This guide explains how to build an Android application for ZiggyAI using the Mo
 ## Technology Stack
 
 ### Recommended Stack
+
 - **Language**: Kotlin 1.9+
 - **UI Framework**: Jetpack Compose
 - **Architecture**: MVVM + Clean Architecture
@@ -29,6 +30,7 @@ This guide explains how to build an Android application for ZiggyAI using the Mo
 ### 2. Add Dependencies
 
 **build.gradle.kts (Project level):**
+
 ```kotlin
 plugins {
     id("com.android.application") version "8.2.0" apply false
@@ -39,6 +41,7 @@ plugins {
 ```
 
 **build.gradle.kts (App level):**
+
 ```kotlin
 plugins {
     id("com.android.application")
@@ -184,6 +187,7 @@ app/
 ### 1. Application Class
 
 **ZiggyApplication.kt:**
+
 ```kotlin
 package com.ziggyai.mobile
 
@@ -227,6 +231,7 @@ class ZiggyApplication : Application() {
 ### 2. API Service
 
 **ZiggyApiService.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.data.api
 
@@ -304,6 +309,7 @@ interface ZiggyApiService {
 ### 3. Network Module (Dependency Injection)
 
 **NetworkModule.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.di
 
@@ -377,6 +383,7 @@ object NetworkModule {
 ### 4. Auth Interceptor
 
 **AuthInterceptor.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.data.api
 
@@ -389,7 +396,7 @@ import okhttp3.Response
 class AuthInterceptor(
     private val userPreferences: UserPreferences
 ) : Interceptor {
-    
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking {
             userPreferences.getAccessToken().first()
@@ -411,6 +418,7 @@ class AuthInterceptor(
 ### 5. Repository Pattern
 
 **MarketRepository.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.data.repository
 
@@ -441,7 +449,7 @@ class MarketRepository @Inject constructor(
                     // Update cache
                     val entities = snapshot.quotes.map { it.toEntity() }
                     quoteDao.insertAll(entities)
-                    
+
                     // Emit fresh data
                     emit(Result.success(snapshot.quotes.map { it.toDomain() }))
                 }
@@ -475,6 +483,7 @@ class MarketRepository @Inject constructor(
 ### 6. Background Sync Worker
 
 **SyncWorker.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.workers
 
@@ -507,7 +516,7 @@ class SyncWorker @AssistedInject constructor(
             // Perform sync
             val lastSync = userPreferences.getLastSyncTime().first()
             val result = syncRepository.sync(since = lastSync)
-            
+
             if (result.isSuccess) {
                 // Update last sync time
                 userPreferences.saveLastSyncTime(System.currentTimeMillis())
@@ -525,6 +534,7 @@ class SyncWorker @AssistedInject constructor(
 ### 7. Compose UI - Dashboard Screen
 
 **DashboardScreen.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.ui.screens.dashboard
 
@@ -568,7 +578,7 @@ fun DashboardScreen(
                     modifier = Modifier.padding(16.dp)
                 )
             }
-            
+
             items(uiState.quotes) { quote ->
                 QuoteCard(quote = quote)
             }
@@ -581,7 +591,7 @@ fun DashboardScreen(
                     modifier = Modifier.padding(16.dp)
                 )
             }
-            
+
             items(uiState.signals) { signal ->
                 SignalCard(signal = signal)
             }
@@ -593,6 +603,7 @@ fun DashboardScreen(
 ### 8. Push Notifications
 
 **ZiggyFirebaseMessagingService.kt:**
+
 ```kotlin
 package com.ziggyai.mobile.services
 
@@ -690,6 +701,7 @@ val encryptedPrefs = EncryptedSharedPreferences.create(
 ### 2. Network Security
 
 **res/xml/network_security_config.xml:**
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
@@ -773,6 +785,7 @@ The release build will be in `app/build/outputs/`.
 ## Support
 
 For development support or questions:
+
 - Create an issue on GitHub
 - Email: dev-support@ziggyai.com
 - Discord: https://discord.gg/ziggyai

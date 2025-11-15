@@ -51,7 +51,9 @@ class TelemetryEmitter:
         self.worker_thread = threading.Thread(target=self._worker, daemon=True)
         self.worker_thread.start()
 
-    def emit(self, event_type: str, data: dict[str, Any], metadata: dict[str, Any] = None) -> None:
+    def emit(
+        self, event_type: str, data: dict[str, Any], metadata: dict[str, Any] = None
+    ) -> None:
         """
         Emit a telemetry event.
 
@@ -186,7 +188,11 @@ def emit_provider_metric(
         "timestamp_ms": int(time.time() * 1000),
     }
 
-    meta = {"component": "provider_health", "metric_type": "performance", **(metadata or {})}
+    meta = {
+        "component": "provider_health",
+        "metric_type": "performance",
+        **(metadata or {}),
+    }
 
     _emitter.emit("provider_metric", data, meta)
 
@@ -215,12 +221,18 @@ def emit_contract_validation(
         "validation_time_ms": validation_time_ms,
     }
 
-    meta = {"component": "data_contracts", "metric_type": "validation", **(metadata or {})}
+    meta = {
+        "component": "data_contracts",
+        "metric_type": "validation",
+        **(metadata or {}),
+    }
 
     _emitter.emit("contract_validation", data, meta)
 
 
-def emit_quarantine_event(dataset_type: str, reason: str, metadata: dict[str, Any] = None) -> None:
+def emit_quarantine_event(
+    dataset_type: str, reason: str, metadata: dict[str, Any] = None
+) -> None:
     """
     Emit quarantine event when data is isolated.
 
@@ -229,9 +241,17 @@ def emit_quarantine_event(dataset_type: str, reason: str, metadata: dict[str, An
         reason: Reason for quarantine
         metadata: Additional context
     """
-    data = {"dataset_type": dataset_type, "quarantine_reason": reason, "severity": "error"}
+    data = {
+        "dataset_type": dataset_type,
+        "quarantine_reason": reason,
+        "severity": "error",
+    }
 
-    meta = {"component": "quarantine", "event_type": "data_quarantined", **(metadata or {})}
+    meta = {
+        "component": "quarantine",
+        "event_type": "data_quarantined",
+        **(metadata or {}),
+    }
 
     _emitter.emit("quarantine", data, meta)
 
@@ -261,12 +281,18 @@ def emit_ingestion_metric(
         "records_per_second": records_processed / max(processing_time_ms / 1000, 0.001),
     }
 
-    meta = {"component": "data_ingestion", "metric_type": "throughput", **(metadata or {})}
+    meta = {
+        "component": "data_ingestion",
+        "metric_type": "throughput",
+        **(metadata or {}),
+    }
 
     _emitter.emit("ingestion_metric", data, meta)
 
 
-def emit_brain_event(event_type: str, event_id: str, metadata: dict[str, Any] = None) -> None:
+def emit_brain_event(
+    event_type: str, event_id: str, metadata: dict[str, Any] = None
+) -> None:
     """
     Emit brain/memory layer events.
 
@@ -277,7 +303,11 @@ def emit_brain_event(event_type: str, event_id: str, metadata: dict[str, Any] = 
     """
     data = {"brain_event_type": event_type, "event_id": event_id}
 
-    meta = {"component": "brain_layer", "event_type": "memory_operation", **(metadata or {})}
+    meta = {
+        "component": "brain_layer",
+        "event_type": "memory_operation",
+        **(metadata or {}),
+    }
 
     _emitter.emit("brain_event", data, meta)
 
@@ -307,13 +337,20 @@ def emit_nlp_metric(
         "processing_time_ms": processing_time_ms,
     }
 
-    meta = {"component": "nlp_processor", "metric_type": "extraction", **(metadata or {})}
+    meta = {
+        "component": "nlp_processor",
+        "metric_type": "extraction",
+        **(metadata or {}),
+    }
 
     _emitter.emit("nlp_metric", data, meta)
 
 
 def emit_custom_metric(
-    metric_name: str, value: float, tags: dict[str, str] = None, metadata: dict[str, Any] = None
+    metric_name: str,
+    value: float,
+    tags: dict[str, str] = None,
+    metadata: dict[str, Any] = None,
 ) -> None:
     """
     Emit custom metric for monitoring.

@@ -77,7 +77,11 @@ class TestVectorDB:
 
     def test_embedding_dimension(self):
         """Test that embeddings have correct dimension."""
-        event = {"ticker": "AAPL", "regime": "normal", "explain": {"shap_top": [["momentum", 0.3]]}}
+        event = {
+            "ticker": "AAPL",
+            "regime": "normal",
+            "explain": {"shap_top": [["momentum", 0.3]]},
+        }
 
         embedding = build_embedding(event)
 
@@ -87,7 +91,11 @@ class TestVectorDB:
 
     def test_embedding_normalization(self):
         """Test that embeddings are properly normalized."""
-        event = {"ticker": "AAPL", "regime": "normal", "explain": {"shap_top": [["momentum", 0.3]]}}
+        event = {
+            "ticker": "AAPL",
+            "regime": "normal",
+            "explain": {"shap_top": [["momentum", 0.3]]},
+        }
 
         embedding = build_embedding(event)
 
@@ -182,7 +190,10 @@ class TestVectorDBRedis:
         # Mock data for search
         mock_client.smembers.return_value = [b"event1", b"event2"]
         mock_client.hgetall.side_effect = [
-            {b"vector": b"[0.1, 0.2, 0.3]", b"metadata": b'{"ticker": "AAPL", "regime": "normal"}'},
+            {
+                b"vector": b"[0.1, 0.2, 0.3]",
+                b"metadata": b'{"ticker": "AAPL", "regime": "normal"}',
+            },
             {
                 b"vector": b"[0.4, 0.5, 0.6]",
                 b"metadata": b'{"ticker": "TSLA", "regime": "high_vol"}',

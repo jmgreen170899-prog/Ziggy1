@@ -100,7 +100,9 @@ class Alert:
             ),
             "trigger_count": self.trigger_count,
             "last_checked_price": self.last_checked_price,
-            "last_checked_at": self.last_checked_at.isoformat() if self.last_checked_at else None,
+            "last_checked_at": (
+                self.last_checked_at.isoformat() if self.last_checked_at else None
+            ),
         }
 
     @classmethod
@@ -114,7 +116,9 @@ class Alert:
             description=data.get("description", ""),
             channels=[NotificationChannel(c) for c in data.get("channels", ["in_app"])],
             expires_at=(
-                datetime.fromisoformat(data["expires_at"]) if data.get("expires_at") else None
+                datetime.fromisoformat(data["expires_at"])
+                if data.get("expires_at")
+                else None
             ),
             repeat_interval=data.get("repeat_interval"),
             custom_expression=data.get("custom_expression", ""),
@@ -132,7 +136,9 @@ class Alert:
         alert.trigger_count = data.get("trigger_count", 0)
         alert.last_checked_price = data.get("last_checked_price", 0.0)
         alert.last_checked_at = (
-            datetime.fromisoformat(data["last_checked_at"]) if data.get("last_checked_at") else None
+            datetime.fromisoformat(data["last_checked_at"])
+            if data.get("last_checked_at")
+            else None
         )
 
         return alert
@@ -142,7 +148,12 @@ class AlertTrigger:
     """Record of an alert trigger event."""
 
     def __init__(
-        self, alert_id: str, symbol: str, condition_met: str, trigger_price: float, message: str
+        self,
+        alert_id: str,
+        symbol: str,
+        condition_met: str,
+        trigger_price: float,
+        message: str,
     ):
         self.id = str(uuid.uuid4())
         self.alert_id = alert_id
@@ -476,12 +487,16 @@ class ProductionAlertSystem:
             elif alert.condition_type == AlertConditionType.PRICE_CHANGE_PCT:
                 if alert.last_checked_price > 0:
                     change_pct = (
-                        (current_price - alert.last_checked_price) / alert.last_checked_price
+                        (current_price - alert.last_checked_price)
+                        / alert.last_checked_price
                     ) * 100
                     return abs(change_pct) >= abs(alert.condition_value)
             elif alert.condition_type == AlertConditionType.CUSTOM_EXPRESSION:
                 # Simple expression evaluation (in production, use a safer evaluator)
-                context = {"price": current_price, "last_price": alert.last_checked_price}
+                context = {
+                    "price": current_price,
+                    "last_price": alert.last_checked_price,
+                }
                 return eval(alert.custom_expression, {"__builtins__": {}}, context)
 
             return False
@@ -579,7 +594,9 @@ def delete_alert(alert_id: str) -> bool:
     return _alert_system.delete_alert(alert_id)
 
 
-def get_alerts(symbol: str | None = None, status: str | None = None) -> list[dict[str, Any]]:
+def get_alerts(
+    symbol: str | None = None, status: str | None = None
+) -> list[dict[str, Any]]:
     """Get alerts."""
     status_enum = AlertStatus(status) if status else None
     if _alert_system is None:

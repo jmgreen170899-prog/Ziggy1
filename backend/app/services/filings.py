@@ -116,7 +116,10 @@ def get_current_filings(
     Latest filings across all companies. Optionally filter by form types.
     """
     url = _sec_url(
-        action="getcurrent", owner="exclude", count=str(max(1, min(count, 200))), output="atom"
+        action="getcurrent",
+        owner="exclude",
+        count=str(max(1, min(count, 200))),
+        output="atom",
     )
     xml = _http_get_text(url, ttl=ttl)
     items = _parse_atom_feed(xml, ticker_map=_get_ticker_map(ttl=86_400))
@@ -219,7 +222,9 @@ def _parse_atom_feed(
         # The summary HTML often contains "CIK: 0000320193  Company: Apple Inc."
         company, cik = _extract_company_and_cik(summary or "") or (None, None)
         # Accessions are usually detectable from link
-        accession = _extract_accession(link or "") or _extract_accession(title or "") or None
+        accession = (
+            _extract_accession(link or "") or _extract_accession(title or "") or None
+        )
 
         ts, iso = _parse_time(updated)
 

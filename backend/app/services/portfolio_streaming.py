@@ -83,7 +83,10 @@ class PortfolioStreamer:
 
         logger.info(
             "Portfolio streaming stopped",
-            extra={"total_updates": self.update_count, "total_errors": self.error_count},
+            extra={
+                "total_updates": self.update_count,
+                "total_errors": self.error_count,
+            },
         )
 
     async def _producer_loop(self):
@@ -119,7 +122,9 @@ class PortfolioStreamer:
                     # Expose queue length metric via connection manager
                     with contextlib.suppress(Exception):
                         self.connection_manager.set_metric(
-                            "portfolio", "portfolio_queue_len", float(self.portfolio_queue.qsize())
+                            "portfolio",
+                            "portfolio_queue_len",
+                            float(self.portfolio_queue.qsize()),
                         )
 
                     # Update last cached
@@ -131,7 +136,10 @@ class PortfolioStreamer:
                 self.last_update_time = time.time()
                 if self._error_streak > 0:
                     self._error_streak = 0
-                    if self._last_state != "UP" or (time.time() - self._last_state_log_ts) > 10.0:
+                    if (
+                        self._last_state != "UP"
+                        or (time.time() - self._last_state_log_ts) > 10.0
+                    ):
                         logger.info("Portfolio streamer state: UP")
                         self._last_state = "UP"
                         self._last_state_log_ts = time.time()
@@ -202,7 +210,9 @@ class PortfolioStreamer:
                 try:
                     # Truncate payload in logs for visibility only
                     # Broadcasting via connection manager which fans out safely
-                    await self.connection_manager.broadcast_to_type(snapshot, "portfolio")
+                    await self.connection_manager.broadcast_to_type(
+                        snapshot, "portfolio"
+                    )
                 except Exception as e:
                     self.broadcasts_failed += 1
                     # Count failures with channel and ids recorded by connection manager
@@ -215,13 +225,16 @@ class PortfolioStreamer:
                     # Expose queue length metric after drain
                     with contextlib.suppress(Exception):
                         self.connection_manager.set_metric(
-                            "portfolio", "portfolio_queue_len", float(self.portfolio_queue.qsize())
+                            "portfolio",
+                            "portfolio_queue_len",
+                            float(self.portfolio_queue.qsize()),
                         )
                     # Warn if broadcast slow
                     b_ms = (time.time() - t0) * 1000.0
                     if b_ms > 2000.0:
                         logger.warning(
-                            "Portfolio broadcast slow", extra={"broadcast_ms": round(b_ms, 1)}
+                            "Portfolio broadcast slow",
+                            extra={"broadcast_ms": round(b_ms, 1)},
                         )
             except asyncio.CancelledError:
                 # Task cancelled during shutdown; exit loop gracefully
@@ -229,7 +242,9 @@ class PortfolioStreamer:
             except Exception as e:
                 # Catch any unexpected error during consumption to keep loop alive
                 self.broadcasts_failed += 1
-                logger.error("Error in portfolio consumer loop", extra={"error": repr(e)})
+                logger.error(
+                    "Error in portfolio consumer loop", extra={"error": repr(e)}
+                )
                 await asyncio.sleep(0.5)
 
     async def _get_portfolio_data(self) -> dict[str, Any]:
@@ -303,7 +318,9 @@ class PortfolioStreamer:
                     "market_value": position.get("market_value", 0.0),
                     "cost_basis": position.get("cost_basis", 0.0),
                     "unrealized_pnl": position.get("unrealized_pnl", 0.0),
-                    "unrealized_pnl_percent": position.get("unrealized_pnl_percent", 0.0),
+                    "unrealized_pnl_percent": position.get(
+                        "unrealized_pnl_percent", 0.0
+                    ),
                     "day_pnl": position.get("day_pnl", 0.0),
                     "day_pnl_percent": position.get("day_pnl_percent", 0.0),
                     "side": position.get("side", "long"),  # long/short
@@ -377,12 +394,18 @@ class PortfolioStreamer:
 
             # Price or market value change with noise thresholds
             if (
-                abs(float(c.get("current_price", 0.0)) - float(last.get("current_price", 0.0)))
+                abs(
+                    float(c.get("current_price", 0.0))
+                    - float(last.get("current_price", 0.0))
+                )
                 > price_threshold
             ):
                 return True
             if (
-                abs(float(c.get("market_value", 0.0)) - float(last.get("market_value", 0.0)))
+                abs(
+                    float(c.get("market_value", 0.0))
+                    - float(last.get("market_value", 0.0))
+                )
                 > value_threshold
             ):
                 return True
@@ -417,7 +440,9 @@ class PortfolioStreamer:
                     "message": f"Failed to get portfolio snapshot: {e!s}",
                     "timestamp": time.time(),
                 }
-                await self.connection_manager.send_json_personal(error_response, websocket)
+                await self.connection_manager.send_json_personal(
+                    error_response, websocket
+                )
 
         elif action == "get_performance_stats":
             # Send streaming performance statistics
@@ -454,6 +479,7 @@ def get_portfolio_streamer(connection_manager: ConnectionManager) -> PortfolioSt
 async def start_portfolio_streaming():
     """Start portfolio streaming (call during app startup)"""
     from app.core.websocket import connection_manager
+
     streamer = get_portfolio_streamer(connection_manager)
     await streamer.start_streaming()
 

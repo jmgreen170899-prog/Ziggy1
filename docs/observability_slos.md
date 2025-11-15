@@ -35,15 +35,15 @@ This document describes ZiggyAI's unified observability infrastructure and servi
 
 The system tracks WebSocket performance across all channels:
 
-| Metric | Description | Unit |
-|--------|-------------|------|
-| `queue_len` | Current message queue length | messages |
-| `dropped_msgs` | Total messages dropped | count |
-| `send_latency_ms` | Message delivery latency | milliseconds |
-| `subscribers` | Active WebSocket connections | count |
-| `broadcasts_attempted` | Total broadcast attempts | count |
-| `broadcasts_failed` | Failed broadcast attempts | count |
-| `avg_uptime_s` | Average connection uptime | seconds |
+| Metric                 | Description                  | Unit         |
+| ---------------------- | ---------------------------- | ------------ |
+| `queue_len`            | Current message queue length | messages     |
+| `dropped_msgs`         | Total messages dropped       | count        |
+| `send_latency_ms`      | Message delivery latency     | milliseconds |
+| `subscribers`          | Active WebSocket connections | count        |
+| `broadcasts_attempted` | Total broadcast attempts     | count        |
+| `broadcasts_failed`    | Failed broadcast attempts    | count        |
+| `avg_uptime_s`         | Average connection uptime    | seconds      |
 
 **Collection**: WebSocket metrics are collected in real-time from the `ConnectionManager` in `app/core/websocket.py`.
 
@@ -51,15 +51,16 @@ The system tracks WebSocket performance across all channels:
 
 Health tracking for external data providers:
 
-| Provider | Metrics Tracked |
-|----------|----------------|
-| **Polygon** | API availability, latency, success rate |
-| **Alpaca** | Trading API health, response times |
-| **News** | RSS feed availability, fetch success |
-| **FRED** | Economic data availability |
-| **IEX Cloud** | Alternative market data health |
+| Provider      | Metrics Tracked                         |
+| ------------- | --------------------------------------- |
+| **Polygon**   | API availability, latency, success rate |
+| **Alpaca**    | Trading API health, response times      |
+| **News**      | RSS feed availability, fetch success    |
+| **FRED**      | Economic data availability              |
+| **IEX Cloud** | Alternative market data health          |
 
 **Per-Provider Metrics**:
+
 - `availability_pct`: Provider uptime percentage
 - `health_score`: Composite health score (0.0 - 1.0)
 - `avg_latency_ms`: Average response latency
@@ -79,15 +80,17 @@ Health tracking for external data providers:
 **Description**: 95th percentile of WebSocket message delivery latency must remain below 100ms to ensure real-time user experience.
 
 **Measurement**:
+
 ```python
 from app.observability import get_websocket_metrics
 
 metrics = get_websocket_metrics()
-avg_latency = avg([channel['send_latency_ms'] 
+avg_latency = avg([channel['send_latency_ms']
                    for channel in metrics['channels'].values()])
 ```
 
 **Impact**:
+
 - User-facing: Real-time market updates, alerts, and notifications
 - Critical for: Trading decisions, price alerts, news delivery
 
@@ -100,6 +103,7 @@ avg_latency = avg([channel['send_latency_ms']
 **Description**: Message queue drop rate across all channels must remain below 0.1% to prevent data loss.
 
 **Measurement**:
+
 ```python
 from app.observability import get_websocket_metrics
 
@@ -110,6 +114,7 @@ drop_rate = (total_dropped / total_attempted) * 100 if total_attempted > 0 else 
 ```
 
 **Impact**:
+
 - User-facing: Missed market updates, incomplete data streams
 - Critical for: Data integrity, trading signals
 
@@ -122,15 +127,17 @@ drop_rate = (total_dropped / total_attempted) * 100 if total_attempted > 0 else 
 **Description**: External data provider availability must exceed 99.5% to ensure reliable data flow.
 
 **Measurement**:
+
 ```python
 from app.observability import get_provider_health_metrics
 
 metrics = get_provider_health_metrics()
-avg_availability = avg([prov['availability_pct'] 
+avg_availability = avg([prov['availability_pct']
                         for prov in metrics['providers'].values()])
 ```
 
 **Impact**:
+
 - System-wide: Data availability, trading capabilities
 - Critical for: Market data, news feeds, economic indicators
 
@@ -145,6 +152,7 @@ GET /__debug/metrics
 ```
 
 Returns comprehensive metrics from all subsystems:
+
 ```json
 {
   "websocket": {
@@ -342,6 +350,7 @@ curl http://localhost:8000/__debug/metrics | jq .providers
 ## Support
 
 For observability issues:
+
 1. Check application logs
 2. Review metrics dashboard
 3. Consult on-call engineer

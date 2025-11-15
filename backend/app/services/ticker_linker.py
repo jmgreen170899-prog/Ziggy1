@@ -48,7 +48,9 @@ class TickerLinker:
                 self.subsidiaries = mappings.get("subsidiaries", {})
                 self.exchange_context = mappings.get("exchange_context", {})
 
-                logger.info(f"Loaded ticker mappings: {len(self.exact_matches)} exact matches")
+                logger.info(
+                    f"Loaded ticker mappings: {len(self.exact_matches)} exact matches"
+                )
             else:
                 logger.warning(f"Ticker mapping file not found: {TICKER_DB_PATH}")
 
@@ -147,7 +149,9 @@ class TickerLinker:
         # Build suffix variations
         self.common_suffixes = set(common_suffixes)
 
-    def map_org_to_tickers(self, text: str, date: str = None, venue: str = None) -> list[str]:
+    def map_org_to_tickers(
+        self, text: str, date: str = None, venue: str = None
+    ) -> list[str]:
         """
         Map organization names in text to ticker symbols.
 
@@ -239,7 +243,9 @@ class TickerLinker:
 
         return filtered_candidates
 
-    def _resolve_name_to_tickers(self, name: str, date: str = None, venue: str = None) -> list[str]:
+    def _resolve_name_to_tickers(
+        self, name: str, date: str = None, venue: str = None
+    ) -> list[str]:
         """Resolve a single company name to ticker symbols."""
         if not name:
             return []
@@ -387,7 +393,11 @@ class TickerLinker:
             "subsidiaries": len(self.subsidiaries),
             "exchange_mappings": len(self.exchange_context),
             "total_tickers": len(
-                set(ticker for tickers in self.exact_matches.values() for ticker in tickers)
+                set(
+                    ticker
+                    for tickers in self.exact_matches.values()
+                    for ticker in tickers
+                )
             ),
         }
 
@@ -411,7 +421,9 @@ def map_org_to_tickers(text: str, date: str = None, venue: str = None) -> list[s
     return _ticker_linker.map_org_to_tickers(text, date, venue)
 
 
-def add_ticker_mapping(company_name: str, tickers: list[str], mapping_type: str = "exact") -> None:
+def add_ticker_mapping(
+    company_name: str, tickers: list[str], mapping_type: str = "exact"
+) -> None:
     """Add a new ticker mapping."""
     _ticker_linker.add_mapping(company_name, tickers, mapping_type)
 

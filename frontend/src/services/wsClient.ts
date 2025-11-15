@@ -13,7 +13,7 @@ export interface WSClientOptions {
   pingPayload?: Json | (() => Json);
 }
 
-export type WSState = 'CONNECTING' | 'OPEN' | 'CLOSING' | 'CLOSED' | 'NONE';
+export type WSState = "CONNECTING" | "OPEN" | "CLOSING" | "CLOSED" | "NONE";
 
 export class WSClient {
   private urlPath: string;
@@ -32,28 +32,31 @@ export class WSClient {
   private onMessageHandlers: Array<(ev: MessageEvent) => void> = [];
 
   constructor(urlPath: string, options: WSClientOptions = {}) {
-    this.urlPath = urlPath.startsWith('/') ? urlPath : `/${urlPath}`;
+    this.urlPath = urlPath.startsWith("/") ? urlPath : `/${urlPath}`;
 
-    const envUrl = (process.env.NEXT_PUBLIC_WS_URL || '').trim();
+    const envUrl = (process.env.NEXT_PUBLIC_WS_URL || "").trim();
     const derivedBase = envUrl
-      ? envUrl.replace(/\/$/, '')
-      : (typeof window !== 'undefined' && window.location
-          ? `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`
-          : 'ws://localhost:8000');
+      ? envUrl.replace(/\/$/, "")
+      : typeof window !== "undefined" && window.location
+        ? `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}`
+        : "ws://localhost:8000";
 
     this.opts = {
-      baseUrl: options.baseUrl?.replace(/\/$/, '') || derivedBase,
+      baseUrl: options.baseUrl?.replace(/\/$/, "") || derivedBase,
       heartbeatIntervalMs: options.heartbeatIntervalMs ?? 25000,
       inactivityTimeoutMs: options.inactivityTimeoutMs ?? 60000,
       maxReconnectDelayMs: options.maxReconnectDelayMs ?? 30000,
       baseReconnectDelayMs: options.baseReconnectDelayMs ?? 1000,
       maxReconnectAttempts: options.maxReconnectAttempts ?? 0,
-      pingPayload: options.pingPayload ?? { type: 'ping', ts: () => Date.now() },
+      pingPayload: options.pingPayload ?? {
+        type: "ping",
+        ts: () => Date.now(),
+      },
     };
   }
 
   connect(): void {
-    if (typeof window === 'undefined') return; // SSR guard
+    if (typeof window === "undefined") return; // SSR guard
 
     const url = `${this.opts.baseUrl}${this.urlPath}`;
     try {
@@ -93,7 +96,11 @@ export class WSClient {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
     }
-    if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
+    if (
+      this.socket &&
+      (this.socket.readyState === WebSocket.OPEN ||
+        this.socket.readyState === WebSocket.CONNECTING)
+    ) {
       this.socket.close();
     }
     this.socket = null;
@@ -118,19 +125,32 @@ export class WSClient {
     this.scheduleReconnect();
   }
 
-  onOpen(fn: () => void): void { this.onOpenHandlers.push(fn); }
-  onClose(fn: (ev: CloseEvent) => void): void { this.onCloseHandlers.push(fn); }
-  onError(fn: (ev: Event) => void): void { this.onErrorHandlers.push(fn); }
-  onMessage(fn: (ev: MessageEvent) => void): void { this.onMessageHandlers.push(fn); }
+  onOpen(fn: () => void): void {
+    this.onOpenHandlers.push(fn);
+  }
+  onClose(fn: (ev: CloseEvent) => void): void {
+    this.onCloseHandlers.push(fn);
+  }
+  onError(fn: (ev: Event) => void): void {
+    this.onErrorHandlers.push(fn);
+  }
+  onMessage(fn: (ev: MessageEvent) => void): void {
+    this.onMessageHandlers.push(fn);
+  }
 
   get state(): WSState {
-    if (!this.socket) return 'NONE';
+    if (!this.socket) return "NONE";
     switch (this.socket.readyState) {
-      case WebSocket.CONNECTING: return 'CONNECTING';
-      case WebSocket.OPEN: return 'OPEN';
-      case WebSocket.CLOSING: return 'CLOSING';
-      case WebSocket.CLOSED: return 'CLOSED';
-      default: return 'NONE';
+      case WebSocket.CONNECTING:
+        return "CONNECTING";
+      case WebSocket.OPEN:
+        return "OPEN";
+      case WebSocket.CLOSING:
+        return "CLOSING";
+      case WebSocket.CLOSED:
+        return "CLOSED";
+      default:
+        return "NONE";
     }
   }
 
@@ -139,7 +159,11 @@ export class WSClient {
     while (this.queue.length) {
       const msg = this.queue.shift();
       if (msg) {
-        try { this.socket.send(msg); } catch { /* ignore */ }
+        try {
+          this.socket.send(msg);
+        } catch {
+          /* ignore */
+        }
       }
     }
   }
@@ -149,20 +173,28 @@ export class WSClient {
     this.stopHeartbeat();
     if (this.opts.heartbeatIntervalMs > 0) {
       this.heartbeatTimer = setInterval(() => {
-        const pingValue = typeof this.opts.pingPayload === 'function'
-          ? (this.opts.pingPayload as () => Json)()
-          : (this.opts.pingPayload as Json);
+        const pingValue =
+          typeof this.opts.pingPayload === "function"
+            ? (this.opts.pingPayload as () => Json)()
+            : (this.opts.pingPayload as Json);
         this.send(pingValue);
       }, this.opts.heartbeatIntervalMs) as unknown as number;
     }
     if (this.opts.inactivityTimeoutMs > 0) {
-      this.inactivityTimer = setInterval(() => {
-        const idle = Date.now() - this.lastActivity;
-        if (idle > this.opts.inactivityTimeoutMs) {
-          // Force reconnect to refresh a stale connection
-          try { this.socket?.close(); } catch { /* ignore */ }
-        }
-      }, Math.min(this.opts.inactivityTimeoutMs, 10000)) as unknown as number;
+      this.inactivityTimer = setInterval(
+        () => {
+          const idle = Date.now() - this.lastActivity;
+          if (idle > this.opts.inactivityTimeoutMs) {
+            // Force reconnect to refresh a stale connection
+            try {
+              this.socket?.close();
+            } catch {
+              /* ignore */
+            }
+          }
+        },
+        Math.min(this.opts.inactivityTimeoutMs, 10000),
+      ) as unknown as number;
     }
   }
 
@@ -178,20 +210,28 @@ export class WSClient {
   }
 
   private scheduleReconnect(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (this.reconnectTimer) return;
 
     // respect max attempts (0 = infinite)
-    if (this.opts.maxReconnectAttempts > 0 && this.reconnectAttempts >= this.opts.maxReconnectAttempts) {
+    if (
+      this.opts.maxReconnectAttempts > 0 &&
+      this.reconnectAttempts >= this.opts.maxReconnectAttempts
+    ) {
       // Keep trying periodically at max delay
       this.reconnectAttempts = this.opts.maxReconnectAttempts; // cap
     } else {
       this.reconnectAttempts += 1;
     }
 
-    const expDelay = this.opts.baseReconnectDelayMs * Math.pow(2, Math.max(0, this.reconnectAttempts - 1));
+    const expDelay =
+      this.opts.baseReconnectDelayMs *
+      Math.pow(2, Math.max(0, this.reconnectAttempts - 1));
     const jitter = 0.85 + Math.random() * 0.3; // 85%-115%
-    const delay = Math.min(Math.floor(expDelay * jitter), this.opts.maxReconnectDelayMs);
+    const delay = Math.min(
+      Math.floor(expDelay * jitter),
+      this.opts.maxReconnectDelayMs,
+    );
 
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;

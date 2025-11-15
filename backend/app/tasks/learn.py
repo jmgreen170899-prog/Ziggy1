@@ -65,7 +65,12 @@ def reliability_diagram(
     """
     pairs = list(zip(y_prob, y_true))
     if not pairs:
-        return {"bin_centers": [], "mean_predicted": [], "mean_observed": [], "counts": []}
+        return {
+            "bin_centers": [],
+            "mean_predicted": [],
+            "mean_observed": [],
+            "counts": [],
+        }
 
     # Create bins
     bins = [i / n_bins for i in range(n_bins + 1)]
@@ -222,7 +227,9 @@ def compute_brier_by_family(events: Iterable[dict[str, Any]]) -> dict[str, float
 
         # Assign to dominant family (or "mixed" if no clear winner)
         if total_weight > 0:
-            dominant_family, dom_weight = max(family_weights.items(), key=lambda x: x[1])
+            dominant_family, dom_weight = max(
+                family_weights.items(), key=lambda x: x[1]
+            )
             if dom_weight / total_weight >= 0.4:  # At least 40% weight
                 family_predictions[dominant_family].append((p_up, label))
             else:
@@ -298,14 +305,18 @@ def analyze_feature_importance_drift(
         explain = event.get("explain", {})
         shap_top = explain.get("shap_top", [])
 
-        target_dict = current_features if event_time >= cutoff_str else previous_features
+        target_dict = (
+            current_features if event_time >= cutoff_str else previous_features
+        )
 
         for feature_name, importance in shap_top:
             target_dict[str(feature_name)].append(float(importance))
 
     # Calculate average importance for each feature
     current_avg = {
-        feature: sum(values) / len(values) for feature, values in current_features.items() if values
+        feature: sum(values) / len(values)
+        for feature, values in current_features.items()
+        if values
     }
     previous_avg = {
         feature: sum(values) / len(values)
@@ -361,7 +372,9 @@ def generate_learn_report(lookback_days: int = 30) -> dict[str, Any]:
     # Filter to lookback period
     cutoff_date = datetime.utcnow() - timedelta(days=lookback_days)
     cutoff_str = cutoff_date.isoformat()
-    filtered_events = [event for event in recent_events if event.get("ts", "") >= cutoff_str]
+    filtered_events = [
+        event for event in recent_events if event.get("ts", "") >= cutoff_str
+    ]
 
     if not filtered_events:
         return {
@@ -395,7 +408,9 @@ def generate_learn_report(lookback_days: int = 30) -> dict[str, Any]:
     all_labels = [e.get("outcome", {}).get("label") for e in filtered_events]
     all_labels = [l for l in all_labels if l is not None]
 
-    overall_brier = brier_score(all_probs, all_labels) if all_probs and all_labels else None
+    overall_brier = (
+        brier_score(all_probs, all_labels) if all_probs and all_labels else None
+    )
 
     # Feature importance analysis (use recent events to compare windows)
     importance_analysis = analyze_feature_importance_drift(recent_events)
@@ -529,7 +544,11 @@ def run_nightly_learning_job() -> dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Nightly learning job failed: {e}")
-        return {"status": "error", "completed_at": datetime.utcnow().isoformat(), "error": str(e)}
+        return {
+            "status": "error",
+            "completed_at": datetime.utcnow().isoformat(),
+            "error": str(e),
+        }
 
 
 # Utility functions for weight adjustment (placeholder)

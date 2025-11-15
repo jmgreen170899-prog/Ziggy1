@@ -13,7 +13,13 @@ def search_web(query: str, max_results: int = 5) -> list[dict[str, Any]]:
     out = []
     with DDGS() as ddgs:
         for r in ddgs.text(query, max_results=max_results):
-            out.append({"title": r.get("title"), "url": r.get("href"), "snippet": r.get("body")})
+            out.append(
+                {
+                    "title": r.get("title"),
+                    "url": r.get("href"),
+                    "snippet": r.get("body"),
+                }
+            )
     return out
 
 
@@ -22,7 +28,12 @@ def fetch_and_extract(url: str) -> str:
         downloaded = trafilatura.fetch_url(url)
         if not downloaded:
             return ""
-        text = trafilatura.extract(downloaded, include_comments=False, include_tables=False) or ""
+        text = (
+            trafilatura.extract(
+                downloaded, include_comments=False, include_tables=False
+            )
+            or ""
+        )
         return text
     except Exception:
         try:
@@ -51,7 +62,9 @@ def ingest_from_web(query: str, max_results: int = 5) -> dict[str, Any]:
         if not chunks:
             continue
         vecs = embed_texts(chunks)
-        metas = [{"source": "web", "url": url, "title": title, "type": "web"} for _ in chunks]
+        metas = [
+            {"source": "web", "url": url, "title": title, "type": "web"} for _ in chunks
+        ]
         upsert_texts(client, chunks, vecs, metas)
         total_chunks += len(chunks)
         sources.append({"title": title, "url": url, "chunks": len(chunks)})

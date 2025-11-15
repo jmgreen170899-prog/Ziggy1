@@ -209,7 +209,11 @@ class BracketComposer:
         try:
             # Create parent entry order
             parent = self._create_order_leg(
-                symbol=symbol, side=side, quantity=quantity, time_in_force=time_in_force, **entry
+                symbol=symbol,
+                side=side,
+                quantity=quantity,
+                time_in_force=time_in_force,
+                **entry,
             )
 
             # Create stop loss order (opposite side of parent)
@@ -234,7 +238,9 @@ class BracketComposer:
                 )
 
             # Compose bracket
-            bracket = BracketOrder(parent=parent, stop_loss=stop_leg, take_profit=take_leg)
+            bracket = BracketOrder(
+                parent=parent, stop_loss=stop_leg, take_profit=take_leg
+            )
 
             # Register orders
             self.active_brackets[bracket.bracket_id] = bracket
@@ -298,7 +304,9 @@ class BracketComposer:
             self.active_orders[leg1.order_id] = leg1
             self.active_orders[leg2.order_id] = leg2
 
-            logger.info(f"Created OCO orders {leg1.order_id}, {leg2.order_id} for {symbol}")
+            logger.info(
+                f"Created OCO orders {leg1.order_id}, {leg2.order_id} for {symbol}"
+            )
             return [leg1, leg2]
 
         except Exception as e:
@@ -333,7 +341,8 @@ class BracketComposer:
             raise ValueError(f"Price required for {order_type} orders")
 
         if (
-            order_type_enum in [OrderType.STOP, OrderType.STOP_LIMIT, OrderType.TRAILING_STOP]
+            order_type_enum
+            in [OrderType.STOP, OrderType.STOP_LIMIT, OrderType.TRAILING_STOP]
             and stop_price is None
         ):
             raise ValueError(f"Stop price required for {order_type} orders")
@@ -353,7 +362,11 @@ class BracketComposer:
         )
 
     def update_fill(
-        self, order_id: str, filled_quantity: float, fill_price: float, commission: float = 0.0
+        self,
+        order_id: str,
+        filled_quantity: float,
+        fill_price: float,
+        commission: float = 0.0,
     ) -> bool:
         """
         Update order with partial or complete fill.
@@ -483,7 +496,9 @@ class BracketComposer:
     def get_open_brackets(self) -> list[BracketOrder]:
         """Get all open bracket orders."""
         return [
-            bracket for bracket in self.active_brackets.values() if not bracket.parent.is_complete()
+            bracket
+            for bracket in self.active_brackets.values()
+            if not bracket.parent.is_complete()
         ]
 
     def get_stats(self) -> dict[str, Any]:
@@ -524,7 +539,9 @@ def compose_bracket(
     """
     try:
         side_enum = OrderSide(side.lower())
-        bracket = bracket_composer.create_bracket(symbol, side_enum, qty, entry, stop, take)
+        bracket = bracket_composer.create_bracket(
+            symbol, side_enum, qty, entry, stop, take
+        )
         return bracket.to_dict()
     except Exception as e:
         logger.error(f"Bracket composition failed: {e}")
@@ -541,11 +558,17 @@ def create_bracket_order(
 ) -> BracketOrder:
     """Create bracket order with full OrderLeg objects."""
     side_enum = OrderSide(side.lower())
-    return bracket_composer.create_bracket(symbol, side_enum, quantity, entry, stop, take)
+    return bracket_composer.create_bracket(
+        symbol, side_enum, quantity, entry, stop, take
+    )
 
 
 def create_oco_order(
-    symbol: str, side: str, quantity: float, order1: dict[str, Any], order2: dict[str, Any]
+    symbol: str,
+    side: str,
+    quantity: float,
+    order1: dict[str, Any],
+    order2: dict[str, Any],
 ) -> list[OrderLeg]:
     """Create OCO order pair."""
     side_enum = OrderSide(side.lower())

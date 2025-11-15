@@ -41,7 +41,9 @@ class TestCognitiveIntegration:
                 "symbol": ["AAPL"] * TEST_DATA_SIZE,
                 "date": dates,
                 "close": prices,
-                "volume": np.random.lognormal(15, 0.5, TEST_DATA_SIZE),  # Log-normal volume
+                "volume": np.random.lognormal(
+                    15, 0.5, TEST_DATA_SIZE
+                ),  # Log-normal volume
             }
         )
 
@@ -68,9 +70,9 @@ class TestCognitiveIntegration:
 
         latency_ms = (time.time() - start_time) * 1000
 
-        assert latency_ms < LATENCY_THRESHOLD_MS, (
-            f"Feature computation took {latency_ms:.2f}ms, exceeds {LATENCY_THRESHOLD_MS}ms limit"
-        )
+        assert (
+            latency_ms < LATENCY_THRESHOLD_MS
+        ), f"Feature computation took {latency_ms:.2f}ms, exceeds {LATENCY_THRESHOLD_MS}ms limit"
         assert len(features) >= 15, "Should compute at least 15 features"
 
         # Test feature validity
@@ -87,8 +89,12 @@ class TestCognitiveIntegration:
 
         latency_ms = (time.time() - start_time) * 1000
 
-        assert latency_ms < 100, f"Signal generation took {latency_ms:.2f}ms, should be < 100ms"
-        assert 0 <= signal_prob <= 1, f"Signal probability {signal_prob} should be between 0 and 1"
+        assert (
+            latency_ms < 100
+        ), f"Signal generation took {latency_ms:.2f}ms, should be < 100ms"
+        assert (
+            0 <= signal_prob <= 1
+        ), f"Signal probability {signal_prob} should be between 0 and 1"
 
     def test_regime_detection_speed(self, sample_market_data):
         """Test regime detection performance."""
@@ -98,7 +104,9 @@ class TestCognitiveIntegration:
 
         latency_ms = (time.time() - start_time) * 1000
 
-        assert latency_ms < 50, f"Regime detection took {latency_ms:.2f}ms, should be < 50ms"
+        assert (
+            latency_ms < 50
+        ), f"Regime detection took {latency_ms:.2f}ms, should be < 50ms"
         assert "regime" in regime_info
         assert "confidence" in regime_info
         assert 0 <= regime_info["confidence"] <= 1
@@ -120,7 +128,9 @@ class TestCognitiveIntegration:
 
         # Test with poorly calibrated predictions
         bad_predictions = np.random.random(n_samples) * 0.5 + 0.4  # Biased predictions
-        bad_outcomes = (np.random.random(n_samples) < 0.2).astype(int)  # Different outcome rate
+        bad_outcomes = (np.random.random(n_samples) < 0.2).astype(
+            int
+        )  # Different outcome rate
 
         bad_ece = self._compute_ece(bad_predictions, bad_outcomes)
         assert bad_ece > ece, "Poorly calibrated predictions should have higher ECE"
@@ -137,7 +147,9 @@ class TestCognitiveIntegration:
         )
         latency_ms = (time.time() - start_time) * 1000
 
-        assert latency_ms < 20, f"Position sizing took {latency_ms:.2f}ms, should be < 20ms"
+        assert (
+            latency_ms < 20
+        ), f"Position sizing took {latency_ms:.2f}ms, should be < 20ms"
 
         # Validate position constraints
         assert "shares" in position_info
@@ -161,15 +173,17 @@ class TestCognitiveIntegration:
         features = self._compute_mock_features(sample_market_data)
         regime = self._detect_mock_regime(sample_market_data)
         signal = self._generate_mock_signal(sample_market_data)
-        position = self._compute_mock_position(signal, sample_market_data["close"].iloc[-1], 100000)
+        position = self._compute_mock_position(
+            signal, sample_market_data["close"].iloc[-1], 100000
+        )
         explanation = self._generate_mock_explanation(features, regime, signal)
 
         total_latency_ms = (time.time() - start_time) * 1000
 
         # End-to-end should complete within 200ms
-        assert total_latency_ms < 200, (
-            f"End-to-end pipeline took {total_latency_ms:.2f}ms, should be < 200ms"
-        )
+        assert (
+            total_latency_ms < 200
+        ), f"End-to-end pipeline took {total_latency_ms:.2f}ms, should be < 200ms"
 
         # Verify all components produced valid outputs
         assert len(features) >= 15
@@ -202,9 +216,9 @@ class TestCognitiveIntegration:
         # Validate model contributions sum to reasonable total
         model_contributions = explanation["model_contributions"]
         total_contrib = sum(model_contributions.values())
-        assert abs(total_contrib - signal) < 0.1, (
-            "Model contributions should approximate final signal"
-        )
+        assert (
+            abs(total_contrib - signal) < 0.1
+        ), "Model contributions should approximate final signal"
 
     def test_backtesting_metrics(self, sample_market_data):
         """Test backtesting functionality and metrics."""
@@ -231,7 +245,9 @@ class TestCognitiveIntegration:
         assert -1 <= metrics["total_return"] <= 10, "Total return should be reasonable"
         assert 0 <= metrics["volatility"] <= 2, "Volatility should be reasonable"
         assert 0 <= metrics["win_rate"] <= 1, "Win rate should be between 0 and 1"
-        assert 0 <= metrics["max_drawdown"] <= 1, "Max drawdown should be between 0 and 1"
+        assert (
+            0 <= metrics["max_drawdown"] <= 1
+        ), "Max drawdown should be between 0 and 1"
 
     def test_memory_efficiency(self, sample_market_data):
         """Test memory usage is reasonable."""

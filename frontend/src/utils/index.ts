@@ -1,14 +1,17 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 // Format currency values
-export function formatCurrency(value: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+export function formatCurrency(
+  value: number,
+  currency: string = "USD",
+): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -17,7 +20,7 @@ export function formatCurrency(value: number, currency: string = 'USD'): string 
 
 // Format percentage values
 export function formatPercentage(value: number, decimals: number = 2): string {
-  return `${value >= 0 ? '+' : ''}${value.toFixed(decimals)}%`;
+  return `${value >= 0 ? "+" : ""}${value.toFixed(decimals)}%`;
 }
 
 // Format large numbers with abbreviations
@@ -40,30 +43,30 @@ export function formatLargeNumber(value: number): string {
 // Format date/time
 export function formatDateTime(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 }
 
 export function formatTime(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
   }).format(date);
 }
 
 export function formatDate(dateString: string): string {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   }).format(date);
 }
 
@@ -97,15 +100,15 @@ export function timeAgo(dateString: string): string {
 
 // Color helpers for market data - using Quantum Blue theme colors
 export function getPriceColor(change: number): string {
-  if (change > 0) return 'text-success';
-  if (change < 0) return 'text-danger';
-  return 'text-gray-500';
+  if (change > 0) return "text-success";
+  if (change < 0) return "text-danger";
+  return "text-gray-500";
 }
 
-export function getPriceColorValue(change: number): 'green' | 'red' | 'gray' {
-  if (change > 0) return 'green';
-  if (change < 0) return 'red';
-  return 'gray';
+export function getPriceColorValue(change: number): "green" | "red" | "gray" {
+  if (change > 0) return "green";
+  if (change < 0) return "red";
+  return "gray";
 }
 
 // Validation helpers
@@ -122,14 +125,14 @@ export function isValidSymbol(symbol: string): boolean {
 // Chart data helpers
 export function generateChartColors(count: number): string[] {
   const baseColors = [
-    '#3B82F6', // blue
-    '#10B981', // emerald
-    '#F59E0B', // amber
-    '#EF4444', // red
-    '#8B5CF6', // violet
-    '#F97316', // orange
-    '#06B6D4', // cyan
-    '#84CC16', // lime
+    "#3B82F6", // blue
+    "#10B981", // emerald
+    "#F59E0B", // amber
+    "#EF4444", // red
+    "#8B5CF6", // violet
+    "#F97316", // orange
+    "#06B6D4", // cyan
+    "#84CC16", // lime
   ];
 
   const colors = [];
@@ -140,25 +143,32 @@ export function generateChartColors(count: number): string[] {
 }
 
 // Risk level helpers
-export function getRiskLevel(value: number, thresholds: { low: number; medium: number }): 'low' | 'medium' | 'high' {
-  if (value <= thresholds.low) return 'low';
-  if (value <= thresholds.medium) return 'medium';
-  return 'high';
+export function getRiskLevel(
+  value: number,
+  thresholds: { low: number; medium: number },
+): "low" | "medium" | "high" {
+  if (value <= thresholds.low) return "low";
+  if (value <= thresholds.medium) return "medium";
+  return "high";
 }
 
-export function getRiskColor(level: 'low' | 'medium' | 'high'): string {
+export function getRiskColor(level: "low" | "medium" | "high"): string {
   switch (level) {
-    case 'low': return 'text-green-500';
-    case 'medium': return 'text-yellow-500';
-    case 'high': return 'text-red-500';
-    default: return 'text-gray-500';
+    case "low":
+      return "text-green-500";
+    case "medium":
+      return "text-yellow-500";
+    case "high":
+      return "text-red-500";
+    default:
+      return "text-gray-500";
   }
 }
 
 // Debounce function
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -170,7 +180,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 // Throttle function
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
   return (...args: Parameters<T>) => {
@@ -184,10 +194,10 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 
 // Deep clone utility
 export function deepClone<T>(obj: T): T {
-  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj === null || typeof obj !== "object") return obj;
   if (obj instanceof Date) return new Date(obj.getTime()) as T;
-  if (obj instanceof Array) return obj.map(item => deepClone(item)) as T;
-  if (typeof obj === 'object') {
+  if (obj instanceof Array) return obj.map((item) => deepClone(item)) as T;
+  if (typeof obj === "object") {
     const clonedObj: Record<string, unknown> = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {

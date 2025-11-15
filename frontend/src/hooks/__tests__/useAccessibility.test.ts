@@ -1,13 +1,13 @@
-import { renderHook, act } from '@testing-library/react';
-import { 
-  useKeyboardNavigation, 
-  useScreenReader, 
-  useFocusTrap, 
-  useReducedMotion 
-} from '@/hooks/useAccessibility';
+import { renderHook, act } from "@testing-library/react";
+import {
+  useKeyboardNavigation,
+  useScreenReader,
+  useFocusTrap,
+  useReducedMotion,
+} from "@/hooks/useAccessibility";
 
-describe('useAccessibility hooks', () => {
-  describe('useKeyboardNavigation', () => {
+describe("useAccessibility hooks", () => {
+  describe("useKeyboardNavigation", () => {
     beforeEach(() => {
       // Create mock DOM elements for testing
       document.body.innerHTML = `
@@ -20,33 +20,33 @@ describe('useAccessibility hooks', () => {
     });
 
     afterEach(() => {
-      document.body.innerHTML = '';
+      document.body.innerHTML = "";
     });
 
-    it('should initialize with correct default values', () => {
+    it("should initialize with correct default values", () => {
       const { result } = renderHook(() =>
         useKeyboardNavigation({
           itemSelector: '[role="article"]',
-          direction: 'vertical',
-        })
+          direction: "vertical",
+        }),
       );
 
       expect(result.current.currentIndex).toBe(0);
       expect(result.current.listRef).toBeDefined();
     });
 
-    it('should handle arrow key navigation', () => {
+    it("should handle arrow key navigation", () => {
       const { result } = renderHook(() =>
         useKeyboardNavigation({
           itemSelector: '[role="article"]',
-          direction: 'vertical',
-        })
+          direction: "vertical",
+        }),
       );
 
       // Attach ref to container
-      const container = document.getElementById('container');
+      const container = document.getElementById("container");
       if (container && result.current.listRef.current) {
-        Object.defineProperty(result.current.listRef, 'current', {
+        Object.defineProperty(result.current.listRef, "current", {
           value: container,
           writable: true,
         });
@@ -54,7 +54,7 @@ describe('useAccessibility hooks', () => {
 
       // Simulate arrow down key
       act(() => {
-        const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+        const event = new KeyboardEvent("keydown", { key: "ArrowDown" });
         document.dispatchEvent(event);
       });
 
@@ -64,24 +64,24 @@ describe('useAccessibility hooks', () => {
     });
   });
 
-  describe('useScreenReader', () => {
-    it('should provide announce function', () => {
+  describe("useScreenReader", () => {
+    it("should provide announce function", () => {
       const { result } = renderHook(() => useScreenReader());
 
-      expect(typeof result.current.announce).toBe('function');
+      expect(typeof result.current.announce).toBe("function");
       expect(result.current.ScreenReaderAnnouncer).toBeDefined();
     });
 
-    it('should announce messages with different priorities', () => {
+    it("should announce messages with different priorities", () => {
       const { result } = renderHook(() => useScreenReader());
 
       // These would normally create live regions in the DOM
       act(() => {
-        result.current.announce('Test message', 'polite');
+        result.current.announce("Test message", "polite");
       });
 
       act(() => {
-        result.current.announce('Urgent message', 'assertive');
+        result.current.announce("Urgent message", "assertive");
       });
 
       // In a real implementation, we'd check for aria-live regions
@@ -89,7 +89,7 @@ describe('useAccessibility hooks', () => {
     });
   });
 
-  describe('useFocusTrap', () => {
+  describe("useFocusTrap", () => {
     beforeEach(() => {
       document.body.innerHTML = `
         <div id="modal">
@@ -101,18 +101,18 @@ describe('useAccessibility hooks', () => {
     });
 
     afterEach(() => {
-      document.body.innerHTML = '';
+      document.body.innerHTML = "";
     });
 
-    it('should initialize focus trap', () => {
+    it("should initialize focus trap", () => {
       const { result } = renderHook(() => useFocusTrap());
 
       expect(result.current.trapRef).toBeDefined();
-      expect(typeof result.current.activate).toBe('function');
-      expect(typeof result.current.deactivate).toBe('function');
+      expect(typeof result.current.activate).toBe("function");
+      expect(typeof result.current.deactivate).toBe("function");
     });
 
-    it('should activate and deactivate focus trap', () => {
+    it("should activate and deactivate focus trap", () => {
       const { result } = renderHook(() => useFocusTrap());
 
       act(() => {
@@ -131,13 +131,13 @@ describe('useAccessibility hooks', () => {
     });
   });
 
-  describe('useReducedMotion', () => {
+  describe("useReducedMotion", () => {
     beforeEach(() => {
       // Mock matchMedia
-      Object.defineProperty(window, 'matchMedia', {
+      Object.defineProperty(window, "matchMedia", {
         writable: true,
-        value: jest.fn().mockImplementation(query => ({
-          matches: query === '(prefers-reduced-motion: reduce)',
+        value: jest.fn().mockImplementation((query) => ({
+          matches: query === "(prefers-reduced-motion: reduce)",
           media: query,
           onchange: null,
           addListener: jest.fn(),
@@ -149,16 +149,16 @@ describe('useAccessibility hooks', () => {
       });
     });
 
-    it('should return reduced motion preference', () => {
+    it("should return reduced motion preference", () => {
       const { result } = renderHook(() => useReducedMotion());
 
-      expect(typeof result.current).toBe('boolean');
+      expect(typeof result.current).toBe("boolean");
     });
 
-    it('should detect reduced motion preference', () => {
+    it("should detect reduced motion preference", () => {
       // Mock reduced motion preference
-      (window.matchMedia as jest.Mock).mockImplementation(query => ({
-        matches: query === '(prefers-reduced-motion: reduce)',
+      (window.matchMedia as jest.Mock).mockImplementation((query) => ({
+        matches: query === "(prefers-reduced-motion: reduce)",
         media: query,
         onchange: null,
         addListener: jest.fn(),
@@ -173,9 +173,9 @@ describe('useAccessibility hooks', () => {
       expect(result.current).toBe(true);
     });
 
-    it('should handle no reduced motion preference', () => {
+    it("should handle no reduced motion preference", () => {
       // Mock no reduced motion preference
-      (window.matchMedia as jest.Mock).mockImplementation(query => ({
+      (window.matchMedia as jest.Mock).mockImplementation((query) => ({
         matches: false,
         media: query,
         onchange: null,

@@ -118,8 +118,12 @@ def _words_from_env(key: str, default_list: Iterable[str]) -> list[str]:
     return [w.strip() for w in raw.split(",") if w.strip()]
 
 
-_LEX_NEG = set(_words_from_env("NEWS_SENTIMENT_NEG", re.split(r"[,\s]+", _DEFAULT_NEG_WORDS)))
-_LEX_POS = set(_words_from_env("NEWS_SENTIMENT_POS", re.split(r"[,\s]+", _DEFAULT_POS_WORDS)))
+_LEX_NEG = set(
+    _words_from_env("NEWS_SENTIMENT_NEG", re.split(r"[,\s]+", _DEFAULT_NEG_WORDS))
+)
+_LEX_POS = set(
+    _words_from_env("NEWS_SENTIMENT_POS", re.split(r"[,\s]+", _DEFAULT_POS_WORDS))
+)
 
 # Weighting knobs (env-tunable)
 LEX_NEG_WEIGHT = float(os.getenv("NEWS_SENTIMENT_NEG_W", "1.0") or "1.0")
@@ -156,7 +160,9 @@ def _to_samples(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "title": _clean_text(it.get("title")),
                 "url": it.get("url") or it.get("link") or "",
                 "published": it.get("published") or it.get("date") or "",
-                "summary": _clean_text(it.get("summary") or it.get("description") or ""),
+                "summary": _clean_text(
+                    it.get("summary") or it.get("description") or ""
+                ),
             }
         )
     return out
@@ -274,7 +280,9 @@ def analyze_news_sentiment(
     for s in samples:
         text = f"{s.get('title', '')}. {s.get('summary', '')}".strip()
         score, model = _score_text(_clean_text(text), prefer_vader=prefer_vader)
-        model_used = model_used if model_used == "vader" else model  # if any are vader, keep vader
+        model_used = (
+            model_used if model_used == "vader" else model
+        )  # if any are vader, keep vader
         label = _label_from_score(score)
         out = {
             "source": s.get("source") or "",
@@ -443,7 +451,18 @@ def _handle_negation(text: str) -> tuple[bool, str]:
     ]
 
     # Punctuation that breaks negation scope
-    scope_breakers = [".", "!", "?", ";", ":", ",", "but", "however", "although", "though"]
+    scope_breakers = [
+        ".",
+        "!",
+        "?",
+        ";",
+        ":",
+        ",",
+        "but",
+        "however",
+        "although",
+        "though",
+    ]
 
     words = text.lower().split()
     processed_words = []

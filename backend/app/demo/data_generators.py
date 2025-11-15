@@ -3,6 +3,7 @@ Demo data generators for safe demonstrations.
 
 Provides deterministic, realistic-looking data when DEMO_MODE is enabled.
 """
+
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -25,9 +26,9 @@ def get_demo_market_data(ticker: str = "AAPL") -> dict[str, Any]:
         "META": 485.20,
         "AMZN": 178.90,
     }
-    
+
     base_price = base_prices.get(ticker, 150.00)
-    
+
     return {
         "ticker": ticker,
         "price": round(base_price, 2),
@@ -161,15 +162,19 @@ def get_demo_news(ticker: str | None = None) -> list[dict[str, Any]]:
             "url": "#",
         },
     ]
-    
+
     if ticker:
         articles[0]["title"] = f"{ticker} Reports Strong Quarterly Results"
-        articles[0]["summary"] = f"{ticker} exceeded expectations with robust revenue growth."
-    
+        articles[0][
+            "summary"
+        ] = f"{ticker} exceeded expectations with robust revenue growth."
+
     return articles
 
 
-def get_demo_backtest_result(symbol: str = "AAPL", strategy: str = "sma50_cross") -> dict[str, Any]:
+def get_demo_backtest_result(
+    symbol: str = "AAPL", strategy: str = "sma50_cross"
+) -> dict[str, Any]:
     """Generate demo backtest results."""
     return {
         "symbol": symbol,
@@ -235,7 +240,7 @@ def get_demo_screener_results(preset: str = "momentum") -> list[dict[str, Any]]:
         {"ticker": "AAPL", "score": 82, "price": 175.50, "change_percent": 1.5},
         {"ticker": "MSFT", "score": 79, "price": 380.25, "change_percent": 0.8},
     ]
-    
+
     return base_results
 
 

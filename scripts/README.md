@@ -9,14 +9,17 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 🚀 Startup & Development
 
 #### `dev-all.ps1`
+
 **Purpose:** Start all ZiggyAI services (frontend + backend)  
 **Usage:** `.\scripts\dev-all.ps1`  
 **What it does:**
+
 - Starts backend FastAPI server
 - Starts frontend Next.js dev server
 - Opens new terminal windows for each service
 
 **Requirements:**
+
 - Node.js 18+
 - Python 3.11+
 - Poetry installed
@@ -24,9 +27,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `preflight.ps1`
+
 **Purpose:** Pre-deployment environment checks  
 **Usage:** `.\scripts\preflight.ps1`  
 **What it does:**
+
 - Verifies all dependencies installed
 - Checks environment variables
 - Validates configuration files
@@ -40,9 +45,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 🧪 Testing & Quality
 
 #### `ui_audit.spec.ts`
+
 **Purpose:** Playwright UI audit specification  
 **Usage:** `npm run audit:fe:ui` (from frontend directory)  
 **What it does:**
+
 - Tests all frontend routes
 - Captures screenshots
 - Validates data rendering
@@ -54,9 +61,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `run_code_health.ps1`
+
 **Purpose:** Run complete code health checks  
 **Usage:** `.\scripts\run_code_health.ps1`  
 **What it does:**
+
 - Frontend type checking
 - Backend type checking
 - Linting (ESLint + Ruff)
@@ -69,9 +78,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `setup_ui_audit.ps1`
+
 **Purpose:** Setup UI audit dependencies  
 **Usage:** `.\scripts\setup_ui_audit.ps1`  
 **What it does:**
+
 - Installs Playwright
 - Installs Lighthouse
 - Installs Axe-core
@@ -82,9 +93,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `run_lighthouse.ps1`
+
 **Purpose:** Run Lighthouse performance audits  
 **Usage:** `.\scripts\run_lighthouse.ps1`  
 **What it does:**
+
 - Starts dev server if not running
 - Runs Lighthouse on all routes
 - Generates performance reports
@@ -97,9 +110,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 🗄️ Database & Data
 
 #### `dev_db_check.ps1`
+
 **Purpose:** Verify database health  
 **Usage:** `.\scripts\dev_db_check.ps1`  
 **What it does:**
+
 - Checks database connection
 - Verifies schema migrations
 - Tests query performance
@@ -110,9 +125,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `seed-dev.ps1`
+
 **Purpose:** Seed development database  
 **Usage:** `.\scripts\seed-dev.ps1`  
 **What it does:**
+
 - Creates sample users
 - Generates mock market data
 - Populates test portfolios
@@ -125,9 +142,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 🧹 Maintenance
 
 #### `dev_clean_env.ps1`
+
 **Purpose:** Clean development environment  
 **Usage:** `.\scripts\dev_clean_env.ps1`  
 **What it does:**
+
 - Removes `node_modules/`
 - Removes `.venv/`
 - Clears build artifacts
@@ -141,9 +160,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 📊 Documentation & Analysis
 
 #### `scan_repo.ps1`
+
 **Purpose:** Scan repository structure  
 **Usage:** `.\scripts\scan_repo.ps1`  
 **What it does:**
+
 - Lists all files and directories
 - Analyzes code organization
 - Identifies potential issues
@@ -154,9 +175,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `export_frontend_routes.ps1`
+
 **Purpose:** Export all frontend routes  
 **Usage:** `.\scripts\export_frontend_routes.ps1`  
 **What it does:**
+
 - Scans `frontend/src/app/`
 - Extracts all route definitions
 - Generates route map
@@ -167,9 +190,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `export_backend_routes.ps1`
+
 **Purpose:** Export all backend API routes  
 **Usage:** `.\scripts\export_backend_routes.ps1`  
 **What it does:**
+
 - Scans FastAPI routers
 - Extracts endpoint definitions
 - Maps HTTP methods
@@ -180,9 +205,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `build_indexes.ps1`
+
 **Purpose:** Build search indexes  
 **Usage:** `.\scripts\build_indexes.ps1`  
 **What it does:**
+
 - Indexes code for search
 - Generates symbol tables
 - Creates dependency graphs
@@ -193,9 +220,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 🎨 Blueprint & Visualization
 
 #### `render_blueprint.ps1`
+
 **Purpose:** Render system blueprint  
 **Usage:** `.\scripts\render_blueprint.ps1`  
 **What it does:**
+
 - Generates architecture diagrams
 - Creates flow charts
 - Renders component relationships
@@ -206,9 +235,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `run_blueprint_full.ps1`
+
 **Purpose:** Full blueprint generation  
 **Usage:** `.\scripts\run_blueprint_full.ps1`  
 **What it does:**
+
 - Runs complete blueprint pipeline
 - Analyzes entire codebase
 - Generates all diagrams
@@ -221,9 +252,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ### 🐍 Python Utilities
 
 #### `generate_ui_report.py`
+
 **Purpose:** Generate UI health report  
 **Usage:** `python scripts/generate_ui_report.py`  
 **What it does:**
+
 - Aggregates UI audit results
 - Analyzes screenshots
 - Identifies UI issues
@@ -234,9 +267,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `verify_endpoints.py`
+
 **Purpose:** Verify API endpoint coverage  
 **Usage:** `python scripts/verify_endpoints.py`  
 **What it does:**
+
 - Compares frontend API calls to backend routes
 - Identifies missing endpoints
 - Detects unused routes
@@ -247,9 +282,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `detect_duplicates.py`
+
 **Purpose:** Detect code duplication  
 **Usage:** `python scripts/detect_duplicates.py`  
 **What it does:**
+
 - Scans for duplicate code blocks
 - Identifies similar functions
 - Suggests refactoring opportunities
@@ -260,9 +297,11 @@ This directory contains automation scripts for development, testing, auditing, a
 ---
 
 #### `validate_code_health_system.py`
+
 **Purpose:** Validate code health infrastructure  
 **Usage:** `python scripts/validate_code_health_system.py`  
 **What it does:**
+
 - Checks all audit tools installed
 - Verifies configuration files
 - Tests audit pipelines
@@ -275,6 +314,7 @@ This directory contains automation scripts for development, testing, auditing, a
 ## 📝 Common Workflows
 
 ### Starting Development
+
 ```powershell
 # Option 1: All services
 .\scripts\dev-all.ps1
@@ -285,6 +325,7 @@ cd backend && poetry run uvicorn app.main:app --reload
 ```
 
 ### Running Quality Checks
+
 ```powershell
 # Quick check
 .\scripts\run_code_health.ps1
@@ -295,6 +336,7 @@ cd backend && make audit-backend-full
 ```
 
 ### Fresh Start
+
 ```powershell
 # Clean everything
 .\scripts\dev_clean_env.ps1
@@ -308,6 +350,7 @@ cd backend && poetry install
 ```
 
 ### Pre-Deployment
+
 ```powershell
 # Run preflight checks
 .\scripts\preflight.ps1
@@ -322,6 +365,7 @@ cd backend && poetry run pytest
 ## 🔧 Configuration
 
 Most scripts read configuration from:
+
 - `.env` files (root, frontend, backend)
 - `package.json` (frontend)
 - `pyproject.toml` (backend)
@@ -332,12 +376,14 @@ Most scripts read configuration from:
 ## 📚 Dependencies
 
 ### Required Tools
+
 - **PowerShell 5.1+** or **PowerShell Core 7+**
 - **Node.js 18+** with npm
 - **Python 3.11+** with Poetry
 - **Git** for version control
 
 ### Optional Tools
+
 - **Docker** for containerization
 - **Make** for Makefile commands
 - **Playwright** for E2E testing
@@ -348,6 +394,7 @@ Most scripts read configuration from:
 ## 🐛 Troubleshooting
 
 ### Script Won't Run
+
 ```powershell
 # Check execution policy
 Get-ExecutionPolicy
@@ -357,6 +404,7 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### Dependencies Missing
+
 ```powershell
 # Verify installations
 node --version
@@ -368,6 +416,7 @@ choco install nodejs python poetry
 ```
 
 ### Port Conflicts
+
 ```powershell
 # Kill process on port 3000
 npx kill-port 3000

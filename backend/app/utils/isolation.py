@@ -67,7 +67,9 @@ def check_strict_isolation() -> tuple[bool, list[str]]:
     # Gated logging: only WARN in production with trading actually enabled.
     # Otherwise, log at DEBUG level without values (names only) and no stack traces.
     if not is_isolated:
-        env = (os.getenv("APP_ENV") or os.getenv("ENV") or "development").strip().lower()
+        env = (
+            (os.getenv("APP_ENV") or os.getenv("ENV") or "development").strip().lower()
+        )
         trading_enabled = (os.getenv("TRADING_ENABLED") or "false").strip().lower() in {
             "1",
             "true",

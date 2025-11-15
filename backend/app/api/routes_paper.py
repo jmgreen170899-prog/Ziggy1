@@ -23,7 +23,14 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.db import db_state
 from app.models.base import get_db
-from app.models.paper import ModelSnapshot, PaperRun, TheoryPerf, TheoryStatus, Trade, TradeStatus
+from app.models.paper import (
+    ModelSnapshot,
+    PaperRun,
+    TheoryPerf,
+    TheoryStatus,
+    Trade,
+    TradeStatus,
+)
 from app.utils.time import monotonic_now
 
 
@@ -145,9 +152,11 @@ def to_paper_run_response(run: PaperRun) -> PaperRunResponse:
         total_pnl=float(run.total_pnl),  # type: ignore
         current_balance=float(run.current_balance),  # type: ignore
         win_rate=float(run.win_rate) if run.win_rate is not None else None,  # type: ignore
-        avg_fill_latency_ms=float(run.avg_fill_latency_ms)
-        if run.avg_fill_latency_ms is not None
-        else None,  # type: ignore
+        avg_fill_latency_ms=(
+            float(run.avg_fill_latency_ms)
+            if run.avg_fill_latency_ms is not None
+            else None
+        ),  # type: ignore
     )
 
 
@@ -177,9 +186,11 @@ def to_theory_perf_response(theory: TheoryPerf) -> TheoryPerfResponse:
         total_pnl=float(theory.total_pnl),  # type: ignore
         win_rate=float(theory.win_rate) if theory.win_rate is not None else None,  # type: ignore
         sharpe_ratio=float(theory.sharpe_ratio) if theory.sharpe_ratio is not None else None,  # type: ignore
-        avg_fill_latency_ms=float(theory.avg_fill_latency_ms)
-        if theory.avg_fill_latency_ms is not None
-        else None,  # type: ignore
+        avg_fill_latency_ms=(
+            float(theory.avg_fill_latency_ms)
+            if theory.avg_fill_latency_ms is not None
+            else None
+        ),  # type: ignore
     )
 
 
@@ -239,7 +250,9 @@ async def list_paper_runs(
 
     except Exception as e:
         logger.error(f"Failed to list paper runs: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve paper runs") from e
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve paper runs"
+        ) from e
 
 
 @router.get("/runs/{run_id}", response_model=PaperRunResponse)
@@ -258,7 +271,9 @@ async def get_paper_run(run_id: int, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         logger.error(f"Failed to get paper run {run_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve paper run") from e
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve paper run"
+        ) from e
 
 
 @router.post("/runs/{run_id}/stop", response_model=None)
@@ -314,7 +329,9 @@ async def get_trades(
         if ticker:
             query = query.filter(Trade.ticker == ticker)
 
-        trades = query.order_by(Trade.signal_time.desc()).offset(offset).limit(limit).all()
+        trades = (
+            query.order_by(Trade.signal_time.desc()).offset(offset).limit(limit).all()
+        )
 
         return [
             TradeResponse(
@@ -371,7 +388,9 @@ async def get_theory_performance(
 
     except Exception as e:
         logger.error(f"Failed to get theory performance for run {run_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve theory performance") from e
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve theory performance"
+        ) from e
 
 
 @router.post("/runs/{run_id}/theories/{theory_name}/pause", response_model=None)
@@ -436,7 +455,9 @@ async def get_run_stats(run_id: int, db: Session = Depends(get_db)):
         failed_trades = (
             db.query(Trade)
             .filter(Trade.paper_run_id == run_id)
-            .filter(Trade.status.in_([TradeStatus.FAILED.value, TradeStatus.REJECTED.value]))
+            .filter(
+                Trade.status.in_([TradeStatus.FAILED.value, TradeStatus.REJECTED.value])
+            )
             .count()
         )
 
@@ -453,14 +474,18 @@ async def get_run_stats(run_id: int, db: Session = Depends(get_db)):
             "win_rate": run.win_rate,
             "error_rate": error_rate,
             "avg_fill_latency_ms": run.avg_fill_latency_ms,
-            "theory_distribution": {theory: int(count) for theory, count in theory_counts},
+            "theory_distribution": {
+                theory: int(count) for theory, count in theory_counts
+            },
         }
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Failed to get stats for run {run_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve run statistics") from e
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve run statistics"
+        ) from e
 
 
 # Model Snapshots and Learning Metrics
@@ -503,7 +528,9 @@ async def get_model_snapshots(
 
     except Exception as e:
         logger.error(f"Failed to get model snapshots for run {run_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve model snapshots") from e
+        raise HTTPException(
+            status_code=500, detail="Failed to retrieve model snapshots"
+        ) from e
 
 
 # Emergency Controls
@@ -550,7 +577,9 @@ async def paper_lab_health():
 
     # If DB is not connected, return a clean 503 JSON without raising
     if not bool(db_state.get("connected")):
-        return JSONResponse(status_code=503, content={"status": "down", "reason": "db_unavailable"})
+        return JSONResponse(
+            status_code=503, content={"status": "down", "reason": "db_unavailable"}
+        )
 
     # Serve cached response if not time to retry yet
     now = monotonic_now()
@@ -620,7 +649,8 @@ async def paper_lab_health():
             # Record failure with backoff and return cached DOWN immediately
             _HEALTH_STATE.record_failure(e)
             return JSONResponse(
-                status_code=503, content=_HEALTH_STATE.cached_payload or {"status": "DOWN"}
+                status_code=503,
+                content=_HEALTH_STATE.cached_payload or {"status": "DOWN"},
             )
 
         # Get brain queue metrics (with fallbacks)
@@ -634,7 +664,11 @@ async def paper_lab_health():
         try:
             learner_metrics = get_learner_metrics()
         except Exception as e:
-            learner_metrics = {"batches_total": 0, "batches_5m": 0, "learner_available": False}
+            learner_metrics = {
+                "batches_total": 0,
+                "batches_5m": 0,
+                "learner_available": False,
+            }
             logger.warning(f"Could not get learner metrics: {e}")
 
         # Get learner gateway status
@@ -688,21 +722,32 @@ async def paper_lab_health():
         if not strict_isolation:
             health_data["detected_live_vars"] = detected_vars
             if not last_error:
-                last_error = (
-                    f"Live broker environment variables detected: {', '.join(detected_vars)}"
-                )
+                last_error = f"Live broker environment variables detected: {', '.join(detected_vars)}"
                 health_data["last_error"] = last_error
 
         # Return appropriate status codes; record success once we formed payload
         # If isolation failed critically or trade activity missing, still count as DOWN
         if paper_enabled and not strict_isolation:
             _HEALTH_STATE.record_failure(RuntimeError("strict_isolation_failed"))
-            payload = {**health_data, "status": "unhealthy", "reason": "strict_isolation_failed"}
+            payload = {
+                **health_data,
+                "status": "unhealthy",
+                "reason": "strict_isolation_failed",
+            }
             return JSONResponse(status_code=503, content=payload)
 
-        if paper_enabled and recent_trades_5m == 0 and paper_worker and paper_worker.is_running:
+        if (
+            paper_enabled
+            and recent_trades_5m == 0
+            and paper_worker
+            and paper_worker.is_running
+        ):
             _HEALTH_STATE.record_failure(RuntimeError("no_recent_trades"))
-            payload = {**health_data, "status": "unhealthy", "reason": "no_recent_trades"}
+            payload = {
+                **health_data,
+                "status": "unhealthy",
+                "reason": "no_recent_trades",
+            }
             return JSONResponse(status_code=503, content=payload)
 
         # Success path: cache for 10s

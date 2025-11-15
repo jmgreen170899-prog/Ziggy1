@@ -55,7 +55,9 @@ def fetch_and_unify(
     now = time.time()
     items: list[dict[str, Any]] = []
 
-    for url in _uniq([u for u in (feed_urls or []) if isinstance(u, str) and u.strip()]):
+    for url in _uniq(
+        [u for u in (feed_urls or []) if isinstance(u, str) and u.strip()]
+    ):
         try:
             feed = _fetch_feed(url, timeout=timeout, ttl=ttl)
             parsed = _parse_feed(feed.xml, feed_url=url)
@@ -163,12 +165,18 @@ def _parse_feed(xml_text: str, *, feed_url: str) -> ParsedFeed:
         title = _text_or_none(root.find("./channel/title"))
         entries = _parse_rss_items(root, base=feed_url)
     elif tag == "feed":  # Atom
-        title = _text_or_none(root.find("./atom:title", _NS)) or _text_or_none(root.find("./title"))
+        title = _text_or_none(root.find("./atom:title", _NS)) or _text_or_none(
+            root.find("./title")
+        )
         entries = _parse_atom_entries(root, base=feed_url)
     else:
         # Unknown root — try both ways
-        title = _text_or_none(root.find(".//channel/title")) or _text_or_none(root.find(".//title"))
-        entries = _parse_rss_items(root, base=feed_url) or _parse_atom_entries(root, base=feed_url)
+        title = _text_or_none(root.find(".//channel/title")) or _text_or_none(
+            root.find(".//title")
+        )
+        entries = _parse_rss_items(root, base=feed_url) or _parse_atom_entries(
+            root, base=feed_url
+        )
 
     return ParsedFeed(title=title, entries=entries)
 

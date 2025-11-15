@@ -112,7 +112,8 @@ def _build_trace_data(event_id: str) -> dict[str, Any]:
 
         # Mock feature extraction results
         features = existing_event.get("explain", {}).get(
-            "features", {"momentum": 0.3, "sentiment": 0.2, "volatility": 0.15, "volume": 0.1}
+            "features",
+            {"momentum": 0.3, "sentiment": 0.2, "volatility": 0.15, "volume": 0.1},
         )
 
         # Mock fusion results
@@ -133,16 +134,26 @@ def _build_trace_data(event_id: str) -> dict[str, Any]:
 
         # Build trace using service
         if TRACE_AVAILABLE:
-            trace_data = build_trace(inputs, features, fusion, calibration, risk, sizing)
+            trace_data = build_trace(
+                inputs, features, fusion, calibration, risk, sizing
+            )
         else:
             # Fallback trace structure
             trace_data = {
                 "graph": {
                     "nodes": [
                         {"id": "inputs", "type": "source", "name": "Market Inputs"},
-                        {"id": "features", "type": "transform", "name": "Feature Extraction"},
+                        {
+                            "id": "features",
+                            "type": "transform",
+                            "name": "Feature Extraction",
+                        },
                         {"id": "fusion", "type": "model", "name": "Signal Fusion"},
-                        {"id": "calibration", "type": "transform", "name": "Calibration"},
+                        {
+                            "id": "calibration",
+                            "type": "transform",
+                            "name": "Calibration",
+                        },
                         {"id": "risk", "type": "filter", "name": "Risk Management"},
                         {"id": "sizing", "type": "output", "name": "Position Sizing"},
                     ],
@@ -201,7 +212,9 @@ def _build_trace_data(event_id: str) -> dict[str, Any]:
 
         except Exception as e:
             if BRAIN_STRICT:
-                raise HTTPException(status_code=500, detail=f"Brain storage failed: {e}")
+                raise HTTPException(
+                    status_code=500, detail=f"Brain storage failed: {e}"
+                )
             else:
                 logger.warning(f"Brain storage failed: {e}")
 
@@ -209,7 +222,9 @@ def _build_trace_data(event_id: str) -> dict[str, Any]:
 
     except Exception as e:
         if BRAIN_STRICT:
-            raise HTTPException(status_code=500, detail=f"Trace construction failed: {e}")
+            raise HTTPException(
+                status_code=500, detail=f"Trace construction failed: {e}"
+            )
         else:
             # Fallback minimal trace
             return {
@@ -237,7 +252,8 @@ async def get_signal_trace(event_id: str = Query(..., description="Event ID to t
     """
     if not TRACE_ENABLED:
         raise HTTPException(
-            status_code=403, detail="Trace feature not enabled. Set EXPLAIN_ENABLE_TRACE=1"
+            status_code=403,
+            detail="Trace feature not enabled. Set EXPLAIN_ENABLE_TRACE=1",
         )
 
     try:
@@ -277,7 +293,9 @@ async def list_traces(
                         "event_id": event.get("original_event_id"),
                         "ticker": event.get("ticker"),
                         "timestamp": event.get("ts"),
-                        "latency_ms": event.get("trace_data", {}).get("total_latency_ms"),
+                        "latency_ms": event.get("trace_data", {}).get(
+                            "total_latency_ms"
+                        ),
                     }
                 )
                 count += 1

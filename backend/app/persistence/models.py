@@ -22,7 +22,9 @@ class PaperRun(Base):
     __tablename__ = "durable_paper_runs"
 
     id = Column(String(64), primary_key=True)  # uuid string
-    started_at = Column(DateTime(timezone=False), nullable=False, default=datetime.utcnow)
+    started_at = Column(
+        DateTime(timezone=False), nullable=False, default=datetime.utcnow
+    )
     ended_at = Column(DateTime(timezone=False), nullable=True)
     meta = Column(JSON, nullable=True)  # universe, theories, params_json
 
@@ -52,7 +54,9 @@ class Position(Base):
     avg_price = Column(Float, nullable=False)
     ts = Column(DateTime(timezone=False), nullable=False, default=datetime.utcnow)
 
-    __table_args__ = (UniqueConstraint("run_id", "symbol", name="uq_positions_run_symbol"),)
+    __table_args__ = (
+        UniqueConstraint("run_id", "symbol", name="uq_positions_run_symbol"),
+    )
 
 
 class PnLPoint(Base):

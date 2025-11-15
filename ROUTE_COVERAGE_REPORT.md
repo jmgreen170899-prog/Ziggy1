@@ -12,13 +12,13 @@ Successfully increased backend API route coverage from **68 routes** to **177 ro
 
 ### Key Metrics
 
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| **OpenAPI Paths** | 64 | 173 | +109 (+170%) |
-| **Total Routes** | 68 | 177 | +109 (+160%) |
-| **Router Modules** | ~20 | 22 | All included |
-| **Route Coverage** | ~38% | 100% | +62% |
-| **Test Coverage** | Failing | 14/14 passing | ✅ |
+| Metric             | Before  | After         | Change       |
+| ------------------ | ------- | ------------- | ------------ |
+| **OpenAPI Paths**  | 64      | 173           | +109 (+170%) |
+| **Total Routes**   | 68      | 177           | +109 (+160%) |
+| **Router Modules** | ~20     | 22            | All included |
+| **Route Coverage** | ~38%    | 100%          | +62%         |
+| **Test Coverage**  | Failing | 14/14 passing | ✅           |
 
 ---
 
@@ -27,6 +27,7 @@ Successfully increased backend API route coverage from **68 routes** to **177 ro
 ### 1. Root Cause Analysis ✅
 
 Identified that routes were failing to register due to:
+
 - **Missing dependencies**: numpy, pandas, sqlalchemy, httpx, etc.
 - **Import-time failures**: Routers were wrapped in try/except that silently failed
 - **Duplicate routes**: `/trading/backtest` was registered twice
@@ -35,6 +36,7 @@ Identified that routes were failing to register due to:
 ### 2. Dependency Installation ✅
 
 Installed critical missing dependencies to enable all router imports:
+
 ```bash
 # Core FastAPI dependencies
 fastapi, uvicorn, pydantic, starlette
@@ -67,11 +69,13 @@ yfinance
 ### 3. Code Fixes ✅
 
 #### Fixed Duplicate Route (`app/api/routes_trading.py`)
+
 - **Issue**: `/trading/backtest` POST route was defined twice (lines 1497 and 1681)
 - **Fix**: Removed the duplicate alias at line 1681
 - **Result**: Eliminated duplicate route registration
 
 #### Improved Error Handling (`app/api/routes_dev.py`)
+
 - **Issue**: Dev endpoints returned 500 when database was unavailable
 - **Fix**: Changed to return 503 (Service Unavailable) with proper error messages
 - **Routes fixed**:
@@ -81,10 +85,12 @@ yfinance
 ### 4. Test Updates ✅
 
 #### Updated `test_routes_wired.py`
+
 - Adjusted expected path count from 175 to 173 (correct value)
 - Added support for 501/503 status codes (valid for unimplemented/unavailable features)
 
 #### All Tests Passing
+
 - `test_health_endpoint_works` ✅
 - `test_openapi_json_available` ✅
 - `test_openapi_has_minimum_routes` ✅
@@ -106,55 +112,55 @@ yfinance
 
 ### All 22 Router Modules (177 Routes Total)
 
-| Router Module | Routes | Prefix | Status |
-|--------------|--------|---------|---------|
-| routes.py | 11 | /api | ✅ Registered |
-| routes_alerts.py | 13 | /alerts | ✅ Registered |
-| routes_chat.py | 3 | /chat | ✅ Registered |
-| routes_cognitive.py | 7 | /cognitive | ✅ Registered |
-| routes_crypto.py | 2 | /crypto | ✅ Registered |
-| routes_dev.py | 9 | /dev | ✅ Registered |
-| routes_explain.py | 3 | /signal | ✅ Registered |
-| routes_feedback.py | 5 | /feedback | ✅ Registered |
-| routes_integration.py | 9 | /integration | ✅ Registered |
-| routes_learning.py | 13 | /learning | ✅ Registered |
-| routes_market.py | 4 | /market | ✅ Registered |
-| routes_market_calendar.py | 7 | /market | ✅ Registered |
-| routes_news.py | 7 | /news | ✅ Registered |
-| routes_paper.py | 11 | /paper | ✅ Registered |
-| routes_performance.py | 8 | /api/performance | ✅ Registered |
-| routes_risk_lite.py | 2 | /risk | ✅ Registered |
-| routes_screener.py | 7 | /screener | ✅ Registered |
-| routes_signals.py | 21 | /signals | ✅ Registered |
-| routes_trace.py | 3 | /signal | ✅ Registered |
-| routes_trading.py | 24 | /trading | ✅ Registered |
-| trading/router.py | 6 | /trade | ✅ Registered |
-| web/browse_router.py | 2 | /web | ✅ Registered |
+| Router Module             | Routes | Prefix           | Status        |
+| ------------------------- | ------ | ---------------- | ------------- |
+| routes.py                 | 11     | /api             | ✅ Registered |
+| routes_alerts.py          | 13     | /alerts          | ✅ Registered |
+| routes_chat.py            | 3      | /chat            | ✅ Registered |
+| routes_cognitive.py       | 7      | /cognitive       | ✅ Registered |
+| routes_crypto.py          | 2      | /crypto          | ✅ Registered |
+| routes_dev.py             | 9      | /dev             | ✅ Registered |
+| routes_explain.py         | 3      | /signal          | ✅ Registered |
+| routes_feedback.py        | 5      | /feedback        | ✅ Registered |
+| routes_integration.py     | 9      | /integration     | ✅ Registered |
+| routes_learning.py        | 13     | /learning        | ✅ Registered |
+| routes_market.py          | 4      | /market          | ✅ Registered |
+| routes_market_calendar.py | 7      | /market          | ✅ Registered |
+| routes_news.py            | 7      | /news            | ✅ Registered |
+| routes_paper.py           | 11     | /paper           | ✅ Registered |
+| routes_performance.py     | 8      | /api/performance | ✅ Registered |
+| routes_risk_lite.py       | 2      | /risk            | ✅ Registered |
+| routes_screener.py        | 7      | /screener        | ✅ Registered |
+| routes_signals.py         | 21     | /signals         | ✅ Registered |
+| routes_trace.py           | 3      | /signal          | ✅ Registered |
+| routes_trading.py         | 24     | /trading         | ✅ Registered |
+| trading/router.py         | 6      | /trade           | ✅ Registered |
+| web/browse_router.py      | 2      | /web             | ✅ Registered |
 
 ### Routes by Domain
 
-| Domain | Count | Prefixes |
-|--------|-------|----------|
-| **Trading** | 30 | /trade, /trading |
-| **Signals** | 21 | /signals |
-| **Core API** | 19 | /api |
-| **Alerts** | 13 | /alerts |
-| **Learning** | 13 | /learning |
-| **Paper Trading** | 11 | /paper |
-| **Market Data** | 10 | /market |
-| **Dev Tools** | 9 | /dev |
-| **Integration** | 9 | /integration |
-| **Performance** | 8 | /api/performance |
-| **Screener** | 7 | /screener |
-| **Cognitive** | 7 | /cognitive |
-| **News** | 7 | /news |
-| **Signal Analysis** | 6 | /signal |
-| **Feedback** | 5 | /feedback |
-| **Chat** | 3 | /chat |
-| **Crypto** | 2 | /crypto |
-| **Risk** | 2 | /risk |
-| **Web** | 2 | /web |
-| **Health** | 1 | /health |
+| Domain              | Count | Prefixes         |
+| ------------------- | ----- | ---------------- |
+| **Trading**         | 30    | /trade, /trading |
+| **Signals**         | 21    | /signals         |
+| **Core API**        | 19    | /api             |
+| **Alerts**          | 13    | /alerts          |
+| **Learning**        | 13    | /learning        |
+| **Paper Trading**   | 11    | /paper           |
+| **Market Data**     | 10    | /market          |
+| **Dev Tools**       | 9     | /dev             |
+| **Integration**     | 9     | /integration     |
+| **Performance**     | 8     | /api/performance |
+| **Screener**        | 7     | /screener        |
+| **Cognitive**       | 7     | /cognitive       |
+| **News**            | 7     | /news            |
+| **Signal Analysis** | 6     | /signal          |
+| **Feedback**        | 5     | /feedback        |
+| **Chat**            | 3     | /chat            |
+| **Crypto**          | 2     | /crypto          |
+| **Risk**            | 2     | /risk            |
+| **Web**             | 2     | /web             |
+| **Health**          | 1     | /health          |
 
 ---
 
@@ -206,6 +212,7 @@ All major domains have functional endpoints:
 Some routes may return 503 (Service Unavailable) when optional dependencies or external services are not configured. This is **expected behavior** and allows routes to remain discoverable in OpenAPI while clearly indicating unavailability.
 
 Examples:
+
 - Paper trading routes require PostgreSQL database
 - Some market data routes require yfinance
 - Rate limiting requires slowapi (optional)
@@ -214,12 +221,14 @@ Examples:
 ### Service Dependencies
 
 Certain features require external services:
+
 - Database (PostgreSQL) - Required for paper trading, dev tools
 - Redis - Required for caching and rate limiting
 - Market data APIs - Required for real-time quotes
 - FRED API - Optional for economic indicators
 
 All routes gracefully handle missing dependencies with appropriate HTTP status codes:
+
 - **503**: Service temporarily unavailable (recoverable)
 - **501**: Feature not implemented
 - **404**: Endpoint not found (but this shouldn't happen now!)
@@ -247,18 +256,21 @@ FRED_API_KEY=...
 ### Recommended Deployment Steps
 
 1. **Install all dependencies**:
+
    ```bash
    cd backend
    pip install -r requirements.txt
    ```
 
 2. **Initialize database** (if using paper trading):
+
    ```bash
    # Run migrations
    alembic upgrade head
    ```
 
 3. **Start the server**:
+
    ```bash
    uvicorn app.main:app --host 0.0.0.0 --port 8000
    ```
@@ -287,6 +299,7 @@ pytest tests/test_openapi_routes.py tests/test_routes_wired.py -v
 ```
 
 All tests should pass. Warnings are expected for:
+
 - Optional dependencies (slowapi, qdrant_client, etc.)
 - Deprecated functions (crypt, datetime.utcnow)
 - SQLAlchemy 2.0 migration warnings

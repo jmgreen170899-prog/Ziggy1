@@ -15,7 +15,7 @@ if HAVE_SLOWAPI:
     from slowapi import Limiter as SlowAPILimiter
     from slowapi.errors import RateLimitExceeded as SlowAPIRateLimitExceeded
     from slowapi.util import get_remote_address as slowapi_get_remote_address
-    
+
     # Use the real implementations
     Limiter = SlowAPILimiter
     RateLimitExceeded = SlowAPIRateLimitExceeded
@@ -25,12 +25,12 @@ else:
     class Limiter:
         def __init__(self, **kwargs):
             pass
-    
+
     class RateLimitExceeded(Exception):
         def __init__(self, detail="Rate limit exceeded"):
             self.detail = detail
             super().__init__(detail)
-    
+
     def get_remote_address(request):
         return "127.0.0.1"  # fallback IP
 

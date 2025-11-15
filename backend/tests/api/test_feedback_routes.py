@@ -68,7 +68,12 @@ class TestFeedbackRoutes:
         # Create target event
         event_id = append_event({"ticker": "AAPL", "p_up": 0.75})
 
-        feedback_data = {"event_id": event_id, "rating": "INVALID_RATING", "tags": [], "note": ""}
+        feedback_data = {
+            "event_id": event_id,
+            "rating": "INVALID_RATING",
+            "tags": [],
+            "note": "",
+        }
 
         response = client.post("/feedback/decision", json=feedback_data)
 
@@ -223,7 +228,11 @@ class TestFeedbackRoutes:
                 "rating": "GOOD",
                 "tags": ["accurate_prediction", "good_timing"],
             },
-            {"event_id": event_id, "rating": "BAD", "tags": ["poor_timing", "market_noise"]},
+            {
+                "event_id": event_id,
+                "rating": "BAD",
+                "tags": ["poor_timing", "market_noise"],
+            },
         ]
 
         for feedback in feedback_entries:
@@ -266,7 +275,11 @@ class TestFeedbackRoutes:
                     "tags": ["poor_timing"],
                     "note": "Missed the mark",
                 },
-                {"event_id": event_ids[2], "rating": "NEUTRAL", "note": "Average performance"},
+                {
+                    "event_id": event_ids[2],
+                    "rating": "NEUTRAL",
+                    "note": "Average performance",
+                },
             ]
         }
 
@@ -287,8 +300,16 @@ class TestFeedbackRoutes:
 
         bulk_data = {
             "feedback_items": [
-                {"event_id": valid_event_id, "rating": "GOOD", "note": "Valid feedback"},
-                {"event_id": "non-existent-id", "rating": "BAD", "note": "Invalid event ID"},
+                {
+                    "event_id": valid_event_id,
+                    "rating": "GOOD",
+                    "note": "Valid feedback",
+                },
+                {
+                    "event_id": "non-existent-id",
+                    "rating": "BAD",
+                    "note": "Invalid event ID",
+                },
                 {
                     "event_id": valid_event_id,
                     "rating": "INVALID_RATING",  # Invalid rating
@@ -465,7 +486,9 @@ class TestFeedbackIntegration:
 
         start_time = time.time()
 
-        bulk_response = client.post("/feedback/bulk", json={"feedback_items": feedback_items})
+        bulk_response = client.post(
+            "/feedback/bulk", json={"feedback_items": feedback_items}
+        )
 
         end_time = time.time()
         submission_time = end_time - start_time

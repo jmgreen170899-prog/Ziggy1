@@ -332,8 +332,12 @@ def get_model_info() -> dict[str, Any]:
     """Get information about loaded models."""
     return {
         "regimes": list(model_by_regime.keys()),
-        "model_types": {regime: type(model).__name__ for regime, model in model_by_regime.items()},
-        "calibrator_types": {regime: type(cal).__name__ for regime, cal in calibrators.items()},
+        "model_types": {
+            regime: type(model).__name__ for regime, model in model_by_regime.items()
+        },
+        "calibrator_types": {
+            regime: type(cal).__name__ for regime, cal in calibrators.items()
+        },
         "feature_order": FEATURE_ORDER,
         "feature_weights": FEATURE_WEIGHTS,
     }
@@ -376,7 +380,8 @@ def validate_features(features: dict[str, Any]) -> dict[str, Any]:
         "issues": issues,
         "warnings": warnings,
         "feature_count": len(features),
-        "coverage": len([f for f in FEATURE_ORDER if f in features]) / len(FEATURE_ORDER),
+        "coverage": len([f for f in FEATURE_ORDER if f in features])
+        / len(FEATURE_ORDER),
     }
 
 

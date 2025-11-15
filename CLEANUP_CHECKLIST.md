@@ -9,12 +9,14 @@
 ## 📋 Overview
 
 This checklist identifies specific files and directories for cleanup. Each item includes:
+
 - ✅ Safe to proceed
 - ⚠️ Needs review before deletion
 - 🔄 Should be moved/reorganized
 - 📝 Needs documentation
 
 **Review Process:**
+
 1. Review each section
 2. Confirm safety of proposed actions
 3. Execute in phases
@@ -25,6 +27,7 @@ This checklist identifies specific files and directories for cleanup. Each item 
 ## 🗑️ Phase 1: Safe Deletions (Low Risk)
 
 ### Backup Files (3 files - 🗑️ DELETE)
+
 Git history preserves old versions, so these backups are redundant.
 
 ```bash
@@ -35,6 +38,7 @@ frontend/src/app/trading/page_old.tsx.backup
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI
 rm frontend/src/app/crypto/page_old.tsx.backup
@@ -67,6 +71,7 @@ paper_test_api.py            → Keep at root or move to backend/tests/paper/
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI
 
@@ -86,6 +91,7 @@ mv test_websocket.py backend/tests/websocket/
 **Risk:** 🟡 Medium - Test discovery patterns may need updating
 
 **Verification:**
+
 ```bash
 cd backend
 poetry run pytest --collect-only  # Verify tests are discovered
@@ -138,6 +144,7 @@ test_startup_fix.py
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI/backend
 
@@ -195,6 +202,7 @@ mv test_startup_fix.py tests/utils/
 **Risk:** 🟡 Medium - Test imports may need updating
 
 **Verification:**
+
 ```bash
 cd backend
 poetry run pytest --collect-only  # Verify all tests discovered
@@ -212,6 +220,7 @@ websocket_debug.html      → tools/debug/websocket_debug.html
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI
 
@@ -247,6 +256,7 @@ implements/PRODUCTION_DEPLOYMENT_COMPLETE.md
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI
 
@@ -279,6 +289,7 @@ ALL_NOTES.md                                   # 6.2MB - Consolidated notes
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI
 
@@ -313,6 +324,7 @@ implements/UIimplements.txt
 ```
 
 **Actions:**
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI
 
@@ -377,25 +389,30 @@ Document all PowerShell scripts:
 # scripts/README.md
 
 ## Startup Scripts
+
 - `dev-all.ps1` - Start all services
 - `preflight.ps1` - Pre-deployment checks
 
 ## Audit Scripts
+
 - `run_code_health.ps1` - Health checks
 - `setup_ui_audit.ps1` - UI audit setup
 - `run_lighthouse.ps1` - Performance audit
 
 ## Development Utilities
+
 - `dev_clean_env.ps1` - Clean environment
 - `dev_db_check.ps1` - Database checks
 - `seed-dev.ps1` - Seed dev data
 
 ## Documentation Scripts
+
 - `scan_repo.ps1` - Repository scanner
 - `export_frontend_routes.ps1` - Export frontend routes
 - `export_backend_routes.ps1` - Export backend routes
 
 ## Build Scripts
+
 - `build_indexes.ps1` - Build indexes
 - `run_blueprint_full.ps1` - Full blueprint
 ```
@@ -415,6 +432,7 @@ audit.ps1                     # 11KB - Manual audit runner
 ```
 
 **Options:**
+
 1. 🔄 Move to `scripts/notes/` if still useful
 2. 🗑️ Delete if superseded by new documentation system
 3. 📝 Document and keep if actively used
@@ -461,6 +479,7 @@ knip-unused.json              # Unused code detection results
 ### Safety Checks
 
 After each phase:
+
 ```bash
 # 1. Check build
 cd frontend && npm run build
@@ -522,19 +541,23 @@ git reset --hard <commit-before-cleanup>
 After cleanup:
 
 ### Files Deleted: ~3
+
 - 3 backup files removed
 
 ### Files Moved: ~35
+
 - 8 root test files → backend/tests/
 - 25 backend root tests → organized subdirectories
 - 2 HTML debug files → tools/debug/
 
 ### Documentation Reorganized: ~20
+
 - Completed docs → docs/archive/implementations/
 - Planning docs → docs/archive/planning/
 - Session logs → docs/archive/sessions/
 
 ### New Documentation: ~7
+
 - README.md
 - REPOSITORY_ANALYSIS.md
 - CLEANUP_CHECKLIST.md
@@ -544,6 +567,7 @@ After cleanup:
 - docs/TESTING.md
 
 ### Benefits
+
 - ✅ Clearer project structure
 - ✅ Easier to find tests
 - ✅ Better documentation

@@ -24,7 +24,9 @@ router = APIRouter(prefix="/api/performance", tags=["performance"])
 
 
 @router.get("/metrics", response_model=None)
-async def get_performance_metrics(last_n: int = Query(100, ge=1, le=1000)) -> dict[str, Any]:
+async def get_performance_metrics(
+    last_n: int = Query(100, ge=1, le=1000)
+) -> dict[str, Any]:
     """
     Get recent performance metrics from async feature computer.
 
@@ -119,7 +121,9 @@ async def get_benchmark_results() -> dict[str, Any]:
 
 
 @router.post("/benchmarks/feature-computation", response_model=None)
-async def run_feature_benchmark(num_operations: int = Query(100, ge=10, le=1000)) -> dict[str, Any]:
+async def run_feature_benchmark(
+    num_operations: int = Query(100, ge=10, le=1000)
+) -> dict[str, Any]:
     """
     Run feature computation benchmark.
 
@@ -132,7 +136,9 @@ async def run_feature_benchmark(num_operations: int = Query(100, ge=10, le=1000)
         Benchmark comparison results
     """
     try:
-        logger.info(f"Running feature computation benchmark with {num_operations} operations")
+        logger.info(
+            f"Running feature computation benchmark with {num_operations} operations"
+        )
 
         comparison = await run_feature_computation_benchmark(num_operations)
 
@@ -147,7 +153,9 @@ async def run_feature_benchmark(num_operations: int = Query(100, ge=10, le=1000)
 
 
 @router.post("/benchmarks/signal-generation", response_model=None)
-async def run_signal_benchmark(num_operations: int = Query(100, ge=10, le=1000)) -> dict[str, Any]:
+async def run_signal_benchmark(
+    num_operations: int = Query(100, ge=10, le=1000)
+) -> dict[str, Any]:
     """
     Run signal generation benchmark.
 
@@ -160,7 +168,9 @@ async def run_signal_benchmark(num_operations: int = Query(100, ge=10, le=1000))
         Benchmark comparison results
     """
     try:
-        logger.info(f"Running signal generation benchmark with {num_operations} operations")
+        logger.info(
+            f"Running signal generation benchmark with {num_operations} operations"
+        )
 
         comparison = await run_signal_generation_benchmark(num_operations)
 

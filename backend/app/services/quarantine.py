@@ -27,7 +27,10 @@ QUARANTINE_RETENTION_DAYS = int(os.getenv("QUARANTINE_RETENTION_DAYS", "30"))
 
 
 def write(
-    dataset: str, reason: str, payload: dict | pd.DataFrame | Any, metadata: dict[str, Any] = None
+    dataset: str,
+    reason: str,
+    payload: dict | pd.DataFrame | Any,
+    metadata: dict[str, Any] = None,
 ) -> str:
     """
     Write failed data to quarantine with metadata.
@@ -81,7 +84,9 @@ def write(
             payload_str = json.dumps(payload_data, default=str, ensure_ascii=False)
             if len(payload_str) > QUARANTINE_MAX_PAYLOAD_SIZE:
                 # Truncate and add marker
-                payload_str = payload_str[: QUARANTINE_MAX_PAYLOAD_SIZE - 100] + "...[TRUNCATED]"
+                payload_str = (
+                    payload_str[: QUARANTINE_MAX_PAYLOAD_SIZE - 100] + "...[TRUNCATED]"
+                )
                 quarantine_record["payload_truncated"] = True
 
             quarantine_record["payload"] = payload_str
@@ -142,7 +147,9 @@ def list_recent(n: int = 50, dataset: str = None) -> list[dict[str, Any]]:
 
         # Filter by dataset if specified
         if dataset:
-            quarantine_files = [f for f in quarantine_files if f.name.startswith(f"{dataset}_")]
+            quarantine_files = [
+                f for f in quarantine_files if f.name.startswith(f"{dataset}_")
+            ]
 
         # Load metadata from files
         entries = []
@@ -247,7 +254,9 @@ def cleanup_old_entries(days: int = None) -> int:
                 logger.warning(f"Failed to remove old quarantine file {file_path}: {e}")
 
         if removed_count > 0:
-            logger.info(f"Cleaned up {removed_count} old quarantine entries (>{days} days)")
+            logger.info(
+                f"Cleaned up {removed_count} old quarantine entries (>{days} days)"
+            )
 
         return removed_count
 
@@ -266,7 +275,12 @@ def get_stats() -> dict[str, Any]:
     try:
         quarantine_dir = Path(QUARANTINE_PATH)
         if not quarantine_dir.exists():
-            return {"total_entries": 0, "total_size_bytes": 0, "datasets": {}, "recent_24h": 0}
+            return {
+                "total_entries": 0,
+                "total_size_bytes": 0,
+                "datasets": {},
+                "recent_24h": 0,
+            }
 
         # Count files and sizes
         files = list(quarantine_dir.glob("*.json"))
@@ -325,13 +339,19 @@ def write_provider_failure(
     return write(
         dataset="provider_failure",
         reason=f"Provider {provider} failed for {ticker}: {error}",
-        payload={"error": str(error), "traceback": None},  # Could add traceback if needed
+        payload={
+            "error": str(error),
+            "traceback": None,
+        },  # Could add traceback if needed
         metadata=failure_metadata,
     )
 
 
 def write_contract_violation(
-    contract_name: str, violation_reason: str, data_sample: Any, metadata: dict[str, Any] = None
+    contract_name: str,
+    violation_reason: str,
+    data_sample: Any,
+    metadata: dict[str, Any] = None,
 ) -> str:
     """
     Quarantine a contract violation with data sample.

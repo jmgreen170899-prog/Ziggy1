@@ -50,6 +50,7 @@ This ensures all libraries are up-to-date.
 ## When to Sync
 
 ### Daily (Recommended)
+
 ```bash
 # Before starting work each day:
 git checkout main
@@ -57,6 +58,7 @@ git pull origin main
 ```
 
 ### Before Creating a Pull Request
+
 ```bash
 # Make sure you have latest changes:
 git checkout main
@@ -66,6 +68,7 @@ git merge main
 ```
 
 ### After a Pull Request is Merged
+
 ```bash
 # Get the newly merged code:
 git checkout main
@@ -73,6 +76,7 @@ git pull origin main
 ```
 
 ### After Reviewing Someone's PR
+
 ```bash
 # To test their changes locally:
 git fetch origin
@@ -84,12 +88,15 @@ git checkout origin/their-branch-name
 ## Verification: Did It Work?
 
 ### Check 1: View Recent Commits
+
 ```bash
 git log --oneline -10
 ```
+
 You should see the latest commits from GitHub.
 
 ### Check 2: Check File Modification Times
+
 ```bash
 # Linux/Mac:
 ls -lt backend/app/ | head -5
@@ -98,14 +105,17 @@ ls -lt frontend/src/ | head -5
 # Windows (PowerShell):
 Get-ChildItem backend\app\ | Sort-Object LastWriteTime -Descending | Select-Object -First 5
 ```
+
 Recently updated files should show recent timestamps.
 
 ### Check 3: Compare with GitHub
+
 ```bash
 # See if your local matches remote:
 git fetch origin
 git diff main origin/main
 ```
+
 If output is empty, you're fully synced! ✅
 
 ---
@@ -168,12 +178,12 @@ git pull origin main
 
 The **"core files"** are the actual source code files in your working directory:
 
-| Directory | Core Files |
-|-----------|------------|
-| `backend/` | Python API code, trading logic, database models |
-| `frontend/` | React components, TypeScript code, UI logic |
-| `scripts/` | Automation and utility scripts |
-| `.github/workflows/` | CI/CD configuration |
+| Directory            | Core Files                                      |
+| -------------------- | ----------------------------------------------- |
+| `backend/`           | Python API code, trading logic, database models |
+| `frontend/`          | React components, TypeScript code, UI logic     |
+| `scripts/`           | Automation and utility scripts                  |
+| `.github/workflows/` | CI/CD configuration                             |
 
 **Key Point**: These files are **automatically updated** when you run `git pull`. You don't need to manually copy anything!
 
@@ -202,6 +212,7 @@ The **"core files"** are the actual source code files in your working directory:
 ```
 
 When you `git pull`:
+
 1. Git downloads changes to `.git/` directory
 2. Git automatically updates your working files
 3. Core files now match GitHub! ✅
@@ -214,12 +225,12 @@ When you `git pull`:
 
 ### Files That Require Re-Installation
 
-| File | Action Required |
-|------|----------------|
+| File                        | Action Required                        |
+| --------------------------- | -------------------------------------- |
 | `backend/requirements.lock` | Run `pip install -r requirements.lock` |
-| `frontend/package.json` | Run `npm install` |
-| `package.json` (root) | Run `npm install` |
-| `docker-compose.yml` | Run `docker-compose pull` |
+| `frontend/package.json`     | Run `npm install`                      |
+| `package.json` (root)       | Run `npm install`                      |
+| `docker-compose.yml`        | Run `docker-compose pull`              |
 
 ### How to Know If You Need to Reinstall
 
@@ -238,11 +249,13 @@ git diff HEAD~1 HEAD --name-only
 ### "My files didn't update after git pull"
 
 **Check:**
+
 1. Are you on the right branch? → `git branch`
 2. Do you have uncommitted changes blocking the pull? → `git status`
 3. Did the pull actually succeed? → Look for error messages
 
 **Fix:**
+
 ```bash
 # If you have uncommitted changes:
 git stash
@@ -257,18 +270,21 @@ git pull origin main
 ### "I see old code even after pulling"
 
 **Possible causes:**
-1. **Cached build artifacts**: 
+
+1. **Cached build artifacts**:
+
    ```bash
    # Backend
    find . -name "*.pyc" -delete
    find . -type d -name "__pycache__" -exec rm -rf {} +
-   
+
    # Frontend
    rm -rf frontend/.next
    rm -rf frontend/node_modules/.cache
    ```
 
 2. **Wrong branch**:
+
    ```bash
    git branch  # Verify you're on the right branch
    ```
@@ -338,11 +354,12 @@ git push origin feature/my-work
 
 ## Summary
 
-**The core principle**: 
+**The core principle**:
 
 > `git pull` automatically updates your core files to match GitHub. Just remember to reinstall dependencies when needed!
 
 Three simple steps:
+
 1. **Fetch**: `git fetch origin` (optional but safe)
 2. **Pull**: `git pull origin main` (updates files)
 3. **Install**: Run `npm install` or `pip install` if dependencies changed
@@ -354,8 +371,9 @@ That's it! Your local core files now match GitHub. 🎉
 ## Need More Details?
 
 See the full [CONTRIBUTING.md](../CONTRIBUTING.md) guide for:
+
 - Creating pull requests
-- Handling merge conflicts  
+- Handling merge conflicts
 - CI/CD pipeline details
 - Advanced Git workflows
 - Complete troubleshooting guide

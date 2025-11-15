@@ -1,11 +1,11 @@
 /**
  * Paper Trading API Service
- * 
+ *
  * Provides interface to ZiggyAI Paper Trading Lab backend endpoints.
  * Admin-only functionality for monitoring autonomous trading operations.
  */
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from "axios";
 
 // Paper Trading Types
 export interface PaperRun {
@@ -14,7 +14,7 @@ export interface PaperRun {
   symbols: string[];
   start_time: string;
   end_time?: string;
-  status: 'active' | 'stopped' | 'error';
+  status: "active" | "stopped" | "error";
   initial_balance: number;
   current_balance: number;
   total_trades: number;
@@ -29,7 +29,7 @@ export interface Trade {
   id: string;
   run_id: string;
   symbol: string;
-  side: 'buy' | 'sell';
+  side: "buy" | "sell";
   quantity: number;
   price: number;
   timestamp: string;
@@ -96,7 +96,7 @@ export interface PaperRunStats {
 }
 
 export interface SystemHealth {
-  worker_status: 'running' | 'stopped' | 'error';
+  worker_status: "running" | "stopped" | "error";
   last_trade_time?: string;
   trades_per_minute: number;
   error_count: number;
@@ -112,7 +112,7 @@ export interface CreateRunRequest {
   max_position_size?: number;
   max_daily_loss?: number;
   enable_learning?: boolean;
-  theory_allocation_method?: 'thompson_sampling' | 'ucb1' | 'epsilon_greedy';
+  theory_allocation_method?: "thompson_sampling" | "ucb1" | "epsilon_greedy";
   learning_frequency?: number;
 }
 
@@ -121,10 +121,10 @@ class PaperTradingAPIClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_PAPER_API_URL || 'http://localhost:8000',
+      baseURL: process.env.NEXT_PUBLIC_PAPER_API_URL || "http://localhost:8000",
       timeout: 30000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -132,13 +132,13 @@ class PaperTradingAPIClient {
     this.client.interceptors.request.use(
       (config) => {
         // Add auth token if available
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem("authToken");
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     // Add response interceptor for error handling
@@ -147,16 +147,16 @@ class PaperTradingAPIClient {
       (error) => {
         if (error.response?.status === 401) {
           // Handle unauthorized - redirect to login
-          window.location.href = '/auth/signin';
+          window.location.href = "/auth/signin";
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
   // Paper Run Management
   async createRun(params: CreateRunRequest): Promise<PaperRun> {
-    const response = await this.client.post('/api/paper/runs', params);
+    const response = await this.client.post("/api/paper/runs", params);
     return response.data;
   }
 
@@ -180,12 +180,16 @@ class PaperTradingAPIClient {
 
   // Trade Data
   async getTrades(runId: string, limit: number = 100): Promise<Trade[]> {
-    const response = await this.client.get(`/api/paper/runs/${runId}/trades?limit=${limit}`);
+    const response = await this.client.get(
+      `/api/paper/runs/${runId}/trades?limit=${limit}`,
+    );
     return response.data;
   }
 
   async getRecentTrades(limit: number = 50): Promise<Trade[]> {
-    const response = await this.client.get(`/api/paper/trades/recent?limit=${limit}`);
+    const response = await this.client.get(
+      `/api/paper/trades/recent?limit=${limit}`,
+    );
     return response.data;
   }
 
@@ -196,7 +200,7 @@ class PaperTradingAPIClient {
   }
 
   async getAllTheoryPerformance(): Promise<TheoryPerformance[]> {
-    const response = await this.client.get('/api/paper/theories/performance');
+    const response = await this.client.get("/api/paper/theories/performance");
     return response.data;
   }
 
@@ -213,7 +217,7 @@ class PaperTradingAPIClient {
   }
 
   async getSystemHealth(): Promise<SystemHealth> {
-    const response = await this.client.get('/api/paper/health');
+    const response = await this.client.get("/api/paper/health");
     return response.data;
   }
 
@@ -225,24 +229,24 @@ class PaperTradingAPIClient {
 
   // Emergency Controls
   async emergencyStop(): Promise<void> {
-    await this.client.post('/api/paper/emergency-stop');
+    await this.client.post("/api/paper/emergency-stop");
   }
 
   async pauseTrading(): Promise<void> {
-    await this.client.post('/api/paper/pause');
+    await this.client.post("/api/paper/pause");
   }
 
   async resumeTrading(): Promise<void> {
-    await this.client.post('/api/paper/resume');
+    await this.client.post("/api/paper/resume");
   }
 
   // System Configuration
   async updateConfig(config: Partial<CreateRunRequest>): Promise<void> {
-    await this.client.post('/api/paper/config', config);
+    await this.client.post("/api/paper/config", config);
   }
 
   async getConfig(): Promise<CreateRunRequest> {
-    const response = await this.client.get('/api/paper/config');
+    const response = await this.client.get("/api/paper/config");
     return response.data;
   }
 }

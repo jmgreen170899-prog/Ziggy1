@@ -3,25 +3,25 @@ name: Verify Routes & E2E
 on:
   pull_request:
     paths:
-      - 'backend/**'
-      - 'frontend/**'
-      - '.github/workflows/verify.yml'
+      - "backend/**"
+      - "frontend/**"
+      - ".github/workflows/verify.yml"
   workflow_dispatch:
 
 jobs:
   backend-tests:
     name: Backend Route Tests
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
-      
+          python-version: "3.11"
+          cache: "pip"
+
       - name: Install dependencies
         run: |
           python -m pip install -U pip
@@ -30,25 +30,25 @@ jobs:
           if [ -f backend/requirements.txt ]; then
             pip install -r backend/requirements.txt || true
           fi
-      
+
       - name: Run static endpoint audit
         id: static_audit
         run: |
           cd backend
           python scripts/static_endpoint_audit.py > static_audit.txt 2>&1 || echo "audit_failed=true" >> $GITHUB_OUTPUT
           cat static_audit.txt
-      
+
       - name: Run backend tests
         env:
-          DOCS_ENABLED: 'true'
+          DOCS_ENABLED: "true"
           PYTHONPATH: backend
-          VECDB_BACKEND: 'memory'
-          FEEDBACK_ENABLED: 'false'
-          ZIGGY_TEST_MODE: '1'
+          VECDB_BACKEND: "memory"
+          FEEDBACK_ENABLED: "false"
+          ZIGGY_TEST_MODE: "1"
         run: |
           cd backend
           pytest tests/test_routes_wired.py tests/test_do_nothing_endpoints.py tests/test_openapi_routes.py -v --tb=short
-      
+
       - name: Get route count
         id: route_count
         run: |
@@ -72,7 +72,7 @@ jobs:
           else
             echo "count=0" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Upload backend test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -82,27 +82,27 @@ jobs:
             backend/static_audit.txt
             backend/route_output.txt
             backend/route_count.txt
-  
+
   e2e:
     name: Frontend E2E Tests
     runs-on: ubuntu-latest
     needs: backend-tests
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      
+          python-version: "3.11"
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Install backend dependencies
         run: |
           python -m pip install -U pip
@@ -110,7 +110,7 @@ jobs:
           if [ -f backend/requirements.txt ]; then
             pip install -r backend/requirements.txt || true
           fi
-      
+
       - name: Start backend server
         run: |
           cd backend
@@ -124,17 +124,17 @@ jobs:
             echo "Waiting for backend... ($i/30)"
             sleep 2
           done
-      
+
       - name: Install frontend dependencies
         run: |
           cd frontend
           npm ci
-      
+
       - name: Build frontend
         run: |
           cd frontend
           npm run build
-      
+
       - name: Start frontend server
         run: |
           cd frontend
@@ -148,20 +148,20 @@ jobs:
             echo "Waiting for frontend... ($i/30)"
             sleep 2
           done
-      
+
       - name: Install Playwright
         run: |
           cd frontend
           npx playwright install --with-deps chromium
-      
+
       - name: Run e2e tests
         env:
-          BACKEND_URL: 'http://localhost:8000'
-          E2E_BASE_URL: 'http://localhost:3000'
+          BACKEND_URL: "http://localhost:8000"
+          E2E_BASE_URL: "http://localhost:3000"
         run: |
           cd frontend
           npx playwright test tests/e2e/routes-wired.spec.ts --reporter=list
-      
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
@@ -169,26 +169,26 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 7
-  
+
   summary:
     name: Generate Summary
     runs-on: ubuntu-latest
     needs: [backend-tests, e2e]
     if: always()
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      
+
       - name: Generate summary
         run: |
           echo "# 🔍 Route Wiring & E2E Verification Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Backend results
           echo "## Backend Tests" >> $GITHUB_STEP_SUMMARY
           if [ -f artifacts/backend-test-results/route_count.txt ]; then
@@ -197,7 +197,7 @@ jobs:
           else
             echo "- ❌ Could not determine route count" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ -f artifacts/backend-test-results/static_audit.txt ]; then
             if grep -q "No do-nothing endpoints found" artifacts/backend-test-results/static_audit.txt; then
               echo "- ✅ No do-nothing endpoints found" >> $GITHUB_STEP_SUMMARY
@@ -208,7 +208,7 @@ jobs:
               echo '```' >> $GITHUB_STEP_SUMMARY
             fi
           fi
-          
+
           # E2E results
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## E2E Tests" >> $GITHUB_STEP_SUMMARY
@@ -217,7 +217,7 @@ jobs:
           else
             echo "- ❌ E2E tests failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Job statuses
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Job Status" >> $GITHUB_STEP_SUMMARY

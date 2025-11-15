@@ -24,7 +24,9 @@ try:
     MARKET_BRAIN_AVAILABLE = True
 except ImportError:
     MARKET_BRAIN_AVAILABLE = False
-    logging.getLogger("ziggy").info("Market Brain not available for screener - using legacy logic")
+    logging.getLogger("ziggy").info(
+        "Market Brain not available for screener - using legacy logic"
+    )
 
 # Prefer the new provider factory (fallback-aware). If unavailable, use legacy.
 try:
@@ -93,7 +95,10 @@ def _signal_from_indicators(close, sma20, sma50, rsi14):
     s50 = _safe(sma50)
     rsi = _safe(rsi14)
 
-    if any(v is None or (isinstance(v, float) and math.isnan(v)) for v in (c, s20, s50, rsi)):
+    if any(
+        v is None or (isinstance(v, float) and math.isnan(v))
+        for v in (c, s20, s50, rsi)
+    ):
         return {"signal": "NEUTRAL", "confidence": 0.50, "reason": "insufficient data"}
 
     spread = 0.0 if (s50 is None or s50 == 0.0) else (s20 - s50) / s50
@@ -129,10 +134,16 @@ def _signal_from_indicators(close, sma20, sma50, rsi14):
     elif rsi <= 40:
         reasons.append("RSI<40")
 
-    return {"signal": signal, "confidence": float(confidence), "reason": " & ".join(reasons)}
+    return {
+        "signal": signal,
+        "confidence": float(confidence),
+        "reason": " & ".join(reasons),
+    }
 
 
-def _enhance_with_market_brain(legacy_item: dict[str, Any], ticker: str) -> dict[str, Any] | None:
+def _enhance_with_market_brain(
+    legacy_item: dict[str, Any], ticker: str
+) -> dict[str, Any] | None:
     """
     Enhance legacy screener item with market brain intelligence.
 
@@ -161,7 +172,9 @@ def _enhance_with_market_brain(legacy_item: dict[str, Any], ticker: str) -> dict
 
         # Update signal and confidence with brain data
         enhanced["signal"] = brain_signal.direction.value
-        enhanced["confidence"] = brain_signal.confidence or legacy_item.get("confidence", 0.5)
+        enhanced["confidence"] = brain_signal.confidence or legacy_item.get(
+            "confidence", 0.5
+        )
 
         # Enhance reason with market brain context
         brain_reason = brain_signal.reason or ""
@@ -198,7 +211,9 @@ def _enhance_with_market_brain(legacy_item: dict[str, Any], ticker: str) -> dict
         return enhanced
 
     except Exception as e:
-        logging.getLogger("ziggy").debug(f"Market brain enhancement failed for {ticker}: {e}")
+        logging.getLogger("ziggy").debug(
+            f"Market brain enhancement failed for {ticker}: {e}"
+        )
         return None
 
 
@@ -213,7 +228,9 @@ def run_screener(market: str | None = None) -> list[dict[str, Any]]:
     provider = None
     if _get_price_provider:
         try:
-            provider = _get_price_provider()  # factory returns a manager with fetch_ohlc()
+            provider = (
+                _get_price_provider()
+            )  # factory returns a manager with fetch_ohlc()
         except Exception:
             provider = None
     if provider is None and "_legacy_get_provider" in globals():
@@ -226,7 +243,9 @@ def run_screener(market: str | None = None) -> list[dict[str, Any]]:
 
     # fetch_ohlc may be async — handle both
     try:
-        frames = _await_maybe(provider.fetch_ohlc(symbols, period_days=180, adjusted=True))
+        frames = _await_maybe(
+            provider.fetch_ohlc(symbols, period_days=180, adjusted=True)
+        )
     except Exception:
         # provider hiccup → return empty to keep UI/scheduler resilient
         return []
@@ -237,14 +256,24 @@ def run_screener(market: str | None = None) -> list[dict[str, Any]]:
             df = (frames or {}).get(t)
             if df is None or getattr(df, "empty", True) or "Close" not in df.columns:
                 results.append(
-                    {"ticker": t, "signal": "NEUTRAL", "confidence": 0.50, "reason": "no data"}
+                    {
+                        "ticker": t,
+                        "signal": "NEUTRAL",
+                        "confidence": 0.50,
+                        "reason": "no data",
+                    }
                 )
                 continue
 
             close_series = pd.to_numeric(df["Close"], errors="coerce").dropna()
             if close_series.empty:
                 results.append(
-                    {"ticker": t, "signal": "NEUTRAL", "confidence": 0.50, "reason": "no data"}
+                    {
+                        "ticker": t,
+                        "signal": "NEUTRAL",
+                        "confidence": 0.50,
+                        "reason": "no data",
+                    }
                 )
                 continue
 
@@ -258,7 +287,11 @@ def run_screener(market: str | None = None) -> list[dict[str, Any]]:
                 if len(close_series) >= 50
                 else float("nan")
             )
-            rsi14 = _rsi(close_series, 14).iloc[-1] if len(close_series) >= 15 else float("nan")
+            rsi14 = (
+                _rsi(close_series, 14).iloc[-1]
+                if len(close_series) >= 15
+                else float("nan")
+            )
 
             price = float(close_series.iloc[-1])
             item = {
@@ -293,14 +326,21 @@ def run_screener(market: str | None = None) -> list[dict[str, Any]]:
             except Exception:
                 # fallback to a minimal message if logging itself fails
                 try:
-                    logging.getLogger("ziggy").warning("[screener] item error fallback for %s", t)
+                    logging.getLogger("ziggy").warning(
+                        "[screener] item error fallback for %s", t
+                    )
                 except Exception:
                     try:
                         print("[screener] item error", t)
                     except Exception:
                         pass
             results.append(
-                {"ticker": t, "signal": "NEUTRAL", "confidence": 0.50, "reason": "error"}
+                {
+                    "ticker": t,
+                    "signal": "NEUTRAL",
+                    "confidence": 0.50,
+                    "reason": "error",
+                }
             )
 
     return results

@@ -57,7 +57,7 @@ CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   api:
@@ -233,7 +233,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
+
         # Timeouts
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
@@ -409,12 +409,14 @@ adb logcat | grep -i ziggyai
 #### Upload to Play Console
 
 1. **Create App in Play Console**
+
    ```
    https://play.google.com/console
    → Create app
    ```
 
 2. **Upload App Bundle**
+
    ```
    Production → Create new release
    → Upload app-release.aab
@@ -626,6 +628,7 @@ async def detailed_health_check():
 ### API Security
 
 1. **Rate Limiting**
+
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -640,6 +643,7 @@ async def sync_data():
 ```
 
 2. **API Key Rotation**
+
 ```bash
 # Rotate JWT secret regularly
 NEW_SECRET=$(openssl rand -hex 32)
@@ -648,13 +652,14 @@ NEW_SECRET=$(openssl rand -hex 32)
 ```
 
 3. **Input Validation**
+
 ```python
 from pydantic import validator
 
 class LoginRequest(BaseModel):
     username: str
     password: str
-    
+
     @validator('username')
     def validate_username(cls, v):
         if len(v) < 3:
@@ -665,6 +670,7 @@ class LoginRequest(BaseModel):
 ### Android App Security
 
 1. **Certificate Pinning**
+
 ```kotlin
 val certificatePinner = CertificatePinner.Builder()
     .add("api.ziggyai.com", "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
@@ -676,6 +682,7 @@ OkHttpClient.Builder()
 ```
 
 2. **ProGuard/R8**
+
 ```kotlin
 buildTypes {
     release {
@@ -686,6 +693,7 @@ buildTypes {
 ```
 
 3. **Root Detection**
+
 ```kotlin
 fun isDeviceRooted(): Boolean {
     val paths = arrayOf(
@@ -757,6 +765,7 @@ Play Console → Production → Previous releases
 ## Support
 
 For deployment support:
+
 - Documentation: https://docs.ziggyai.com
 - Email: devops@ziggyai.com
 - Emergency: Create high-priority GitHub issue
@@ -766,6 +775,7 @@ For deployment support:
 ## Changelog
 
 Track all deployments:
+
 - Date deployed
 - Version number
 - Changes included

@@ -30,6 +30,7 @@ class RiskLiteResponse(BaseModel):
     cpc: CPCData | None = Field(None, description="Put/Call ratio data, null on error")
     error: str | None = Field(None, description="Error message if data unavailable")
 
+
 # simple in-memory cache
 _TTL = int(os.getenv("RISK_LITE_TTL", "300"))  # seconds
 _CACHE: dict[str, Any] = {"ts": 0.0, "data": None}
@@ -70,17 +71,19 @@ def _compute_payload(series: pd.Series, window: int, used: str) -> RiskLiteRespo
 
 @router.get("/market-risk-lite", response_model=RiskLiteResponse)
 def risk_lite(
-    period_days: int = Query(180, ge=30, le=720, description="Lookback window for downloads"),
+    period_days: int = Query(
+        180, ge=30, le=720, description="Lookback window for downloads"
+    ),
     window: int = Query(20, ge=5, le=60, description="Moving average / z-score window"),
     use_cache: bool = Query(True, description="Return cached value when fresh"),
 ) -> RiskLiteResponse:
     """
     Lightweight risk bar derived from CBOE Put/Call.
-    
+
     Tries ^CPC (index) then falls back to ^CPCE (equity).
     Returns Put/Call ratio with z-score and moving average.
     On failure, returns error message with null data.
-    
+
     Side effects: Updates in-memory cache on successful data fetch.
     """
     now = time.time()
@@ -100,7 +103,9 @@ def risk_lite(
             continue
 
     if series is None:
-        payload = RiskLiteResponse(cpc=None, error="No data for ^CPC/^CPCE (blocked or unavailable)")
+        payload = RiskLiteResponse(
+            cpc=None, error="No data for ^CPC/^CPCE (blocked or unavailable)"
+        )
     else:
         payload = _compute_payload(series, window, used)
 
@@ -124,7 +129,7 @@ def risk_lite_alias(
     """
     **DEPRECATED:** This endpoint is maintained for backward compatibility only.
     Please use `/market-risk-lite` instead.
-    
+
     This alias will be removed in a future version.
     """
     return risk_lite(period_days=period_days, window=window, use_cache=use_cache)

@@ -61,7 +61,8 @@ class RSSNewsProvider:
                     return items
                 else:
                     logger.warning(
-                        "RSS non-200", extra={"source": source, "status": response.status}
+                        "RSS non-200",
+                        extra={"source": source, "status": response.status},
                     )
                     # Fallback to cache if fresh
                     ts = self._cache_ts.get(source, 0)
@@ -94,7 +95,9 @@ class RSSNewsProvider:
                         # Clean description
                         desc_text = ""
                         if description is not None and description.text:
-                            desc_text = re.sub(r"<[^>]+>", "", description.text)  # Remove HTML tags
+                            desc_text = re.sub(
+                                r"<[^>]+>", "", description.text
+                            )  # Remove HTML tags
                             desc_text = desc_text.strip()[:500]  # Limit length
 
                         # Parse date
@@ -102,7 +105,9 @@ class RSSNewsProvider:
                         if pub_date is not None and pub_date.text:
                             try:
                                 # Parse RFC 2822 format (common in RSS)
-                                dt = datetime.strptime(pub_date.text, "%a, %d %b %Y %H:%M:%S %z")
+                                dt = datetime.strptime(
+                                    pub_date.text, "%a, %d %b %Y %H:%M:%S %z"
+                                )
                                 timestamp = dt.timestamp()
                             except ValueError:
                                 try:
@@ -126,13 +131,18 @@ class RSSNewsProvider:
                         )
 
                 except Exception as e:
-                    logger.debug("RSS item parse error", extra={"source": source, "error": str(e)})
+                    logger.debug(
+                        "RSS item parse error",
+                        extra={"source": source, "error": str(e)},
+                    )
                     continue
 
             return items[:20]  # Limit to 20 most recent items
 
         except Exception as e:
-            logger.warning("RSS parsing error", extra={"source": source, "error": str(e)})
+            logger.warning(
+                "RSS parsing error", extra={"source": source, "error": str(e)}
+            )
             return []
 
     async def get_all_news(self) -> list[dict[str, Any]]:

@@ -14,7 +14,10 @@ class ZiggyBaseException(Exception):
     """Base exception for all Ziggy-specific errors"""
 
     def __init__(
-        self, message: str, details: dict[str, Any] | None = None, correlation_id: str | None = None
+        self,
+        message: str,
+        details: dict[str, Any] | None = None,
+        correlation_id: str | None = None,
     ):
         self.message = message
         self.details = details or {}

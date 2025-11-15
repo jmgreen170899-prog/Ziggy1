@@ -40,7 +40,11 @@ class FeatureStore:
         logger.info(f"Initialized feature store with cache size: {self.cache_size}")
 
     def get(
-        self, ticker: str, dt: date | datetime, interval: str = "1D", version: str = FEATURE_VERSION
+        self,
+        ticker: str,
+        dt: date | datetime,
+        interval: str = "1D",
+        version: str = FEATURE_VERSION,
     ) -> dict[str, Any]:
         """
         Get features for a ticker at a specific datetime and interval.
@@ -75,7 +79,9 @@ class FeatureStore:
 
         return features
 
-    def _generate_key(self, ticker: str, dt: date | datetime, interval: str, version: str) -> str:
+    def _generate_key(
+        self, ticker: str, dt: date | datetime, interval: str, version: str
+    ) -> str:
         """Generate deterministic cache key."""
         dt_floor = dt.date() if isinstance(dt, datetime) else dt
         raw = f"{ticker.upper()}|{dt_floor.isoformat()}|{interval}|{version}"
@@ -146,7 +152,9 @@ class FeatureStore:
         np.random.seed(hash(f"highlow{dt}") % 2**32)
         return float(np.random.normal(0.5, 0.2))
 
-    def _compute_volatility(self, ticker: str, dt: date | datetime, period: int) -> float:
+    def _compute_volatility(
+        self, ticker: str, dt: date | datetime, period: int
+    ) -> float:
         """Compute realized volatility."""
         np.random.seed(hash(f"{ticker}{dt}vol{period}") % 2**32)
         return float(np.random.lognormal(np.log(0.2), 0.5))  # Log-normal around 20%
@@ -232,7 +240,10 @@ _feature_store = FeatureStore()
 
 
 def compute_features(
-    ticker: str, dt: date | datetime, interval: str = "1D", version: str = FEATURE_VERSION
+    ticker: str,
+    dt: date | datetime,
+    interval: str = "1D",
+    version: str = FEATURE_VERSION,
 ) -> dict[str, Any]:
     """
     Convenience function to compute features using the global feature store.
@@ -249,7 +260,9 @@ def compute_features(
     return _feature_store.get(ticker, dt, interval, version)
 
 
-def key_for(ticker: str, dt: date | datetime, interval: str, version: str = FEATURE_VERSION) -> str:
+def key_for(
+    ticker: str, dt: date | datetime, interval: str, version: str = FEATURE_VERSION
+) -> str:
     """Generate cache key for given parameters."""
     return _feature_store._generate_key(ticker, dt, interval, version)
 

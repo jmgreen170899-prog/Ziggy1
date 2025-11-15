@@ -86,7 +86,9 @@ class TestFeatureStore(TestCognitiveCore):
 
         latency = (time.time() - start_time) * 1000  # Convert to ms
 
-        assert latency < 150, f"Feature computation took {latency:.2f}ms, exceeds 150ms limit"
+        assert (
+            latency < 150
+        ), f"Feature computation took {latency:.2f}ms, exceeds 150ms limit"
         assert isinstance(features, dict), "Features should be returned as dictionary"
         assert len(features) > 0, "Should compute at least one feature"
 
@@ -104,9 +106,9 @@ class TestFeatureStore(TestCognitiveCore):
 
         assert features1 == features2, "Cached features should match original"
         assert second_latency < first_latency, "Cached computation should be faster"
-        assert second_latency < 10, (
-            f"Cached retrieval took {second_latency:.2f}ms, should be < 10ms"
-        )
+        assert (
+            second_latency < 10
+        ), f"Cached retrieval took {second_latency:.2f}ms, should be < 10ms"
 
     def test_feature_completeness(self, feature_store, sample_data):
         """Test that all expected features are computed."""
@@ -114,7 +116,9 @@ class TestFeatureStore(TestCognitiveCore):
 
         # Check that we have features from multiple categories
         feature_keys = list(features.keys())
-        assert len(feature_keys) >= 10, f"Expected at least 10 features, got {len(feature_keys)}"
+        assert (
+            len(feature_keys) >= 10
+        ), f"Expected at least 10 features, got {len(feature_keys)}"
 
         # Check for specific key features
         assert "rsi_14" in features, "Should include RSI feature"
@@ -145,9 +149,9 @@ class TestRegimeDetection(TestCognitiveCore):
 
         # Check probabilities sum to 1
         total_weight = sum(regime_weights.values())
-        assert abs(total_weight - 1.0) < 0.01, (
-            f"Regime weights sum to {total_weight}, should be ~1.0"
-        )
+        assert (
+            abs(total_weight - 1.0) < 0.01
+        ), f"Regime weights sum to {total_weight}, should be ~1.0"
 
         # Check all weights are non-negative
         for regime, weight in regime_weights.items():
@@ -159,7 +163,9 @@ class TestRegimeDetection(TestCognitiveCore):
         regime_vector = regime_detector.regime_vector(sample_data)
 
         assert isinstance(regime_vector, dict), "Regime vector should be dictionary"
-        assert len(regime_vector) >= 4, "Should include regime weights and additional features"
+        assert (
+            len(regime_vector) >= 4
+        ), "Should include regime weights and additional features"
 
         # Check required keys
         required_keys = ["bull_market", "bear_market", "sideways", "high_volatility"]
@@ -179,7 +185,9 @@ class TestSignalFusion(TestCognitiveCore):
         latency = (time.time() - start_time) * 1000
 
         assert latency < 100, f"Signal fusion took {latency:.2f}ms, should be < 100ms"
-        assert 0 <= signal <= 1, f"Signal probability {signal} should be between 0 and 1"
+        assert (
+            0 <= signal <= 1
+        ), f"Signal probability {signal} should be between 0 and 1"
 
     def test_signal_explainability(self, signal_ensemble, sample_data):
         """Test signal explainability features."""
@@ -187,17 +195,23 @@ class TestSignalFusion(TestCognitiveCore):
 
         assert isinstance(explanation, dict), "Explanation should be dictionary"
         assert "feature_importance" in explanation, "Should include feature importance"
-        assert "model_contributions" in explanation, "Should include model contributions"
+        assert (
+            "model_contributions" in explanation
+        ), "Should include model contributions"
         assert "regime_influence" in explanation, "Should include regime influence"
 
         # Check feature importance
         feature_importance = explanation["feature_importance"]
-        assert isinstance(feature_importance, dict), "Feature importance should be dictionary"
+        assert isinstance(
+            feature_importance, dict
+        ), "Feature importance should be dictionary"
         assert len(feature_importance) > 0, "Should have feature importance scores"
 
         # Check model contributions
         model_contributions = explanation["model_contributions"]
-        assert isinstance(model_contributions, dict), "Model contributions should be dictionary"
+        assert isinstance(
+            model_contributions, dict
+        ), "Model contributions should be dictionary"
         assert len(model_contributions) > 0, "Should have model contribution scores"
 
     def test_signal_calibration_integration(self, signal_ensemble, sample_data):
@@ -266,10 +280,14 @@ class TestPositionSizing(TestCognitiveCore):
 
         assert shares >= 0, "Shares should be non-negative"
         assert dollar_amount >= 0, "Dollar amount should be non-negative"
-        assert 0 <= risk_percent <= 1, f"Risk percent {risk_percent} should be between 0 and 1"
+        assert (
+            0 <= risk_percent <= 1
+        ), f"Risk percent {risk_percent} should be between 0 and 1"
 
         # Check position doesn't exceed portfolio
-        assert dollar_amount <= portfolio_value, "Position shouldn't exceed portfolio value"
+        assert (
+            dollar_amount <= portfolio_value
+        ), "Position shouldn't exceed portfolio value"
 
 
 class TestBacktesting(TestCognitiveCore):
@@ -440,9 +458,9 @@ class TestIntegrationPerformance(TestCognitiveCore):
         total_latency = (time.time() - start_time) * 1000
 
         # Full pipeline should complete within 200ms
-        assert total_latency < 200, (
-            f"End-to-end pipeline took {total_latency:.2f}ms, should be < 200ms"
-        )
+        assert (
+            total_latency < 200
+        ), f"End-to-end pipeline took {total_latency:.2f}ms, should be < 200ms"
 
         # Verify all outputs
         assert isinstance(features, dict) and len(features) > 0
@@ -476,7 +494,9 @@ class TestIntegrationPerformance(TestCognitiveCore):
         memory_growth = final_memory - initial_memory
 
         # Memory growth should be reasonable (< 100MB for test operations)
-        assert memory_growth < 100, f"Memory growth {memory_growth:.2f}MB exceeds 100MB limit"
+        assert (
+            memory_growth < 100
+        ), f"Memory growth {memory_growth:.2f}MB exceeds 100MB limit"
         print(f"Memory growth during testing: {memory_growth:.2f}MB")
 
 

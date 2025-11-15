@@ -22,7 +22,9 @@ class Alert:
     id: str
     user_id: str | None
     symbol: str
-    condition_type: str  # 'price_above', 'price_below', 'volume_spike', 'news_sentiment'
+    condition_type: (
+        str  # 'price_above', 'price_below', 'volume_spike', 'news_sentiment'
+    )
     threshold: float
     current_value: float | None = None
     triggered: bool = False
@@ -143,7 +145,9 @@ class AlertMonitor:
         for alert in triggered_alerts:
             await self._broadcast_alert_triggered(alert)
 
-    async def _evaluate_alert_condition(self, alert: Alert, market_data: dict[str, Any]) -> bool:
+    async def _evaluate_alert_condition(
+        self, alert: Alert, market_data: dict[str, Any]
+    ) -> bool:
         """Evaluate if an alert condition is met"""
         try:
             if alert.condition_type == "price_above":
@@ -242,7 +246,9 @@ class AlertMonitor:
                 "message": alert.message,
             }
             for alert in self.alerts.values()
-            if alert.triggered and alert.triggered_at and alert.triggered_at > cutoff_time
+            if alert.triggered
+            and alert.triggered_at
+            and alert.triggered_at > cutoff_time
         ]
 
 

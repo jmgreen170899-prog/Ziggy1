@@ -71,7 +71,9 @@ class FeatureComputer:
         """
         return {t: self.compute_for_ticker(t) for t in tickers}
 
-    def get_features(self, ticker: str, force_refresh: bool = False) -> FeatureSet | None:
+    def get_features(
+        self, ticker: str, force_refresh: bool = False
+    ) -> FeatureSet | None:
         """
         Get features as a FeatureSet object (for compatibility with regime detector).
 

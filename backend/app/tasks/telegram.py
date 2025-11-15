@@ -57,7 +57,9 @@ def _clean(s: str | None) -> str | None:
     if not isinstance(s, str):
         return None
     s = s.split("#", 1)[0].strip()
-    if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+    if (s.startswith('"') and s.endswith('"')) or (
+        s.startswith("'") and s.endswith("'")
+    ):
         s = s[1:-1].strip()
     return s or None
 
@@ -117,7 +119,9 @@ async def send_message(text: str, parse_mode: str = "HTML") -> bool:
                 j = {"parse_error": (resp.text if hasattr(resp, "text") else "")}
             _last_raw = {"status_code": resp.status_code, "json": j}
             ok = bool(resp.is_success and bool(j.get("ok")))
-            _last_err = None if ok else (j.get("description") or f"HTTP {resp.status_code}")
+            _last_err = (
+                None if ok else (j.get("description") or f"HTTP {resp.status_code}")
+            )
     except Exception as e:  # network/timeout/etc
         _last_err = repr(e)
         _last_raw = {"exception": _last_err}
@@ -131,7 +135,9 @@ async def send_message(text: str, parse_mode: str = "HTML") -> bool:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def tg_send(text: str, *, kind: str = "misc", meta: dict[str, Any] | None = None) -> bool:
+def tg_send(
+    text: str, *, kind: str = "misc", meta: dict[str, Any] | None = None
+) -> bool:
     """
     Synchronous wrapper that calls the async sender and logs the attempt.
     Safe to use from threads, sync routes, or background jobs.
@@ -162,14 +168,18 @@ def tg_send(text: str, *, kind: str = "misc", meta: dict[str, Any] | None = None
                         resp = client.post("/sendMessage", json=payload)
                         j = (
                             resp.json()
-                            if resp.headers.get("content-type", "").startswith("application/json")
+                            if resp.headers.get("content-type", "").startswith(
+                                "application/json"
+                            )
                             else {}
                         )
                         global _last_raw, _last_err
                         _last_raw = {"status_code": resp.status_code, "json": j}
                         ok = bool(resp.is_success and bool(j.get("ok")))
                         _last_err = (
-                            None if ok else (j.get("description") or f"HTTP {resp.status_code}")
+                            None
+                            if ok
+                            else (j.get("description") or f"HTTP {resp.status_code}")
                         )
             except Exception as e:
                 _last_err = repr(e)
@@ -199,7 +209,9 @@ def tg_diag() -> dict:
     # Best-effort getMe check (sync; minimal overhead)
     try:
         if httpx is not None and bot:
-            with httpx.Client(base_url=f"https://api.telegram.org/bot{bot}", timeout=5.0) as client:
+            with httpx.Client(
+                base_url=f"https://api.telegram.org/bot{bot}", timeout=5.0
+            ) as client:
                 r = client.get("/getMe")
                 try:
                     j = r.json()

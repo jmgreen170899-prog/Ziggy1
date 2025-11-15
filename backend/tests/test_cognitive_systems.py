@@ -16,7 +16,12 @@ from pathlib import Path
 import pytest
 
 from app.cognitive.cognitive_hub import CognitiveHub
-from app.cognitive.counterfactual import ActionType, CounterfactualEngine, Outcome, TradingDecision
+from app.cognitive.counterfactual import (
+    ActionType,
+    CounterfactualEngine,
+    Outcome,
+    TradingDecision,
+)
 from app.cognitive.episodic_memory import EpisodicMemory, MarketEpisode
 from app.cognitive.meta_learner import MetaLearner
 
@@ -57,7 +62,10 @@ class TestMetaLearner:
             strategy_name, correct=True, profit=100.0, regime="RiskOn"
         )
 
-        assert meta_learner.strategies[strategy_name].total_predictions == initial_predictions + 1
+        assert (
+            meta_learner.strategies[strategy_name].total_predictions
+            == initial_predictions + 1
+        )
         assert meta_learner.strategies[strategy_name].total_profit == 100.0
 
     def test_strategy_evolution(self, meta_learner):
@@ -65,11 +73,16 @@ class TestMetaLearner:
         # Update strategies enough times to trigger evolution
         for i in range(10):
             meta_learner.update_strategy_performance(
-                "balanced_default", correct=i % 2 == 0, profit=float(i * 10), regime="RiskOn"
+                "balanced_default",
+                correct=i % 2 == 0,
+                profit=float(i * 10),
+                regime="RiskOn",
             )
 
         # Should have evolved at least one new strategy
-        evolved_strategies = [s for s in meta_learner.strategies.values() if s.generation > 0]
+        evolved_strategies = [
+            s for s in meta_learner.strategies.values() if s.generation > 0
+        ]
         assert len(evolved_strategies) > 0
 
     def test_regime_specific_accuracy(self, meta_learner):
@@ -129,18 +142,24 @@ class TestCounterfactualEngine:
         """Test counterfactual analysis of a decision."""
         current_prices = {"AAPL": 155.0}
 
-        analysis = engine.analyze_decision(sample_decision, sample_outcome, current_prices)
+        analysis = engine.analyze_decision(
+            sample_decision, sample_outcome, current_prices
+        )
 
         assert analysis is not None
         assert len(analysis.counterfactuals) > 0
         assert analysis.best_alternative is not None
         assert analysis.regret_score >= 0
 
-    def test_opportunity_cost_calculation(self, engine, sample_decision, sample_outcome):
+    def test_opportunity_cost_calculation(
+        self, engine, sample_decision, sample_outcome
+    ):
         """Test opportunity cost calculation."""
         current_prices = {"AAPL": 160.0}  # Price went up more
 
-        analysis = engine.analyze_decision(sample_decision, sample_outcome, current_prices)
+        analysis = engine.analyze_decision(
+            sample_decision, sample_outcome, current_prices
+        )
 
         # Should identify opportunities if price moved favorably
         assert analysis.total_opportunity_cost >= 0
@@ -252,7 +271,12 @@ class TestEpisodicMemory:
         """Test retrieving lessons from similar episodes."""
         memory.store_episode(sample_episode)
 
-        context = {"volatility": 0.3, "regime": "RiskOn", "rsi": 65.0, "confidence": 0.8}
+        context = {
+            "volatility": 0.3,
+            "regime": "RiskOn",
+            "rsi": 65.0,
+            "confidence": 0.8,
+        }
 
         lessons = memory.get_lessons_from_similar_episodes(context, k=1)
         assert len(lessons) > 0
@@ -317,7 +341,10 @@ class TestCognitiveHub:
         }
 
         enhanced = hub.enhance_decision(
-            ticker="AAPL", proposed_action="buy", market_context=market_context, confidence=0.75
+            ticker="AAPL",
+            proposed_action="buy",
+            market_context=market_context,
+            confidence=0.75,
         )
 
         assert "ticker" in enhanced

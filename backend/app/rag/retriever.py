@@ -14,11 +14,11 @@ def retrieve(query: str, top_k: int = 5) -> list[dict[str, Any]]:
     return results
 
 
-def stitch_answer(query: str, passages: list[dict[str, Any]], max_chars: int = 1000) -> str:
+def stitch_answer(
+    query: str, passages: list[dict[str, Any]], max_chars: int = 1000
+) -> str:
     if not passages:
-        return (
-            "I couldn't find anything relevant yet. Try ingesting sources or broadening the query."
-        )
+        return "I couldn't find anything relevant yet. Try ingesting sources or broadening the query."
     acc, total = [], 0
     for p in passages:
         t = p.get("text", "")

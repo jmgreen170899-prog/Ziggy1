@@ -78,9 +78,7 @@ class DecisionLogger:
         monthly_dir = self.data_dir / f"{event_date.year:04d}-{event_date.month:02d}"
         monthly_dir.mkdir(exist_ok=True)
 
-        filename = (
-            f"decision_log-{event_date.year:04d}{event_date.month:02d}{event_date.day:02d}.jsonl"
-        )
+        filename = f"decision_log-{event_date.year:04d}{event_date.month:02d}{event_date.day:02d}.jsonl"
         return monthly_dir / filename
 
     def append_event(self, event_data: dict[str, Any]) -> str:
@@ -122,7 +120,9 @@ class DecisionLogger:
             )
 
             # Add metadata
-            event.meta.update({"logged_at": datetime.now(UTC).isoformat(), "logger_version": "1.0"})
+            event.meta.update(
+                {"logged_at": datetime.now(UTC).isoformat(), "logger_version": "1.0"}
+            )
 
             # Write to JSONL file
             log_file = self._get_log_file_path()
@@ -165,7 +165,9 @@ class DecisionLogger:
                         month += 12
                         year -= 1
                     search_date = datetime(year, month, 1)
-                monthly_dir = self.data_dir / f"{search_date.year:04d}-{search_date.month:02d}"
+                monthly_dir = (
+                    self.data_dir / f"{search_date.year:04d}-{search_date.month:02d}"
+                )
 
                 if monthly_dir.exists():
                     search_files.extend(monthly_dir.glob("decision_log-*.jsonl"))
@@ -214,9 +216,17 @@ class DecisionLogger:
             filters = filters or {}
 
             # Parse date range
-            since_dt = datetime.fromisoformat(since.replace("Z", "+00:00")) if since else None
-            until_dt = datetime.fromisoformat(until.replace("Z", "+00:00")) if until else None
-            cursor_dt = datetime.fromisoformat(cursor.replace("Z", "+00:00")) if cursor else None
+            since_dt = (
+                datetime.fromisoformat(since.replace("Z", "+00:00")) if since else None
+            )
+            until_dt = (
+                datetime.fromisoformat(until.replace("Z", "+00:00")) if until else None
+            )
+            cursor_dt = (
+                datetime.fromisoformat(cursor.replace("Z", "+00:00"))
+                if cursor
+                else None
+            )
 
             # Determine which files to search
             search_files = self._get_search_files(since_dt, until_dt)
@@ -245,7 +255,9 @@ class DecisionLogger:
                                 break
 
                             # Check cursor (pagination)
-                            event_dt = datetime.fromisoformat(event["ts"].replace("Z", "+00:00"))
+                            event_dt = datetime.fromisoformat(
+                                event["ts"].replace("Z", "+00:00")
+                            )
                             if cursor_dt and event_dt >= cursor_dt:
                                 continue
 
@@ -268,13 +280,19 @@ class DecisionLogger:
             if len(events) == limit and events:
                 next_cursor = events[-1]["ts"]
 
-            return {"items": events, "next_cursor": next_cursor, "total_returned": len(events)}
+            return {
+                "items": events,
+                "next_cursor": next_cursor,
+                "total_returned": len(events),
+            }
 
         except Exception as e:
             self.logger.error(f"Failed to query events: {e}")
             return {"items": [], "next_cursor": None, "total_returned": 0}
 
-    def _get_search_files(self, since_dt: datetime | None, until_dt: datetime | None) -> list[Path]:
+    def _get_search_files(
+        self, since_dt: datetime | None, until_dt: datetime | None
+    ) -> list[Path]:
         """Get list of log files to search based on date range."""
         from datetime import timedelta
 
@@ -290,7 +308,9 @@ class DecisionLogger:
         end_dt = until_dt.replace(day=1)
 
         while current_dt <= end_dt:
-            monthly_dir = self.data_dir / f"{current_dt.year:04d}-{current_dt.month:02d}"
+            monthly_dir = (
+                self.data_dir / f"{current_dt.year:04d}-{current_dt.month:02d}"
+            )
             if monthly_dir.exists():
                 search_files.extend(monthly_dir.glob("decision_log-*.jsonl"))
 
@@ -328,7 +348,9 @@ class DecisionLogger:
 
         return True
 
-    def update_event_outcome(self, event_id: str, outcome: dict[str, str | float | bool]) -> bool:
+    def update_event_outcome(
+        self, event_id: str, outcome: dict[str, str | float | bool]
+    ) -> bool:
         """
         Update the outcome of an existing event.
 
@@ -395,18 +417,24 @@ class DecisionLogger:
                 events_by_kind[kind] = events_by_kind.get(kind, 0) + 1
 
             # Signal analysis
-            signal_events = [e for e in events if e.get("kind") == "signal" and e.get("outcome")]
+            signal_events = [
+                e for e in events if e.get("kind") == "signal" and e.get("outcome")
+            ]
             hit_rate = None
             avg_confidence = None
             brier_score = None
             signals_summary = {}
 
             if signal_events:
-                hits = sum(1 for e in signal_events if e.get("outcome", {}).get("hit", False))
+                hits = sum(
+                    1 for e in signal_events if e.get("outcome", {}).get("hit", False)
+                )
                 hit_rate = hits / len(signal_events)
 
                 confidences = [
-                    e.get("confidence") for e in signal_events if e.get("confidence") is not None
+                    e.get("confidence")
+                    for e in signal_events
+                    if e.get("confidence") is not None
                 ]
                 if confidences:
                     avg_confidence = sum(confidences) / len(confidences)
@@ -429,18 +457,28 @@ class DecisionLogger:
                 for event in signal_events:
                     signal_name = event.get("signal_name", "unknown")
                     if signal_name not in signals:
-                        signals[signal_name] = {"count": 0, "hits": 0, "total_confidence": 0}
+                        signals[signal_name] = {
+                            "count": 0,
+                            "hits": 0,
+                            "total_confidence": 0,
+                        }
 
                     signals[signal_name]["count"] += 1
                     if event.get("outcome", {}).get("hit", False):
                         signals[signal_name]["hits"] += 1
                     if event.get("confidence") is not None:
-                        signals[signal_name]["total_confidence"] += event.get("confidence")
+                        signals[signal_name]["total_confidence"] += event.get(
+                            "confidence"
+                        )
 
                 for signal_name, data in signals.items():
-                    data["hit_rate"] = data["hits"] / data["count"] if data["count"] > 0 else 0
+                    data["hit_rate"] = (
+                        data["hits"] / data["count"] if data["count"] > 0 else 0
+                    )
                     data["avg_confidence"] = (
-                        data["total_confidence"] / data["count"] if data["count"] > 0 else 0
+                        data["total_confidence"] / data["count"]
+                        if data["count"] > 0
+                        else 0
                     )
 
                 signals_summary = signals
@@ -502,7 +540,9 @@ def log_signal_event(
     return log_decision_event(event_data)
 
 
-def log_regime_event(regime: str, confidence: float, rules_fired: list[str], **kwargs) -> str:
+def log_regime_event(
+    regime: str, confidence: float, rules_fired: list[str], **kwargs
+) -> str:
     """Log a regime change event."""
     event_data = {
         "kind": "regime",
@@ -545,7 +585,10 @@ if __name__ == "__main__":
         signal_name="MeanReversion",
         confidence=0.75,
         rules_fired=["RSI < 30", "Price < BB_Lower", "Volume > 1.5x avg"],
-        decision={"action": "BUY", "reason": "Oversold conditions with volume confirmation"},
+        decision={
+            "action": "BUY",
+            "reason": "Oversold conditions with volume confirmation",
+        },
         risk={"atr": 2.5, "stop_mult": 1.5, "qty": 100, "risk_pct": 1.0},
     )
     print(f"Logged signal event: {signal_id}")

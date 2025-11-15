@@ -67,8 +67,13 @@ class TestWALMode:
 
         # Check metrics confirm WAL mode
         metrics = events.get_event_store_metrics()
-        assert metrics["sqlite_wal"] == "wal", f"Expected WAL mode, got {metrics['sqlite_wal']}"
-        assert metrics["sqlite_sync"] in ["1", "NORMAL"], "Expected NORMAL synchronous mode"
+        assert (
+            metrics["sqlite_wal"] == "wal"
+        ), f"Expected WAL mode, got {metrics['sqlite_wal']}"
+        assert metrics["sqlite_sync"] in [
+            "1",
+            "NORMAL",
+        ], "Expected NORMAL synchronous mode"
 
     def test_wal_files_created(self, sqlite_event_store):
         """Verify that WAL files are created when using WAL mode."""
@@ -209,7 +214,8 @@ class TestBatchPerformance:
 
         # Time individual writes
         individual_events = [
-            {"ticker": f"TICK{i}", "event_type": "individual"} for i in range(num_events)
+            {"ticker": f"TICK{i}", "event_type": "individual"}
+            for i in range(num_events)
         ]
 
         t0 = time.perf_counter()
@@ -218,7 +224,9 @@ class TestBatchPerformance:
         individual_time = time.perf_counter() - t0
 
         # Time batch write
-        batch_events = [{"ticker": f"BATCH{i}", "event_type": "batch"} for i in range(num_events)]
+        batch_events = [
+            {"ticker": f"BATCH{i}", "event_type": "batch"} for i in range(num_events)
+        ]
 
         t0 = time.perf_counter()
         events.write_batch(batch_events)
@@ -227,7 +235,9 @@ class TestBatchPerformance:
         # Batch should be significantly faster (at least 1.5x, often 2-3x)
         speedup = individual_time / batch_time
         print(f"\nBatch speedup: {speedup:.2f}x")
-        print(f"Individual: {individual_time * 1000:.2f}ms, Batch: {batch_time * 1000:.2f}ms")
+        print(
+            f"Individual: {individual_time * 1000:.2f}ms, Batch: {batch_time * 1000:.2f}ms"
+        )
 
         # Assert at least 1.3x speedup (conservative to account for variance)
         assert speedup > 1.3, f"Batch write not faster enough: {speedup:.2f}x speedup"
@@ -239,7 +249,8 @@ class TestBatchPerformance:
 
         for batch_size in batch_sizes:
             test_events = [
-                {"ticker": f"TEST{i}", "event_type": "latency_test"} for i in range(batch_size)
+                {"ticker": f"TEST{i}", "event_type": "latency_test"}
+                for i in range(batch_size)
             ]
 
             t0 = time.perf_counter()
@@ -252,9 +263,9 @@ class TestBatchPerformance:
                 f"\nBatch size {batch_size}: {latency_ms:.2f}ms total, {per_event_ms:.2f}ms per event"
             )
 
-            assert latency_ms < 1000, (
-                f"Batch write too slow: {latency_ms:.2f}ms for {batch_size} events"
-            )
+            assert (
+                latency_ms < 1000
+            ), f"Batch write too slow: {latency_ms:.2f}ms for {batch_size} events"
 
 
 class TestMetrics:

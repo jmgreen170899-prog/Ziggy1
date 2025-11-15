@@ -33,10 +33,12 @@ The Vector Memory system provides semantic similarity search capabilities for Zi
 - **Size**: ~80MB
 
 **Model Versioning**: Each stored vector includes:
+
 - `embed_model`: Model name (e.g., "all-MiniLM-L6-v2")
 - `embed_model_version`: Version tag (e.g., "v1.0-transformer")
 
 This enables:
+
 - Tracking which embeddings need re-encoding after model updates
 - A/B testing different embedding models
 - Migration between embedding strategies
@@ -103,6 +105,7 @@ vecdb.upsert_event(
 ```
 
 Automatically adds:
+
 - `embed_model`: Model name
 - `embed_model_version`: Version tag
 
@@ -188,15 +191,15 @@ Based on evaluation with 50 test events (see `scripts/eval_vector_memory.py`):
 
 Transformer vs Hash Baseline:
 
-| Metric | Transformer | Hash Baseline | Improvement |
-|--------|-------------|---------------|-------------|
-| Recall@1 | 0.7200 | 0.2400 | +200% |
-| Recall@5 | 0.8800 | 0.5200 | +69% |
-| Recall@10 | 0.9400 | 0.7000 | +34% |
+| Metric    | Transformer | Hash Baseline | Improvement |
+| --------- | ----------- | ------------- | ----------- |
+| Recall@1  | 0.7200      | 0.2400        | +200%       |
+| Recall@5  | 0.8800      | 0.5200        | +69%        |
+| Recall@10 | 0.9400      | 0.7000        | +34%        |
 
 ### Latency
 
-- **Encoding Time**: 
+- **Encoding Time**:
   - Transformer: ~2-3s for 50 events (batch)
   - Hash: ~0.05s for 50 events
   - Transformer amortized: ~40-60ms per event
@@ -207,7 +210,7 @@ Transformer vs Hash Baseline:
 
 ### Semantic Similarity
 
-- **Mean Similarity Score**: 
+- **Mean Similarity Score**:
   - Transformer: 0.85+ for truly similar events
   - Hash: 0.40-0.60 (less discriminative)
 
@@ -275,17 +278,17 @@ def get_relevant_context(current_event: dict, k: int = 5) -> list[dict]:
     """Retrieve relevant historical context for current event."""
     # Encode current event
     query_embedding = vecdb.build_embedding(current_event)
-    
+
     # Filter by same ticker (optional)
     filter_meta = {"ticker": current_event["ticker"]}
-    
+
     # Search
     results = vecdb.search_similar(
         query_embedding,
         k=k,
         filter_metadata=filter_meta
     )
-    
+
     return results
 
 # Use in decision pipeline
@@ -307,6 +310,7 @@ python scripts/eval_vector_memory.py --test-size 50 --k-values 1,5,10
 ```
 
 This generates:
+
 - Recall@k metrics for transformer vs baseline
 - Encoding and query latency measurements
 - Mean similarity scores
@@ -319,19 +323,21 @@ Output saved to `eval_results.json`.
 ### Upgrading from Hash to Transformer
 
 1. **Check Model Available**:
+
    ```python
    info = vecdb.get_embedding_info()
    print(info["status"])  # Should be "loaded"
    ```
 
 2. **Re-encode Existing Events**:
+
    ```python
    # Fetch old events (pseudocode)
    old_events = fetch_all_events_from_db()
-   
+
    # Re-encode with transformer
    new_embeddings = vecdb.build_embeddings_batch(old_events)
-   
+
    # Re-upsert
    for event, embedding in zip(old_events, new_embeddings):
        vecdb.upsert_event(event["id"], embedding, event["metadata"])
@@ -354,6 +360,7 @@ Output saved to `eval_results.json`.
 **Symptom**: `get_embedding_info()` shows status "not_loaded"
 
 **Solutions**:
+
 - Install sentence-transformers: `pip install sentence-transformers`
 - Check model name is valid
 - Verify disk space for model download (~80MB)
@@ -364,6 +371,7 @@ Output saved to `eval_results.json`.
 **Symptom**: Low Recall@k scores
 
 **Solutions**:
+
 - Ensure transformer model is loaded (not using hash fallback)
 - Check event text quality - ensure relevant fields populated
 - Consider different embedding model (larger = better quality, slower)
@@ -374,6 +382,7 @@ Output saved to `eval_results.json`.
 **Symptom**: High query latency
 
 **Solutions**:
+
 - Use batch encoding for multiple events
 - Switch to Qdrant backend (optimized vector search)
 - Consider GPU acceleration for encoding (set `EMBEDDING_DEVICE=cuda`)

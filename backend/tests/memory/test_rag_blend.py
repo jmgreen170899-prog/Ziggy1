@@ -42,7 +42,9 @@ class TestRAGBlending:
 
         # Should handle empty case gracefully
         outcomes = [
-            n["metadata"]["p_outcome"] for n in neighbors if "p_outcome" in n.get("metadata", {})
+            n["metadata"]["p_outcome"]
+            for n in neighbors
+            if "p_outcome" in n.get("metadata", {})
         ]
         prior = sum(outcomes) / len(outcomes) if outcomes else None
 
@@ -186,7 +188,9 @@ class TestRAGBlending:
                 weighted_outcomes.append(score * outcome)
                 total_weight += score
 
-        weighted_prior = sum(weighted_outcomes) / total_weight if total_weight > 0 else None
+        weighted_prior = (
+            sum(weighted_outcomes) / total_weight if total_weight > 0 else None
+        )
 
         # Should be weighted more towards high-similarity neighbors
         # 0.95*0.8 + 0.85*0.6 + 0.75*0.4 = 0.76 + 0.51 + 0.3 = 1.57
@@ -303,12 +307,18 @@ class TestRAGIntegration:
             if p_outcome is not None:
                 neighbor_outcomes.append(p_outcome)
 
-        prior = sum(neighbor_outcomes) / len(neighbor_outcomes) if neighbor_outcomes else None
+        prior = (
+            sum(neighbor_outcomes) / len(neighbor_outcomes)
+            if neighbor_outcomes
+            else None
+        )
 
         # Test blending
         p_model = 0.8
         weight_prior = 0.25
-        p_blend = weight_prior * prior + (1 - weight_prior) * p_model if prior else p_model
+        p_blend = (
+            weight_prior * prior + (1 - weight_prior) * p_model if prior else p_model
+        )
 
         expected_prior = (0.75 + 0.65) / 2  # 0.7
         expected_blend = 0.25 * 0.7 + 0.75 * 0.8  # 0.175 + 0.6 = 0.775
@@ -376,7 +386,11 @@ class TestRAGIntegration:
 
     def test_rag_consistency_across_calls(self):
         """Test that RAG produces consistent results across calls."""
-        event = {"ticker": "AAPL", "regime": "normal", "explain": {"shap_top": [["momentum", 0.3]]}}
+        event = {
+            "ticker": "AAPL",
+            "regime": "normal",
+            "explain": {"shap_top": [["momentum", 0.3]]},
+        }
 
         # Generate embeddings multiple times
         embeddings = []
@@ -464,7 +478,9 @@ class TestRAGPerformance:
                 {
                     "id": f"event_{i}",
                     "score": 0.9 - i * 0.0001,  # Decreasing similarity
-                    "metadata": {"p_outcome": 0.5 + (i % 100) * 0.005},  # Varying outcomes
+                    "metadata": {
+                        "p_outcome": 0.5 + (i % 100) * 0.005
+                    },  # Varying outcomes
                 }
             )
 

@@ -92,7 +92,8 @@ async def submit_decision_feedback(feedback: FeedbackRequest) -> FeedbackRespons
     target_event = get_event_by_id(feedback.event_id)
     if target_event is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Event {feedback.event_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Event {feedback.event_id} not found",
         )
 
     try:
@@ -109,16 +110,21 @@ async def submit_decision_feedback(feedback: FeedbackRequest) -> FeedbackRespons
         # Append feedback to event store
         feedback_id = append_event(feedback_payload)
 
-        logger.info(f"Feedback submitted for event {feedback.event_id}: {feedback.rating}")
+        logger.info(
+            f"Feedback submitted for event {feedback.event_id}: {feedback.rating}"
+        )
 
         return FeedbackResponse(
-            success=True, feedback_id=feedback_id, message="Feedback submitted successfully"
+            success=True,
+            feedback_id=feedback_id,
+            message="Feedback submitted successfully",
         )
 
     except Exception as e:
         logger.error(f"Failed to submit feedback: {e}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to submit feedback"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to submit feedback",
         )
 
 
@@ -237,7 +243,9 @@ async def get_feedback_stats() -> dict[str, Any]:
         cutoff_date = datetime.utcnow() - timedelta(days=7)
         cutoff_str = cutoff_date.isoformat()
 
-        recent_feedback = [f for f in feedback_events if f.get("submitted_at", "") >= cutoff_str]
+        recent_feedback = [
+            f for f in feedback_events if f.get("submitted_at", "") >= cutoff_str
+        ]
 
         # Events with feedback vs total events
         events_with_feedback = set()
@@ -252,13 +260,17 @@ async def get_feedback_stats() -> dict[str, Any]:
             if event.get("decision") and not event.get("_feedback_for"):
                 total_decision_events += 1
 
-        feedback_coverage = (len(events_with_feedback) / max(total_decision_events, 1)) * 100
+        feedback_coverage = (
+            len(events_with_feedback) / max(total_decision_events, 1)
+        ) * 100
 
         return {
             "enabled": FEEDBACK_ENABLED,
             "total_feedback": total_feedback,
             "rating_distribution": rating_counts,
-            "top_tags": sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)[:10],
+            "top_tags": sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)[
+                :10
+            ],
             "recent_activity_7d": len(recent_feedback),
             "feedback_coverage_pct": round(feedback_coverage, 2),
             "events_with_feedback": len(events_with_feedback),
@@ -276,7 +288,9 @@ async def get_feedback_stats() -> dict[str, Any]:
 class BulkFeedbackRequest(BaseModel):
     """Request model for bulk feedback submission."""
 
-    feedback_items: list[FeedbackRequest] = Field(..., description="List of feedback items")
+    feedback_items: list[FeedbackRequest] = Field(
+        ..., description="List of feedback items"
+    )
 
     model_config = ConfigDict(
         json_schema_extra={

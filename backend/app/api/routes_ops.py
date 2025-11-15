@@ -27,38 +27,32 @@ router = APIRouter(prefix="/ops", tags=["operations"])
 
 
 async def check_subsystem_health(
-    name: str,
-    endpoint: str,
-    client: httpx.AsyncClient,
-    timeout: float = 5.0
+    name: str, endpoint: str, client: httpx.AsyncClient, timeout: float = 5.0
 ) -> dict[str, Any]:
     """
     Check health of a single subsystem with timeout.
-    
+
     Args:
         name: Subsystem name (e.g., "core", "paper_lab")
         endpoint: Health endpoint path
         client: HTTP client for requests
         timeout: Request timeout in seconds
-        
+
     Returns:
         Dict with subsystem status and metrics
     """
     start = time.time()
     try:
-        response = await asyncio.wait_for(
-            client.get(endpoint),
-            timeout=timeout
-        )
+        response = await asyncio.wait_for(client.get(endpoint), timeout=timeout)
         elapsed = time.time() - start
-        
+
         if response.status_code == 200:
             data = response.json()
             return {
                 "subsystem": name,
                 "status": "healthy",
                 "response_time_ms": round(elapsed * 1000, 2),
-                "details": data
+                "details": data,
             }
         else:
             return {
@@ -66,9 +60,9 @@ async def check_subsystem_health(
                 "status": "unhealthy",
                 "response_time_ms": round(elapsed * 1000, 2),
                 "error": f"HTTP {response.status_code}",
-                "details": {}
+                "details": {},
             }
-            
+
     except asyncio.TimeoutError:
         elapsed = time.time() - start
         logger.warning(
@@ -77,17 +71,17 @@ async def check_subsystem_health(
                 "subsystem": name,
                 "endpoint": endpoint,
                 "timeout_sec": timeout,
-                "elapsed_sec": round(elapsed, 2)
-            }
+                "elapsed_sec": round(elapsed, 2),
+            },
         )
         return {
             "subsystem": name,
             "status": "timeout",
             "response_time_ms": round(elapsed * 1000, 2),
             "error": f"Timeout after {timeout}s",
-            "details": {}
+            "details": {},
         }
-        
+
     except Exception as e:
         elapsed = time.time() - start
         logger.error(
@@ -96,15 +90,15 @@ async def check_subsystem_health(
                 "subsystem": name,
                 "endpoint": endpoint,
                 "error": str(e),
-                "elapsed_sec": round(elapsed, 2)
-            }
+                "elapsed_sec": round(elapsed, 2),
+            },
         )
         return {
             "subsystem": name,
             "status": "error",
             "response_time_ms": round(elapsed * 1000, 2),
             "error": str(e),
-            "details": {}
+            "details": {},
         }
 
 
@@ -122,12 +116,12 @@ async def check_subsystem_health(
     - Timestamp
     
     Use this endpoint for monitoring, alerting, and operational dashboards.
-    """
+    """,
 )
 async def get_operational_status() -> dict[str, Any]:
     """
     Aggregate health from all subsystems into a unified status report.
-    
+
     Checks health endpoints from:
     - Core services
     - Paper lab
@@ -143,7 +137,7 @@ async def get_operational_status() -> dict[str, Any]:
     - Performance
     """
     start_time = time.time()
-    
+
     # Define all subsystem health endpoints
     subsystems = [
         ("core", "http://localhost:8000/api/core/health"),
@@ -159,7 +153,7 @@ async def get_operational_status() -> dict[str, Any]:
         ("feedback", "http://localhost:8000/feedback/health"),
         ("performance", "http://localhost:8000/performance/health"),
     ]
-    
+
     # Check all subsystems concurrently with timeout
     timeout = httpx.Timeout(5.0, connect=2.0)
     async with httpx.AsyncClient(timeout=timeout) as client:
@@ -168,15 +162,15 @@ async def get_operational_status() -> dict[str, Any]:
             for name, endpoint in subsystems
         ]
         results = await asyncio.gather(*tasks, return_exceptions=False)
-    
+
     # Analyze overall health
     healthy_count = sum(1 for r in results if r["status"] == "healthy")
     timeout_count = sum(1 for r in results if r["status"] == "timeout")
     error_count = sum(1 for r in results if r["status"] == "error")
     unhealthy_count = sum(1 for r in results if r["status"] == "unhealthy")
-    
+
     total = len(results)
-    
+
     # Determine overall status
     if healthy_count == total:
         overall_status = "healthy"
@@ -184,9 +178,9 @@ async def get_operational_status() -> dict[str, Any]:
         overall_status = "degraded"
     else:
         overall_status = "unhealthy"
-    
+
     elapsed = time.time() - start_time
-    
+
     return {
         "overall_status": overall_status,
         "timestamp": time.time(),
@@ -201,8 +195,8 @@ async def get_operational_status() -> dict[str, Any]:
         "subsystems": results,
         "metadata": {
             "version": "0.1.0",
-            "environment": "production"  # Could read from env
-        }
+            "environment": "production",  # Could read from env
+        },
     }
 
 
@@ -221,7 +215,7 @@ async def get_operational_status() -> dict[str, Any]:
     - Learning run limits
     
     Use this to ensure no long-running external calls lack timeout protection.
-    """
+    """,
 )
 async def get_timeout_audit() -> dict[str, Any]:
     """
@@ -234,74 +228,74 @@ async def get_timeout_audit() -> dict[str, Any]:
                 "timeout_sec": 10.0,
                 "location": "app.api.routes_trading._OHLC_TIMEOUT_SECS",
                 "status": "configured",
-                "notes": "Per-ticker timeout with async/sync support"
+                "notes": "Per-ticker timeout with async/sync support",
             },
             "chat_llm": {
                 "provider": "openai/anthropic",
                 "timeout_sec": 60.0,
                 "location": "app.api.routes_chat.REQUEST_TIMEOUT",
                 "status": "configured",
-                "notes": "HTTP timeout via httpx.Timeout"
+                "notes": "HTTP timeout via httpx.Timeout",
             },
             "news_rss": {
                 "provider": "various_rss_feeds",
                 "timeout_sec": 8.0,
                 "location": "app.api.routes_news (urllib.request.urlopen)",
                 "status": "configured",
-                "notes": "Per-feed timeout"
+                "notes": "Per-feed timeout",
             },
             "rag_documents": {
                 "provider": "web_scraping",
                 "timeout_sec": 30.0,
                 "location": "app.api.routes (httpx.Client)",
                 "status": "configured",
-                "notes": "Document fetch timeout"
+                "notes": "Document fetch timeout",
             },
             "web_browse": {
                 "provider": "playwright",
                 "timeout_sec": 30.0,
                 "location": "app.web.browse_router (httpx.Client)",
                 "status": "configured",
-                "notes": "Web page load timeout"
-            }
+                "notes": "Web page load timeout",
+            },
         },
         "internal_operations": {
             "screening_jobs": {
                 "max_duration_sec": 300.0,
                 "location": "app.api.routes_screener",
                 "status": "needs_audit",
-                "notes": "Should add explicit timeout for large scans"
+                "notes": "Should add explicit timeout for large scans",
             },
             "learning_runs": {
                 "max_duration_sec": 600.0,
                 "location": "app.api.routes_learning",
                 "status": "needs_audit",
-                "notes": "Should add timeout for training loops"
+                "notes": "Should add timeout for training loops",
             },
             "backtest_execution": {
                 "max_duration_sec": 120.0,
                 "location": "app.api.routes_trading",
                 "status": "needs_audit",
-                "notes": "Should add timeout for long backtests"
+                "notes": "Should add timeout for long backtests",
             },
             "paper_trading_engine": {
                 "tick_timeout_sec": 1.0,
                 "location": "app.paper.engine (asyncio.wait_for)",
                 "status": "configured",
-                "notes": "Per-tick processing timeout"
-            }
+                "notes": "Per-tick processing timeout",
+            },
         },
         "database": {
             "redis": {
                 "timeout_sec": 5.0,
                 "status": "needs_configuration",
-                "notes": "Should configure connection and operation timeouts"
+                "notes": "Should configure connection and operation timeouts",
             },
             "postgres": {
                 "timeout_sec": 30.0,
                 "status": "needs_configuration",
-                "notes": "Should configure query timeout"
-            }
+                "notes": "Should configure query timeout",
+            },
         },
         "recommendations": [
             "Add explicit timeouts to screening jobs",
@@ -309,16 +303,14 @@ async def get_timeout_audit() -> dict[str, Any]:
             "Add explicit timeouts to backtest execution",
             "Configure Redis connection timeout",
             "Configure Postgres query timeout",
-            "Add timeout monitoring/alerts"
+            "Add timeout monitoring/alerts",
         ],
-        "timestamp": time.time()
+        "timestamp": time.time(),
     }
 
 
 @router.get(
-    "/health",
-    response_model=MessageResponse,
-    summary="Ops module health check"
+    "/health", response_model=MessageResponse, summary="Ops module health check"
 )
 async def ops_health() -> MessageResponse:
     """Simple health check for ops module itself."""

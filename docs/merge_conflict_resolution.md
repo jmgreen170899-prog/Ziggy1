@@ -23,6 +23,7 @@ To prevent this issue from recurring, the repository now includes automated chec
 ### 1. Automated Test
 
 A pytest test is included in the backend test suite:
+
 - **Location**: `backend/tests/test_no_merge_markers.py`
 - **What it does**: Scans all source files for conflict markers
 - **When it runs**: Every time tests are executed locally or in CI
@@ -30,6 +31,7 @@ A pytest test is included in the backend test suite:
 ### 2. Standalone Script
 
 A standalone script can be run manually or in CI pipelines:
+
 - **Location**: `scripts/check_merge_markers.py`
 - **Usage**: `python scripts/check_merge_markers.py`
 - **Exit codes**:
@@ -39,6 +41,7 @@ A standalone script can be run manually or in CI pipelines:
 ### 3. CI Integration
 
 The check is integrated into the GitHub Actions CI workflow:
+
 - **Location**: `.github/workflows/ci.yml`
 - **When it runs**: On every pull request and push to main
 - **Effect**: Pull requests with conflict markers will fail CI checks
@@ -84,6 +87,7 @@ You have several options:
 ### Step 3: Remove All Markers
 
 Ensure you remove **all three marker lines**:
+
 - `<<<<<<< HEAD` (or `<<<<<<< branch-name`)
 - `=======`
 - `>>>>>>> branch-name` (or `>>>>>>> commit-hash`)
@@ -93,18 +97,21 @@ Ensure you remove **all three marker lines**:
 Before committing:
 
 1. **Run the backend tests**:
+
    ```bash
    cd backend
    pytest
    ```
 
 2. **Check for import errors**:
+
    ```bash
    cd backend
    PYTHONPATH=. python -c "import app.main"
    ```
 
 3. **Run the conflict marker check**:
+
    ```bash
    python scripts/check_merge_markers.py
    ```
@@ -139,6 +146,7 @@ git commit -m "Resolve merge conflicts in [files]"
 ## Files Scanned by the Check
 
 The automated check scans these file types:
+
 - Python files (`.py`)
 - JavaScript files (`.js`, `.jsx`)
 - TypeScript files (`.ts`, `.tsx`)
@@ -147,6 +155,7 @@ The automated check scans these file types:
 - Markdown files (`.md`)
 
 In these directories:
+
 - `backend/`
 - `frontend/`
 - `scripts/`
@@ -159,11 +168,13 @@ In these directories:
 If the CI check detects conflict markers:
 
 1. Pull the latest changes:
+
    ```bash
    git pull origin main
    ```
 
 2. Run the check locally:
+
    ```bash
    python scripts/check_merge_markers.py
    ```
@@ -171,6 +182,7 @@ If the CI check detects conflict markers:
 3. Open the reported files and remove all conflict markers
 
 4. Verify the code works:
+
    ```bash
    cd backend && pytest
    cd frontend && npm run build
@@ -186,6 +198,7 @@ If the CI check detects conflict markers:
 ### False Positives
 
 The check excludes common false positives like comment decorators:
+
 - `# ===============` (Python comments)
 - `// ==============` (JavaScript/TypeScript comments)
 

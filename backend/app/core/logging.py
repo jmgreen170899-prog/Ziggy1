@@ -152,5 +152,7 @@ class LoggerMixin:
     @property
     def logger(self) -> logging.Logger:
         if not hasattr(self, "_logger"):
-            self._logger = get_logger(self.__class__.__module__ + "." + self.__class__.__name__)
+            self._logger = get_logger(
+                self.__class__.__module__ + "." + self.__class__.__name__
+            )
         return self._logger

@@ -31,6 +31,7 @@ This Next.js application provides a modern, real-time trading interface with the
 ## Backend Integration
 
 The frontend integrates with a comprehensive backend API that provides:
+
 - RAG query system for AI-powered financial analysis
 - Real-time market data and WebSocket updates
 - Trading signal generation and portfolio management
@@ -41,6 +42,7 @@ The frontend integrates with a comprehensive backend API that provides:
 ## Development Guidelines
 
 When working on this project:
+
 1. Follow TypeScript best practices and maintain type safety
 2. Use the existing Zustand stores for state management
 3. Implement real-time features using the WebSocket service
@@ -51,6 +53,7 @@ When working on this project:
 ## File Structure
 
 The project follows a modular structure with clear separation of concerns:
+
 - `app/` - Next.js App Router pages and layouts
 - `components/` - Reusable React components organized by feature
 - `services/` - External service integrations (API, WebSocket)

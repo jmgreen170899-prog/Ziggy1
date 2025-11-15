@@ -1,9 +1,11 @@
 # Ziggy Brain Improvement Summary
 
 ## Question
+
 "Based on what is already implemented - what is the best improvement that can be made to 'Ziggy's brain' to improve decision making?"
 
 ## Answer
+
 **Confidence Calibration with Historical Context Enrichment**
 
 ## Why This Is The Best Improvement
@@ -44,6 +46,7 @@ A new system that enriches every trading decision with:
 ### Integration Points
 
 **Before:**
+
 ```python
 signal = Signal(
     ticker="AAPL",
@@ -54,6 +57,7 @@ signal = Signal(
 ```
 
 **After:**
+
 ```python
 signal = Signal(
     ticker="AAPL",
@@ -61,7 +65,7 @@ signal = Signal(
     confidence=0.68,                # Calibrated (+3%)
     signal_type="MeanReversion",
     reason="RSI oversold | Confidence increased by 3% based on historical performance",
-    
+
     # New context fields
     decision_quality={
         'expected_accuracy': 0.72,
@@ -84,15 +88,18 @@ signal = Signal(
 ## Measured Improvements
 
 ### Accuracy
+
 - **Before:** Brier score = 0.28 (miscalibrated)
 - **After:** Brier score = 0.18 (well-calibrated)
 - **Improvement:** 36% reduction in prediction error
 
 ### Context
+
 - **Before:** No historical context
 - **After:** 5-10 similar decisions with outcomes shown
 
 ### Learning
+
 - **Before:** Static, never improves
 - **After:** Continuous learning from every outcome
 
@@ -139,16 +146,19 @@ signal = Signal(
 ## How It Works
 
 ### 1. Signal Generation (Existing)
+
 ```
 Market Data → Features → Regime → Signal (raw confidence)
 ```
 
 ### 2. Context Enrichment (New)
+
 ```
 Signal → Query History → Apply Calibration → Add Context → Enhanced Signal
 ```
 
 ### 3. Continuous Learning Loop
+
 ```
 Signal → Execution → Outcome → Update History → Better Calibration → Repeat
 ```
@@ -163,26 +173,31 @@ Signal → Execution → Outcome → Update History → Better Calibration → R
 ## Why Not Other Improvements?
 
 ### Option 1: Vector Memory Enhancement
+
 - **Pro:** Better semantic search
 - **Con:** Already has placeholder embeddings; needs significant data
 - **Impact:** Medium (recall improvements)
 
 ### Option 2: Provider Health Optimization
+
 - **Pro:** Better data reliability
 - **Con:** Already implemented with failover
 - **Impact:** Small (incremental)
 
 ### Option 3: Event Store Performance
+
 - **Pro:** Higher throughput
 - **Con:** Not a bottleneck currently
 - **Impact:** Small (engineering improvement)
 
 ### Option 4: Real-time Feature Offloading
+
 - **Pro:** Better async performance
 - **Con:** Adds complexity
 - **Impact:** Small (latency reduction)
 
 ### ✅ Confidence Calibration (Chosen)
+
 - **Pro:** Directly improves decision quality
 - **Pro:** Uses existing infrastructure
 - **Pro:** Immediate value, continuous improvement
@@ -191,18 +206,21 @@ Signal → Execution → Outcome → Update History → Better Calibration → R
 ## Usage
 
 ### Run the Demo
+
 ```bash
 cd backend
 python demo_decision_improvement.py
 ```
 
 ### Run the Tests
+
 ```bash
 cd backend
 python test_decision_context.py
 ```
 
 ### Use in Code
+
 ```python
 from app.services.decision_context import enrich_decision
 
@@ -239,7 +257,7 @@ While this improvement is complete and working, potential future enhancements in
 ✅ Continuously improves as more data accumulates  
 ✅ Leverages existing decision_log and memory infrastructure  
 ✅ Maintains explainability (shows reasoning for adjustments)  
-✅ Requires minimal code changes (mostly additive)  
+✅ Requires minimal code changes (mostly additive)
 
 This transforms Ziggy from a rule-based system into a **learning system** that improves decision-making through experience.
 

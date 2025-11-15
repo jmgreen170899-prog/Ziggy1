@@ -19,6 +19,7 @@ cd frontend && npm run dev                      # Terminal 2
 ## 📊 What Gets Audited
 
 ### 14 ZiggyAI Routes
+
 - Dashboard (`/`)
 - Chat (`/chat`)
 - Market (`/market`)
@@ -35,6 +36,7 @@ cd frontend && npm run dev                      # Terminal 2
 - Account (`/account`)
 
 ### Data Quality Metrics
+
 - **Data Cards/Rows Count**: Live content verification
 - **NaN/Undefined Values**: Broken data display detection
 - **Missing Fields**: Empty data element identification
@@ -42,12 +44,14 @@ cd frontend && npm run dev                      # Terminal 2
 - **Empty States**: Proper fallback handling
 
 ### Layout Health
+
 - **Overflow Elements**: Horizontal scrolling issues
 - **Hidden Elements**: Invisible content detection
 - **Responsive Issues**: Mobile touch target validation
 - **Reflow Count**: Layout stability monitoring
 
 ### Performance Analysis
+
 - **Lighthouse Scores**: Performance, Accessibility, Best Practices, SEO
 - **Core Web Vitals**: FCP, LCP, CLS, TBT measurements
 - **Load Times**: DOM, Network, Data loading metrics
@@ -56,15 +60,18 @@ cd frontend && npm run dev                      # Terminal 2
 ## 📸 Output Artifacts
 
 ### Screenshots
+
 - `artifacts/ui/{tab-name}.png` - Full-page screenshots of each route
 - Automated capture after data loading completes
 
 ### Raw Data
+
 - `artifacts/ui/ui_audit.json` - Complete Playwright audit results
 - `artifacts/ui/lighthouse_summary.json` - Lighthouse performance data
 - `artifacts/ui/lh_{tab-name}.json` - Individual Lighthouse reports
 
 ### Generated Report
+
 - `ui_improvements.md` - Prioritized improvement recommendations
   - **P0 (Critical)**: NaN values, layout overflow, console errors
   - **P1 (High)**: Missing fields, stale data, responsive issues
@@ -73,6 +80,7 @@ cd frontend && npm run dev                      # Terminal 2
 ## 🛠️ Development Tools
 
 ### UX Debug Overlay
+
 Live development overlay for real-time monitoring:
 
 ```typescript
@@ -90,6 +98,7 @@ export default function Layout({ children }) {
 ```
 
 **Features:**
+
 - **API Performance**: Real-time latency P50/P95 tracking
 - **Data Freshness**: TTL and staleness indicators
 - **Layout Health**: Reflow count and overflow detection
@@ -111,8 +120,10 @@ python scripts/generate_ui_report.py             # Report only
 ## 📋 Report Format
 
 ### Executive Summary
+
 ```markdown
 ## 📊 Executive Summary
+
 - **Total Tabs Audited:** 14
 - **Healthy Tabs:** 12/14 (86%)
 - **Total Issues:** 23
@@ -121,21 +132,27 @@ python scripts/generate_ui_report.py             # Report only
 ```
 
 ### Per-Tab Analysis
+
 ```markdown
 ## 🟡 Market (`/market`)
+
 **Screenshot:** `artifacts/ui/market.png`
 
 ### 📊 What's Shown (Live Data)
+
 - **Data Cards:** 8
 - **Data Rows:** 24
 - **Load Times:** DOM: 🟢 245ms, Data: 🟡 1.2s
 
 ### ⚠️ Issues Detected (5 total)
+
 **P1 - Missing Data Fields** (3 found)
+
 - div.price-display
 - span.change-percent
 
 ### 🔧 Actionable Fixes
+
 - Add loading skeletons for missing price data
 - Implement graceful degradation for API failures
 ```
@@ -143,17 +160,20 @@ python scripts/generate_ui_report.py             # Report only
 ## 🎯 Best Practices
 
 ### Running Audits
+
 1. **Clean State**: Clear browser cache and storage
 2. **Stable Environment**: Ensure backend/frontend are fully loaded
 3. **Consistent Data**: Use same test data for comparative audits
 4. **Regular Schedule**: Run audits after major UI changes
 
 ### Interpreting Results
+
 - **P0 Issues**: Fix immediately (break user experience)
 - **P1 Issues**: Fix within 1 week (impact usability)
 - **P2 Issues**: Fix within 1 month (polish and optimization)
 
 ### Performance Targets
+
 - **Lighthouse Performance**: >90% (excellent), >70% (good)
 - **Accessibility**: >95% (WCAG compliance)
 - **Load Times**: <1s DOM, <3s data loading
@@ -164,6 +184,7 @@ python scripts/generate_ui_report.py             # Report only
 ### Common Issues
 
 **Playwright Test Failures**
+
 ```bash
 # Install browsers
 npx playwright install
@@ -173,6 +194,7 @@ npx playwright test --debug scripts/ui_audit.spec.ts
 ```
 
 **Lighthouse Installation**
+
 ```bash
 # Global install
 npm install -g lighthouse
@@ -182,11 +204,13 @@ lighthouse --version
 ```
 
 **Server Connection Issues**
+
 - Ensure backend is running on `localhost:8000`
 - Ensure frontend is running on `localhost:3000`
 - Check firewall/antivirus blocking connections
 
 **Missing Screenshots**
+
 - Verify `artifacts/ui/` directory permissions
 - Check disk space availability
 - Ensure Playwright has browser permissions

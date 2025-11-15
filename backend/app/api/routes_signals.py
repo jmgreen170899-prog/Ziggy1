@@ -51,7 +51,10 @@ except ImportError:
 # Memory & Knowledge imports
 from ..memory.events import append_event, build_durable_event
 from ..memory.vecdb import build_embedding, search_similar, upsert_event
-from ..services.market_brain.features import get_multiple_ticker_features, get_ticker_features
+from ..services.market_brain.features import (
+    get_multiple_ticker_features,
+    get_ticker_features,
+)
 from ..services.market_brain.regime import get_regime_state, regime_detector
 from ..services.market_brain.signals import (
     generate_signals_for_watchlist,
@@ -171,7 +174,9 @@ class TradePlanRequest(BaseModel):
 
     ticker: str = Field(..., description="Stock symbol")
     account_size: float | None = Field(100000, description="Account size in dollars")
-    sizing_method: str | None = Field("VolatilityTarget", description="Position sizing method")
+    sizing_method: str | None = Field(
+        "VolatilityTarget", description="Position sizing method"
+    )
     force_refresh: bool | None = Field(False, description="Force refresh of features")
 
 
@@ -204,9 +209,15 @@ def get_ticker_features_endpoint(
         features = get_ticker_features(ticker.upper(), force_refresh)
 
         if not features:
-            raise HTTPException(status_code=404, detail=f"No features available for {ticker}")
+            raise HTTPException(
+                status_code=404, detail=f"No features available for {ticker}"
+            )
 
-        return {"ticker": ticker.upper(), "features": features.to_dict(), "status": "success"}
+        return {
+            "ticker": ticker.upper(),
+            "features": features.to_dict(),
+            "status": "success",
+        }
 
     except Exception as e:
         logger.error(f"Error getting features for {ticker}: {e}")
@@ -222,7 +233,9 @@ def get_bulk_features(request: BulkFeaturesRequest):
 
         # Limit to reasonable number of tickers
         if len(tickers) > 50:
-            raise HTTPException(status_code=400, detail="Maximum 50 tickers allowed per request")
+            raise HTTPException(
+                status_code=400, detail="Maximum 50 tickers allowed per request"
+            )
 
         tickers_upper = [t.upper() for t in tickers]
         features_dict = get_multiple_ticker_features(tickers_upper)
@@ -253,7 +266,9 @@ def get_bulk_features(request: BulkFeaturesRequest):
 
 @router.get("/regime", response_model=None)
 def get_current_regime(
-    force_refresh: bool = Query(False, description="Force refresh of regime calculation"),
+    force_refresh: bool = Query(
+        False, description="Force refresh of regime calculation"
+    ),
 ):
     """Get current market regime."""
     try:
@@ -267,12 +282,19 @@ def get_current_regime(
 
 
 @router.get("/regime/history", response_model=None)
-def get_regime_history(days: int = Query(5, ge=1, le=30, description="Number of days of history")):
+def get_regime_history(
+    days: int = Query(5, ge=1, le=30, description="Number of days of history")
+):
     """Get regime history."""
     try:
         history = regime_detector.get_regime_history(days)
 
-        return {"history": history, "days": days, "count": len(history), "status": "success"}
+        return {
+            "history": history,
+            "days": days,
+            "count": len(history),
+            "status": "success",
+        }
 
     except Exception as e:
         logger.error(f"Error getting regime history: {e}")
@@ -289,7 +311,9 @@ def get_regime_history(days: int = Query(5, ge=1, le=30, description="Number of 
 def get_ticker_signal(
     request: Request,
     ticker: str,
-    include_features: bool = Query(False, description="Include raw features in response"),
+    include_features: bool = Query(
+        False, description="Include raw features in response"
+    ),
     include_regime: bool = Query(True, description="Include regime context"),
 ):
     """Get trading signal for a ticker with complete analysis."""
@@ -360,7 +384,8 @@ def get_watchlist_signals(request: WatchlistSignalsRequest):
         # Limit to reasonable number
         if len(tickers) > 25:
             raise HTTPException(
-                status_code=400, detail="Maximum 25 tickers allowed for signal generation"
+                status_code=400,
+                detail="Maximum 25 tickers allowed for signal generation",
             )
 
         tickers_upper = [t.upper() for t in tickers]
@@ -609,7 +634,9 @@ def execute_trade_from_signal(request: ExecuteTradeRequest):
         # Generate signal
         signal = generate_ticker_signal(request.ticker)
         if not signal:
-            raise HTTPException(status_code=400, detail=f"No signal available for {request.ticker}")
+            raise HTTPException(
+                status_code=400, detail=f"No signal available for {request.ticker}"
+            )
 
         # Get features for position sizing
         features = get_ticker_features(request.ticker)
@@ -685,7 +712,9 @@ def get_trade_execution_status(request_id: str):
 
         result = get_execution_status(request_id)
         if not result:
-            raise HTTPException(status_code=404, detail=f"Execution {request_id} not found")
+            raise HTTPException(
+                status_code=404, detail=f"Execution {request_id} not found"
+            )
 
         return {
             "request_id": result.request_id,
@@ -710,7 +739,11 @@ def get_execution_history(ticker: str | None = None, limit: int = 50):
     """Get execution history."""
     try:
         if trade_executor is None:
-            return {"executions": [], "total": 0, "error": "Trade executor service not available"}
+            return {
+                "executions": [],
+                "total": 0,
+                "error": "Trade executor service not available",
+            }
 
         history = trade_executor.get_execution_history(ticker, limit)
 
@@ -723,7 +756,9 @@ def get_execution_history(ticker: str | None = None, limit: int = 50):
                     "filled_quantity": result.filled_quantity,
                     "filled_price": result.filled_price,
                     "executed_value": result.executed_value,
-                    "timestamp": result.timestamp.isoformat() if result.timestamp else None,
+                    "timestamp": (
+                        result.timestamp.isoformat() if result.timestamp else None
+                    ),
                 }
                 for result in history
             ],
@@ -794,7 +829,8 @@ def run_quick_backtest(request: Request, ticker: str, period: str = "3M"):
 
         if period not in period_map:
             raise HTTPException(
-                status_code=400, detail=f"Invalid period: {period}. Use: {list(period_map.keys())}"
+                status_code=400,
+                detail=f"Invalid period: {period}. Use: {list(period_map.keys())}",
             )
 
         results = quick_backtest(ticker, period_map[period])
@@ -858,7 +894,8 @@ def analyze_signal_quality(ticker: str, period: str = "3M"):
 
         if period not in period_map:
             raise HTTPException(
-                status_code=400, detail=f"Invalid period: {period}. Use: {list(period_map.keys())}"
+                status_code=400,
+                detail=f"Invalid period: {period}. Use: {list(period_map.keys())}",
             )
 
         analysis = analyze_signals(ticker, period_map[period])
@@ -905,8 +942,12 @@ class CognitiveSignalResponse(BaseModel):
     confidence: float = Field(..., description="Signal confidence (0-1)")
     regime: str = Field(..., description="Market regime")
     shap_top: list[tuple] = Field(..., description="Top feature attributions")
-    neighbors: list[dict[str, Any]] = Field(default_factory=list, description="Similar past events")
-    position_size: dict[str, Any] | None = Field(None, description="Position sizing recommendation")
+    neighbors: list[dict[str, Any]] = Field(
+        default_factory=list, description="Similar past events"
+    )
+    position_size: dict[str, Any] | None = Field(
+        None, description="Position sizing recommendation"
+    )
     latency_ms: float = Field(..., description="Processing latency in milliseconds")
     cache_hit: bool = Field(..., description="Whether features were cached")
     event_id: str | None = Field(None, description="Event ID for this decision")
@@ -926,7 +967,9 @@ async def generate_cognitive_signal(request: CognitiveSignalRequest):
     - Event logging for continuous learning
     """
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     start_time = datetime.now()
 
@@ -938,7 +981,9 @@ async def generate_cognitive_signal(request: CognitiveSignalRequest):
             dt = datetime.now()
 
         # Compute features
-        features = compute_features(ticker=request.symbol, dt=dt, interval=request.interval)
+        features = compute_features(
+            ticker=request.symbol, dt=dt, interval=request.interval
+        )
 
         # Detect regime
         regime_info = detect_regime(features)
@@ -979,7 +1024,10 @@ async def generate_cognitive_signal(request: CognitiveSignalRequest):
                     p_up_prior = sum(neighbor_outcomes) / len(neighbor_outcomes)
 
                     # Blend model prediction with prior
-                    p_up_blend = RAG_PRIOR_WEIGHT * p_up_prior + (1 - RAG_PRIOR_WEIGHT) * p_up_model
+                    p_up_blend = (
+                        RAG_PRIOR_WEIGHT * p_up_prior
+                        + (1 - RAG_PRIOR_WEIGHT) * p_up_model
+                    )
 
                     logger.info(
                         f"RAG blending for {request.symbol}: "
@@ -1084,11 +1132,15 @@ async def get_regime_analysis(
 ):
     """Get detailed regime analysis for a symbol."""
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     try:
         # Parse datetime
-        dt_parsed = datetime.fromisoformat(dt.replace("Z", "+00:00")) if dt else datetime.now()
+        dt_parsed = (
+            datetime.fromisoformat(dt.replace("Z", "+00:00")) if dt else datetime.now()
+        )
 
         # Compute features
         features = compute_features(ticker=symbol, dt=dt_parsed, interval=interval)
@@ -1120,16 +1172,22 @@ async def generate_bulk_cognitive_signals(
 ):
     """Generate cognitive signals for multiple symbols efficiently."""
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     if len(symbols) > 50:
-        raise HTTPException(status_code=400, detail="Maximum 50 symbols per bulk request")
+        raise HTTPException(
+            status_code=400, detail="Maximum 50 symbols per bulk request"
+        )
 
     start_time = datetime.now()
 
     try:
         # Parse datetime
-        dt_parsed = datetime.fromisoformat(dt.replace("Z", "+00:00")) if dt else datetime.now()
+        dt_parsed = (
+            datetime.fromisoformat(dt.replace("Z", "+00:00")) if dt else datetime.now()
+        )
 
         results = []
         feature_list = []
@@ -1138,7 +1196,9 @@ async def generate_bulk_cognitive_signals(
         # Compute features for all symbols
         for symbol in symbols:
             try:
-                features = compute_features(ticker=symbol, dt=dt_parsed, interval=interval)
+                features = compute_features(
+                    ticker=symbol, dt=dt_parsed, interval=interval
+                )
                 regime_info = detect_regime(features)
 
                 feature_list.append(features)
@@ -1162,7 +1222,12 @@ async def generate_bulk_cognitive_signals(
                     signal_results.append(fused_probability(features, regime))
                 else:
                     signal_results.append(
-                        {"p_up": 0.5, "confidence": 0.0, "shap_top": [], "regime": regime}
+                        {
+                            "p_up": 0.5,
+                            "confidence": 0.0,
+                            "shap_top": [],
+                            "regime": regime,
+                        }
                     )
 
         # Format results
@@ -1230,7 +1295,10 @@ async def cognitive_health_check():
                 "test_feature_count": len(test_features),
             }
         except Exception as e:
-            health_status["components"]["feature_store"] = {"status": "error", "error": str(e)}
+            health_status["components"]["feature_store"] = {
+                "status": "error",
+                "error": str(e),
+            }
 
         try:
             from ..services.regime import detect_regime
@@ -1243,7 +1311,10 @@ async def cognitive_health_check():
                 "test_regime": test_regime["regime"],
             }
         except Exception as e:
-            health_status["components"]["regime_detection"] = {"status": "error", "error": str(e)}
+            health_status["components"]["regime_detection"] = {
+                "status": "error",
+                "error": str(e),
+            }
 
         try:
             from ..services.fusion import fused_probability
@@ -1254,6 +1325,9 @@ async def cognitive_health_check():
                 "test_probability": test_signal["p_up"],
             }
         except Exception as e:
-            health_status["components"]["signal_fusion"] = {"status": "error", "error": str(e)}
+            health_status["components"]["signal_fusion"] = {
+                "status": "error",
+                "error": str(e),
+            }
 
     return health_status

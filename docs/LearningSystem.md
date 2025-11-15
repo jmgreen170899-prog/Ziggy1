@@ -53,6 +53,7 @@ Ziggy's strict learning system implements a conservative, auditable learning pip
 **Purpose**: Capture every live trading decision with complete context for later analysis.
 
 **Features**:
+
 - Append-only storage with monthly rotation
 - Parquet format with CSV fallback
 - Full decision context: features, parameters, regime, probabilities
@@ -60,6 +61,7 @@ Ziggy's strict learning system implements a conservative, auditable learning pip
 - Chronological integrity for time-series analysis
 
 **Data Structure**:
+
 ```python
 @dataclass
 class TradingDecisionRecord:
@@ -74,17 +76,17 @@ class TradingDecisionRecord:
     entry_price: float
     stop_price: Optional[float]
     take_profit: Optional[float]
-    
+
     # Outcomes (filled after completion)
     outcome_after_1h: Optional[float]
-    outcome_after_4h: Optional[float] 
+    outcome_after_4h: Optional[float]
     outcome_after_24h: Optional[float]
     exit_price: Optional[float]
     fees_paid: Optional[float]
     slippage: Optional[float]
     exit_reason: Optional[str]
     realized_pnl: Optional[float]
-    
+
     # Versioning
     rule_version: str
     signal_version: str
@@ -95,6 +97,7 @@ class TradingDecisionRecord:
 **Purpose**: Calculate comprehensive performance metrics with statistical significance.
 
 **Metrics Calculated**:
+
 - **Performance**: Hit rate, expectancy, total PnL, Sharpe ratio, Sortino ratio
 - **Risk**: Maximum drawdown, Calmar ratio, drawdown duration
 - **Calibration**: Brier score, calibration slope/intercept, reliability diagrams
@@ -102,6 +105,7 @@ class TradingDecisionRecord:
 - **Statistical**: Bootstrap confidence intervals, significance tests
 
 **Key Functions**:
+
 - `evaluate_trading_performance()`: Comprehensive metric calculation
 - `compare_runs()`: Statistical comparison between baseline and candidate
 - `bootstrap_confidence_interval()`: Statistical significance testing
@@ -111,16 +115,19 @@ class TradingDecisionRecord:
 **Purpose**: Ensure predicted probabilities match actual outcomes.
 
 **Methods**:
+
 - **Isotonic Regression**: Non-parametric, monotonic calibration
 - **Platt Scaling**: Sigmoid-based parametric calibration
 
 **Features**:
+
 - Train/test validation splits
 - Reliability diagram generation
 - Calibration curve analysis
 - Model persistence and loading
 
 **Quality Metrics**:
+
 - Calibration slope (ideal: 1.0)
 - Calibration intercept (ideal: 0.0)
 - Mean squared error from perfect calibration
@@ -131,12 +138,14 @@ class TradingDecisionRecord:
 **Purpose**: Optimize rule parameters with rigorous validation gates.
 
 **Rule Parameters**:
+
 - RSI thresholds (oversold/overbought)
 - ATR stop multipliers
 - Regime strength thresholds
 - Signal-specific parameters
 
 **Learning Pipeline**:
+
 1. **Data Split**: Chronological 60% train / 20% validation / 20% test
 2. **Candidate Generation**: Small parameter variations around current values
 3. **Validation**: Fit calibration on train, select best on validation
@@ -144,6 +153,7 @@ class TradingDecisionRecord:
 5. **Gate Checking**: All strict gates must pass for promotion
 
 **Strict Validation Gates**:
+
 ```python
 @dataclass
 class StrictGates:
@@ -163,30 +173,37 @@ class StrictGates:
 **Endpoints**:
 
 #### System Status
+
 - `GET /learning/status` - Overall system health and readiness
 - `GET /learning/health` - Detailed health diagnostics
 
 #### Data Management
+
 - `GET /learning/data/summary?days=90` - Available learning data summary
 
 #### Rule Management
+
 - `GET /learning/rules/current` - Active rule set
 - `GET /learning/rules/history` - Rule version history
 
 #### Learning Operations
+
 - `POST /learning/run` - Execute learning iteration (background)
 - `GET /learning/results/latest` - Most recent learning results
 - `GET /learning/results/history?limit=20` - Learning history
 
 #### Configuration
+
 - `GET /learning/gates` - Current validation gates
 - `PUT /learning/gates` - Update validation gates
 
 #### Calibration
+
 - `GET /learning/calibration/status` - Calibration model status
 - `POST /learning/calibration/build?days=90` - Build calibration model
 
 #### Evaluation
+
 - `GET /learning/evaluate/current?days=30` - Current performance metrics
 
 ## Usage Examples
@@ -218,7 +235,7 @@ from app.services.data_log import log_trading_decision, update_trading_outcome
 # Log a trading decision
 timestamp = log_trading_decision(
     ticker="AAPL",
-    regime="bull", 
+    regime="bull",
     features={"rsi": 30.5, "atr": 2.1},
     signal_name="momentum_breakout",
     params={"rsi_threshold": 30, "atr_multiplier": 2.0},
@@ -278,7 +295,9 @@ data/
 ## Safety Features
 
 ### 1. Conservative Gates
+
 All improvements must pass **ALL** validation gates simultaneously:
+
 - Statistical significance required
 - Minimum sample size enforced
 - Risk deterioration limits
@@ -286,17 +305,20 @@ All improvements must pass **ALL** validation gates simultaneously:
 - Calibration quality checks
 
 ### 2. Out-of-Sample Testing
+
 - Strict chronological splits (no look-ahead bias)
 - Final evaluation on held-out test set
 - Bootstrap confidence intervals
 
 ### 3. Versioning & Rollback
+
 - Full rule version history
 - Parent-child relationships tracked
 - Easy rollback to previous versions
 - Audit trail for all changes
 
 ### 4. Interpretability
+
 - Only rule parameters optimized (no black boxes)
 - Clear parameter ranges and meanings
 - Full explanation of changes
@@ -305,6 +327,7 @@ All improvements must pass **ALL** validation gates simultaneously:
 ## Monitoring & Alerts
 
 The system continuously monitors:
+
 - Data freshness and quality
 - Trading frequency within limits
 - Feature drift detection
@@ -316,12 +339,14 @@ Health status is exposed via `/learning/health` endpoint with actionable recomme
 ## Integration Points
 
 ### With Existing Ziggy Systems:
+
 1. **Signal Generation**: Parameters feed into signal calculations
 2. **Risk Management**: Stop-loss and position sizing rules
 3. **Regime Detection**: Regime-specific parameter sets
 4. **Market Brain**: Enhanced with learning insights
 
 ### External Integration:
+
 1. **Trading Platforms**: Real-time parameter updates
 2. **Monitoring Systems**: Health and performance metrics
 3. **Notification Systems**: Learning results and alerts

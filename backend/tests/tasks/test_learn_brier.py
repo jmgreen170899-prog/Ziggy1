@@ -123,17 +123,23 @@ class TestFeatureFamilyAnalysis:
             {
                 "p_up": 0.8,
                 "outcome": {"label": 1},
-                "explain": {"shap_top": [["rsi", 0.3], ["momentum", 0.2]]},  # momentum family
+                "explain": {
+                    "shap_top": [["rsi", 0.3], ["momentum", 0.2]]
+                },  # momentum family
             },
             {
                 "p_up": 0.3,
                 "outcome": {"label": 0},
-                "explain": {"shap_top": [["vix", 0.4], ["put_call", 0.2]]},  # sentiment family
+                "explain": {
+                    "shap_top": [["vix", 0.4], ["put_call", 0.2]]
+                },  # sentiment family
             },
             {
                 "p_up": 0.7,
                 "outcome": {"label": 1},
-                "explain": {"shap_top": [["breadth", 0.5], ["advance", 0.3]]},  # breadth family
+                "explain": {
+                    "shap_top": [["breadth", 0.5], ["advance", 0.3]]
+                },  # breadth family
             },
         ]
 
@@ -152,7 +158,9 @@ class TestFeatureFamilyAnalysis:
             {
                 "p_up": 0.6,
                 "outcome": {"label": 1},
-                "explain": {"shap_top": [["rsi", 0.2], ["vix", 0.2], ["breadth", 0.2]]},  # Mixed
+                "explain": {
+                    "shap_top": [["rsi", 0.2], ["vix", 0.2], ["breadth", 0.2]]
+                },  # Mixed
             }
         ]
 
@@ -174,7 +182,11 @@ class TestFeatureFamilyAnalysis:
         family_scores = compute_brier_by_family(events)
 
         # Should categorize unknown features appropriately
-        assert "other" in family_scores or "unknown" in family_scores or "mixed" in family_scores
+        assert (
+            "other" in family_scores
+            or "unknown" in family_scores
+            or "mixed" in family_scores
+        )
 
     def test_compute_brier_by_family_no_explanation(self):
         """Test feature family computation with missing explanations."""
@@ -226,7 +238,9 @@ class TestDriftDetection:
         current_scores = {"momentum": 0.25, "sentiment": 0.30, "breadth": 0.22}
         previous_scores = {"momentum": 0.24, "sentiment": 0.31, "breadth": 0.21}
 
-        drift_flags = compute_drift_flags(current_scores, previous_scores, threshold=0.02)
+        drift_flags = compute_drift_flags(
+            current_scores, previous_scores, threshold=0.02
+        )
 
         # No family should be flagged for drift
         assert not any(drift_flags.values())
@@ -236,7 +250,9 @@ class TestDriftDetection:
         current_scores = {"momentum": 0.30, "sentiment": 0.25, "breadth": 0.35}
         previous_scores = {"momentum": 0.25, "sentiment": 0.24, "breadth": 0.30}
 
-        drift_flags = compute_drift_flags(current_scores, previous_scores, threshold=0.02)
+        drift_flags = compute_drift_flags(
+            current_scores, previous_scores, threshold=0.02
+        )
 
         # momentum and breadth should be flagged (increases > 0.02)
         assert drift_flags["momentum"] is True  # 0.30 - 0.25 = 0.05 > 0.02
@@ -248,7 +264,9 @@ class TestDriftDetection:
         current_scores = {"momentum": 0.25, "sentiment": 0.30, "new_family": 0.28}
         previous_scores = {"momentum": 0.24, "sentiment": 0.31}
 
-        drift_flags = compute_drift_flags(current_scores, previous_scores, threshold=0.02)
+        drift_flags = compute_drift_flags(
+            current_scores, previous_scores, threshold=0.02
+        )
 
         # New family should not be flagged as drift
         assert drift_flags["new_family"] is False
@@ -258,7 +276,9 @@ class TestDriftDetection:
         current_scores = {"momentum": 0.25}
         previous_scores = {"momentum": 0.24, "sentiment": 0.31}
 
-        drift_flags = compute_drift_flags(current_scores, previous_scores, threshold=0.02)
+        drift_flags = compute_drift_flags(
+            current_scores, previous_scores, threshold=0.02
+        )
 
         # Only families in current_scores should be in drift_flags
         assert "momentum" in drift_flags
@@ -574,7 +594,9 @@ class TestLearningIntegration:
                     "ticker": f"STOCK{i % 50}",
                     "p_up": 0.5 + (i % 100) * 0.005,
                     "outcome": {"label": i % 2},
-                    "explain": {"shap_top": [[f"feature_{j}", 0.1 + j * 0.05] for j in range(5)]},
+                    "explain": {
+                        "shap_top": [[f"feature_{j}", 0.1 + j * 0.05] for j in range(5)]
+                    },
                 }
             )
 

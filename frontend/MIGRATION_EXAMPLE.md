@@ -6,30 +6,31 @@ Here's how you might have been making API calls before Phase 2:
 
 ```typescript
 // Old way - untyped, error-prone
-import axios from 'axios';
+import axios from "axios";
 
 async function fetchMarketRisk() {
   try {
     // String-based path, no type checking
-    const response = await axios.get('http://localhost:8000/market-risk-lite');
-    
+    const response = await axios.get("http://localhost:8000/market-risk-lite");
+
     // No type safety on response.data
     const cpc = response.data.cpc;
-    const last = cpc.last;  // Could be undefined, no warning
-    
+    const last = cpc.last; // Could be undefined, no warning
+
     return {
       value: last,
       zScore: cpc.z20,
     };
   } catch (error) {
     // Error format is unknown
-    console.error('Error:', error);
+    console.error("Error:", error);
     return null;
   }
 }
 ```
 
 **Problems:**
+
 - ❌ No compile-time type checking
 - ❌ No auto-completion
 - ❌ Easy to make typos in URLs
@@ -43,18 +44,18 @@ Here's the same code using the new typed client:
 
 ```typescript
 // New way - fully typed, compile-time safe
-import { apiClient } from '@/services/apiClient';
-import type { RiskLiteResponse, ErrorResponse } from '@/types/api';
+import { apiClient } from "@/services/apiClient";
+import type { RiskLiteResponse, ErrorResponse } from "@/types/api";
 
 async function fetchMarketRisk() {
   try {
     // Type-safe method, IDE shows parameters
     const response: RiskLiteResponse = await apiClient.getRiskLite({
-      period_days: 180,  // IDE suggests valid parameters
+      period_days: 180, // IDE suggests valid parameters
       window: 20,
       use_cache: true,
     });
-    
+
     // TypeScript knows cpc is CPCData | null
     if (response.cpc) {
       // Auto-completion shows: ticker, last, ma20, z20, date
@@ -64,21 +65,22 @@ async function fetchMarketRisk() {
         ticker: response.cpc.ticker,
       };
     }
-    
+
     // Handle error case (response.error is string | null)
-    console.error('Risk data unavailable:', response.error);
+    console.error("Risk data unavailable:", response.error);
     return null;
   } catch (error) {
     // Error is typed as ErrorResponse
     const apiError = error as ErrorResponse;
     console.error(`Error ${apiError.code}: ${apiError.detail}`);
-    console.error('Meta:', apiError.meta);
+    console.error("Meta:", apiError.meta);
     return null;
   }
 }
 ```
 
 **Benefits:**
+
 - ✅ Compile-time type checking
 - ✅ IDE auto-completion
 - ✅ Type-safe parameters
@@ -97,7 +99,7 @@ import axios from 'axios';
 export function RiskWidget() {
   const [risk, setRisk] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     async function loadRisk() {
       try {
@@ -111,10 +113,10 @@ export function RiskWidget() {
     }
     loadRisk();
   }, []);
-  
+
   if (loading) return <div>Loading...</div>;
   if (!risk?.cpc) return <div>No data</div>;
-  
+
   // No type safety on risk.cpc
   return (
     <div>
@@ -138,7 +140,7 @@ export function RiskWidget() {
   const [risk, setRisk] = useState<RiskLiteResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     async function loadRisk() {
       try {
@@ -158,11 +160,11 @@ export function RiskWidget() {
     }
     loadRisk();
   }, []);
-  
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!risk?.cpc) return <div>No data available</div>;
-  
+
   // TypeScript knows all properties exist and their types
   return (
     <div>
@@ -181,8 +183,8 @@ export function RiskWidget() {
 ### News Sentiment
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
-import type { SentimentResponse } from '@/types/api';
+import { apiClient } from "@/services/apiClient";
+import type { SentimentResponse } from "@/types/api";
 
 async function fetchSentiment(ticker: string): Promise<SentimentResponse> {
   const sentiment = await apiClient.getNewsSentiment({
@@ -190,14 +192,14 @@ async function fetchSentiment(ticker: string): Promise<SentimentResponse> {
     lookback_days: 3,
     limit: 40,
   });
-  
+
   // TypeScript knows:
   // - sentiment.score is number
   // - sentiment.label is string
   // - sentiment.samples is SentimentSample[]
   console.log(`${ticker} sentiment: ${sentiment.label} (${sentiment.score})`);
   console.log(`Analyzed ${sentiment.sample_count} articles`);
-  
+
   return sentiment;
 }
 ```
@@ -205,16 +207,16 @@ async function fetchSentiment(ticker: string): Promise<SentimentResponse> {
 ### Backtesting
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
-import type { BacktestOut } from '@/types/api';
+import { apiClient } from "@/services/apiClient";
+import type { BacktestOut } from "@/types/api";
 
 async function runStrategy(symbol: string): Promise<BacktestOut> {
   const result = await apiClient.runBacktest({
     symbol,
-    strategy: 'sma50_cross',
-    timeframe: '1Y',
+    strategy: "sma50_cross",
+    timeframe: "1Y",
   });
-  
+
   // TypeScript knows:
   // - result.metrics is Record<string, any>
   // - result.trades is Array<Record<string, any>>
@@ -222,7 +224,7 @@ async function runStrategy(symbol: string): Promise<BacktestOut> {
   console.log(`Backtest for ${result.symbol}:`);
   console.log(`Strategy: ${result.strategy}`);
   console.log(`Summary: ${result.summary}`);
-  
+
   return result;
 }
 ```
@@ -230,15 +232,15 @@ async function runStrategy(symbol: string): Promise<BacktestOut> {
 ### Alerts
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
-import type { AlertResponse } from '@/types/api';
+import { apiClient } from "@/services/apiClient";
+import type { AlertResponse } from "@/types/api";
 
 async function setupAlert(ticker: string): Promise<AlertResponse> {
   const alert = await apiClient.createSMA50Alert({
     symbol: ticker,
-    rule: 'cross',
+    rule: "cross",
   });
-  
+
   // TypeScript knows:
   // - alert.ok is boolean
   // - alert.message is string
@@ -246,7 +248,7 @@ async function setupAlert(ticker: string): Promise<AlertResponse> {
   if (alert.ok && alert.alert) {
     console.log(`Alert created: ${alert.alert.id}`);
   }
-  
+
   return alert;
 }
 ```
@@ -256,45 +258,50 @@ async function setupAlert(ticker: string): Promise<AlertResponse> {
 When migrating a component to use the typed client:
 
 1. **Replace axios imports**
+
    ```typescript
    // Before
-   import axios from 'axios';
-   
+   import axios from "axios";
+
    // After
-   import { apiClient } from '@/services/apiClient';
+   import { apiClient } from "@/services/apiClient";
    ```
 
 2. **Replace API calls**
+
    ```typescript
    // Before
-   const response = await axios.get('/endpoint');
+   const response = await axios.get("/endpoint");
    const data = response.data;
-   
+
    // After
    const data = await apiClient.getEndpoint();
    ```
 
 3. **Add type imports**
+
    ```typescript
-   import type { ResponseType } from '@/types/api';
+   import type { ResponseType } from "@/types/api";
    ```
 
 4. **Update state types**
+
    ```typescript
    // Before
    const [data, setData] = useState<any>(null);
-   
+
    // After
    const [data, setData] = useState<ResponseType | null>(null);
    ```
 
 5. **Update error handling**
+
    ```typescript
    // Before
    catch (error) {
      console.error(error);
    }
-   
+
    // After
    catch (error) {
      const apiError = error as ErrorResponse;
@@ -310,32 +317,35 @@ When migrating a component to use the typed client:
 
 ## Benefits Summary
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| Type Safety | ❌ None | ✅ Full compile-time |
-| Auto-completion | ❌ No | ✅ Yes |
-| Error Detection | ❌ Runtime only | ✅ Compile-time |
-| Refactoring | ❌ Risky | ✅ Safe |
-| Documentation | ❌ External | ✅ Inline JSDoc |
-| Error Format | ❌ Inconsistent | ✅ Standardized |
-| URL Management | ❌ String literals | ✅ Method names |
+| Aspect          | Before             | After                |
+| --------------- | ------------------ | -------------------- |
+| Type Safety     | ❌ None            | ✅ Full compile-time |
+| Auto-completion | ❌ No              | ✅ Yes               |
+| Error Detection | ❌ Runtime only    | ✅ Compile-time      |
+| Refactoring     | ❌ Risky           | ✅ Safe              |
+| Documentation   | ❌ External        | ✅ Inline JSDoc      |
+| Error Format    | ❌ Inconsistent    | ✅ Standardized      |
+| URL Management  | ❌ String literals | ✅ Method names      |
 
 ## Getting Started
 
 1. **Import the client:**
+
    ```typescript
-   import { apiClient } from '@/services/apiClient';
+   import { apiClient } from "@/services/apiClient";
    ```
 
 2. **Use typed methods:**
+
    ```typescript
    const data = await apiClient.methodName(params);
    ```
 
 3. **Handle errors:**
+
    ```typescript
-   import type { ErrorResponse } from '@/types/api';
-   
+   import type { ErrorResponse } from "@/types/api";
+
    try {
      const data = await apiClient.methodName();
    } catch (error) {

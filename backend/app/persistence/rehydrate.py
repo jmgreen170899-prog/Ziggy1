@@ -120,7 +120,8 @@ async def _apply_resume_to_worker(worker) -> dict[str, Any]:
                             "run_id": run_id,
                             "positions": positions,
                             "equity_curve": pnl_points[-500:],
-                            "params": (run.meta or {}).get("params_json") or (run.meta or {}),
+                            "params": (run.meta or {}).get("params_json")
+                            or (run.meta or {}),
                         }
                     )
                     positions_n = len(positions)
@@ -153,7 +154,9 @@ async def _apply_resume_to_worker(worker) -> dict[str, Any]:
 
     # If not applied, try audit log replay
     if not applied:
-        audit_path = _env_path("AUDIT_LOG_PATH", str(Path("./data/paper_events.jsonl").resolve()))
+        audit_path = _env_path(
+            "AUDIT_LOG_PATH", str(Path("./data/paper_events.jsonl").resolve())
+        )
         audit = AuditLog(audit_path)
         latest_positions: dict[str, dict[str, Any]] = {}
         equity_curve: list[dict[str, Any]] = []
@@ -186,11 +189,11 @@ async def _apply_resume_to_worker(worker) -> dict[str, Any]:
             )
             positions_n = len(latest_positions)
         if bandit_payload and hasattr(worker.allocator, "set_state"):
-            await worker.allocator.set_state(
-                {"arms": bandit_payload}
-            ) if asyncio.iscoroutinefunction(
-                worker.allocator.set_state
-            ) else worker.allocator.set_state({"arms": bandit_payload})
+            (
+                await worker.allocator.set_state({"arms": bandit_payload})
+                if asyncio.iscoroutinefunction(worker.allocator.set_state)
+                else worker.allocator.set_state({"arms": bandit_payload})
+            )
             arms_k = len(bandit_payload or {})
         if model_bytes and hasattr(worker.learner, "set_state"):
             worker.learner.set_state(model_bytes, learner_meta or {})

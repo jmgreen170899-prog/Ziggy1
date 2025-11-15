@@ -132,7 +132,9 @@ class SlippageModel:
         base_slippage = (self.base_bps / 10000) * price * abs(quantity)
 
         # Market impact based on size and volatility
-        market_impact = self.impact_factor * volatility * np.sqrt(abs(quantity)) * price * 0.01
+        market_impact = (
+            self.impact_factor * volatility * np.sqrt(abs(quantity)) * price * 0.01
+        )
 
         return base_slippage + market_impact
 
@@ -140,7 +142,9 @@ class SlippageModel:
 class FeeModel:
     """Models trading fees and commissions."""
 
-    def __init__(self, per_share: float = 0.005, min_fee: float = 1.0, max_fee: float = 10.0):
+    def __init__(
+        self, per_share: float = 0.005, min_fee: float = 1.0, max_fee: float = 10.0
+    ):
         """
         Initialize fee model.
 
@@ -171,7 +175,9 @@ class BorrowModel:
         """
         self.base_rate = base_rate
 
-    def calculate_borrow_cost(self, symbol: str, quantity: float, price: float, days: int) -> float:
+    def calculate_borrow_cost(
+        self, symbol: str, quantity: float, price: float, days: int
+    ) -> float:
         """
         Calculate borrowing cost for short position.
 
@@ -211,7 +217,11 @@ class BacktestEngine:
         self.equity_curve: list[dict[str, Any]] = []
 
     def run_backtest(
-        self, universe: list[str], start_date: str, end_date: str, initial_capital: float = 100000.0
+        self,
+        universe: list[str],
+        start_date: str,
+        end_date: str,
+        initial_capital: float = 100000.0,
     ) -> BacktestResults:
         """
         Run complete backtest.
@@ -273,7 +283,9 @@ class BacktestEngine:
                 if symbol not in positions:
                     if p_up > 0.6 and confidence > 0.7:
                         # Long entry
-                        quantity = int(current_capital * 0.02 / 100)  # 2% position, $100/share
+                        quantity = int(
+                            current_capital * 0.02 / 100
+                        )  # 2% position, $100/share
                         price = 100.0 + np.random.normal(0, 2)  # Mock price
 
                         trade = self._open_position(
@@ -292,7 +304,9 @@ class BacktestEngine:
 
                     elif p_up < 0.4 and confidence > 0.7:
                         # Short entry
-                        quantity = -int(current_capital * 0.02 / 100)  # 2% position short
+                        quantity = -int(
+                            current_capital * 0.02 / 100
+                        )  # 2% position short
                         price = 100.0 + np.random.normal(0, 2)  # Mock price
 
                         trade = self._open_position(
@@ -355,11 +369,15 @@ class BacktestEngine:
         for symbol, position in positions.items():
             trade = position["trade"]
             exit_price = 100.0 + np.random.normal(0, 2)  # Mock exit price
-            completed_trade = self._close_position(trade, end_dt, exit_price, "End of backtest")
+            completed_trade = self._close_position(
+                trade, end_dt, exit_price, "End of backtest"
+            )
             self.trades.append(completed_trade)
 
         # Calculate comprehensive results
-        return self._calculate_results(universe, start_date, end_date, total_days, initial_capital)
+        return self._calculate_results(
+            universe, start_date, end_date, total_days, initial_capital
+        )
 
     def _open_position(
         self,
@@ -377,7 +395,9 @@ class BacktestEngine:
 
         # Calculate costs
         volatility = 0.2  # Mock volatility
-        slippage = self.slippage_model.calculate_slippage(symbol, quantity, price, volatility)
+        slippage = self.slippage_model.calculate_slippage(
+            symbol, quantity, price, volatility
+        )
         fees = self.fee_model.calculate_fee(quantity)
 
         return Trade(
@@ -412,7 +432,10 @@ class BacktestEngine:
         # Calculate borrow costs for short positions
         days_held = (exit_time - trade.entry_time).days
         borrow_cost = self.borrow_model.calculate_borrow_cost(
-            trade.symbol, trade.quantity, (trade.entry_price + exit_price) / 2, days_held
+            trade.symbol,
+            trade.quantity,
+            (trade.entry_price + exit_price) / 2,
+            days_held,
         )
 
         # Calculate P&L
@@ -421,7 +444,9 @@ class BacktestEngine:
         else:  # short
             gross_pnl = abs(trade.quantity) * (trade.entry_price - exit_price)
 
-        total_costs = trade.fees + trade.slippage + exit_fees + exit_slippage + borrow_cost
+        total_costs = (
+            trade.fees + trade.slippage + exit_fees + exit_slippage + borrow_cost
+        )
         net_pnl = gross_pnl - total_costs
 
         # Update trade
@@ -483,7 +508,9 @@ class BacktestEngine:
         total_fees = sum(t.fees for t in self.trades)
         total_slippage = sum(t.slippage for t in self.trades)
         gross_pnl = total_pnl + total_fees + total_slippage
-        cost_ratio = (total_fees + total_slippage) / abs(gross_pnl) if gross_pnl != 0 else 0
+        cost_ratio = (
+            (total_fees + total_slippage) / abs(gross_pnl) if gross_pnl != 0 else 0
+        )
 
         # Regime performance
         regime_performance = {}
@@ -567,8 +594,12 @@ def run_backtest(universe: list[str], start: str, end: str) -> dict[str, Any]:
 
     # Convert datetime objects to strings
     for trade in results_dict["trades"]:
-        trade["entry_time"] = trade["entry_time"].isoformat() if trade["entry_time"] else None
-        trade["exit_time"] = trade["exit_time"].isoformat() if trade["exit_time"] else None
+        trade["entry_time"] = (
+            trade["entry_time"].isoformat() if trade["entry_time"] else None
+        )
+        trade["exit_time"] = (
+            trade["exit_time"].isoformat() if trade["exit_time"] else None
+        )
 
     return results_dict
 
@@ -576,7 +607,9 @@ def run_backtest(universe: list[str], start: str, end: str) -> dict[str, Any]:
 def main():
     """CLI entry point for backtesting."""
     parser = argparse.ArgumentParser(description="ZiggyAI Backtesting Engine")
-    parser.add_argument("--universe", required=True, help="Comma-separated list of symbols")
+    parser.add_argument(
+        "--universe", required=True, help="Comma-separated list of symbols"
+    )
     parser.add_argument("--start", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="End date (YYYY-MM-DD)")
     parser.add_argument("--output", help="Output file for results (JSON)")

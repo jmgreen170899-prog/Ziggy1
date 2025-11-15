@@ -101,7 +101,9 @@ def authenticate_user(username: str, password: str) -> UserInDB | None:
     return user
 
 
-def create_access_token(data: dict[str, Any], expires_delta: timedelta | None = None) -> str:
+def create_access_token(
+    data: dict[str, Any], expires_delta: timedelta | None = None
+) -> str:
     """Create JWT access token"""
     to_encode = data.copy()
 
@@ -154,7 +156,9 @@ async def get_current_user(
     return User(**user.model_dump())
 
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
+async def get_current_active_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
     """Get current active user (raises exception if not authenticated)"""
     if not current_user:
         raise HTTPException(
@@ -163,15 +167,22 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
             headers={"WWW-Authenticate": "Bearer"},
         )
     if current_user.disabled:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
+        )
     return current_user
 
 
 def require_scope(required_scope: str):
     """Dependency factory for scope-based authorization"""
 
-    async def scope_checker(current_user: User = Depends(get_current_active_user)) -> User:
-        if required_scope not in current_user.scopes and "admin" not in current_user.scopes:
+    async def scope_checker(
+        current_user: User = Depends(get_current_active_user),
+    ) -> User:
+        if (
+            required_scope not in current_user.scopes
+            and "admin" not in current_user.scopes
+        ):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Operation requires '{required_scope}' scope",
@@ -183,12 +194,17 @@ def require_scope(required_scope: str):
 
 # API Key authentication
 API_KEYS = {
-    "ziggy-admin-key": {"name": "Admin API Key", "scopes": ["admin", "trading", "market_data"]},
+    "ziggy-admin-key": {
+        "name": "Admin API Key",
+        "scopes": ["admin", "trading", "market_data"],
+    },
     "ziggy-readonly-key": {"name": "Read-Only API Key", "scopes": ["read_only"]},
 }
 
 
-async def get_api_key_user(api_key: str | None = Depends(api_key_header)) -> User | None:
+async def get_api_key_user(
+    api_key: str | None = Depends(api_key_header),
+) -> User | None:
     """Authenticate using API key"""
     if not api_key:
         return None
@@ -198,7 +214,9 @@ async def get_api_key_user(api_key: str | None = Depends(api_key_header)) -> Use
         return None
 
     return User(
-        username=f"api_key_{api_key[:8]}", full_name=key_info["name"], scopes=key_info["scopes"]
+        username=f"api_key_{api_key[:8]}",
+        full_name=key_info["name"],
+        scopes=key_info["scopes"],
     )
 
 
@@ -221,7 +239,9 @@ async def get_current_active_user_flexible(
             headers={"WWW-Authenticate": "Bearer"},
         )
     if current_user.disabled:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
+        )
     return current_user
 
 

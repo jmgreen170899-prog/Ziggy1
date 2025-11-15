@@ -12,7 +12,12 @@ This package provides a complete autonomous paper trading system including:
 
 from .allocator import BanditAlgorithm, BanditAllocator
 from .engine import PaperEngine, RunParams, RunStats, Signal
-from .features import FeatureComputer, PriceData, compute_features_async, feature_computer
+from .features import (
+    FeatureComputer,
+    PriceData,
+    compute_features_async,
+    feature_computer,
+)
 from .labels import LabelGenerator, TradeLabel, label_generator
 from .learner import OnlineLearner, PredictionResult, TrainingBatch
 from .theories import MarketFeatures, Theory, theory_registry

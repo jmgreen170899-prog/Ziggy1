@@ -40,7 +40,9 @@ class TradingSettings:
     IB_CLIENT_ID: int = _int("IB_CLIENT_ID", 7)
 
     # Alpaca
-    ALPACA_BASE_URL: str = os.getenv("ALPACA_BASE_URL", "https://paper-api.alpaca.markets")
+    ALPACA_BASE_URL: str = os.getenv(
+        "ALPACA_BASE_URL", "https://paper-api.alpaca.markets"
+    )
     ALPACA_KEY_ID: str | None = os.getenv("ALPACA_KEY_ID")
     ALPACA_SECRET: str | None = os.getenv("ALPACA_SECRET")
 

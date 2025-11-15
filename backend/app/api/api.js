@@ -2,10 +2,14 @@
 // Smart fetch wrapper that honors VITE_API_BASE, discovers /api prefix,
 // retries common aliases, and caches results in localStorage.
 
-const RAW_BASE = (import.meta?.env?.VITE_API_BASE ?? "").trim().replace(/\/+$/, "");
+const RAW_BASE = (import.meta?.env?.VITE_API_BASE ?? "")
+  .trim()
+  .replace(/\/+$/, "");
 const BASE = RAW_BASE; // if "", requests are same-origin
 const DEBUG = String(import.meta?.env?.VITE_DEBUG_API ?? "0") === "1";
-const DEFAULT_TIMEOUT_MS = Number(import.meta?.env?.VITE_API_TIMEOUT_MS ?? 10000);
+const DEFAULT_TIMEOUT_MS = Number(
+  import.meta?.env?.VITE_API_TIMEOUT_MS ?? 10000,
+);
 const FORCED_PREFIX = (import.meta?.env?.VITE_API_PREFIX ?? "").trim(); // "", "/api", or ""
 
 // NEW: dedupe/debounce defaults (non-breaking; opt-out via opts.dedupe=false)
@@ -18,7 +22,7 @@ let discovering; // in-flight discovery promise
 // Aliases for historically renamed routes (retry on 404)
 const STATIC_ALIASES = {
   "/market/risk-lite": "/market-risk-lite", // old → new
-  "/quotes": "/crypto/quotes",              // legacy frontend → new backend
+  "/quotes": "/crypto/quotes", // legacy frontend → new backend
 
   // QUICK ACTIONS ++ handy fallbacks (app may call lhs; backend might expose rhs)
   "/trading/backtest": "/backtest",
@@ -62,14 +66,18 @@ function withBase(path, prefix = "") {
 }
 
 function isJsonResponse(res) {
-  return (res.headers.get("content-type") || "").toLowerCase().includes("application/json");
+  return (res.headers.get("content-type") || "")
+    .toLowerCase()
+    .includes("application/json");
 }
 
 async function discoverPrefix() {
   // 0) Respect forced prefix when provided
   if (FORCED_PREFIX === "" || FORCED_PREFIX === "/api") {
     cachedPrefix = FORCED_PREFIX;
-    try { localStorage.setItem("ziggy_api_prefix", FORCED_PREFIX); } catch {}
+    try {
+      localStorage.setItem("ziggy_api_prefix", FORCED_PREFIX);
+    } catch {}
     DEBUG && console.debug("[api] prefix forced:", FORCED_PREFIX || "''");
     return cachedPrefix;
   }
@@ -84,13 +92,25 @@ async function discoverPrefix() {
       if (r.ok) {
         let healthy = false;
         if (isJsonResponse(r)) {
-          const j = await r.clone().json().catch(() => ({}));
+          const j = await r
+            .clone()
+            .json()
+            .catch(() => ({}));
           healthy =
             j?.fastapi === "ok" ||
             j?.ok?.fastapi === "ok" ||
-            Object.values(j || {}).some((v) => String(v).toLowerCase() === "ok");
+            Object.values(j || {}).some(
+              (v) => String(v).toLowerCase() === "ok",
+            );
         } else {
-          const t = (await r.clone().text().catch(() => "")).trim().toLowerCase();
+          const t = (
+            await r
+              .clone()
+              .text()
+              .catch(() => "")
+          )
+            .trim()
+            .toLowerCase();
           healthy = t === "ok";
         }
         if (healthy) {
@@ -108,13 +128,25 @@ async function discoverPrefix() {
       if (r.ok) {
         let healthy = false;
         if (isJsonResponse(r)) {
-          const j = await r.clone().json().catch(() => ({}));
+          const j = await r
+            .clone()
+            .json()
+            .catch(() => ({}));
           healthy =
             j?.fastapi === "ok" ||
             j?.ok?.fastapi === "ok" ||
-            Object.values(j || {}).some((v) => String(v).toLowerCase() === "ok");
+            Object.values(j || {}).some(
+              (v) => String(v).toLowerCase() === "ok",
+            );
         } else {
-          const t = (await r.clone().text().catch(() => "")).trim().toLowerCase();
+          const t = (
+            await r
+              .clone()
+              .text()
+              .catch(() => "")
+          )
+            .trim()
+            .toLowerCase();
           healthy = t === "ok";
         }
         if (healthy) {
@@ -148,7 +180,9 @@ function learnAlias(from, to) {
   const dst = normPath(to);
   if (src === dst) return;
   dynamicAliases[src] = dst;
-  try { localStorage.setItem(LS_ALIASES_KEY, JSON.stringify(dynamicAliases)); } catch {}
+  try {
+    localStorage.setItem(LS_ALIASES_KEY, JSON.stringify(dynamicAliases));
+  } catch {}
   DEBUG && console.debug("[api] learned alias:", src, "→", dst);
 }
 
@@ -169,10 +203,14 @@ function withTimeout(signal, ms = DEFAULT_TIMEOUT_MS) {
 
 function buildUrlWithQuery(path, query) {
   if (!query) return path;
-  const url = new URL(withBase(path, cachedPrefix || ""), ABSOLUTE_RE.test(BASE) ? undefined : window.location.origin);
+  const url = new URL(
+    withBase(path, cachedPrefix || ""),
+    ABSOLUTE_RE.test(BASE) ? undefined : window.location.origin,
+  );
   Object.entries(query).forEach(([k, v]) => {
     if (v === undefined || v === null) return;
-    if (Array.isArray(v)) v.forEach((x) => url.searchParams.append(k, String(x)));
+    if (Array.isArray(v))
+      v.forEach((x) => url.searchParams.append(k, String(x)));
     else url.searchParams.set(k, String(v));
   });
   // Return pathname+search relative to base to keep fetch same-origin when BASE=""
@@ -205,7 +243,7 @@ function maybeEmitScanStatus(path, data) {
     const isScanEndpoint =
       p === "/trade/scan/status" ||
       p === "/trade/scan/enable" ||
-      p === "/trade/scan" ||             // future-proof
+      p === "/trade/scan" || // future-proof
       p.endsWith("/trade/scan/status") ||
       p.endsWith("/trade/scan/enable");
 
@@ -216,10 +254,15 @@ function maybeEmitScanStatus(path, data) {
     // { scan: { enabled, next, state } }
     // { next_run, next_at, schedule: { next }, ... }
     const root = data.scan && typeof data.scan === "object" ? data.scan : data;
-    const enabled = typeof root.enabled === "boolean" ? root.enabled : undefined;
+    const enabled =
+      typeof root.enabled === "boolean" ? root.enabled : undefined;
     const state =
       root.state ??
-      (enabled === true ? "enabled" : enabled === false ? "disabled" : undefined);
+      (enabled === true
+        ? "enabled"
+        : enabled === false
+          ? "disabled"
+          : undefined);
 
     const nextRaw =
       root.next ??
@@ -244,10 +287,14 @@ function maybeEmitScanStatus(path, data) {
           scanState: g.status.scanState,
           scanNext: g.status.scanNext,
         },
-      })
+      }),
     );
 
-    DEBUG && console.debug("[api] scan status", { state: g.status.scanState, next: g.status.scanNext });
+    DEBUG &&
+      console.debug("[api] scan status", {
+        state: g.status.scanState,
+        next: g.status.scanNext,
+      });
   } catch (e) {
     // never throw
     DEBUG && console.warn("[api] scan status emit failed:", e);
@@ -268,7 +315,9 @@ function emitRefreshing() {
     const g = (window.__ziggyApi = window.__ziggyApi || {});
     g.status = { ...(g.status || {}), refreshing: activeDataRequests > 0 };
     window.dispatchEvent(
-      new CustomEvent("ziggy:status", { detail: { refreshing: g.status.refreshing } })
+      new CustomEvent("ziggy:status", {
+        detail: { refreshing: g.status.refreshing },
+      }),
     );
   } catch {}
 }
@@ -333,7 +382,9 @@ async function coreFetch(path, opts = {}, expectJson = true) {
 
   const method = (rest.method || "GET").toUpperCase();
   const wantDedupe = dedupe !== false && method === "GET";
-  const windowMs = Number.isFinite(dedupeMs) ? Number(dedupeMs) : DEFAULT_DEDUPE_MS;
+  const windowMs = Number.isFinite(dedupeMs)
+    ? Number(dedupeMs)
+    : DEFAULT_DEDUPE_MS;
 
   // Short debounce cache: if we fetched this very recently, return cached value
   const cacheKey = keyFor(method, url, null);
@@ -385,7 +436,10 @@ async function coreFetch(path, opts = {}, expectJson = true) {
 
     // If we got a 404 and we assumed "", try /api once
     if (res.status === 404 && prefix === "") {
-      const url2 = withBase(p + (query ? "?" + new URLSearchParams(query).toString() : ""), "/api");
+      const url2 = withBase(
+        p + (query ? "?" + new URLSearchParams(query).toString() : ""),
+        "/api",
+      );
       DEBUG && console.debug("[api] 404 retry with /api:", url2);
       try {
         const res2 = await fetch(url2, {
@@ -407,8 +461,19 @@ async function coreFetch(path, opts = {}, expectJson = true) {
     if (res.status === 404) {
       const alias = resolveAlias(p);
       if (alias) {
-        const aliasedUrl = withBase(alias + (query ? "?" + new URLSearchParams(query).toString() : ""), cachedPrefix || "");
-        DEBUG && console.debug("[api] 404 alias retry:", p, "→", alias, "|", aliasedUrl);
+        const aliasedUrl = withBase(
+          alias + (query ? "?" + new URLSearchParams(query).toString() : ""),
+          cachedPrefix || "",
+        );
+        DEBUG &&
+          console.debug(
+            "[api] 404 alias retry:",
+            p,
+            "→",
+            alias,
+            "|",
+            aliasedUrl,
+          );
         const res3 = await fetch(aliasedUrl, {
           ...rest,
           headers,
@@ -428,7 +493,9 @@ async function coreFetch(path, opts = {}, expectJson = true) {
         emitRefreshing();
       }
       let bodyText = "";
-      try { bodyText = await res.text(); } catch {}
+      try {
+        bodyText = await res.text();
+      } catch {}
       const err = new Error(`HTTP ${res.status} ${res.statusText}`);
       err.status = res.status;
       err.statusText = res.statusText;
@@ -457,7 +524,10 @@ async function coreFetch(path, opts = {}, expectJson = true) {
         emitRefreshing();
       }
       if (wantDedupe && windowMs > 0) {
-        shortCache.set(cacheKey, { expires: Date.now() + windowMs, data: null });
+        shortCache.set(cacheKey, {
+          expires: Date.now() + windowMs,
+          data: null,
+        });
       }
       return null;
     }
@@ -467,7 +537,11 @@ async function coreFetch(path, opts = {}, expectJson = true) {
       data = await res.json();
     } catch (e) {
       const txt = await res.text().catch(() => "");
-      try { data = JSON.parse(txt); } catch { data = txt; }
+      try {
+        data = JSON.parse(txt);
+      } catch {
+        data = txt;
+      }
     } finally {
       if (isDataEndpoint(p)) {
         activeDataRequests = Math.max(0, activeDataRequests - 1);
@@ -476,7 +550,9 @@ async function coreFetch(path, opts = {}, expectJson = true) {
     }
 
     // Side-effect: if this is a scan endpoint, publish scanState/scanNext
-    try { maybeEmitScanStatus(p, data); } catch {}
+    try {
+      maybeEmitScanStatus(p, data);
+    } catch {}
 
     // Store short debounce cache for identical GETs
     if (wantDedupe && windowMs > 0) {
@@ -509,21 +585,32 @@ api.text = async function apiText(path, opts = {}) {
 
 /** Convenience HTTP helpers */
 api.get = (path, opts = {}) => api(path, { ...opts, method: "GET" });
-api.post = (path, body, opts = {}) => api(path, { ...opts, method: "POST", body });
-api.put = (path, body, opts = {}) => api(path, { ...opts, method: "PUT", body });
-api.patch = (path, body, opts = {}) => api(path, { ...opts, method: "PATCH", body });
+api.post = (path, body, opts = {}) =>
+  api(path, { ...opts, method: "POST", body });
+api.put = (path, body, opts = {}) =>
+  api(path, { ...opts, method: "PUT", body });
+api.patch = (path, body, opts = {}) =>
+  api(path, { ...opts, method: "PATCH", body });
 api.delete = (path, opts = {}) => api(path, { ...opts, method: "DELETE" });
 
 /** Query helper: api.getQ("/market/scan", { symbols: ["AAPL","TSLA"] }) */
-api.getQ = (path, query, opts = {}) => api(path, { ...opts, method: "GET", query });
+api.getQ = (path, query, opts = {}) =>
+  api(path, { ...opts, method: "GET", query });
 
 /** QUICK ACTIONS ++: simple multi-path fallbacks */
 api.tryPost = async (paths = [], jsonBody = {}, opts = {}) => {
   let lastErr;
   for (const p of paths) {
     try {
-      return await api(p, { ...opts, method: "POST", query: opts.query, json: jsonBody });
-    } catch (e) { lastErr = e; }
+      return await api(p, {
+        ...opts,
+        method: "POST",
+        query: opts.query,
+        json: jsonBody,
+      });
+    } catch (e) {
+      lastErr = e;
+    }
   }
   throw lastErr || new Error("All POST fallbacks failed");
 };
@@ -532,7 +619,9 @@ api.tryGet = async (paths = [], query = null, opts = {}) => {
   for (const p of paths) {
     try {
       return await api(p, { ...opts, method: "GET", query });
-    } catch (e) { lastErr = e; }
+    } catch (e) {
+      lastErr = e;
+    }
   }
   throw lastErr || new Error("All GET fallbacks failed");
 };
@@ -545,11 +634,12 @@ api.tryGet = async (paths = [], query = null, opts = {}) => {
 api.trade = api.trade || {};
 api.trade.paperMarket = async function paperMarket(jsonBody = {}, opts = {}) {
   const headers = { ...(opts.headers || {}) };
-  if (opts.idempotencyKey) headers["X-Idempotency-Key"] = String(opts.idempotencyKey);
+  if (opts.idempotencyKey)
+    headers["X-Idempotency-Key"] = String(opts.idempotencyKey);
   return api.tryPost(
     ["/trade/market", "/trading/market", "/paper/market"],
     jsonBody,
-    { ...opts, headers }
+    { ...opts, headers },
   );
 };
 
@@ -558,7 +648,7 @@ api.trade.backtest = async function backtest(jsonBody = {}, opts = {}) {
   return api.tryPost(
     ["/trading/backtest", "/backtest", "/strategy/backtest"],
     jsonBody,
-    opts
+    opts,
   );
 };
 
@@ -572,7 +662,7 @@ api.news.sentiment = async function newsSentiment(ticker, opts = {}) {
   return api.tryGet(
     ["/news/sentiment", "/news/nlp", "/news/headwind", "/sentiment/news"],
     q,
-    opts
+    opts,
   );
 };
 /* ============================================================================ */
@@ -582,7 +672,9 @@ api.base = BASE;
 api.getPrefix = async () => discoverPrefix();
 api.resetDiscovery = () => {
   cachedPrefix = null;
-  try { localStorage.removeItem("ziggy_api_prefix"); } catch {}
+  try {
+    localStorage.removeItem("ziggy_api_prefix");
+  } catch {}
 };
 
 /** Optional: expose to window for console poking */

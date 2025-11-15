@@ -81,6 +81,7 @@ curl http://localhost:8000/paper/health
 #### Troubleshooting Unhealthy States
 
 **Strict Isolation Failed (HTTP 500)**
+
 ```json
 {
   "strict_isolation": false,
@@ -89,19 +90,23 @@ curl http://localhost:8000/paper/health
   "reason": "strict_isolation_failed"
 }
 ```
+
 **Solution**: Run `.\scripts\dev_clean_env.ps1` and restart backend
 
 **No Recent Trades (HTTP 503)**
+
 ```json
 {
   "recent_trades_5m": 0,
-  "status": "unhealthy", 
+  "status": "unhealthy",
   "reason": "no_recent_trades"
 }
 ```
+
 **Solution**: Wait for autonomous trading to generate signals, or check theory allocation
 
 **Database Connectivity Issues**
+
 ```json
 {
   "db_ok": false,
@@ -109,6 +114,7 @@ curl http://localhost:8000/paper/health
   "status": "unhealthy"
 }
 ```
+
 **Solution**: Run `.\scripts\dev_db_check.ps1` to start PostgreSQL
 
 ### Paper Trading Architecture

@@ -24,7 +24,11 @@ def _now() -> float:
 
 def _is_prod_trading_enabled() -> bool:
     env = (os.getenv("APP_ENV") or os.getenv("ENV") or "development").strip().lower()
-    trading = (os.getenv("TRADING_ENABLED") or "false").strip().lower() in {"1", "true", "yes"}
+    trading = (os.getenv("TRADING_ENABLED") or "false").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
     return env == "production" and trading
 
 
@@ -72,7 +76,9 @@ class ConnectionManager:
             q = asyncio.Queue(maxsize=maxsize)
             self._queues[channel] = q
             # Start consumer for this channel
-            self._consumers[channel] = asyncio.create_task(self._consume_channel(channel))
+            self._consumers[channel] = asyncio.create_task(
+                self._consume_channel(channel)
+            )
         return q
 
     def _bump_metric(self, channel: str, key: str, delta: float = 1.0):
@@ -101,7 +107,10 @@ class ConnectionManager:
 
     # ------------- public API -------------
     async def connect(
-        self, websocket: WebSocket, connection_type: str, metadata: dict[str, Any] | None = None
+        self,
+        websocket: WebSocket,
+        connection_type: str,
+        metadata: dict[str, Any] | None = None,
     ):
         """Accept a new WebSocket connection and register under channel."""
         await websocket.accept()
@@ -206,10 +215,13 @@ class ConnectionManager:
     async def send_personal_message(self, message: str, websocket: WebSocket):
         """Send message to specific connection with timeout and pruning on failure."""
         try:
-            await asyncio.wait_for(websocket.send_text(message), timeout=TIMEOUTS["websocket_send"])
+            await asyncio.wait_for(
+                websocket.send_text(message), timeout=TIMEOUTS["websocket_send"]
+            )
         except Exception as e:
             logger.warning(
-                "Failed to send personal message", extra={"error": repr(e), "ws_id": id(websocket)}
+                "Failed to send personal message",
+                extra={"error": repr(e), "ws_id": id(websocket)},
             )
             self.disconnect(websocket)
 
@@ -296,14 +308,17 @@ class ConnectionManager:
 
                 # Mark task done and update queue metric
                 self._queues[channel].task_done()
-                self._set_metric(channel, "queue_len", float(self._queues[channel].qsize()))
+                self._set_metric(
+                    channel, "queue_len", float(self._queues[channel].qsize())
+                )
 
             except asyncio.CancelledError:
                 logger.info("Broadcast consumer cancelled", extra={"channel": channel})
                 break
             except Exception as e:
                 logger.error(
-                    "Broadcast consumer error", extra={"channel": channel, "error": repr(e)}
+                    "Broadcast consumer error",
+                    extra={"channel": channel, "error": repr(e)},
                 )
                 await asyncio.sleep(0.25)
 
@@ -374,11 +389,13 @@ class ConnectionManager:
             # In production with trading enabled elevate, else debug
             if _is_prod_trading_enabled():
                 logger.warning(
-                    "Alert monitor update failed", extra={"symbol": symbol, "error": repr(e)}
+                    "Alert monitor update failed",
+                    extra={"symbol": symbol, "error": repr(e)},
                 )
             else:
                 logger.debug(
-                    "Alert monitor update failed", extra={"symbol": symbol, "error": repr(e)}
+                    "Alert monitor update failed",
+                    extra={"symbol": symbol, "error": repr(e)},
                 )
 
     async def broadcast_trading_signal(self, signal: dict[str, Any]):
@@ -475,7 +492,9 @@ class MarketDataStreamer:
                             # Simple upstream backpressure: skip broadcast when queue is high
                             try:
                                 stats = self.connection_manager.get_connection_stats()
-                                ch_stats = stats.get("per_channel", {}).get("market_data", {})
+                                ch_stats = stats.get("per_channel", {}).get(
+                                    "market_data", {}
+                                )
                                 qlen = int(ch_stats.get("queue_len", 0))
                                 maxsize = QUEUE_LIMITS["websocket_default"]
                                 if maxsize > 0 and qlen / maxsize >= 0.8:
@@ -518,13 +537,18 @@ class MarketDataStreamer:
         """Enhance real-time market data with Ziggy's brain intelligence"""
         try:
             # Import brain enhancement system
-            from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+            from app.services.market_brain.simple_data_hub import (
+                DataSource,
+                enhance_market_data,
+            )
 
             # Prepare data for brain enhancement
             symbol_data = {symbol: market_data}
 
             # Route through Ziggy's brain for enhancement
-            enhanced = enhance_market_data(symbol_data, DataSource.OVERVIEW, symbols=[symbol])
+            enhanced = enhance_market_data(
+                symbol_data, DataSource.OVERVIEW, symbols=[symbol]
+            )
 
             # Extract enhanced data for the symbol
             if isinstance(enhanced, dict):
@@ -547,7 +571,9 @@ class MarketDataStreamer:
                         {
                             "brain_features": symbol_enhanced.get("features", {}),
                             "regime_context": symbol_enhanced.get("regime_context", {}),
-                            "confidence_score": symbol_enhanced.get("confidence_score", 0.5),
+                            "confidence_score": symbol_enhanced.get(
+                                "confidence_score", 0.5
+                            ),
                         }
                     )
 
@@ -560,7 +586,9 @@ class MarketDataStreamer:
                 return market_data
 
         except Exception as e:
-            logger.warning(f"Brain enhancement failed for {symbol}: {e}, using raw data")
+            logger.warning(
+                f"Brain enhancement failed for {symbol}: {e}, using raw data"
+            )
             # Fallback: return original data with brain attempt marker
             market_data["brain_enhanced"] = False
             market_data["brain_error"] = str(e)
@@ -591,7 +619,9 @@ class MarketDataStreamer:
             try:
 
                 async def _fetch_last_two() -> tuple[float | None, float | None]:
-                    data = await provider.fetch_ohlc([symbol], period_days=3, adjusted=True)
+                    data = await provider.fetch_ohlc(
+                        [symbol], period_days=3, adjusted=True
+                    )
                     # Some providers may return (data_dict, source_map)
                     if isinstance(data, tuple) and len(data) >= 1:
                         data = data[0]
@@ -609,7 +639,9 @@ class MarketDataStreamer:
                         )
                         return last, None
                     prev = (
-                        float(tail.iloc[0]["Close"]) if tail.iloc[0]["Close"] is not None else None
+                        float(tail.iloc[0]["Close"])
+                        if tail.iloc[0]["Close"] is not None
+                        else None
                     )
                     last = (
                         float(tail.iloc[-1]["Close"])
@@ -665,16 +697,22 @@ class MarketDataStreamer:
 
                 ticker = yf.Ticker(symbol)
                 info = ticker.info
-                current_price = info.get("currentPrice") or info.get("regularMarketPrice")
+                current_price = info.get("currentPrice") or info.get(
+                    "regularMarketPrice"
+                )
                 if not current_price:
                     hist = ticker.history(period="1d", interval="1m")
                     if not hist.empty:
                         current_price = float(hist["Close"].iloc[-1])
                 if not current_price:
                     return None
-                previous_close = info.get("previousClose") or info.get("regularMarketPreviousClose")
+                previous_close = info.get("previousClose") or info.get(
+                    "regularMarketPreviousClose"
+                )
                 change = (current_price - previous_close) if previous_close else 0.0
-                change_percent = ((change / previous_close) * 100) if previous_close else 0.0
+                change_percent = (
+                    ((change / previous_close) * 100) if previous_close else 0.0
+                )
                 volume = info.get("regularMarketVolume") or info.get("volume", 0)
                 market_data = {
                     "symbol": symbol,

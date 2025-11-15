@@ -7,7 +7,10 @@ from pathlib import Path
 from typing import Literal
 
 from pydantic import model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict  # pip install pydantic-settings
+from pydantic_settings import (
+    BaseSettings,
+    SettingsConfigDict,
+)  # pip install pydantic-settings
 
 
 # If you don't have it yet:
@@ -34,7 +37,7 @@ class Settings(BaseSettings):
 
     # ---- Development Configuration ----
     SEED_DEV_USER: bool = False
-    
+
     # ---- Demo Mode ----
     # Enable demo mode for safe demonstrations with deterministic data
     DEMO_MODE: bool = False
@@ -91,7 +94,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "ziggy-secret-change-in-production"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
-    
+
     # ---- Authentication Configuration ----
     # Enable/disable authentication (disabled by default in development)
     ENABLE_AUTH: bool = False
@@ -190,7 +193,8 @@ class Settings(BaseSettings):
             missing = [
                 k
                 for k, v in required_for_prod.items()
-                if not v or (k == "SECRET_KEY" and v == "ziggy-secret-change-in-production")
+                if not v
+                or (k == "SECRET_KEY" and v == "ziggy-secret-change-in-production")
             ]
 
             if missing:
@@ -229,7 +233,11 @@ class Settings(BaseSettings):
     @property
     def cors_origins(self) -> list[str]:
         """Parse CORS origins into list"""
-        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+        return [
+            origin.strip()
+            for origin in self.ALLOWED_ORIGINS.split(",")
+            if origin.strip()
+        ]
 
     @property
     def has_polygon_key(self) -> bool:
@@ -243,10 +251,18 @@ class Settings(BaseSettings):
     def provider_chains(self) -> dict[str, list[str]]:
         """Parse provider chains into structured format"""
         return {
-            "prices": [p.strip().lower() for p in self.PROVIDERS_PRICES.split(",") if p.strip()],
-            "quotes": [p.strip().lower() for p in self.PROVIDERS_QUOTES.split(",") if p.strip()],
-            "crypto": [p.strip().lower() for p in self.PROVIDERS_CRYPTO.split(",") if p.strip()],
-            "news": [p.strip().lower() for p in self.PROVIDERS_NEWS.split(",") if p.strip()],
+            "prices": [
+                p.strip().lower() for p in self.PROVIDERS_PRICES.split(",") if p.strip()
+            ],
+            "quotes": [
+                p.strip().lower() for p in self.PROVIDERS_QUOTES.split(",") if p.strip()
+            ],
+            "crypto": [
+                p.strip().lower() for p in self.PROVIDERS_CRYPTO.split(",") if p.strip()
+            ],
+            "news": [
+                p.strip().lower() for p in self.PROVIDERS_NEWS.split(",") if p.strip()
+            ],
         }
 
     def get_ws_queue_maxsize(self) -> int:

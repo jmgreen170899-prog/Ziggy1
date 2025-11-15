@@ -1,22 +1,26 @@
 # Rate Limiting Configuration for ZiggyAI
 
 ## Overview
+
 Rate limiting implementation to protect the ZiggyAI API from abuse and ensure fair usage.
 
 ## Backend Rate Limiting Implementation
 
 ### Install Required Package
+
 ```bash
 pip install slowapi
 ```
 
 ### Add to requirements.txt
+
 ```
 slowapi==0.1.9
 redis==4.5.5
 ```
 
 ### Rate Limiting Middleware (backend/app/middleware/rate_limit.py)
+
 ```python
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -37,7 +41,7 @@ limiter = Limiter(
 def setup_rate_limiting(app: FastAPI):
     app.state.limiter = limiter
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-    
+
     # Custom rate limit exceeded handler
     @app.exception_handler(RateLimitExceeded)
     async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
@@ -49,6 +53,7 @@ def setup_rate_limiting(app: FastAPI):
 ```
 
 ### Apply Rate Limits to Routes (backend/app/api/routes_signals.py)
+
 ```python
 from fastapi import Depends
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -76,6 +81,7 @@ async def get_market_data(request: Request):
 ```
 
 ### API Key Based Rate Limiting
+
 ```python
 from fastapi import Header, HTTPException
 import hashlib
@@ -83,7 +89,7 @@ import hashlib
 def get_api_key_rate_limit(api_key: str = Header(None)):
     if not api_key:
         return get_remote_address
-    
+
     # Use API key for rate limiting
     return lambda request: hashlib.md5(api_key.encode()).hexdigest()
 
@@ -97,8 +103,9 @@ async def get_premium_signals(request: Request, api_key: str = Header(None)):
 ## Redis Configuration
 
 ### Docker Compose Redis Service
+
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   redis:
     image: redis:alpine
@@ -113,6 +120,7 @@ volumes:
 ```
 
 ### Redis Configuration for Production
+
 ```redis
 # redis.conf
 maxmemory 256mb
@@ -125,28 +133,31 @@ save 60 10000
 ## Frontend Rate Limiting Awareness
 
 ### API Client with Rate Limiting (frontend/src/services/api.ts)
+
 ```typescript
 export class APIClient {
   private retryAfter: number = 0;
-  
+
   async makeRequest(url: string, options: RequestInit = {}) {
     // Check if we're in a rate limit cooldown
     if (this.retryAfter > Date.now()) {
-      throw new Error(`Rate limited. Retry after ${Math.ceil((this.retryAfter - Date.now()) / 1000)} seconds`);
+      throw new Error(
+        `Rate limited. Retry after ${Math.ceil((this.retryAfter - Date.now()) / 1000)} seconds`,
+      );
     }
-    
+
     try {
       const response = await fetch(url, options);
-      
+
       if (response.status === 429) {
         // Rate limited
-        const retryAfter = response.headers.get('Retry-After');
+        const retryAfter = response.headers.get("Retry-After");
         if (retryAfter) {
-          this.retryAfter = Date.now() + (parseInt(retryAfter) * 1000);
+          this.retryAfter = Date.now() + parseInt(retryAfter) * 1000;
         }
-        throw new Error('Rate limit exceeded');
+        throw new Error("Rate limit exceeded");
       }
-      
+
       return response;
     } catch (error) {
       throw error;
@@ -158,16 +169,19 @@ export class APIClient {
 ## Rate Limiting Tiers
 
 ### Free Tier
+
 - 100 requests/minute
 - 1000 requests/day
 - Basic endpoints only
 
 ### Premium Tier
+
 - 500 requests/minute
 - 10000 requests/day
 - All endpoints including premium signals
 
 ### Enterprise Tier
+
 - 1000 requests/minute
 - Unlimited daily requests
 - Custom rate limits available
@@ -175,6 +189,7 @@ export class APIClient {
 ## Monitoring Rate Limits
 
 ### Rate Limit Metrics
+
 ```python
 import time
 from collections import defaultdict
@@ -183,15 +198,15 @@ class RateLimitMonitor:
     def __init__(self):
         self.request_counts = defaultdict(int)
         self.blocked_requests = defaultdict(int)
-    
+
     def log_request(self, client_id: str, endpoint: str):
         key = f"{client_id}:{endpoint}"
         self.request_counts[key] += 1
-    
+
     def log_blocked(self, client_id: str, endpoint: str):
         key = f"{client_id}:{endpoint}"
         self.blocked_requests[key] += 1
-    
+
     def get_stats(self):
         return {
             "total_requests": sum(self.request_counts.values()),
@@ -201,6 +216,7 @@ class RateLimitMonitor:
 ```
 
 ## Implementation Checklist
+
 - [ ] Install slowapi and redis packages
 - [ ] Set up Redis server
 - [ ] Implement rate limiting middleware
@@ -211,6 +227,7 @@ class RateLimitMonitor:
 - [ ] Document API limits for users
 
 ## Testing Rate Limits
+
 ```bash
 # Test basic rate limit
 for i in {1..35}; do curl http://localhost:8000/signals/status; done

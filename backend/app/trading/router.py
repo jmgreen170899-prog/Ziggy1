@@ -56,7 +56,9 @@ except ImportError as e:
             )()
 
     class MockGuardrails:
-        def check_trade_allowed(self, symbol: str, size: float, price: float, regime: str):
+        def check_trade_allowed(
+            self, symbol: str, size: float, price: float, regime: str
+        ):
             return True, "mock_ok", {"mock": True}
 
         def get_guardrail_stats(self):
@@ -96,7 +98,9 @@ except ImportError as e:
             )()
 
     class MockQuality:
-        def get_quality_report(self, venue: str | None = None, symbol: str | None = None):
+        def get_quality_report(
+            self, venue: str | None = None, symbol: str | None = None
+        ):
             return {
                 "bucket_stats": [],
                 "venue_performance": {},
@@ -132,18 +136,12 @@ except ImportError:
             "MockJournal",
             (),
             {
-                "log_trade_intent": lambda *args,
-                **kwargs: f"mock_intent_{datetime.now().timestamp()}",
-                "log_policy_check": lambda *args,
-                **kwargs: f"mock_policy_{datetime.now().timestamp()}",
-                "log_guardrail_check": lambda *args,
-                **kwargs: f"mock_guardrail_{datetime.now().timestamp()}",
-                "log_trade_submit": lambda *args,
-                **kwargs: f"mock_submit_{datetime.now().timestamp()}",
-                "log_panic_activate": lambda *args,
-                **kwargs: f"mock_panic_{datetime.now().timestamp()}",
-                "log_panic_complete": lambda *args,
-                **kwargs: f"mock_panic_complete_{datetime.now().timestamp()}",
+                "log_trade_intent": lambda *args, **kwargs: f"mock_intent_{datetime.now().timestamp()}",
+                "log_policy_check": lambda *args, **kwargs: f"mock_policy_{datetime.now().timestamp()}",
+                "log_guardrail_check": lambda *args, **kwargs: f"mock_guardrail_{datetime.now().timestamp()}",
+                "log_trade_submit": lambda *args, **kwargs: f"mock_submit_{datetime.now().timestamp()}",
+                "log_panic_activate": lambda *args, **kwargs: f"mock_panic_{datetime.now().timestamp()}",
+                "log_panic_complete": lambda *args, **kwargs: f"mock_panic_complete_{datetime.now().timestamp()}",
             },
         )()
 
@@ -265,7 +263,9 @@ async def trade_market(request: TradeRequest, background_tasks: BackgroundTasks)
             intent_id=intent_id,
             symbol=request.symbol,
             policy_result=(
-                policy_result.to_dict() if hasattr(policy_result, "to_dict") else {"mock": True}
+                policy_result.to_dict()
+                if hasattr(policy_result, "to_dict")
+                else {"mock": True}
             ),
             check_details={"regime": request.regime, "confidence": request.p_up},
             violations=policy_violations,
@@ -283,11 +283,13 @@ async def trade_market(request: TradeRequest, background_tasks: BackgroundTasks)
 
         # 5. Guardrail check
         estimated_price = 100.0  # TODO: Get real market price
-        guardrail_allowed, guardrail_reason, guardrail_details = guardrails.check_trade_allowed(
-            request.symbol,
-            request.qty if request.side.lower() == "buy" else -request.qty,
-            estimated_price,
-            request.regime or "base",
+        guardrail_allowed, guardrail_reason, guardrail_details = (
+            guardrails.check_trade_allowed(
+                request.symbol,
+                request.qty if request.side.lower() == "buy" else -request.qty,
+                estimated_price,
+                request.regime or "base",
+            )
         )
 
         # 6. Log guardrail check result
@@ -426,7 +428,11 @@ async def trade_health():
                 current_orders = get_open_orders()
             except Exception as e:
                 logger.warning(f"Failed to get current positions/orders: {e}")
-                current_positions = {"total": 0, "gross_exposure": 0.0, "net_exposure": 0.0}
+                current_positions = {
+                    "total": 0,
+                    "gross_exposure": 0.0,
+                    "net_exposure": 0.0,
+                }
                 current_orders = {"count": 0}
         else:
             current_positions = {"total": 0, "gross_exposure": 0.0, "net_exposure": 0.0}
@@ -465,7 +471,9 @@ async def trade_panic():
     try:
         start_time = datetime.now(UTC)
 
-        logger.critical("PANIC BUTTON ACTIVATED - Closing all positions and canceling orders")
+        logger.critical(
+            "PANIC BUTTON ACTIVATED - Closing all positions and canceling orders"
+        )
         journal = get_journal()
 
         # Journal panic activation
@@ -530,9 +538,9 @@ async def trade_panic():
         status = (
             "success"
             if success
-            else "partial"
-            if (positions_closed > 0 or orders_canceled > 0)
-            else "failed"
+            else (
+                "partial" if (positions_closed > 0 or orders_canceled > 0) else "failed"
+            )
         )
 
         return PanicResponse(
@@ -587,7 +595,10 @@ async def resume_trading():
     try:
         guardrails.resume_trading()
 
-        resume_event = {"kind": "trading_resume", "timestamp": datetime.now(UTC).isoformat()}
+        resume_event = {
+            "kind": "trading_resume",
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
 
         # Log to journal if available
         try:
@@ -624,7 +635,12 @@ async def _execute_panic_procedure() -> dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Panic execution failed: {e}")
-        return {"positions_closed": 0, "orders_canceled": 0, "success": False, "error": str(e)}
+        return {
+            "positions_closed": 0,
+            "orders_canceled": 0,
+            "success": False,
+            "error": str(e),
+        }
 
 
 def _update_guardrail_metrics():

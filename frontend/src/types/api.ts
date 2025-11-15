@@ -61,7 +61,7 @@ export interface RiskMetrics {
 // Trading Types
 export interface TradingSignal {
   symbol: string;
-  signal_type: 'BUY' | 'SELL' | 'HOLD';
+  signal_type: "BUY" | "SELL" | "HOLD";
   strength: number;
   price_target?: number;
   stop_loss?: number;
@@ -97,7 +97,7 @@ export interface NewsItem {
   url: string;
   published_date: string;
   source: string;
-  sentiment?: 'positive' | 'negative' | 'neutral';
+  sentiment?: "positive" | "negative" | "neutral";
   sentiment_score?: number;
   symbols?: string[];
 }
@@ -141,7 +141,7 @@ export interface CryptoPrice {
 // Alert Types
 export interface Alert {
   id: string;
-  type: 'price' | 'volume' | 'news' | 'technical';
+  type: "price" | "volume" | "news" | "technical";
   symbol: string;
   condition: string;
   target_value: number;
@@ -198,7 +198,7 @@ export interface AdaptationMetrics {
 
 // WebSocket Types
 export interface WebSocketMessage {
-  type: 'quote' | 'news' | 'alert' | 'signal';
+  type: "quote" | "news" | "alert" | "signal";
   data: Quote | NewsItem | Alert | TradingSignal;
   timestamp: string;
 }
@@ -215,7 +215,7 @@ export interface APIResponse<T> {
 export interface ChatMessage {
   id: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   timestamp: string;
   sources?: string[];
   confidence?: number;
@@ -249,18 +249,23 @@ export interface OllamaChatResponse {
 export interface AnonymizedTradeData {
   // NO PERSONAL IDENTIFIERS - Only aggregated data patterns
   symbol: string;
-  trade_type: 'buy' | 'sell';
-  quantity_tier: 'small' | 'medium' | 'large' | 'institutional'; // Bucketed, not exact
-  price_tier: 'below_avg' | 'avg' | 'above_avg'; // Relative to market
+  trade_type: "buy" | "sell";
+  quantity_tier: "small" | "medium" | "large" | "institutional"; // Bucketed, not exact
+  price_tier: "below_avg" | "avg" | "above_avg"; // Relative to market
   time_bucket: string; // Rounded to hour/day for privacy
-  strategy_type?: 'momentum' | 'mean_reversion' | 'breakout' | 'fundamental' | 'ai_signal';
-  holding_period_tier: 'intraday' | 'short_term' | 'medium_term' | 'long_term';
+  strategy_type?:
+    | "momentum"
+    | "mean_reversion"
+    | "breakout"
+    | "fundamental"
+    | "ai_signal";
+  holding_period_tier: "intraday" | "short_term" | "medium_term" | "long_term";
   market_conditions: {
-    volatility_tier: 'low' | 'medium' | 'high';
-    volume_tier: 'low' | 'medium' | 'high';
-    trend: 'up' | 'down' | 'sideways';
+    volatility_tier: "low" | "medium" | "high";
+    volume_tier: "low" | "medium" | "high";
+    trend: "up" | "down" | "sideways";
   };
-  outcome_tier?: 'loss' | 'breakeven' | 'small_gain' | 'large_gain'; // Added later for learning
+  outcome_tier?: "loss" | "breakeven" | "small_gain" | "large_gain"; // Added later for learning
   // Hash-based session ID (changes regularly, no persistence to user account)
   session_hash: string;
 }
@@ -269,11 +274,11 @@ export interface TradeDataSubmission {
   trades: AnonymizedTradeData[];
   market_context: {
     session_start: string;
-    market_state: 'pre_market' | 'open' | 'close' | 'after_hours';
+    market_state: "pre_market" | "open" | "close" | "after_hours";
     major_events?: string[]; // Earnings, news, etc.
   };
   // Privacy commitment
-  privacy_level: 'anonymized' | 'aggregated_only';
+  privacy_level: "anonymized" | "aggregated_only";
   // No user identifiers - data flows to ZiggyAI brain anonymously
 }
 
@@ -296,7 +301,7 @@ export interface ZiggyBrainLearning {
 }
 
 export interface TradeDataPrivacySettings {
-  anonymization_level: 'full' | 'partial' | 'opt_out';
+  anonymization_level: "full" | "partial" | "opt_out";
   data_retention_days: number;
   share_outcomes: boolean; // Whether to share trade outcomes for learning
   share_strategies: boolean; // Whether to share strategy patterns

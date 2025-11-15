@@ -67,10 +67,18 @@ class TestSignalWithRAG:
         }
 
         # Mock position sizing
-        mock_position.return_value = {"size": 0.15, "method": "volatility_target", "risk_pct": 2.0}
+        mock_position.return_value = {
+            "size": 0.15,
+            "method": "volatility_target",
+            "risk_pct": 2.0,
+        }
 
         # Make request
-        request_data = {"symbol": "AAPL", "interval": "1D", "include_explanations": True}
+        request_data = {
+            "symbol": "AAPL",
+            "interval": "1D",
+            "include_explanations": True,
+        }
 
         response = client.post("/signals/cognitive/signal", json=request_data)
 
@@ -98,7 +106,13 @@ class TestSignalWithRAG:
     @patch("app.api.routes_signals.build_embedding")
     @patch("app.api.routes_signals.upsert_event")
     def test_cognitive_signal_with_rag_neighbors(
-        self, mock_upsert, mock_embedding, mock_search, mock_fused, mock_regime, mock_features
+        self,
+        mock_upsert,
+        mock_embedding,
+        mock_search,
+        mock_fused,
+        mock_regime,
+        mock_features,
     ):
         """Test cognitive signal generation with RAG neighbors."""
         # Mock feature computation
@@ -140,7 +154,11 @@ class TestSignalWithRAG:
         ]
 
         # Make request
-        request_data = {"symbol": "AAPL", "interval": "1D", "include_explanations": True}
+        request_data = {
+            "symbol": "AAPL",
+            "interval": "1D",
+            "include_explanations": True,
+        }
 
         response = client.post("/signals/cognitive/signal", json=request_data)
 
@@ -181,7 +199,11 @@ class TestSignalWithRAG:
         # Mock components
         mock_features.return_value = {"momentum": 0.3}
         mock_regime.return_value = {"regime": "normal", "confidence": 0.8}
-        mock_fused.return_value = {"p_up": 0.65, "confidence": 0.7, "shap_top": [["momentum", 0.5]]}
+        mock_fused.return_value = {
+            "p_up": 0.65,
+            "confidence": 0.7,
+            "shap_top": [["momentum", 0.5]],
+        }
 
         # Mock neighbors without p_outcome
         mock_search.return_value = [
@@ -231,10 +253,22 @@ class TestSignalWithRAG:
 
         # Mock neighbors with mixed outcome data
         mock_search.return_value = [
-            {"id": "event_1", "score": 0.95, "metadata": {"p_outcome": 0.9}},  # Very good outcome
-            {"id": "event_2", "score": 0.88, "metadata": {"p_outcome": 0.1}},  # Poor outcome
+            {
+                "id": "event_1",
+                "score": 0.95,
+                "metadata": {"p_outcome": 0.9},
+            },  # Very good outcome
+            {
+                "id": "event_2",
+                "score": 0.88,
+                "metadata": {"p_outcome": 0.1},
+            },  # Poor outcome
             {"id": "event_3", "score": 0.82, "metadata": {}},  # No outcome data
-            {"id": "event_4", "score": 0.75, "metadata": {"p_outcome": 0.7}},  # Good outcome
+            {
+                "id": "event_4",
+                "score": 0.75,
+                "metadata": {"p_outcome": 0.7},
+            },  # Good outcome
         ]
 
         request_data = {"symbol": "TSLA", "interval": "1D"}
@@ -489,9 +523,21 @@ class TestSignalRAGEdgeCases:
 
             # Mock neighbors with extreme outcomes
             mock_search.return_value = [
-                {"id": "event1", "score": 0.9, "metadata": {"p_outcome": 0.0}},  # Extreme bear
-                {"id": "event2", "score": 0.85, "metadata": {"p_outcome": 1.0}},  # Extreme bull
-                {"id": "event3", "score": 0.8, "metadata": {"p_outcome": 0.0}},  # Another bear
+                {
+                    "id": "event1",
+                    "score": 0.9,
+                    "metadata": {"p_outcome": 0.0},
+                },  # Extreme bear
+                {
+                    "id": "event2",
+                    "score": 0.85,
+                    "metadata": {"p_outcome": 1.0},
+                },  # Extreme bull
+                {
+                    "id": "event3",
+                    "score": 0.8,
+                    "metadata": {"p_outcome": 0.0},
+                },  # Another bear
             ]
 
             request_data = {"symbol": "AAPL", "interval": "1D"}

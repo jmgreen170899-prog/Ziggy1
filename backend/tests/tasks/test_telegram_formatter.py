@@ -101,7 +101,12 @@ def test_format_bulk_signals():
     """Test formatting multiple signals."""
     signals = [
         {"ticker": "AAPL", "signal": "BUY", "confidence": 0.85, "reason": "Oversold"},
-        {"ticker": "GOOGL", "signal": "SELL", "confidence": 0.78, "reason": "Overbought"},
+        {
+            "ticker": "GOOGL",
+            "signal": "SELL",
+            "confidence": 0.78,
+            "reason": "Overbought",
+        },
         {"ticker": "MSFT", "signal": "BUY", "confidence": 0.70, "reason": "Momentum"},
         {
             "ticker": "NVDA",
@@ -261,7 +266,9 @@ def test_format_signal_message_parse_mode_safe():
 
 def test_format_bulk_signals_limit():
     """Test that bulk signals respect the max_signals limit."""
-    signals = [{"ticker": f"TICK{i}", "signal": "BUY", "confidence": 0.70} for i in range(10)]
+    signals = [
+        {"ticker": f"TICK{i}", "signal": "BUY", "confidence": 0.70} for i in range(10)
+    ]
 
     result = format_bulk_signals(signals, max_signals=3)
 

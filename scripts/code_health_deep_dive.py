@@ -48,7 +48,11 @@ class CodeHealthReport:
 
     def get_success_rate(self) -> float:
         """Calculate overall success rate."""
-        return (self.passed_checks / self.total_checks * 100) if self.total_checks > 0 else 0.0
+        return (
+            (self.passed_checks / self.total_checks * 100)
+            if self.total_checks > 0
+            else 0.0
+        )
 
 
 class ZiggyCodeHealthChecker:
@@ -143,7 +147,11 @@ class ZiggyCodeHealthChecker:
                 health_result = CodeHealthResult(
                     "TypeScript Syntax Check",
                     True,
-                    {"tool": "tsc", "config": "tsconfig.strict.json", "errors_found": 0},
+                    {
+                        "tool": "tsc",
+                        "config": "tsconfig.strict.json",
+                        "errors_found": 0,
+                    },
                 )
             else:
                 # Parse TypeScript errors
@@ -202,7 +210,9 @@ class ZiggyCodeHealthChecker:
                 bandit_data = json.loads(result.stdout) if result.stdout else {}
                 issues = bandit_data.get("results", [])
 
-                critical_issues = [i for i in issues if i.get("issue_severity") == "HIGH"]
+                critical_issues = [
+                    i for i in issues if i.get("issue_severity") == "HIGH"
+                ]
 
                 health_result = CodeHealthResult(
                     "Security Check",
@@ -220,7 +230,11 @@ class ZiggyCodeHealthChecker:
                 health_result = CodeHealthResult(
                     "Security Check",
                     result.returncode == 0,
-                    {"tool": "bandit", "raw_output": result.stdout, "stderr": result.stderr},
+                    {
+                        "tool": "bandit",
+                        "raw_output": result.stdout,
+                        "stderr": result.stderr,
+                    },
                 )
 
             health_result.duration_seconds = duration
@@ -285,7 +299,9 @@ class ZiggyCodeHealthChecker:
 
         except Exception as e:
             health_result = CodeHealthResult(
-                "Endpoint Verification", False, {"error": str(e), "tool": "verify_endpoints.py"}
+                "Endpoint Verification",
+                False,
+                {"error": str(e), "tool": "verify_endpoints.py"},
             )
             health_result.duration_seconds = time.time() - start_time
             return health_result
@@ -346,7 +362,9 @@ class ZiggyCodeHealthChecker:
 
         except Exception as e:
             health_result = CodeHealthResult(
-                "Duplicate Detection", False, {"error": str(e), "tool": "detect_duplicates.py"}
+                "Duplicate Detection",
+                False,
+                {"error": str(e), "tool": "detect_duplicates.py"},
             )
             health_result.duration_seconds = time.time() - start_time
             return health_result
@@ -359,7 +377,15 @@ class ZiggyCodeHealthChecker:
         try:
             # Run vulture for Python dead code detection
             result = subprocess.run(
-                [sys.executable, "-m", "vulture", "backend/", "scripts/", "--min-confidence", "80"],
+                [
+                    sys.executable,
+                    "-m",
+                    "vulture",
+                    "backend/",
+                    "scripts/",
+                    "--min-confidence",
+                    "80",
+                ],
                 capture_output=True,
                 text=True,
                 cwd=".",
@@ -412,7 +438,9 @@ class ZiggyCodeHealthChecker:
         # Process results
         for result in results:
             if isinstance(result, Exception):
-                error_result = CodeHealthResult("Unknown Check", False, {"error": str(result)})
+                error_result = CodeHealthResult(
+                    "Unknown Check", False, {"error": str(result)}
+                )
                 self.report.add_result(error_result)
             else:
                 self.report.add_result(result)

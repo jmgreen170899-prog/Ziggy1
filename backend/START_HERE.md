@@ -45,16 +45,19 @@ PYTHONPATH=backend RUN_LEGACY_TESTS=1 pytest -q tests/legacy/
 ### What Changed
 
 **BOM Removal**: Removed UTF-8 BOM (Byte Order Mark) from:
+
 - `.github/workflows/ci.yml`
 - `backend/pytest.ini`
 - `backend/requirements.lock`
 
 **Dependency Cleanup**: Cleaned `backend/requirements.lock`:
+
 - Removed duplicate entries: `slowapi==0.1.9`, `python-jose==3.5.0`
 - Removed Windows-specific packages: `pywin32`, `pywin32-ctypes`, `win32_setctime`
 - Maintained 186 unique, properly pinned packages
 
 **Added Missing Types**: Tests expect these classes to be importable:
+
 - `RegimeDetector` in `app.services.regime` - OO wrapper for regime detection
 - `SignalFusionEnsemble` in `app.services.fusion.ensemble` - signal fusion with ML models
 - `FeatureSet` and `FeatureComputer` in `app.services.market_brain.features` - feature computation
@@ -68,6 +71,7 @@ All classes are deterministic with no I/O operations on import or initialization
 **Local Development**: To match CI behavior, either:
 
 1. **Set PYTHONPATH** (recommended):
+
    ```bash
    export PYTHONPATH=backend
    cd backend && pytest
@@ -155,18 +159,21 @@ pytest -v -m "not slow"
 ### Import Errors
 
 If you see `ModuleNotFoundError: No module named 'app'`:
+
 - Ensure `PYTHONPATH=backend` is set
 - Or run pytest from backend directory with pytest.ini
 
 ### Tests Discovering Duplicate Files
 
 If pytest finds duplicate test files:
+
 - Ensure no `test_*.py` files exist in `backend/` root
 - Only keep tests under `backend/tests/`
 
 ### Windows-Specific Package Errors
 
 If you see errors about `pywin32` or similar:
+
 - These packages were removed from `requirements.lock`
 - They are Windows-only and not needed for Linux CI
 - Re-run `pip install -r backend/requirements.lock`

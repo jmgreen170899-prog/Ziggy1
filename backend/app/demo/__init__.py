@@ -3,6 +3,7 @@ Demo utilities for safe demonstrations.
 
 Provides deterministic data and safe operations when DEMO_MODE is enabled.
 """
+
 from app.demo.data_generators import (
     get_demo_market_data,
     get_demo_portfolio,

@@ -5,12 +5,14 @@ A comprehensive financial trading and market analysis platform frontend built wi
 ## 🚀 Features
 
 ### Core Functionality
+
 - **RAG Query System**: AI-powered query interface for financial data
 - **Agent Interactions**: Intelligent agent-based trading assistance
 - **Real-time WebSocket**: Live market data and notifications
 - **Health Monitoring**: System health checks and status monitoring
 
 ### Market Data
+
 - **Live Quotes**: Real-time stock price updates
 - **Interactive Charts**: Advanced charting with multiple timeframes
 - **Risk Metrics**: Comprehensive risk analysis and metrics
@@ -18,30 +20,35 @@ A comprehensive financial trading and market analysis platform frontend built wi
 - **Watchlists**: Customizable symbol tracking
 
 ### Trading Features
+
 - **Trading Signals**: AI-generated buy/sell/hold recommendations
 - **Portfolio Management**: Complete portfolio tracking and analytics
 - **Market Screener**: Advanced filtering and screening tools
 - **Signal Analysis**: Detailed signal breakdown with confidence scores
 
 ### News & Analysis
+
 - **Live News Feed**: Real-time financial news aggregation
 - **Sentiment Analysis**: AI-powered news sentiment tracking
 - **Symbol-specific News**: Targeted news for individual securities
 - **News Filtering**: Advanced filtering by sentiment, source, and symbols
 
 ### Cryptocurrency
+
 - **Crypto Prices**: Real-time cryptocurrency price tracking
 - **Technical Analysis**: Advanced crypto technical analysis
 - **Favorites Management**: Customizable crypto watchlists
 - **Market Data**: Comprehensive crypto market information
 
 ### Alerts System
+
 - **Custom Alerts**: User-defined price and condition alerts
 - **Real-time Notifications**: Instant browser notifications
 - **Alert Management**: Create, update, and delete alerts
 - **WebSocket Integration**: Live alert triggering
 
 ### Learning & Adaptation
+
 - **Feedback System**: User feedback collection for AI improvement
 - **Performance Metrics**: AI adaptation and learning metrics
 - **Continuous Learning**: System that learns from user interactions
@@ -92,18 +99,20 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Backend API running on `http://localhost:8000` (default)
 
 ### Installation
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Set up environment variables**:
+
    ```bash
    # Create .env.local file
    NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -111,6 +120,7 @@ src/
    ```
 
 3. **Run the development server**:
+
    ```bash
    npm run dev
    ```
@@ -121,13 +131,14 @@ src/
 ### Available Scripts
 
 - `npm run dev` - Start development server
-- `npm run build` - Build for production  
+- `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 
 ## 🔧 Configuration
 
 ### API Configuration
+
 The frontend connects to the backend API via environment variables:
 
 ```env
@@ -136,7 +147,9 @@ NEXT_PUBLIC_WS_URL=ws://localhost:8000       # WebSocket URL
 ```
 
 ### WebSocket Events
+
 The application listens for these real-time events:
+
 - `quote_update` - Live price updates
 - `news_update` - New news items
 - `alert_triggered` - Alert notifications
@@ -147,6 +160,7 @@ The application listens for these real-time events:
 ## 📊 Features Overview
 
 ### Dashboard
+
 - Portfolio overview with P&L tracking
 - Watchlist with real-time updates
 - Latest trading signals
@@ -154,6 +168,7 @@ The application listens for these real-time events:
 - Quick navigation to all features
 
 ### Real-time Features
+
 - Live price updates via WebSocket
 - Instant news notifications
 - Real-time alert triggering
@@ -175,6 +190,7 @@ The frontend integrates with the following backend endpoints:
 ## 🎨 Styling
 
 The project uses Tailwind CSS with a dark theme by default. The color scheme includes:
+
 - Green for positive values/gains
 - Red for negative values/losses
 - Blue for primary actions
@@ -183,6 +199,7 @@ The project uses Tailwind CSS with a dark theme by default. The color scheme inc
 ## 🔄 State Management
 
 Zustand stores manage application state:
+
 - **MarketStore**: Quotes, watchlists, loading states
 - **PortfolioStore**: Portfolio data, trading signals
 - **NewsStore**: News items, filters, sentiment
@@ -201,7 +218,7 @@ Zustand stores manage application state:
 
 ### Common Issues
 
-1. **WebSocket connection fails**: 
+1. **WebSocket connection fails**:
    - Check if backend is running
    - Verify WebSocket URL in environment variables
 

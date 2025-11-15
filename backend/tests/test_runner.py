@@ -50,7 +50,11 @@ TEST_CONFIG = {
         ],
         "min_trades": 10,
     },
-    "api": {"max_response_time_ms": 300, "min_success_rate": 0.95, "concurrent_requests": 10},
+    "api": {
+        "max_response_time_ms": 300,
+        "min_success_rate": 0.95,
+        "concurrent_requests": 10,
+    },
 }
 
 
@@ -79,7 +83,9 @@ def validate_acceptance_criteria():
         ece = compute_ece(predictions, outcomes)
         criteria_results["ece"] = ece < TEST_CONFIG["calibration"]["max_ece"]
 
-        print(f"   ✓ ECE: {ece:.4f} {'✅ PASS' if ece < 0.05 else '❌ FAIL'} (threshold: < 0.05)")
+        print(
+            f"   ✓ ECE: {ece:.4f} {'✅ PASS' if ece < 0.05 else '❌ FAIL'} (threshold: < 0.05)"
+        )
 
     except Exception as e:
         print(f"   ❌ ECE test failed: {e}")
@@ -111,17 +117,29 @@ def validate_acceptance_criteria():
     print("\n🔍 Testing Explainability Features...")
     try:
         explanation_mock = {
-            "feature_importance": {"rsi_14": 0.15, "momentum_5d": 0.12, "volatility_20": 0.10},
-            "model_contributions": {"momentum": 0.4, "mean_reversion": 0.3, "volatility": 0.3},
+            "feature_importance": {
+                "rsi_14": 0.15,
+                "momentum_5d": 0.12,
+                "volatility_20": 0.10,
+            },
+            "model_contributions": {
+                "momentum": 0.4,
+                "mean_reversion": 0.3,
+                "volatility": 0.3,
+            },
             "regime_influence": 0.15,
             "confidence_interval": [0.6, 0.8],
         }
 
         required_components = TEST_CONFIG["explainability"]["required_components"]
-        has_all_components = all(comp in explanation_mock for comp in required_components)
+        has_all_components = all(
+            comp in explanation_mock for comp in required_components
+        )
         criteria_results["explainability"] = has_all_components
 
-        print(f"   ✓ Required Components: {'✅ PASS' if has_all_components else '❌ FAIL'}")
+        print(
+            f"   ✓ Required Components: {'✅ PASS' if has_all_components else '❌ FAIL'}"
+        )
         for comp in required_components:
             status = "✅" if comp in explanation_mock else "❌"
             print(f"     {status} {comp}")
@@ -144,7 +162,9 @@ def validate_acceptance_criteria():
         }
 
         required_metrics = TEST_CONFIG["backtesting"]["required_metrics"]
-        has_all_metrics = all(metric in backtest_results_mock for metric in required_metrics)
+        has_all_metrics = all(
+            metric in backtest_results_mock for metric in required_metrics
+        )
         criteria_results["backtesting"] = has_all_metrics
 
         print(f"   ✓ Required Metrics: {'✅ PASS' if has_all_metrics else '❌ FAIL'}")
@@ -160,10 +180,18 @@ def validate_acceptance_criteria():
     print("\n🌐 Testing API Performance...")
     try:
         # Mock API performance metrics
-        api_metrics = {"response_time_ms": 95, "success_rate": 0.98, "throughput_rps": 15}
+        api_metrics = {
+            "response_time_ms": 95,
+            "success_rate": 0.98,
+            "throughput_rps": 15,
+        }
 
-        response_ok = api_metrics["response_time_ms"] < TEST_CONFIG["api"]["max_response_time_ms"]
-        success_ok = api_metrics["success_rate"] >= TEST_CONFIG["api"]["min_success_rate"]
+        response_ok = (
+            api_metrics["response_time_ms"] < TEST_CONFIG["api"]["max_response_time_ms"]
+        )
+        success_ok = (
+            api_metrics["success_rate"] >= TEST_CONFIG["api"]["min_success_rate"]
+        )
 
         criteria_results["api_performance"] = response_ok and success_ok
 

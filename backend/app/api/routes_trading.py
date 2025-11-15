@@ -36,7 +36,9 @@ try:
     MARKET_BRAIN_AVAILABLE = True
 except Exception:
     MARKET_BRAIN_AVAILABLE = False
-    logging.getLogger("ziggy").warning("Market Brain system not available - using legacy logic")
+    logging.getLogger("ziggy").warning(
+        "Market Brain system not available - using legacy logic"
+    )
     # Stubs to satisfy type checkers when Market Brain package is absent
     from typing import Any as _Any
 
@@ -92,13 +94,19 @@ def _get_provider_names() -> list[str]:
         chain = getattr(mp, "providers", None)
         if isinstance(chain, (list, tuple)) and chain:
             provider_names = [
-                str(getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)).lower()
+                str(
+                    getattr(
+                        p, "name", getattr(p, "__class__", type("x", (), {})).__name__
+                    )
+                ).lower()
                 for p in chain
             ]
         else:
             provider_names = [
                 str(
-                    getattr(mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__)
+                    getattr(
+                        mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__
+                    )
                 ).lower()
             ]
     return provider_names
@@ -166,7 +174,9 @@ class ExplainIn(BaseModel):
 
 class ExplainBullet(BaseModel):
     label: str
-    impact: str = Field("neutral", description="positive | negative | neutral | bullish | bearish")
+    impact: str = Field(
+        "neutral", description="positive | negative | neutral | bullish | bearish"
+    )
     weight: float | None = Field(None, ge=0.0, le=1.0)
     detail: str | None = None
 
@@ -209,13 +219,19 @@ def trade_health():
             if isinstance(chain, (list, tuple)) and chain:
                 providers = [
                     str(
-                        getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)
+                        getattr(
+                            p,
+                            "name",
+                            getattr(p, "__class__", type("x", (), {})).__name__,
+                        )
                     ).lower()
                     for p in chain
                 ]
             else:
                 nm = str(
-                    getattr(mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__)
+                    getattr(
+                        mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__
+                    )
                 ).lower()
                 providers = [nm]
         d = tg_diag()
@@ -244,7 +260,9 @@ def trade_health():
 @router.get("/trade/screener", response_model=ScreenerResponse)
 def get_screener(
     market: str = Query("nyse"),
-    notify: bool = Query(False, description="If true, also emit Telegram alerts from this call"),
+    notify: bool = Query(
+        False, description="If true, also emit Telegram alerts from this call"
+    ),
 ):
     try:
         results = _run_maybe_async(run_screener) or []
@@ -256,7 +274,9 @@ def get_screener(
 
     if notify:
         noteworthy = [
-            s for s in results if isinstance(s, dict) and s.get("signal") in {"BUY", "SELL"}
+            s
+            for s in results
+            if isinstance(s, dict) and s.get("signal") in {"BUY", "SELL"}
         ]
         if noteworthy:
             lines = [
@@ -267,7 +287,12 @@ def get_screener(
             with contextlib.suppress(Exception):
                 tg_send("Ziggy Screener Alerts:\n" + "\n".join(lines), kind="screener")
 
-    return {"ran_at": time.time(), "market": market, "count": len(results), "results": results}
+    return {
+        "ran_at": time.time(),
+        "market": market,
+        "count": len(results),
+        "results": results,
+    }
 
 
 # ───────────────────────────────────────────────────────────────────────────────
@@ -332,7 +357,9 @@ def _explain_with_market_brain(body: ExplainIn) -> ExplainOut | None:
         # Market regime context
         if regime_result:
             regime_name = getattr(getattr(regime_result, "regime", None), "value", "")
-            regime_impact = "positive" if regime_name in ["RISK_ON", "CHOP"] else "negative"
+            regime_impact = (
+                "positive" if regime_name in ["RISK_ON", "CHOP"] else "negative"
+            )
             bullets.append(
                 ExplainBullet(
                     label=f"Market Regime: {regime_name}",
@@ -361,7 +388,9 @@ def _explain_with_market_brain(body: ExplainIn) -> ExplainOut | None:
             if getattr(features, "rsi_14", None) is not None:
                 rsi_val = float(getattr(features, "rsi_14", 0.0))
                 rsi_impact = (
-                    "positive" if rsi_val > 60 else "negative" if rsi_val < 40 else "neutral"
+                    "positive"
+                    if rsi_val > 60
+                    else "negative" if rsi_val < 40 else "neutral"
                 )
                 bullets.append(
                     ExplainBullet(
@@ -422,9 +451,11 @@ def _explain_with_market_brain(body: ExplainIn) -> ExplainOut | None:
             rsi_desc = (
                 "bullish"
                 if float(getattr(features, "rsi_14", 0.0)) > 60
-                else "bearish"
-                if float(getattr(features, "rsi_14", 0.0)) < 40
-                else "neutral"
+                else (
+                    "bearish"
+                    if float(getattr(features, "rsi_14", 0.0)) < 40
+                    else "neutral"
+                )
             )
             parts.append(
                 f"Momentum: {rsi_desc} (RSI {float(getattr(features, 'rsi_14', 0.0)):.1f})"
@@ -466,11 +497,17 @@ def _explain_with_market_brain(body: ExplainIn) -> ExplainOut | None:
                         / float(getattr(brain_signal, "entry_price", 1.0) or 1.0)
                         * 100
                     )
-                    rrr = float(tp_pct) / float(sl_pct) if sl_pct and sl_pct > 0 else 1.5
+                    rrr = (
+                        float(tp_pct) / float(sl_pct) if sl_pct and sl_pct > 0 else 1.5
+                    )
                 else:
                     # Dynamic RRR based on regime and confidence
-                    regime_name2 = getattr(getattr(regime_result, "regime", None), "value", "")
-                    base_rrr = 2.0 if regime_result and regime_name2 == "RISK_ON" else 1.5
+                    regime_name2 = getattr(
+                        getattr(regime_result, "regime", None), "value", ""
+                    )
+                    base_rrr = (
+                        2.0 if regime_result and regime_name2 == "RISK_ON" else 1.5
+                    )
                     conf_boost = (getattr(brain_signal, "confidence", 0.5) or 0.5) * 0.5
                     rrr = base_rrr + conf_boost
                     tp_pct = sl_pct * rrr
@@ -495,7 +532,9 @@ def _explain_with_market_brain(body: ExplainIn) -> ExplainOut | None:
                 else body.signal
             ),
             confidence=(
-                getattr(brain_signal, "confidence", None) if brain_signal else body.confidence
+                getattr(brain_signal, "confidence", None)
+                if brain_signal
+                else body.confidence
             ),
             rationale=" ".join(parts),
             bullets=bullets,
@@ -511,7 +550,9 @@ def _explain_with_market_brain(body: ExplainIn) -> ExplainOut | None:
         )
 
     except Exception as e:
-        logging.getLogger("ziggy").error(f"Market Brain explanation error for {body.ticker}: {e}")
+        logging.getLogger("ziggy").error(
+            f"Market Brain explanation error for {body.ticker}: {e}"
+        )
         return None
 
 
@@ -538,7 +579,9 @@ def _explain_with_legacy_logic(body: ExplainIn, t0: float) -> ExplainOut:
         bullets.append(
             ExplainBullet(
                 label=f"RSI14 at {rsi:.1f}",
-                impact="positive" if rsi > 60 else "negative" if rsi < 40 else "neutral",
+                impact=(
+                    "positive" if rsi > 60 else "negative" if rsi < 40 else "neutral"
+                ),
                 weight=min(max(rsi / 100.0, 0.0), 1.0),
                 detail="Momentum context (70/30 overbought/oversold bands)",
             )
@@ -550,7 +593,9 @@ def _explain_with_legacy_logic(body: ExplainIn, t0: float) -> ExplainOut:
             ExplainBullet(
                 label=f"SMA20 vs SMA50 spread {sma_spread:+.2f}%",
                 impact=(
-                    "positive" if sma_spread > 0 else "negative" if sma_spread < 0 else "neutral"
+                    "positive"
+                    if sma_spread > 0
+                    else "negative" if sma_spread < 0 else "neutral"
                 ),
                 weight=min(abs(sma_spread) / 20.0, 1.0),
                 detail="Short-term trend relative to medium-term trend",
@@ -602,7 +647,10 @@ def _explain_with_legacy_logic(body: ExplainIn, t0: float) -> ExplainOut:
         sl = 0.02  # 2%
         tp = sl * base_rrr
         risk = ExplainRisk(
-            stopLossPct=sl * 100.0, takeProfitPct=tp * 100.0, rrr=base_rrr, note="Heuristic levels"
+            stopLossPct=sl * 100.0,
+            takeProfitPct=tp * 100.0,
+            rrr=base_rrr,
+            note="Heuristic levels",
         )
     except Exception:
         risk = None
@@ -706,7 +754,11 @@ def market_calendar(days: int = Query(14, ge=1, le=60)):
             with data_path.open("r", encoding="utf-8") as f:
                 doc = json.load(f)
             cutoff = (now + timedelta(days=days)).date().isoformat()
-            macro = [m for m in (doc.get("macro") or []) if m.get("date") and m["date"] <= cutoff]
+            macro = [
+                m
+                for m in (doc.get("macro") or [])
+                if m.get("date") and m["date"] <= cutoff
+            ]
             earnings = doc.get("earnings") or {}
             return {"asof": time.time(), "macro": macro, "earnings": earnings}
     except Exception:
@@ -779,7 +831,8 @@ async def get_ohlc(
         description="If true, returns a summary + per-ticker results with ok/error and records. Backward-compatible mapping when false.",
     ),
     timeout_s: float = Query(
-        None, description="Per-ticker timeout in seconds for batch mode (defaults to internal)."
+        None,
+        description="Per-ticker timeout in seconds for batch mode (defaults to internal).",
     ),
 ):
     try:
@@ -818,20 +871,32 @@ async def get_ohlc(
 
             results: list[dict[str, Any]] = []
             succeeded = failed = 0
-            per_timeout = float(timeout_s) if (timeout_s and timeout_s > 0) else _OHLC_TIMEOUT_SECS
+            per_timeout = (
+                float(timeout_s)
+                if (timeout_s and timeout_s > 0)
+                else _OHLC_TIMEOUT_SECS
+            )
 
             def _extract_chain() -> list[str]:
                 chain = getattr(mp, "providers", None)
                 if isinstance(chain, (list, tuple)) and chain:
                     return [
                         str(
-                            getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)
+                            getattr(
+                                p,
+                                "name",
+                                getattr(p, "__class__", type("x", (), {})).__name__,
+                            )
                         ).lower()
                         for p in chain
                     ]
                 return [
                     str(
-                        getattr(mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__)
+                        getattr(
+                            mp,
+                            "name",
+                            getattr(mp, "__class__", type("x", (), {})).__name__,
+                        )
                     ).lower()
                 ]
 
@@ -871,7 +936,9 @@ async def get_ohlc(
                                 out: list[dict[str, Any]] = []
                                 if df_ is None or getattr(df_, "empty", True):
                                     return out
-                                cols = {c.lower().replace(" ", "_"): c for c in df_.columns}
+                                cols = {
+                                    c.lower().replace(" ", "_"): c for c in df_.columns
+                                }
                                 for _, row in df_.iterrows():
                                     d = row[cols.get("date", "Date")]
                                     try:
@@ -885,7 +952,10 @@ async def get_ohlc(
 
                                     def _num(key, default=None, _row=row):
                                         val = _row.get(
-                                            cols.get(key, key.title().replace("_", " ")), default
+                                            cols.get(
+                                                key, key.title().replace("_", " ")
+                                            ),
+                                            default,
                                         )
                                         return float(val) if pd.notna(val) else None
 
@@ -1002,7 +1072,9 @@ async def get_ohlc(
                     ds = str(d)
 
                 def _num(key, default=None, _row=row):
-                    val = _row.get(cols.get(key, key.title().replace("_", " ")), default)
+                    val = _row.get(
+                        cols.get(key, key.title().replace("_", " ")), default
+                    )
                     return float(val) if pd.notna(val) else None
 
                 out.append(
@@ -1030,12 +1102,16 @@ async def get_ohlc(
             "symbols": mapping,
             "source": src,
             "provider_chain": [
-                getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__).lower()
+                getattr(
+                    p, "name", getattr(p, "__class__", type("x", (), {})).__name__
+                ).lower()
                 for p in (getattr(mp, "providers", []) or [])
             ]
             or [
                 str(
-                    getattr(mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__)
+                    getattr(
+                        mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__
+                    )
                 ).lower()
             ],
         }
@@ -1077,7 +1153,11 @@ def market_breadth(
         except Exception:
             _DEF = ["AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA"]
 
-        tickers = [t.strip().upper() for t in symbols.split(",") if t.strip()] if symbols else _DEF
+        tickers = (
+            [t.strip().upper() for t in symbols.split(",") if t.strip()]
+            if symbols
+            else _DEF
+        )
 
         provider = YFinanceProvider()
         frames = provider.fetch_ohlc(tickers, period_days=period_days)
@@ -1176,10 +1256,10 @@ _CPC_TTL = 300  # 5 minutes
 def risk_lite() -> RiskLiteResponse:
     """
     Lightweight risk bar feed: CBOE Put/Call Index (^CPC).
-    
+
     Falls back to ^CPCE (equity-only P/C) if ^CPC is unavailable.
     Returns last value, 20-day mean, 20-day z-score, last date, and which ticker was used.
-    
+
     Side effects: Updates in-memory cache on successful data fetch.
     """
     import yfinance as yf
@@ -1195,7 +1275,12 @@ def risk_lite() -> RiskLiteResponse:
     for t in tickers_try:
         try:
             df = yf.download(
-                t, period="6mo", interval="1d", auto_adjust=False, progress=False, threads=False
+                t,
+                period="6mo",
+                interval="1d",
+                auto_adjust=False,
+                progress=False,
+                threads=False,
             )
             if isinstance(df, pd.DataFrame) and not df.empty and "Close" in df.columns:
                 s = pd.to_numeric(df["Close"], errors="coerce").dropna()
@@ -1207,7 +1292,9 @@ def risk_lite() -> RiskLiteResponse:
             continue
 
     if series is None:
-        payload = RiskLiteResponse(cpc=None, error="No data for ^CPC/^CPCE (blocked or unavailable)")
+        payload = RiskLiteResponse(
+            cpc=None, error="No data for ^CPC/^CPCE (blocked or unavailable)"
+        )
     else:
         last = float(series.iloc[-1])
         tail = series.tail(20)
@@ -1234,7 +1321,7 @@ def risk_lite_alias() -> RiskLiteResponse:
     """
     **DEPRECATED:** This endpoint is maintained for backward compatibility only.
     Please use `/market/risk-lite` instead.
-    
+
     This alias will be removed in a future version.
     """
     return risk_lite()
@@ -1250,7 +1337,7 @@ def risk_lite_alias2() -> RiskLiteResponse:
     """
     **DEPRECATED:** This endpoint is maintained for backward compatibility only.
     Please use `/market/risk-lite` instead.
-    
+
     This alias will be removed in a future version.
     """
     return risk_lite()
@@ -1366,7 +1453,8 @@ def _sma_cross_long_only(close: pd.Series, window: int = 50):
         last_price = p
         # If invested, equity follows price; else flat (keep equity)
         invested = any(
-            e <= close.index[i] and close.index[i] < x for e, x in zip(entries, exits, strict=False)
+            e <= close.index[i] and close.index[i] < x
+            for e, x in zip(entries, exits, strict=False)
         )
         if invested:
             equity *= 1.0 + r
@@ -1441,10 +1529,16 @@ def _provider_names(mp) -> list[str]:
     chain = getattr(mp, "providers", None)
     if isinstance(chain, (list, tuple)) and chain:
         return [
-            str(getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)).lower()
+            str(
+                getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)
+            ).lower()
             for p in chain
         ]
-    return [str(getattr(mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__)).lower()]
+    return [
+        str(
+            getattr(mp, "name", getattr(mp, "__class__", type("x", (), {})).__name__)
+        ).lower()
+    ]
 
 
 # ───────────────────────────────────────────────────────────────────────────────
@@ -1508,10 +1602,22 @@ def _read_throttle_from_meta_or_headers(
         except Exception:
             return None
 
-    tf = _to_opt_float(tf) if tf is not None else _to_opt_float(hdrs.get("X-Ziggy-Throttle"))
-    ru = _to_opt_float(ru) if ru is not None else _to_opt_float(hdrs.get("X-Ziggy-Risk-Used"))
+    tf = (
+        _to_opt_float(tf)
+        if tf is not None
+        else _to_opt_float(hdrs.get("X-Ziggy-Throttle"))
+    )
+    ru = (
+        _to_opt_float(ru)
+        if ru is not None
+        else _to_opt_float(hdrs.get("X-Ziggy-Risk-Used"))
+    )
     gr = str(gr) if gr is not None else (hdrs.get("X-Ziggy-Guardrails"))
-    dm = _to_opt_float(dm) if dm is not None else _to_opt_float(hdrs.get("X-Ziggy-Daily-Max-Pct"))
+    dm = (
+        _to_opt_float(dm)
+        if dm is not None
+        else _to_opt_float(hdrs.get("X-Ziggy-Daily-Max-Pct"))
+    )
     # if explicit factor is present, use it; else derive from components
     if tf is not None and _isfinite(tf):
         return {"factor": _clamp(tf, 0.0, 1.0), "reason": "client-supplied"}
@@ -1524,9 +1630,9 @@ def _read_throttle_from_meta_or_headers(
 def trading_backtest(body: BacktestIn) -> BacktestOut:
     """
     Lightweight backtest intended for quick UI feedback.
-    
+
     Enhanced with Market Brain when available, falls back to legacy SMA cross strategy.
-    
+
     Side effects: None (read-only simulation).
     """
     try:
@@ -1541,7 +1647,9 @@ def trading_backtest(body: BacktestIn) -> BacktestOut:
                 if brain_result:
                     return brain_result
             except Exception as e:
-                logging.getLogger("ziggy").debug(f"Market Brain backtest failed for {symbol}: {e}")
+                logging.getLogger("ziggy").debug(
+                    f"Market Brain backtest failed for {symbol}: {e}"
+                )
 
         # Fallback to legacy backtest
         return _backtest_with_legacy_logic(symbol, body)
@@ -1601,8 +1709,14 @@ def _backtest_with_market_brain(symbol: str, body: BacktestIn) -> BacktestOut | 
         for trade in brain_results.trades:
             legacy_trades.append(
                 {
-                    "entry": trade.entry_date.strftime("%Y-%m-%d") if trade.entry_date else "",
-                    "exit": trade.exit_date.strftime("%Y-%m-%d") if trade.exit_date else "",
+                    "entry": (
+                        trade.entry_date.strftime("%Y-%m-%d")
+                        if trade.entry_date
+                        else ""
+                    ),
+                    "exit": (
+                        trade.exit_date.strftime("%Y-%m-%d") if trade.exit_date else ""
+                    ),
                     "ret": trade.pnl_percent / 100.0 if trade.pnl_percent else 0.0,
                 }
             )
@@ -1642,7 +1756,9 @@ def _backtest_with_market_brain(symbol: str, body: BacktestIn) -> BacktestOut | 
         )
 
     except Exception as e:
-        logging.getLogger("ziggy").error(f"Market Brain backtest error for {symbol}: {e}")
+        logging.getLogger("ziggy").error(
+            f"Market Brain backtest error for {symbol}: {e}"
+        )
         return None
 
 
@@ -1651,7 +1767,9 @@ def _backtest_with_legacy_logic(symbol: str, body: BacktestIn) -> BacktestOut:
     days = _tf_to_days(body.timeframe, body.period_days)
     mp = _price_provider()
     if mp is None:
-        raise HTTPException(status_code=503, detail={"error": "no market data provider"})
+        raise HTTPException(
+            status_code=503, detail={"error": "no market data provider"}
+        )
 
     # Fetch OHLC for one symbol
     def _fetch():
@@ -1708,6 +1826,7 @@ def _backtest_with_legacy_logic(symbol: str, body: BacktestIn) -> BacktestOut:
 # Aliases for flexibility (frontends may call these)
 # Note: /backtest is already defined above
 
+
 @router.post(
     "/strategy/backtest",
     response_model=BacktestOut,
@@ -1718,7 +1837,7 @@ def backtest_alias2(body: BacktestIn) -> BacktestOut:
     """
     **DEPRECATED:** This endpoint is maintained for backward compatibility only.
     Please use `/backtest` instead.
-    
+
     This alias will be removed in a future version.
     """
     return trading_backtest(body)
@@ -1813,7 +1932,9 @@ def trade_market(
     x_ziggy_throttle: float | None = Header(default=None, convert_underscores=True),
     x_ziggy_risk_used: float | None = Header(default=None, convert_underscores=True),
     x_ziggy_guardrails: str | None = Header(default=None, convert_underscores=True),
-    x_ziggy_daily_max_pct: float | None = Header(default=None, convert_underscores=True),
+    x_ziggy_daily_max_pct: float | None = Header(
+        default=None, convert_underscores=True
+    ),
 ):
     """
     Paper trade stub: echoes computed ATR sizing and projected stops/targets.
@@ -1825,7 +1946,9 @@ def trade_market(
             raise HTTPException(status_code=400, detail={"error": "symbol required"})
         side = (body.side or "").upper()
         if side not in {"BUY", "SELL"}:
-            raise HTTPException(status_code=400, detail={"error": "side must be BUY or SELL"})
+            raise HTTPException(
+                status_code=400, detail={"error": "side must be BUY or SELL"}
+            )
 
         entry = _to_num(body.entry)
         stop = _to_num(body.stop)
@@ -1847,7 +1970,9 @@ def trade_market(
                 df = (frames or {}).get(symbol)
                 if df is not None and not getattr(df, "empty", True):
                     close_col = "Adj Close" if "Adj Close" in df.columns else "Close"
-                    entry = float(pd.to_numeric(df[close_col], errors="coerce").dropna().iloc[-1])
+                    entry = float(
+                        pd.to_numeric(df[close_col], errors="coerce").dropna().iloc[-1]
+                    )
             except Exception:
                 entry = entry  # leave as is
 
@@ -1875,24 +2000,35 @@ def trade_market(
             atr_val = _to_num(sizing.atr)
             if atr_val is None:
                 atr_val = _compute_atr_for(
-                    symbol, days=max(30, (sizing.period or 14) * 4), period=sizing.period or 14
+                    symbol,
+                    days=max(30, (sizing.period or 14) * 4),
+                    period=sizing.period or 14,
                 )
 
             atr_mult = sizing.atrMult or 1.5
             if atr_val is None or not math.isfinite(atr_val):
                 raise HTTPException(
-                    status_code=422, detail={"error": "atr unavailable to size position"}
+                    status_code=422,
+                    detail={"error": "atr unavailable to size position"},
                 )
 
             # derive stop if absent
             if stop is None or not math.isfinite(stop):
-                stop = entry - atr_val * atr_mult if side == "BUY" else entry + atr_val * atr_mult
+                stop = (
+                    entry - atr_val * atr_mult
+                    if side == "BUY"
+                    else entry + atr_val * atr_mult
+                )
 
             # derive target if absent
             if target is None or not math.isfinite(target):
                 r_mult = sizing.rMultiple or 2.0
                 stop_dist = abs(entry - float(stop))
-                target = entry + stop_dist * r_mult if side == "BUY" else entry - stop_dist * r_mult
+                target = (
+                    entry + stop_dist * r_mult
+                    if side == "BUY"
+                    else entry - stop_dist * r_mult
+                )
 
             # derive qty from riskAmount if not provided
             if qty is None:
@@ -1900,21 +2036,32 @@ def trade_market(
                 if risk_amt is not None and risk_amt > 0:
                     stop_dist = abs(entry - float(stop))
                     # APPLY GLOBAL THROTTLE to riskAmount before qty calculation
-                    eff_risk_amt = float(risk_amt) * float(_clamp(throttle_factor, 0.0, 1.0))
-                    qty_calc = int(max(0, math.floor(eff_risk_amt / max(stop_dist, 1e-12))))
+                    eff_risk_amt = float(risk_amt) * float(
+                        _clamp(throttle_factor, 0.0, 1.0)
+                    )
+                    qty_calc = int(
+                        max(0, math.floor(eff_risk_amt / max(stop_dist, 1e-12)))
+                    )
                     qty = qty_calc
             else:
                 # qty was explicitly provided; do not override, but provide a suggestedQty hint
                 if _clamp(throttle_factor, 0.0, 1.0) < 1.0:
                     try:
                         suggested_qty = int(
-                            max(0, math.floor(int(qty) * float(_clamp(throttle_factor, 0.0, 1.0))))
+                            max(
+                                0,
+                                math.floor(
+                                    int(qty) * float(_clamp(throttle_factor, 0.0, 1.0))
+                                ),
+                            )
                         )
                     except Exception:
                         suggested_qty = None
                     meta_in.setdefault("throttle", {})
                     meta_in["throttle"]["suggestedQty"] = suggested_qty
-                    meta_in["throttle"]["note"] = "global throttle suggests reduced size"
+                    meta_in["throttle"][
+                        "note"
+                    ] = "global throttle suggests reduced size"
 
             sizing_dict = sizing.dict()
             sizing_dict["atr"] = atr_val
@@ -1925,7 +2072,11 @@ def trade_market(
             qty = 0  # explicit
 
         # risk summary
-        stop_dist = abs(entry - float(stop)) if (stop is not None and math.isfinite(stop)) else None
+        stop_dist = (
+            abs(entry - float(stop))
+            if (stop is not None and math.isfinite(stop))
+            else None
+        )
         r_multiple = None
         if stop_dist and stop_dist > 0 and target is not None and math.isfinite(target):
             if side == "BUY":
@@ -2117,7 +2268,10 @@ def set_trading_mode(mode: str):
             return {"ok": True, "mode": "paper", "message": "Paper trading enabled"}
         elif mode.lower() == "live":
             # Note: This would require broker connector setup
-            return {"ok": False, "error": "Live trading requires broker connector setup"}
+            return {
+                "ok": False,
+                "error": "Live trading requires broker connector setup",
+            }
         else:
             return {"ok": False, "error": "Mode must be 'paper' or 'live'"}
 

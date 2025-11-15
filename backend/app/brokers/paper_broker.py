@@ -148,7 +148,8 @@ class PaperBroker:
 
         # Simulate latency
         latency_ms = max(
-            0, int(self.rng.normalvariate(self.latency_ms_base, self.latency_ms_variance))
+            0,
+            int(self.rng.normalvariate(self.latency_ms_base, self.latency_ms_variance)),
         )
         paper_order.latency_ms = latency_ms
 
@@ -159,7 +160,9 @@ class PaperBroker:
         market_price = self._get_market_price(order.symbol)
 
         # Calculate execution price with slippage
-        slippage_bps = self.rng.normalvariate(self.slippage_bps, self.slippage_bps * 0.3)
+        slippage_bps = self.rng.normalvariate(
+            self.slippage_bps, self.slippage_bps * 0.3
+        )
         slippage_factor = 1.0 + (slippage_bps / 10000.0)
 
         if order.side == "BUY":

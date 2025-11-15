@@ -25,16 +25,16 @@ tests/test_api_smoke/
 
 ### Test Coverage by Domain
 
-| Domain | Tests | Lines | Key Features |
-|--------|-------|-------|--------------|
-| Trading | 7 | 193 | Risk metrics, backtest, health |
-| Screener | 8 | 257 | Scan, presets, regime summary |
-| Cognitive | 6 | 252 | Decision enhancement, learning |
-| Paper Lab | 7 | 288 | Run lifecycle, trades, portfolio |
-| Chat | 10 | 277 | Completion, health, config |
-| Core | 11 | 318 | Health, RAG, tasks, ingest |
-| News/Alerts | 12 | 339 | Sentiment, alerts lifecycle |
-| **Total** | **61** | **1,924** | All major API domains |
+| Domain      | Tests  | Lines     | Key Features                     |
+| ----------- | ------ | --------- | -------------------------------- |
+| Trading     | 7      | 193       | Risk metrics, backtest, health   |
+| Screener    | 8      | 257       | Scan, presets, regime summary    |
+| Cognitive   | 6      | 252       | Decision enhancement, learning   |
+| Paper Lab   | 7      | 288       | Run lifecycle, trades, portfolio |
+| Chat        | 10     | 277       | Completion, health, config       |
+| Core        | 11     | 318       | Health, RAG, tasks, ingest       |
+| News/Alerts | 12     | 339       | Sentiment, alerts lifecycle      |
+| **Total**   | **61** | **1,924** | All major API domains            |
 
 ## Test Philosophy
 
@@ -94,14 +94,14 @@ assert data["price"] > 0
 def test_market_risk_lite(client):
     """Test market risk-lite endpoint returns Put/Call ratio data"""
     response = client.get("/market-risk-lite")
-    
+
     # Status code
     assert response.status_code == 200
-    
+
     # Response structure
     data = response.json()
     assert "cpc" in data or "error" in data
-    
+
     # If successful, check data structure
     if data.get("cpc"):
         cpc = data["cpc"]
@@ -109,7 +109,7 @@ def test_market_risk_lite(client):
         assert "last" in cpc
         assert "ma20" in cpc
         assert "z20" in cpc
-        
+
         # Value invariants
         assert isinstance(cpc["last"], (int, float))
         assert cpc["ticker"] in ["^CPC", "^CPCE"]
@@ -125,19 +125,19 @@ def test_screener_scan_with_valid_universe(client):
         "min_confidence": 0.6,
         "limit": 10,
     }
-    
+
     response = client.post("/screener/scan", json=payload)
-    
+
     assert response.status_code in [200, 500, 501]
-    
+
     if response.status_code == 200:
         data = response.json()
-        
+
         # Required fields
         assert "results" in data
         assert "total_screened" in data
         assert "execution_time_ms" in data
-        
+
         # Invariants
         assert data["total_screened"] >= 0
         assert len(data["results"]) <= payload["limit"]
@@ -149,20 +149,20 @@ def test_screener_scan_with_valid_universe(client):
 def test_chat_health(client):
     """Test chat service health check"""
     response = client.get("/chat/health")
-    
+
     assert response.status_code == 200
-    
+
     data = response.json()
-    
+
     # Required fields from Phase 1
     assert "provider" in data
     assert "base" in data
     assert "model" in data
     assert "ok" in data
-    
+
     # Type checks
     assert isinstance(data["ok"], bool)
-    
+
     # Value checks
     assert data["provider"] in ["openai", "local"]
 ```
@@ -237,11 +237,13 @@ pytest tests/test_api_smoke/ --cov=app.api --cov-report=term-missing
 ### Expected Behavior
 
 **When Services Available:**
+
 - ✅ Tests pass with 200 status codes
 - ✅ Response structures validated
 - ✅ Invariants checked
 
 **When Services Unavailable:**
+
 - ✅ Tests accept 501 (Not Implemented)
 - ✅ Tests accept 500 (Service Unavailable)
 - ✅ Tests remain fast (no timeouts)
@@ -326,24 +328,28 @@ assert isinstance(data["meta"], dict)
 ## Benefits
 
 ### For Development
+
 - ✅ Fast feedback on API changes
 - ✅ Catch breaking changes early
 - ✅ Validate response structures
 - ✅ Document expected behavior
 
 ### For CI/CD
+
 - ✅ Quick smoke tests (< 5 seconds)
 - ✅ No external dependencies
 - ✅ Reliable and stable
 - ✅ Clear failure messages
 
 ### For Documentation
+
 - ✅ Live examples of API usage
 - ✅ Expected response formats
 - ✅ Valid payload structures
 - ✅ Error handling patterns
 
 ### For Contracts
+
 - ✅ Backend/frontend alignment
 - ✅ TypeScript type validation
 - ✅ Regression prevention
@@ -357,17 +363,17 @@ assert isinstance(data["meta"], dict)
 def test_new_endpoint(client):
     """Test description"""
     response = client.get("/new-endpoint")
-    
+
     # 1. Check status code
     assert response.status_code == 200
-    
+
     # 2. Check structure
     data = response.json()
     assert "key_field" in data
-    
+
     # 3. Check types
     assert isinstance(data["key_field"], str)
-    
+
     # 4. Check invariants
     assert len(data["key_field"]) > 0
 ```
@@ -386,18 +392,21 @@ Examples:
 ## Success Metrics
 
 ### Coverage
+
 - ✅ 61 tests across 7 domains
 - ✅ All major endpoints tested
 - ✅ Critical paths validated
 - ✅ Error cases handled
 
 ### Quality
+
 - ✅ Realistic payloads
 - ✅ Meaningful assertions
 - ✅ Fast execution
 - ✅ Independent tests
 
 ### Integration
+
 - ✅ Phase 1 validation
 - ✅ Phase 2 alignment
 - ✅ CI/CD ready
@@ -445,7 +454,7 @@ These tests are ready for:
 ✅ Realistic payloads from Pydantic schemas  
 ✅ Status codes + key fields validated  
 ✅ Fast, independent, CI-ready  
-✅ Acts as contracts for UI + refactors  
+✅ Acts as contracts for UI + refactors
 
 **All three phases now complete!**
 

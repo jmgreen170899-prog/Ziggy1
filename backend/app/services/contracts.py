@@ -18,7 +18,9 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 # Environment configuration
-CONTRACT_VIOLATION_RATE_THRESHOLD = float(os.getenv("CONTRACT_VIOLATION_RATE_THRESHOLD", "0.001"))
+CONTRACT_VIOLATION_RATE_THRESHOLD = float(
+    os.getenv("CONTRACT_VIOLATION_RATE_THRESHOLD", "0.001")
+)
 
 
 class ContractViolation(Exception):
@@ -50,13 +52,17 @@ def validate_ohlcv(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
     missing = set(required) - set(df.columns)
     if missing:
         raise ContractViolation(
-            "ohlcv", f"Missing required columns for {ticker}: {missing}", df.columns.tolist()
+            "ohlcv",
+            f"Missing required columns for {ticker}: {missing}",
+            df.columns.tolist(),
         )
 
     # Timestamp monotonicity
     if not df["ts"].is_monotonic_increasing:
         raise ContractViolation(
-            "ohlcv", f"Timestamps not monotonic increasing for {ticker}", df["ts"].head().tolist()
+            "ohlcv",
+            f"Timestamps not monotonic increasing for {ticker}",
+            df["ts"].head().tolist(),
         )
 
     # No null values in core columns
@@ -89,13 +95,16 @@ def validate_ohlcv(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
     close_violations = ((df["close"] > df["high"]) | (df["close"] < df["low"])).sum()
     if close_violations > 0:
         raise ContractViolation(
-            "ohlcv", f"Close outside High/Low range in {ticker}: {close_violations} rows"
+            "ohlcv",
+            f"Close outside High/Low range in {ticker}: {close_violations} rows",
         )
 
     # Volume non-negative
     negative_volume = (df["volume"] < 0).sum()
     if negative_volume > 0:
-        raise ContractViolation("ohlcv", f"Negative volume in {ticker}: {negative_volume} rows")
+        raise ContractViolation(
+            "ohlcv", f"Negative volume in {ticker}: {negative_volume} rows"
+        )
 
     # Reasonable price ranges (basic sanity check)
     price_cols = ["open", "high", "low", "close"]
@@ -110,7 +119,9 @@ def validate_ohlcv(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
         pct_change = df[col].pct_change().abs()
         extreme_changes = (pct_change > 10.0).sum()
         if extreme_changes > 0:
-            logger.warning(f"Extreme price changes in {ticker}.{col}: {extreme_changes} rows")
+            logger.warning(
+                f"Extreme price changes in {ticker}.{col}: {extreme_changes} rows"
+            )
 
 
 def validate_quotes(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
@@ -132,12 +143,16 @@ def validate_quotes(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
     missing = set(required) - set(df.columns)
     if missing:
         raise ContractViolation(
-            "quotes", f"Missing required quote columns for {ticker}: {missing}", df.columns.tolist()
+            "quotes",
+            f"Missing required quote columns for {ticker}: {missing}",
+            df.columns.tolist(),
         )
 
     # Timestamp monotonicity
     if not df["ts"].is_monotonic_increasing:
-        raise ContractViolation("quotes", f"Quote timestamps not monotonic increasing for {ticker}")
+        raise ContractViolation(
+            "quotes", f"Quote timestamps not monotonic increasing for {ticker}"
+        )
 
     # No null values
     null_columns = []
@@ -148,7 +163,8 @@ def validate_quotes(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
 
     if null_columns:
         raise ContractViolation(
-            "quotes", f"Null values in quote data for {ticker}: {', '.join(null_columns)}"
+            "quotes",
+            f"Null values in quote data for {ticker}: {', '.join(null_columns)}",
         )
 
     # Bid <= Ask relationship
@@ -163,7 +179,8 @@ def validate_quotes(df: pd.DataFrame, ticker: str = "UNKNOWN") -> None:
         if (df[col] <= 0).any():
             zero_count = (df[col] <= 0).sum()
             raise ContractViolation(
-                "quotes", f"Zero or negative {col} prices in {ticker}: {zero_count} rows"
+                "quotes",
+                f"Zero or negative {col} prices in {ticker}: {zero_count} rows",
             )
 
 
@@ -196,12 +213,16 @@ def validate_news(df: pd.DataFrame) -> None:
             null_columns.append(f"{col}({null_count})")
 
     if null_columns:
-        raise ContractViolation("news", f"Null values in news data: {', '.join(null_columns)}")
+        raise ContractViolation(
+            "news", f"Null values in news data: {', '.join(null_columns)}"
+        )
 
     # Unique IDs
     duplicate_ids = df["id"].duplicated().sum()
     if duplicate_ids > 0:
-        raise ContractViolation("news", f"Duplicate news IDs: {duplicate_ids} duplicates")
+        raise ContractViolation(
+            "news", f"Duplicate news IDs: {duplicate_ids} duplicates"
+        )
 
     # Valid timestamps
     try:
@@ -234,7 +255,9 @@ def validate_crypto_data(df: pd.DataFrame, symbol: str = "UNKNOWN") -> None:
     if "volume" in df.columns:
         # Crypto volumes can be much higher than equities
         if df["volume"].max() > 1e12:  # Reasonable upper bound
-            logger.warning(f"Very high volume detected in {symbol}: {df['volume'].max()}")
+            logger.warning(
+                f"Very high volume detected in {symbol}: {df['volume'].max()}"
+            )
 
 
 def validate_market_hours(df: pd.DataFrame, exchange: str = "NYSE") -> None:
@@ -302,7 +325,9 @@ def validate_data_consistency(df: pd.DataFrame, dataset_type: str, **kwargs) -> 
         raise
     except Exception as e:
         # Wrap unexpected errors as contract violations
-        raise ContractViolation(dataset_type, f"Unexpected validation error: {e}", type(e).__name__)
+        raise ContractViolation(
+            dataset_type, f"Unexpected validation error: {e}", type(e).__name__
+        )
 
 
 def get_validation_stats() -> dict[str, Any]:
@@ -312,4 +337,9 @@ def get_validation_stats() -> dict[str, Any]:
     Returns:
         Dictionary with validation metrics
     """
-    return {"total_validations": 0, "violations": 0, "violation_rate": 0.0, "last_violation": None}
+    return {
+        "total_validations": 0,
+        "violations": 0,
+        "violation_rate": 0.0,
+        "last_violation": None,
+    }

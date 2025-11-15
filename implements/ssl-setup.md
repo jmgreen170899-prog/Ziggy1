@@ -1,11 +1,13 @@
 # SSL/HTTPS Configuration Guide for ZiggyAI Production
 
 ## Overview
+
 This guide outlines the SSL certificate setup required for production deployment of ZiggyAI.
 
 ## SSL Certificate Options
 
 ### Option 1: Let's Encrypt (Recommended for most deployments)
+
 ```bash
 # Install certbot
 sudo apt-get install certbot
@@ -19,6 +21,7 @@ sudo certbot certonly --standalone -d yourdomain.com -d api.yourdomain.com
 ```
 
 ### Option 2: Commercial SSL Certificate
+
 1. Purchase from a trusted CA (Comodo, DigiCert, etc.)
 2. Generate CSR (Certificate Signing Request)
 3. Install provided certificates
@@ -26,13 +29,14 @@ sudo certbot certonly --standalone -d yourdomain.com -d api.yourdomain.com
 ## Backend HTTPS Configuration
 
 ### FastAPI SSL Setup (main.py modification needed)
+
 ```python
 import ssl
 
 if __name__ == "__main__":
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     ssl_context.load_cert_chain('/path/to/cert.pem', '/path/to/key.pem')
-    
+
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
@@ -44,33 +48,35 @@ if __name__ == "__main__":
 ## Frontend HTTPS Configuration
 
 ### Next.js Production Build
+
 ```javascript
 // next.config.ts - Add HTTPS redirect
 const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         has: [
           {
-            type: 'header',
-            key: 'x-forwarded-proto',
-            value: 'http',
+            type: "header",
+            key: "x-forwarded-proto",
+            value: "http",
           },
         ],
-        destination: 'https://yourdomain.com/:path*',
+        destination: "https://yourdomain.com/:path*",
         permanent: true,
       },
-    ]
+    ];
   },
-}
+};
 ```
 
 ## Docker Configuration with SSL
 
 ### docker-compose.yml modifications
+
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   backend:
     volumes:
@@ -80,7 +86,7 @@ services:
       - SSL_KEY_PATH=/app/ssl/key.pem
     ports:
       - "443:443"
-  
+
   nginx:
     image: nginx:alpine
     ports:
@@ -94,6 +100,7 @@ services:
 ## Security Headers Configuration
 
 ### Add to main.py
+
 ```python
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -114,6 +121,7 @@ async def add_security_headers(request: Request, call_next):
 ## Testing SSL Configuration
 
 ### Verify SSL Setup
+
 ```bash
 # Test certificate validity
 openssl x509 -in certificate.pem -text -noout
@@ -126,6 +134,7 @@ curl -I https://yourdomain.com
 ```
 
 ## Implementation Status
+
 - [ ] Domain purchased and configured
 - [ ] SSL certificate obtained
 - [ ] Backend HTTPS configured
@@ -134,6 +143,7 @@ curl -I https://yourdomain.com
 - [ ] SSL testing completed
 
 ## Notes
+
 - Certificates need renewal (Let's Encrypt: 90 days)
 - Set up auto-renewal with cron jobs
 - Test SSL configuration before going live

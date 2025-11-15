@@ -75,7 +75,9 @@ class CodeHealthReportGenerator:
 
         return results
 
-    def analyze_p0_issues(self, frontend_results: dict, backend_results: dict) -> list[str]:
+    def analyze_p0_issues(
+        self, frontend_results: dict, backend_results: dict
+    ) -> list[str]:
         """Identify P0 (critical) issues"""
         p0_issues = []
 
@@ -95,7 +97,9 @@ class CodeHealthReportGenerator:
                         )
 
                 if result.get("metrics", {}).get("nanCells", 0) > 0:
-                    p0_issues.append(f"🚨 Frontend **{result['route']}** displays NaN values in UI")
+                    p0_issues.append(
+                        f"🚨 Frontend **{result['route']}** displays NaN values in UI"
+                    )
 
         # Backend P0 issues
         if backend_results.get("endpoints"):
@@ -122,11 +126,15 @@ class CodeHealthReportGenerator:
                 summary = smoke_audit.get("summary", {})
                 failed_count = summary.get("failed", 0)
                 if failed_count > 0:
-                    p0_issues.append(f"🚨 {failed_count} API endpoints completely failing")
+                    p0_issues.append(
+                        f"🚨 {failed_count} API endpoints completely failing"
+                    )
 
         return p0_issues
 
-    def analyze_p1_issues(self, frontend_results: dict, backend_results: dict) -> list[str]:
+    def analyze_p1_issues(
+        self, frontend_results: dict, backend_results: dict
+    ) -> list[str]:
         """Identify P1 (high priority) issues"""
         p1_issues = []
 
@@ -181,7 +189,9 @@ class CodeHealthReportGenerator:
                     "health_endpoint",
                 ]:
                     error = audit_result.get("error", "Failed")
-                    p1_issues.append(f"⚠️ Backend **{audit_name}** check failed: {error}")
+                    p1_issues.append(
+                        f"⚠️ Backend **{audit_name}** check failed: {error}"
+                    )
 
         if backend_results.get("endpoints"):
             failures = backend_results["endpoints"].get("failures", [])
@@ -194,7 +204,9 @@ class CodeHealthReportGenerator:
 
         return p1_issues
 
-    def analyze_p2_issues(self, frontend_results: dict, backend_results: dict) -> list[str]:
+    def analyze_p2_issues(
+        self, frontend_results: dict, backend_results: dict
+    ) -> list[str]:
         """Identify P2 (polish/optimization) issues"""
         p2_issues = []
 
@@ -202,7 +214,9 @@ class CodeHealthReportGenerator:
         if frontend_results.get("jscpd"):
             duplicates = frontend_results["jscpd"].get("duplicates", [])
             if duplicates:
-                p2_issues.append(f"📝 Frontend has {len(duplicates)} code duplication blocks")
+                p2_issues.append(
+                    f"📝 Frontend has {len(duplicates)} code duplication blocks"
+                )
 
         if frontend_results.get("ui_audit"):
             for result in frontend_results["ui_audit"]:
@@ -458,9 +472,13 @@ python scripts/generate_code_health_report.py
             return {"score": 0, "status": "❌ NO DATA"}
 
         total_routes = len(results["ui_audit"])
-        successful_routes = len([r for r in results["ui_audit"] if r.get("status") == "success"])
+        successful_routes = len(
+            [r for r in results["ui_audit"] if r.get("status") == "success"]
+        )
 
-        success_rate = (successful_routes / total_routes * 100) if total_routes > 0 else 0
+        success_rate = (
+            (successful_routes / total_routes * 100) if total_routes > 0 else 0
+        )
 
         # Factor in performance if available
         perf_avg = self.get_avg_performance(results)
@@ -489,7 +507,9 @@ python scripts/generate_code_health_report.py
         total_audits = len(audits)
         successful_audits = len([a for a in audits.values() if a.get("success", False)])
 
-        success_rate = (successful_audits / total_audits * 100) if total_audits > 0 else 0
+        success_rate = (
+            (successful_audits / total_audits * 100) if total_audits > 0 else 0
+        )
 
         # Factor in endpoint success rate if available
         endpoint_success = results.get("endpoints", {}).get("success_rate", 100)
@@ -531,7 +551,11 @@ python scripts/generate_code_health_report.py
         if not backend_results.get("audit_summary"):
             return "❌ UNKNOWN"
 
-        health_audit = backend_results["audit_summary"].get("audits", {}).get("health_endpoint", {})
+        health_audit = (
+            backend_results["audit_summary"]
+            .get("audits", {})
+            .get("health_endpoint", {})
+        )
         if health_audit.get("success", False):
             return "✅ HEALTHY"
         else:

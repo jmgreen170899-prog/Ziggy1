@@ -42,7 +42,8 @@ class IBKRAdapter(BrokerAdapter):
         await self._ensure()
         poss = await self.ib.positionsAsync()
         return [
-            {"symbol": p.contract.symbol, "qty": p.position, "avg_price": p.avgCost} for p in poss
+            {"symbol": p.contract.symbol, "qty": p.position, "avg_price": p.avgCost}
+            for p in poss
         ]
 
     async def cancel_all(self) -> None:

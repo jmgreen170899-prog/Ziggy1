@@ -138,7 +138,9 @@ async def fund_dev_portfolio(funding_request: PortfolioFundingRequest):
     """
     try:
         if funding_request.additional_capital <= 0:
-            raise HTTPException(status_code=400, detail="Additional capital must be positive")
+            raise HTTPException(
+                status_code=400, detail="Additional capital must be positive"
+            )
 
         result = fund_portfolio(additional_capital=funding_request.additional_capital)
 

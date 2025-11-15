@@ -167,7 +167,11 @@ class RuleParameterGenerator:
         current = param.current_value
 
         if param.param_type == "float":
-            if param.step_size and param.min_value is not None and param.max_value is not None:
+            if (
+                param.step_size
+                and param.min_value is not None
+                and param.max_value is not None
+            ):
                 # Grid search around current value
                 steps = [-2, -1, 1, 2]  # Small steps around current
                 for step in steps:
@@ -351,15 +355,21 @@ class StrictLearner:
         # Gate 5: Calibration slope in range
         slope = candidate_metrics.calibration_slope
         gates["calibration_slope"] = (
-            self.gates.calibration_slope_range[0] <= slope <= self.gates.calibration_slope_range[1]
+            self.gates.calibration_slope_range[0]
+            <= slope
+            <= self.gates.calibration_slope_range[1]
         )
 
         # Gate 6: Max drawdown not significantly worse
         dd_delta_rel = comparison.get("max_drawdown_delta_pct", 0) / 100.0
-        gates["max_drawdown"] = dd_delta_rel <= self.gates.max_drawdown_deterioration_rel
+        gates["max_drawdown"] = (
+            dd_delta_rel <= self.gates.max_drawdown_deterioration_rel
+        )
 
         # Gate 7: Hit rate statistical significance
-        gates["hit_rate_significance"] = comparison.get("hit_rate_statistically_significant", False)
+        gates["hit_rate_significance"] = comparison.get(
+            "hit_rate_statistically_significant", False
+        )
 
         # Gate 8: Feature stability (PSI)
         max_psi = 0.0
@@ -488,7 +498,9 @@ class StrictLearner:
             )
 
         # Evaluate best candidate on test set
-        candidate_test_metrics = evaluate_trading_performance(test_df, baseline_df=train_df)
+        candidate_test_metrics = evaluate_trading_performance(
+            test_df, baseline_df=train_df
+        )
 
         # Compare results
         comparison = compare_runs(baseline_metrics, candidate_test_metrics)
@@ -544,9 +556,12 @@ class StrictLearner:
     def save_learning_result(self, result: LearningResult) -> bool:
         """Save learning result to disk."""
         try:
-            timestamp_str = datetime.fromtimestamp(result.timestamp).strftime("%Y%m%d_%H%M%S")
+            timestamp_str = datetime.fromtimestamp(result.timestamp).strftime(
+                "%Y%m%d_%H%M%S"
+            )
             filepath = (
-                self.learning_dir / f"learning_{timestamp_str}_{result.candidate_version}.json"
+                self.learning_dir
+                / f"learning_{timestamp_str}_{result.candidate_version}.json"
             )
 
             with open(filepath, "w") as f:

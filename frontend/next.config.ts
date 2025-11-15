@@ -3,17 +3,17 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  
+
   // Fix turbopack workspace root warning
   turbopack: {
     root: __dirname,
   },
-  
+
   // Ensure proper path resolution
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.resolve(__dirname, 'src'),
+      "@": path.resolve(__dirname, "src"),
     };
     return config;
   },

@@ -26,6 +26,7 @@ Development: http://localhost:8000/mobile
 Authenticate and receive JWT tokens for API access.
 
 **Request:**
+
 ```json
 {
   "username": "user@example.com",
@@ -36,6 +37,7 @@ Authenticate and receive JWT tokens for API access.
 ```
 
 **Response:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIs...",
@@ -51,6 +53,7 @@ Authenticate and receive JWT tokens for API access.
 ```
 
 **Security Best Practices:**
+
 - Store tokens securely using Android Keystore
 - Never log or display tokens
 - Implement token refresh before expiration
@@ -69,6 +72,7 @@ Authorization: Bearer <access_token>
 **Endpoint:** `POST /mobile/auth/refresh`
 
 **Request:**
+
 ```json
 {
   "refresh_token": "eyJhbGciOiJIUzI1NiIs..."
@@ -76,6 +80,7 @@ Authorization: Bearer <access_token>
 ```
 
 **Response:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIs...",
@@ -92,27 +97,31 @@ Authorization: Bearer <access_token>
 The most efficient way to fetch data - combines all updates in a single request.
 
 **Query Parameters:**
+
 - `since` (optional): Unix timestamp for incremental sync
 - `include` (optional): Comma-separated list: `quotes,signals,alerts,news,portfolio`
 
 **Example - Initial Sync:**
+
 ```bash
 GET /mobile/sync?include=all
 ```
 
 **Example - Incremental Sync:**
+
 ```bash
 GET /mobile/sync?since=1699564800&include=quotes,signals
 ```
 
 **Response:**
+
 ```json
 {
   "quotes": [
     {
       "symbol": "AAPL",
-      "price": 155.50,
-      "change": 1.50,
+      "price": 155.5,
+      "change": 1.5,
       "change_pct": 0.97,
       "volume": 50000000,
       "timestamp": 1699564800
@@ -132,9 +141,9 @@ GET /mobile/sync?since=1699564800&include=quotes,signals
   "alerts": [],
   "news": [],
   "portfolio": {
-    "total_value": 100000.00,
-    "cash": 25000.00,
-    "day_change": 1250.00,
+    "total_value": 100000.0,
+    "cash": 25000.0,
+    "day_change": 1250.0,
     "day_change_pct": 1.25,
     "positions": [],
     "updated_at": 1699564800
@@ -145,20 +154,21 @@ GET /mobile/sync?since=1699564800&include=quotes,signals
 ```
 
 **Mobile Implementation Pattern:**
+
 ```kotlin
 class DataSyncManager {
     private var lastSyncTimestamp: Long = 0
-    
+
     suspend fun sync() {
         val response = api.sync(
             since = if (lastSyncTimestamp > 0) lastSyncTimestamp else null,
             include = "all"
         )
-        
+
         // Update local cache
         database.updateQuotes(response.quotes)
         database.updateSignals(response.signals)
-        
+
         // Store sync token for next request
         lastSyncTimestamp = response.sync_token.toLong()
     }
@@ -174,21 +184,24 @@ class DataSyncManager {
 Get compact quotes for multiple symbols in one request.
 
 **Query Parameters:**
+
 - `symbols`: Comma-separated list (max 20 symbols)
 
 **Example:**
+
 ```bash
 GET /mobile/market/snapshot?symbols=AAPL,GOOGL,MSFT,TSLA
 ```
 
 **Response:**
+
 ```json
 {
   "quotes": [
     {
       "symbol": "AAPL",
-      "price": 155.50,
-      "change": 1.50,
+      "price": 155.5,
+      "change": 1.5,
       "change_pct": 0.97,
       "volume": 50000000,
       "timestamp": 1699564800
@@ -201,6 +214,7 @@ GET /mobile/market/snapshot?symbols=AAPL,GOOGL,MSFT,TSLA
 ```
 
 **Cache Strategy:**
+
 - Use `cache_ttl` to determine when to refresh
 - Cache locally for offline access
 - Show stale data with visual indicator after TTL
@@ -210,6 +224,7 @@ GET /mobile/market/snapshot?symbols=AAPL,GOOGL,MSFT,TSLA
 **Endpoint:** `GET /mobile/market/quote/{symbol}`
 
 **Example:**
+
 ```bash
 GET /mobile/market/quote/AAPL
 ```
@@ -223,15 +238,18 @@ GET /mobile/market/quote/AAPL
 Get AI-generated trading signals optimized for mobile display.
 
 **Query Parameters:**
+
 - `limit` (optional): Number of signals (1-50, default: 10)
 - `symbols` (optional): Filter by specific symbols
 
 **Example:**
+
 ```bash
 GET /mobile/signals?limit=10&symbols=AAPL,GOOGL
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -247,6 +265,7 @@ GET /mobile/signals?limit=10&symbols=AAPL,GOOGL
 ```
 
 **Signal Actions:**
+
 - `BUY`: Recommended to buy
 - `SELL`: Recommended to sell
 - `HOLD`: Recommended to hold position
@@ -258,17 +277,18 @@ GET /mobile/signals?limit=10&symbols=AAPL,GOOGL
 Get compact portfolio summary.
 
 **Response:**
+
 ```json
 {
-  "total_value": 100000.00,
-  "cash": 25000.00,
-  "day_change": 1250.00,
+  "total_value": 100000.0,
+  "cash": 25000.0,
+  "day_change": 1250.0,
   "day_change_pct": 1.25,
   "positions": [
     {
       "symbol": "AAPL",
       "shares": 100,
-      "value": 15000.00,
+      "value": 15000.0,
       "change_pct": 1.5
     }
   ],
@@ -283,17 +303,19 @@ Get compact portfolio summary.
 **Endpoint:** `GET /mobile/alerts`
 
 **Query Parameters:**
+
 - `active_only` (optional): Show only active alerts (default: true)
 
 **Response:**
+
 ```json
 [
   {
     "id": "alert_123",
     "symbol": "AAPL",
     "condition": "above",
-    "price": 160.00,
-    "current_price": 155.50,
+    "price": 160.0,
+    "current_price": 155.5,
     "triggered": false,
     "created_at": 1699564800
   }
@@ -305,22 +327,24 @@ Get compact portfolio summary.
 **Endpoint:** `POST /mobile/alerts`
 
 **Request:**
+
 ```json
 {
   "symbol": "AAPL",
   "condition": "above",
-  "price": 160.00
+  "price": 160.0
 }
 ```
 
 **Response:**
+
 ```json
 {
   "id": "alert_new",
   "status": "created",
   "symbol": "AAPL",
   "condition": "above",
-  "price": 160.00
+  "price": 160.0
 }
 ```
 
@@ -333,10 +357,12 @@ Get compact portfolio summary.
 **Endpoint:** `GET /mobile/news`
 
 **Query Parameters:**
+
 - `limit` (optional): Number of items (1-100, default: 20)
 - `symbols` (optional): Filter by symbols
 
 **Response:**
+
 ```json
 [
   {
@@ -352,6 +378,7 @@ Get compact portfolio summary.
 ```
 
 **Sentiment Values:**
+
 - Range: -1.0 (very negative) to 1.0 (very positive)
 - 0.0: neutral
 
@@ -364,6 +391,7 @@ Get compact portfolio summary.
 Register device for push notifications.
 
 **Request:**
+
 ```json
 {
   "device_id": "unique_device_id",
@@ -375,6 +403,7 @@ Register device for push notifications.
 ```
 
 **Response:**
+
 ```json
 {
   "status": "registered",
@@ -400,7 +429,7 @@ class ZiggyRepository {
             since = lastSyncTime,
             include = "quotes,signals,portfolio"
         )
-        
+
         // Update local database
         updateLocalCache(response)
     }
@@ -428,7 +457,7 @@ class MarketDataRepository(
     fun getQuotes(symbols: List<String>): Flow<List<Quote>> = flow {
         // Emit cached data immediately
         emit(database.getQuotes(symbols))
-        
+
         // Fetch fresh data in background
         try {
             val fresh = api.getMarketSnapshot(symbols.joinToString(","))
@@ -493,7 +522,7 @@ class ZiggyFirebaseMessagingService : FirebaseMessagingService() {
             "news" -> showNewsNotification(message.data)
         }
     }
-    
+
     override fun onNewToken(token: String) {
         // Update token on server
         api.registerDevice(
@@ -512,6 +541,7 @@ class ZiggyFirebaseMessagingService : FirebaseMessagingService() {
 - **Other endpoints**: 30 requests per minute
 
 **Rate Limit Headers:**
+
 ```
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
@@ -534,6 +564,7 @@ All errors follow a consistent format:
 ```
 
 **Common Error Codes:**
+
 - `400 BAD_REQUEST`: Invalid request parameters
 - `401 UNAUTHORIZED`: Missing or invalid authentication
 - `403 FORBIDDEN`: Insufficient permissions
@@ -588,6 +619,7 @@ The mobile API follows semantic versioning:
 - **Minimum Supported App Version**: Specified in response headers
 
 Breaking changes will increment the major version number and be communicated via:
+
 - API documentation updates
 - In-app notifications
 - Email to registered developers
@@ -595,6 +627,7 @@ Breaking changes will increment the major version number and be communicated via
 ## Support
 
 For API support, issues, or feature requests:
+
 - GitHub Issues: https://github.com/jmgreen170899-prog/ZiggyAI/issues
 - Email: support@ziggyai.com
 - Documentation: https://docs.ziggyai.com/mobile-api
@@ -602,6 +635,7 @@ For API support, issues, or feature requests:
 ## Changelog
 
 ### Version 1.0.0 (2024-11-10)
+
 - Initial mobile API release
 - Authentication with JWT tokens
 - Market data endpoints

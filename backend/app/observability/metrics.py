@@ -168,7 +168,9 @@ def get_slo_status() -> dict[str, Any]:
 
     if ws_p95_latencies:
         avg_p95_latency = sum(ws_p95_latencies) / len(ws_p95_latencies)
-        ws_slo_violated = check_slo_violation("ws_delivery_latency_p95", avg_p95_latency)
+        ws_slo_violated = check_slo_violation(
+            "ws_delivery_latency_p95", avg_p95_latency
+        )
         results.append(
             {
                 "name": "ws_delivery_latency_p95",
@@ -211,7 +213,9 @@ def get_slo_status() -> dict[str, Any]:
 
     if provider_availabilities:
         avg_availability = sum(provider_availabilities) / len(provider_availabilities)
-        availability_slo_violated = check_slo_violation("provider_availability", avg_availability)
+        availability_slo_violated = check_slo_violation(
+            "provider_availability", avg_availability
+        )
         results.append(
             {
                 "name": "provider_availability",

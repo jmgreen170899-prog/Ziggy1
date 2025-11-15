@@ -192,9 +192,12 @@ class RegimeDetector:
         regime = RegimeState.CHOP  # Default
 
         # Rule 1: Panic (highest priority)
-        panic_vix = metrics.vix_level and metrics.vix_level > self.thresholds["vix_panic"]
+        panic_vix = (
+            metrics.vix_level and metrics.vix_level > self.thresholds["vix_panic"]
+        )
         panic_spy = (
-            metrics.spy_change_1d and metrics.spy_change_1d < self.thresholds["spy_panic_change"]
+            metrics.spy_change_1d
+            and metrics.spy_change_1d < self.thresholds["spy_panic_change"]
         )
 
         if panic_vix or panic_spy:
@@ -203,7 +206,9 @@ class RegimeDetector:
             confidence = 0.9  # High confidence for panic signals
 
             if panic_vix:
-                reasons.append(f"VIX at {metrics.vix_level:.1f} > {self.thresholds['vix_panic']}")
+                reasons.append(
+                    f"VIX at {metrics.vix_level:.1f} > {self.thresholds['vix_panic']}"
+                )
             if panic_spy:
                 reasons.append(
                     f"SPY 1-day change {metrics.spy_change_1d:.1f}% < {self.thresholds['spy_panic_change']}%"
@@ -249,9 +254,13 @@ class RegimeDetector:
 
             # Add context for why it's chop
             if metrics.breadth_50dma:
-                reasons.append(f"Breadth at {metrics.breadth_50dma:.1f}% (neutral zone)")
+                reasons.append(
+                    f"Breadth at {metrics.breadth_50dma:.1f}% (neutral zone)"
+                )
             if metrics.spy_slope_20d:
-                reasons.append(f"20-day slope {metrics.spy_slope_20d:.2f}% (low momentum)")
+                reasons.append(
+                    f"20-day slope {metrics.spy_slope_20d:.2f}% (low momentum)"
+                )
 
         # Store reasons in metrics
         metrics.reasons = reasons

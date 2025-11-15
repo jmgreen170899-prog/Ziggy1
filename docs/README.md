@@ -74,16 +74,16 @@ pip install -r backend/requirements.lock
 
 ### I want to...
 
-| Goal | Documentation | Estimated Time |
-|------|---------------|----------------|
-| **Sync my local files with GitHub** | [SYNC_GUIDE.md](./SYNC_GUIDE.md) | 5 min |
-| **Understand the complete workflow** | [GITHUB_WORKFLOW.md](./GITHUB_WORKFLOW.md) | 10 min |
-| **Create my first pull request** | [CONTRIBUTING.md](../CONTRIBUTING.md#creating-and-managing-pull-requests) | 5 min |
-| **Resolve merge conflicts** | [CONTRIBUTING.md](../CONTRIBUTING.md#troubleshooting) | 10 min |
-| **Set up my dev environment** | [README-dev.md](../implements/README-dev.md) | 15 min |
-| **Run code health audits** | [AUDIT_README.md](../implements/AUDIT_README.md) | 10 min |
-| **Understand CI/CD pipeline** | [CONTRIBUTING.md](../CONTRIBUTING.md#cicd-pipeline) | 5 min |
-| **Fix "my files aren't syncing"** | [SYNC_GUIDE.md](./SYNC_GUIDE.md#troubleshooting) | 5 min |
+| Goal                                 | Documentation                                                             | Estimated Time |
+| ------------------------------------ | ------------------------------------------------------------------------- | -------------- |
+| **Sync my local files with GitHub**  | [SYNC_GUIDE.md](./SYNC_GUIDE.md)                                          | 5 min          |
+| **Understand the complete workflow** | [GITHUB_WORKFLOW.md](./GITHUB_WORKFLOW.md)                                | 10 min         |
+| **Create my first pull request**     | [CONTRIBUTING.md](../CONTRIBUTING.md#creating-and-managing-pull-requests) | 5 min          |
+| **Resolve merge conflicts**          | [CONTRIBUTING.md](../CONTRIBUTING.md#troubleshooting)                     | 10 min         |
+| **Set up my dev environment**        | [README-dev.md](../implements/README-dev.md)                              | 15 min         |
+| **Run code health audits**           | [AUDIT_README.md](../implements/AUDIT_README.md)                          | 10 min         |
+| **Understand CI/CD pipeline**        | [CONTRIBUTING.md](../CONTRIBUTING.md#cicd-pipeline)                       | 5 min          |
+| **Fix "my files aren't syncing"**    | [SYNC_GUIDE.md](./SYNC_GUIDE.md#troubleshooting)                          | 5 min          |
 
 ---
 
@@ -92,6 +92,7 @@ pip install -r backend/requirements.lock
 ### Scenario 1: Daily Development
 
 **Morning routine:**
+
 ```bash
 git checkout main
 git pull origin main
@@ -104,6 +105,7 @@ git checkout -b feature/my-work
 ### Scenario 2: Someone Merged a PR
 
 **Get their changes:**
+
 ```bash
 git checkout main
 git pull origin main
@@ -115,6 +117,7 @@ git pull origin main
 ### Scenario 3: Creating a Pull Request
 
 **Complete workflow:**
+
 ```bash
 # Create branch
 git checkout -b feature/new-feature
@@ -134,6 +137,7 @@ git push origin feature/new-feature
 ### Scenario 4: Merge Conflicts
 
 **Resolution:**
+
 ```bash
 git pull origin main
 # CONFLICT detected!
@@ -159,7 +163,7 @@ Automated synchronization with GitHub:
 # Linux/Mac
 ./scripts/sync-from-github.sh
 
-# Windows  
+# Windows
 .\scripts\sync-from-github.ps1
 
 # With auto-install dependencies (Windows)
@@ -167,6 +171,7 @@ Automated synchronization with GitHub:
 ```
 
 **Features:**
+
 - ✅ Automatic fetch and pull
 - ✅ Stash uncommitted changes
 - ✅ Detect dependency updates
@@ -231,6 +236,7 @@ Ready to Code!
 ```
 
 **Key Points:**
+
 1. **`git pull`** automatically updates your files
 2. **Dependencies** must be installed separately
 3. **Your files** = the actual code in directories
@@ -245,6 +251,7 @@ Ready to Code!
 ### Q: How do I know if my files are synced?
 
 **A:** Run these commands:
+
 ```bash
 git fetch origin
 git diff main origin/main  # Should be empty if synced
@@ -256,6 +263,7 @@ git status                 # Should be clean
 ### Q: What are "core files"?
 
 **A:** Core files are the actual source code files in your working directory:
+
 - `backend/` - Python API code
 - `frontend/` - React UI code
 - `scripts/` - Automation scripts
@@ -270,6 +278,7 @@ git status                 # Should be clean
 ### Q: What if I have uncommitted changes?
 
 **A:** Either:
+
 1. Commit them first: `git add . && git commit -m "message"`
 2. Stash them: `git stash`
 3. Use our sync script which handles this automatically
@@ -279,6 +288,7 @@ git status                 # Should be clean
 ### Q: What if dependencies changed?
 
 **A:** After pulling, run:
+
 ```bash
 npm install                         # Root dependencies
 cd frontend && npm install          # Frontend
@@ -289,7 +299,8 @@ cd ../backend && pip install -r requirements.lock  # Backend
 
 ### Q: How do I sync a specific branch?
 
-**A:** 
+**A:**
+
 ```bash
 git fetch origin
 git checkout branch-name
@@ -305,6 +316,7 @@ git pull origin branch-name
 ### Problem: My files didn't update after `git pull`
 
 **Checklist:**
+
 - [ ] Are you on the right branch? (`git branch`)
 - [ ] Did the pull succeed? (check for errors)
 - [ ] Do you have uncommitted changes? (`git status`)
@@ -315,6 +327,7 @@ git pull origin branch-name
 ### Problem: Merge conflicts
 
 **Solution:**
+
 1. Open conflicted files
 2. Look for `<<<<<<<` markers
 3. Choose correct version
@@ -326,6 +339,7 @@ git pull origin branch-name
 ### Problem: Dependencies are broken
 
 **Solution:**
+
 ```bash
 # Clean install
 rm -rf node_modules package-lock.json
@@ -343,11 +357,13 @@ pip install --upgrade -r requirements.lock
 ## 📚 Further Reading
 
 ### Git Resources
+
 - [Git Documentation](https://git-scm.com/doc)
 - [GitHub Flow Guide](https://guides.github.com/introduction/flow/)
 - [Pro Git Book](https://git-scm.com/book/en/v2)
 
 ### ZiggyAI Specific
+
 - [Architecture Overview](../implements/ZiggyAI_FULL_WRITEUP.md)
 - [Backend Functionality](../implements/ZiggyAI_Backend_Functionality_Explained.txt)
 - [Task Documentation](../TASK.md)
@@ -373,6 +389,7 @@ This documentation is maintained by the ZiggyAI team. To update:
 3. Request review from a maintainer
 
 **Documentation Structure:**
+
 ```
 docs/
 ├── README.md              ← You are here (index)
@@ -388,17 +405,20 @@ CONTRIBUTING.md            ← Complete contributing guide (root)
 ## ✅ Next Steps
 
 **If you're new to the project:**
+
 1. Read [SYNC_GUIDE.md](./SYNC_GUIDE.md) (5 min)
 2. Set up your environment: [README-dev.md](../implements/README-dev.md) (15 min)
 3. Try the sync script: `./scripts/sync-from-github.sh`
 
 **If you're making your first contribution:**
+
 1. Read [CONTRIBUTING.md](../CONTRIBUTING.md) (20 min)
 2. Create a feature branch
 3. Make your changes
 4. Create a pull request
 
 **If you're debugging an issue:**
+
 1. Check [SYNC_GUIDE.md - Troubleshooting](./SYNC_GUIDE.md#troubleshooting)
 2. Check [CONTRIBUTING.md - Troubleshooting](../CONTRIBUTING.md#troubleshooting)
 3. Search existing issues on GitHub

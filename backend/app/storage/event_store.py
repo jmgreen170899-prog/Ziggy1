@@ -94,7 +94,9 @@ def get_metrics() -> dict[str, Any]:
 
     # Add computed metrics
     if metrics.get("batch_writes_total", 0) > 0:
-        avg_batch_size = metrics.get("batch_events_total", 0) / metrics["batch_writes_total"]
+        avg_batch_size = (
+            metrics.get("batch_events_total", 0) / metrics["batch_writes_total"]
+        )
         metrics["avg_batch_size"] = avg_batch_size
 
     if metrics.get("last_batch_ms", 0) > 0 and metrics.get("last_batch_size", 0) > 0:
@@ -134,7 +136,9 @@ def get_performance_summary() -> str:
         )
 
     if "avg_batch_size" in metrics:
-        summary_lines.append(f"  Average Batch Size: {metrics['avg_batch_size']:.2f} events")
+        summary_lines.append(
+            f"  Average Batch Size: {metrics['avg_batch_size']:.2f} events"
+        )
 
     summary_lines.extend(
         [

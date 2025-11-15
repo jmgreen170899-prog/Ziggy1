@@ -15,7 +15,9 @@ import aiohttp
 class IEXCloudProvider:
     """Free IEX Cloud market data provider"""
 
-    def __init__(self, api_key: str = "pk_test_YOUR_PUBLIC_KEY"):  # Use test key for now
+    def __init__(
+        self, api_key: str = "pk_test_YOUR_PUBLIC_KEY"
+    ):  # Use test key for now
         self.api_key = api_key
         self.base_url = "https://cloud.iexapis.com/stable"
         self.session: aiohttp.ClientSession | None = None

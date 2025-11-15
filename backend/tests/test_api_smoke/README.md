@@ -69,17 +69,17 @@ def client():
 def test_endpoint_name(client):
     """Test description"""
     response = client.get("/endpoint")
-    
+
     # Status code check
     assert response.status_code == 200
-    
+
     # Response structure check
     data = response.json()
     assert "key_field" in data
-    
+
     # Type checks
     assert isinstance(data["key_field"], str)
-    
+
     # Value invariants
     assert data["some_value"] > 0
 ```
@@ -87,26 +87,31 @@ def test_endpoint_name(client):
 ## What We Test
 
 ### 1. Status Codes
+
 - Not just 200 OK
 - Expected error codes (400, 422, 500, 501)
 - Proper HTTP method support
 
 ### 2. Response Structure
+
 - Required fields present
 - Correct types (from Phase 1 models)
 - Nested structure validation
 
 ### 3. Value Invariants
+
 - Numeric ranges (e.g., scores in [-1, 1])
 - Required enumerations
 - Non-negative values where applicable
 
 ### 4. Error Handling
+
 - Standardized error format (detail, code, meta)
 - Graceful handling of invalid inputs
 - Proper validation errors
 
 ### 5. Backward Compatibility
+
 - Deprecated endpoints still work
 - Marked as deprecated in OpenAPI
 
@@ -115,12 +120,14 @@ def test_endpoint_name(client):
 These tests validate the work from previous phases:
 
 ### Phase 1 Validation
+
 - Response models are properly used
 - Deprecated endpoints are marked
 - Error responses follow standardized format
 - All endpoints have concrete schemas
 
 ### Phase 2 Validation
+
 - Generated TypeScript types match responses
 - API client methods work correctly
 - Contract alignment between backend/frontend
@@ -139,26 +146,28 @@ Add to your CI pipeline:
 ## Expected Behavior
 
 ### When Services Are Available
+
 - Tests pass with 200 status codes
 - Response structures are validated
 - Invariants are checked
 
 ### When Services Are Unavailable
+
 - Tests accept 501 (Not Implemented)
 - Tests accept 500 (Service Unavailable)
 - Tests remain fast (no timeouts)
 
 ## Test Coverage by Domain
 
-| Domain | Endpoints Tested | Key Features |
-|--------|-----------------|--------------|
-| Trading | 7 | Risk metrics, backtesting, health |
-| Screener | 8 | Scanning, presets, regime summary |
-| Cognitive | 6 | Decision enhancement, learning |
-| Paper Lab | 7 | Run lifecycle, trades, portfolio |
-| Chat | 10 | Completion, health, config |
-| Core | 11 | Health, RAG, tasks, ingest |
-| News/Alerts | 12 | Sentiment, alerts lifecycle |
+| Domain      | Endpoints Tested | Key Features                      |
+| ----------- | ---------------- | --------------------------------- |
+| Trading     | 7                | Risk metrics, backtesting, health |
+| Screener    | 8                | Scanning, presets, regime summary |
+| Cognitive   | 6                | Decision enhancement, learning    |
+| Paper Lab   | 7                | Run lifecycle, trades, portfolio  |
+| Chat        | 10               | Completion, health, config        |
+| Core        | 11               | Health, RAG, tasks, ingest        |
+| News/Alerts | 12               | Sentiment, alerts lifecycle       |
 
 **Total: 61 smoke tests across 7 domains**
 
@@ -211,7 +220,7 @@ pytest tests/test_api_smoke/ -x
 ✅ Fast execution (< 5 seconds total)  
 ✅ No flaky tests  
 ✅ Clear failure messages  
-✅ Independent test execution  
+✅ Independent test execution
 
 ---
 

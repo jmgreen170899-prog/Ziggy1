@@ -183,9 +183,9 @@ def compute_atr_from_df(df: pd.DataFrame, period: int = 14) -> float | None:
         return None
 
     prev_close = cl.shift(1)
-    tr = pd.concat([(hi - lo).abs(), (hi - prev_close).abs(), (lo - prev_close).abs()], axis=1).max(
-        axis=1
-    )
+    tr = pd.concat(
+        [(hi - lo).abs(), (hi - prev_close).abs(), (lo - prev_close).abs()], axis=1
+    ).max(axis=1)
     tr = tr.dropna()
     if tr.empty:
         return None
@@ -203,7 +203,10 @@ def compute_atr(
     Convenience: fetch recent OHLC for `symbol` and compute ATR(period).
     """
     frames = fetch_ohlc(
-        [symbol], period_days=max(lookback_days, period * 3), adjusted=True, provider=provider
+        [symbol],
+        period_days=max(lookback_days, period * 3),
+        adjusted=True,
+        provider=provider,
     )
     df = frames.get(symbol) or pd.DataFrame()
     return compute_atr_from_df(df, period=period)
@@ -247,7 +250,11 @@ def atr_position_plan(
     if r_multiple <= 0:
         r_multiple = 2.0
 
-    target = entry + stop_dist * r_multiple if side_u == "BUY" else entry - stop_dist * r_multiple
+    target = (
+        entry + stop_dist * r_multiple
+        if side_u == "BUY"
+        else entry - stop_dist * r_multiple
+    )
 
     qty = None
     if risk_amount is not None and risk_amount > 0:
@@ -285,7 +292,12 @@ def sma_cross_backtest(close: pd.Series, window: int = 50) -> dict[str, Any]:
       }
     """
     if close is None or close.shape[0] < max(5, window + 2):
-        return {"trades": [], "returns": [], "equity": [], "metrics": {"window": window}}
+        return {
+            "trades": [],
+            "returns": [],
+            "equity": [],
+            "metrics": {"window": window},
+        }
 
     close = close.astype(float)
     sma = close.rolling(window=window).mean()
@@ -309,7 +321,9 @@ def sma_cross_backtest(close: pd.Series, window: int = 50) -> dict[str, Any]:
         p = float(close.iloc[i])
         r = (p / last_price) - 1.0
         last_price = p
-        invested = any(e <= close.index[i] and close.index[i] < x for e, x in zip(entries, exits))
+        invested = any(
+            e <= close.index[i] and close.index[i] < x for e, x in zip(entries, exits)
+        )
         if invested:
             equity *= 1.0 + r
             daily_rets.append(r)
@@ -362,7 +376,9 @@ def sma_cross_backtest(close: pd.Series, window: int = 50) -> dict[str, Any]:
     # Daily Sharpe (252 trading days)
     dr = np.array(daily_rets[1:], dtype=float)
     sharpe = (
-        float(dr.mean() / dr.std() * math.sqrt(252)) if (dr.size > 1 and dr.std() > 0) else None
+        float(dr.mean() / dr.std() * math.sqrt(252))
+        if (dr.size > 1 and dr.std() > 0)
+        else None
     )
 
     return {
@@ -425,7 +441,9 @@ def run_backtest(
         }
 
     mp = provider or get_price_provider()
-    frames = fetch_ohlc([sym], period_days=max(5, int(period_days)), adjusted=True, provider=mp)
+    frames = fetch_ohlc(
+        [sym], period_days=max(5, int(period_days)), adjusted=True, provider=mp
+    )
     df = frames.get(sym) or pd.DataFrame()
     close = series_from_df(df)
 
@@ -446,12 +464,16 @@ def run_backtest(
         if isinstance(chain, (list, tuple)) and chain:
             return [
                 str(
-                    getattr(pp, "name", getattr(pp, "__class__", type("x", (), {})).__name__)
+                    getattr(
+                        pp, "name", getattr(pp, "__class__", type("x", (), {})).__name__
+                    )
                 ).lower()
                 for pp in chain
             ]
         return [
-            str(getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)).lower()
+            str(
+                getattr(p, "name", getattr(p, "__class__", type("x", (), {})).__name__)
+            ).lower()
         ]
 
     out = {

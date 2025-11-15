@@ -176,7 +176,9 @@ class ZiggyIntegrationHub:
         try:
             # Get overview data and enhance with brain
             overview_data = {"timestamp": time.time()}
-            enhanced = self.enhance_with_brain_intelligence(overview_data, "market_overview")
+            enhanced = self.enhance_with_brain_intelligence(
+                overview_data, "market_overview"
+            )
 
             return {
                 "regime": enhanced.get("market_regime", "unknown"),
@@ -214,14 +216,17 @@ class ZiggyIntegrationHub:
             return {
                 "version": default_rules.version,
                 "parameters": {
-                    name: param.current_value for name, param in default_rules.parameters.items()
+                    name: param.current_value
+                    for name, param in default_rules.parameters.items()
                 },
             }
         except Exception as e:
             self.logger.error(f"Failed to get active rules: {e}")
             return {"version": "error", "parameters": {}}
 
-    def apply_probability_calibration(self, raw_probabilities: list[float]) -> list[float]:
+    def apply_probability_calibration(
+        self, raw_probabilities: list[float]
+    ) -> list[float]:
         """Apply learned probability calibration."""
         if not self._calibration_available or self._apply_calibration is None:
             return raw_probabilities
@@ -281,11 +286,16 @@ class ZiggyIntegrationHub:
         calibrated_prob = None
         if raw_probability is not None:
             calibrated_probs = self.apply_probability_calibration([raw_probability])
-            calibrated_prob = calibrated_probs[0] if calibrated_probs else raw_probability
+            calibrated_prob = (
+                calibrated_probs[0] if calibrated_probs else raw_probability
+            )
 
         # Determine action based on calibrated probability and rules
         action, quantity, confidence, reasoning = self._determine_action(
-            ticker, calibrated_prob or raw_probability, brain_features, active_rules["parameters"]
+            ticker,
+            calibrated_prob or raw_probability,
+            brain_features,
+            active_rules["parameters"],
         )
 
         # Calculate risk management levels
@@ -319,7 +329,9 @@ class ZiggyIntegrationHub:
             try:
                 learning_record = decision.to_learning_record()
                 decision_timestamp = self._log_decision(**learning_record)
-                decision.brain_insights.append(f"Logged for learning: {decision_timestamp}")
+                decision.brain_insights.append(
+                    f"Logged for learning: {decision_timestamp}"
+                )
             except Exception as e:
                 self.logger.error(f"Failed to log decision for learning: {e}")
 
@@ -395,7 +407,10 @@ class ZiggyIntegrationHub:
         return action, quantity, confidence, reasoning
 
     def _calculate_risk_levels(
-        self, market_data: dict[str, Any], features: dict[str, Any], parameters: dict[str, Any]
+        self,
+        market_data: dict[str, Any],
+        features: dict[str, Any],
+        parameters: dict[str, Any],
     ) -> tuple[float | None, float | None, float]:
         """Calculate stop loss, take profit, and risk score."""
         try:
@@ -470,7 +485,11 @@ class ZiggyIntegrationHub:
 
         # Calculate integration score
         active_systems = sum(
-            [self._brain_available, self._learning_available, self._calibration_available]
+            [
+                self._brain_available,
+                self._learning_available,
+                self._calibration_available,
+            ]
         )
         health["integration_score"] = (active_systems / 3.0) * 100
 
@@ -537,4 +556,6 @@ if __name__ == "__main__":
 
     # Test system health
     health = hub.get_system_health()
-    print(f"System health: {health['overall_status']} (score: {health['integration_score']:.1f}%)")
+    print(
+        f"System health: {health['overall_status']} (score: {health['integration_score']:.1f}%)"
+    )

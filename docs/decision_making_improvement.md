@@ -20,6 +20,7 @@ self.win_rates = {
 ```
 
 **Issues:**
+
 - Confidence scores never adapted to actual performance
 - No learning from historical outcomes
 - Same confidence regardless of recent results
@@ -88,6 +89,7 @@ Implemented a **dynamic confidence calibration system** that:
 **Core Class:** `DecisionContextEnricher`
 
 **Key Methods:**
+
 - `enrich_decision()` - Main entry point for enrichment
 - `_get_historical_performance()` - Queries decision log for outcomes
 - `_apply_calibration()` - Applies isotonic regression calibration
@@ -95,6 +97,7 @@ Implemented a **dynamic confidence calibration system** that:
 - `_extract_lessons()` - Generates insights from history
 
 **Caching Strategy:**
+
 - Performance metrics cached for 1 hour
 - Calibrators cached indefinitely (reloaded on restart)
 - Cache refreshes automatically on TTL expiration
@@ -104,11 +107,12 @@ Implemented a **dynamic confidence calibration system** that:
 **File:** `backend/app/services/market_brain/signals.py`
 
 **Enhanced Fields in Signal Dataclass:**
+
 ```python
 @dataclass
 class Signal:
     # Existing fields...
-    
+
     # New decision context fields
     raw_confidence: float | None = None          # Pre-calibration
     confidence_adjustment: float | None = None    # How much changed
@@ -118,13 +122,14 @@ class Signal:
 ```
 
 **Integration Point:**
+
 ```python
 def generate_signal(self, ticker: str, regime: RegimeResult | None = None):
     # ... existing signal generation ...
-    
+
     # NEW: Enrich with decision context
     final_signal = self._enrich_signal_with_context(final_signal, features)
-    
+
     return {"ticker": ticker, "signal": final_signal, "reason": "ok"}
 ```
 
@@ -133,12 +138,14 @@ def generate_signal(self, ticker: str, regime: RegimeResult | None = None):
 **Method:** Isotonic Regression
 
 **Why Isotonic Regression?**
+
 - Non-parametric (makes no assumptions about probability distribution)
 - Monotonic (preserves confidence ordering)
 - Works well with limited data
 - Standard approach in ML calibration
 
 **Fallback Strategy:**
+
 ```
 IF historical_signals >= 30:
     Use isotonic regression calibrator
@@ -151,6 +158,7 @@ ELSE:
 ### 4. Performance Metrics
 
 **Tracked Metrics:**
+
 - **Win Rate** - Percentage of successful signals
 - **Brier Score** - Calibration quality (lower is better)
 - **Sample Size** - Number of historical signals
@@ -158,9 +166,11 @@ ELSE:
 - **Reliability Score** - Overall quality indicator (0-1)
 
 **Brier Score Formula:**
+
 ```
 Brier = (1/N) * Σ(predicted_prob - actual_outcome)²
 ```
+
 - Perfect calibration: 0.0
 - Good calibration: < 0.20
 - Poor calibration: > 0.30
@@ -182,7 +192,7 @@ signal = generate_signal("AAPL")
 print(signal.raw_confidence)        # 0.65 (original)
 print(signal.confidence)            # 0.68 (calibrated)
 print(signal.confidence_adjustment) # +0.03 (adjusted upward)
-print(signal.decision_quality)      # {'expected_accuracy': 0.72, 
+print(signal.decision_quality)      # {'expected_accuracy': 0.72,
                                     #  'reliability_score': 0.85,
                                     #  'historical_win_rate': 0.72,
                                     #  'historical_sample_size': 47}
@@ -201,6 +211,7 @@ print(signal.lessons_learned)       # ['Strong track record: 72% win rate',
 **Solution:** Calibrated scores based on real outcomes
 
 **Example:**
+
 - Static confidence: 65%
 - Actual historical win rate: 72%
 - Calibrated confidence: 68% (adjusted upward)
@@ -212,6 +223,7 @@ print(signal.lessons_learned)       # ['Strong track record: 72% win rate',
 **Solution:** Separate calibration for each signal type + regime combination
 
 **Example:**
+
 - MeanReversion in CHOP: 68% confidence
 - MeanReversion in PANIC: 45% confidence
 - Reflects actual performance difference
@@ -222,6 +234,7 @@ print(signal.lessons_learned)       # ['Strong track record: 72% win rate',
 **Solution:** Shows similar decisions and their outcomes
 
 **Example:**
+
 ```
 Similar Past Decisions:
 - 8 similar trades found
@@ -236,6 +249,7 @@ Similar Past Decisions:
 **Solution:** Explainable adjustments with lessons learned
 
 **Example:**
+
 ```
 Lessons Learned:
 1. Strong track record: 72% win rate over 47 signals
@@ -249,8 +263,9 @@ Lessons Learned:
 **Solution:** Learning feedback loop
 
 **Flow:**
+
 ```
-Signal → Execution → Outcome → Update History → 
+Signal → Execution → Outcome → Update History →
 Better Calibration → Improved Future Signals
 ```
 
@@ -259,16 +274,19 @@ Better Calibration → Improved Future Signals
 ### Computational Cost
 
 **First Call (Cold Start):**
+
 - Query decision log: ~50-100ms
 - Build calibrator: ~10-20ms (if needed)
 - Total: ~100ms
 
 **Subsequent Calls (Cached):**
+
 - Cache lookup: ~1ms
 - Calibration: ~1ms
 - Total: ~5-10ms
 
 **Cache Strategy:**
+
 - Performance metrics: 1-hour TTL
 - Calibrators: Persist across restarts
 - Minimal impact on signal generation latency
@@ -276,11 +294,13 @@ Better Calibration → Improved Future Signals
 ### Memory Usage
 
 **Per Calibrator:**
+
 - Isotonic regression model: ~5-10KB
 - Performance metrics: ~1KB
 - Total: ~10KB per (signal_type, regime) combination
 
 **Expected Total:**
+
 - ~10 signal types × 4 regimes = 40 combinations
 - 40 × 10KB = ~400KB total
 - Negligible memory footprint
@@ -300,6 +320,7 @@ After (calibrated): 0.18
 **File:** `backend/test_decision_context.py`
 
 **Tests:**
+
 1. Historical performance tracking
 2. Confidence calibration (synthetic data)
 3. Decision enrichment (end-to-end)
@@ -314,12 +335,14 @@ After (calibrated): 0.18
 **File:** `backend/demo_decision_improvement.py`
 
 **Demonstrates:**
+
 - Before/after comparison
 - Regime-specific calibration
 - Decision quality indicators
 - Continuous learning feedback loop
 
 **Run with:**
+
 ```bash
 cd backend
 python demo_decision_improvement.py
@@ -351,14 +374,17 @@ MIN_SAMPLES_FOR_SIMPLE_ADJUSTMENT=10
 ### Tuning Parameters
 
 **Calibration Quality:**
+
 - Increase `MIN_SAMPLES_FOR_CALIBRATION` for higher quality (slower to learn)
 - Decrease for faster adaptation (potentially noisy)
 
 **Historical Context:**
+
 - Increase `HISTORICAL_LOOKBACK_DAYS` for more stable metrics
 - Decrease for faster adaptation to recent changes
 
 **Similar Decisions:**
+
 - Increase `SIMILAR_DECISIONS_LOOKBACK_DAYS` to find more examples
 - Decrease to focus on recent patterns
 

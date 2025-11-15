@@ -3,23 +3,25 @@
 Generated: 2025-11-08 (UTC)
 
 ## Startup & Env
- Backend OpenAPI reachable: Yes
- Discovered routes (scan): 26
- Total frontend API calls (scan): 3
- OpenAPI diff issues: 0 (proxy normalization applied)
 
-| Area | Routes Tested | Endpoints Touched | Failures | Degraded | Notes |
-|---|---:|---:|---:|---:|---|
-| Startup & Env | 0 | 0 | 0 | 0 | No data yet |
-| Auth | 0 | 0 | 0 | 0 | No data yet |
-| Market/Overview | 0 | 0 | 0 | 0 | No data yet |
-| Signals | 0 | 0 | 0 | 0 | No data yet |
-| Trading | 0 | 0 | 0 | 0 | No data yet |
-| News | 0 | 0 | 0 | 0 | No data yet |
-| Proxies | 0 | 0 | 0 | 0 | Resolved: proxy path normalization applied |
-| DX | 0 | 0 | 0 | 0 | No data yet |
+Backend OpenAPI reachable: Yes
+Discovered routes (scan): 26
+Total frontend API calls (scan): 3
+OpenAPI diff issues: 0 (proxy normalization applied)
+
+| Area            | Routes Tested | Endpoints Touched | Failures | Degraded | Notes                                      |
+| --------------- | ------------: | ----------------: | -------: | -------: | ------------------------------------------ |
+| Startup & Env   |             0 |                 0 |        0 |        0 | No data yet                                |
+| Auth            |             0 |                 0 |        0 |        0 | No data yet                                |
+| Market/Overview |             0 |                 0 |        0 |        0 | No data yet                                |
+| Signals         |             0 |                 0 |        0 |        0 | No data yet                                |
+| Trading         |             0 |                 0 |        0 |        0 | No data yet                                |
+| News            |             0 |                 0 |        0 |        0 | No data yet                                |
+| Proxies         |             0 |                 0 |        0 |        0 | Resolved: proxy path normalization applied |
+| DX              |             0 |                 0 |        0 |        0 | No data yet                                |
 
 ## Proxies
+
 - Status: Resolved
   - Frontend proxy paths now normalized (e.g., `/api/paper/health` → `/paper/health`).
   - Latest OpenAPI diff: 0 missing-endpoint issues.
@@ -28,6 +30,7 @@ Generated: 2025-11-08 (UTC)
     - GET /api/paper/status/detailed → GET /paper/status/detailed
 
 ## Market/Overview
+
 - [Severity: low] Home references market overview endpoint
   - Route(s): /
   - Backend endpoint(s): GET /market/overview
@@ -40,42 +43,49 @@ Generated: 2025-11-08 (UTC)
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## Auth
+
 - No e2e or scan hits for auth routes in this run.
-  - Data source: tools/out/frontend-calls.json (no calls under /auth/*), tools/out/api-diff.json
+  - Data source: tools/out/frontend-calls.json (no calls under /auth/\*), tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## Signals (single+batch)
+
 - No data yet. Run e2e to exercise signals UI.
   - Data source: tools/out/frontend-calls.json (no calls under /signals), tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## Trading
+
 - No data yet. Run e2e to exercise trading flows.
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## News
+
 - No data yet. Run e2e to exercise news pages.
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## Charts/OHLC
+
 - No data yet. Add e2e to validate OHLC rendering.
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## WebSockets
+
 - No data yet. Add e2e for WS streams.
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json, Playwright report
 
 ## DX
+
 - No e2e data yet. OpenAPI reachable. Scan captured 26 routes and 3 API call sites.
   - Data source: tools/out/frontend-calls.json, tools/out/api-diff.json
 - No data yet. Run: npm run audit:scan / npm run audit:openapi / npm run audit:e2e
@@ -95,12 +105,14 @@ Generated: 2025-11-08 (UTC)
   - JSON results: `frontend/artifacts/e2e/playwright-results.json`
 
 ### Routes exercised (examples)
+
 - `/` (home)
 - `/account`, `/account/billing`, `/account/devices`
 - `/auth/signin`, `/auth/signup`, `/auth/forgot-password`
 - `/chat`, `/crypto`, `/market`, `/news`, `/portfolio`, `/trading`, and more
 
 ### Notable failure
+
 - One test failed (homepage smoke previously timing out waiting for `#__next`).
   - Symptoms: Timeout acquiring root container plus Next.js dev overlay errors (“Functions cannot be passed directly to Client Components…”).
   - Likely cause: Passing a non-serializable function from a Server Component to a Client Component.
@@ -110,6 +122,7 @@ Generated: 2025-11-08 (UTC)
     - Optionally add `allowedDevOrigins` in `next.config.ts` to remove cross-origin dev warning.
 
 ### Usefulness
+
 - Confirms most major routes render and network requests succeed (26 green).
 - Highlights a hydration / component boundary issue early.
 

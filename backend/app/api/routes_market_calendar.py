@@ -13,7 +13,10 @@ from ..services.macro import fred_data, get_market_calendar_data, market_calenda
 
 # Market Brain Integration
 try:
-    from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+    from app.services.market_brain.simple_data_hub import (
+        DataSource,
+        enhance_market_data,
+    )
 
     BRAIN_AVAILABLE = True
     _enhance_market_data = enhance_market_data
@@ -71,7 +74,8 @@ async def get_earnings_calendar(
         return {
             "earnings": earnings,
             "start_date": start_date or datetime.now().strftime("%Y-%m-%d"),
-            "end_date": end_date or (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"),
+            "end_date": end_date
+            or (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"),
         }
     except Exception as e:
         logger.error(f"Error fetching earnings: {e}")
@@ -88,7 +92,8 @@ async def get_economic_events(
         result = {
             "events": events,
             "start_date": start_date or datetime.now().strftime("%Y-%m-%d"),
-            "end_date": end_date or (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"),
+            "end_date": end_date
+            or (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d"),
         }
 
         # Enhance with Market Brain Intelligence

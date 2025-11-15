@@ -20,7 +20,10 @@ class RiskManager:
     def check(self, symbol: str, intended_notional: float) -> bool:
         if intended_notional > self.cfg.max_notional_per_trade:
             raise ValueError("Notional exceeds per-trade cap")
-        if self.oms.gross_exposure() + abs(intended_notional) > self.cfg.max_gross_exposure:
+        if (
+            self.oms.gross_exposure() + abs(intended_notional)
+            > self.cfg.max_gross_exposure
+        ):
             raise ValueError("Exposure cap hit")
         # if self.oms.realized_pnl_today() < -self.cfg.max_daily_loss:
         #     raise ValueError("Daily loss limit breached")

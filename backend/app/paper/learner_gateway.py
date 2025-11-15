@@ -49,7 +49,10 @@ class LearnerGateway:
 
         logger.info(
             "Learner gateway started",
-            extra={"batch_size": self.batch_size, "drain_interval": self.drain_interval},
+            extra={
+                "batch_size": self.batch_size,
+                "drain_interval": self.drain_interval,
+            },
         )
 
     async def stop(self) -> None:
@@ -85,7 +88,8 @@ class LearnerGateway:
                 except Exception as e:
                     error_msg = f"Error in learner drain loop: {e!s}"
                     logger.error(
-                        error_msg, extra={"error": str(e), "traceback": traceback.format_exc()}
+                        error_msg,
+                        extra={"error": str(e), "traceback": traceback.format_exc()},
                     )
                     _learner_metrics.record_error(error_msg)
 
@@ -125,7 +129,9 @@ class LearnerGateway:
             import numpy as np
 
             X = np.array([evt.features for evt in labeled], dtype=float)
-            y = np.array([float(cast(float, evt.label)) for evt in labeled], dtype=float)
+            y = np.array(
+                [float(cast(float, evt.label)) for evt in labeled], dtype=float
+            )
 
             features_dim = int(X.shape[1]) if X.ndim == 2 and X.size else 0
 
@@ -203,7 +209,9 @@ class LearnerGateway:
 _learner_gateway: LearnerGateway | None = None
 
 
-async def start_learner_gateway(batch_size: int = 256, drain_interval: float = 5.0) -> None:
+async def start_learner_gateway(
+    batch_size: int = 256, drain_interval: float = 5.0
+) -> None:
     """Start the global learner gateway."""
     global _learner_gateway
 

@@ -24,7 +24,9 @@ class FakeSession:
     def __init__(self, status=500, text=""):
         self._resp = FakeResponse(status=status, text=text)
 
-    def get(self, url):  # aiohttp returns an awaitable context manager; our FakeResponse matches
+    def get(
+        self, url
+    ):  # aiohttp returns an awaitable context manager; our FakeResponse matches
         return self._resp
 
 

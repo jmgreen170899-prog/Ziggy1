@@ -306,8 +306,12 @@ class TestNewsNLP:
         positive_text = "Apple stock is performing well"
         negative_text = "Apple stock is not performing well"
 
-        pos_result = nlp_module.extract_entities_and_sentiment({"headline": positive_text})
-        neg_result = nlp_module.extract_entities_and_sentiment({"headline": negative_text})
+        pos_result = nlp_module.extract_entities_and_sentiment(
+            {"headline": positive_text}
+        )
+        neg_result = nlp_module.extract_entities_and_sentiment(
+            {"headline": negative_text}
+        )
 
         # Negation should flip sentiment
         pos_sentiment = pos_result["overall_sentiment"]["polarity"]
@@ -332,7 +336,9 @@ class TestTimezoneUtils:
     def test_event_timestamp_normalization(self, timezone_module):
         """Test normalizing event timestamps."""
         result = timezone_module.normalize_event_ts(
-            source_ts="2025-01-13T15:30:00", source_tz="America/New_York", exchange="NYSE"
+            source_ts="2025-01-13T15:30:00",
+            source_tz="America/New_York",
+            exchange="NYSE",
         )
 
         assert result["success"] is True
@@ -402,7 +408,9 @@ class TestBrainIntegration:
             "event_classification": "earnings",
         }
 
-        with patch.object(brain_module, "append_event", return_value="test_nlp_event_id"):
+        with patch.object(
+            brain_module, "append_event", return_value="test_nlp_event_id"
+        ):
             event_id = await brain_module.write_nlp_to_brain(
                 news_data=SAMPLE_NEWS_DATA, nlp_results=nlp_results
             )
@@ -449,7 +457,9 @@ class TestIntegrationScenarios:
         # This would test the full pipeline from provider failure through brain logging
         # Mock the provider factory and brain integration
 
-        with patch("backend.app.services.provider_factory.MultiProvider") as mock_provider:
+        with patch(
+            "backend.app.services.provider_factory.MultiProvider"
+        ) as mock_provider:
             with patch(
                 "backend.app.services.brain_integration.write_provider_health_to_brain"
             ) as mock_brain:
@@ -477,7 +487,9 @@ class TestIntegrationScenarios:
                     # Setup contract violation
                     mock_validate.return_value = {
                         "valid": False,
-                        "violations": [{"type": "price_inconsistency", "details": "high < low"}],
+                        "violations": [
+                            {"type": "price_inconsistency", "details": "high < low"}
+                        ],
                     }
 
                     mock_quarantine.return_value = "quarantine_123"

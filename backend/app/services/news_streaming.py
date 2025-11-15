@@ -61,17 +61,24 @@ class NewsStreamer:
                 await self.streaming_task
         logger.info("News streaming stopped")
 
-    async def _enhance_news_with_brain(self, news_item: dict[str, Any]) -> dict[str, Any]:
+    async def _enhance_news_with_brain(
+        self, news_item: dict[str, Any]
+    ) -> dict[str, Any]:
         """Enhance news item with Ziggy's brain intelligence"""
         try:
             # Import brain enhancement system
-            from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+            from app.services.market_brain.simple_data_hub import (
+                DataSource,
+                enhance_market_data,
+            )
 
             # Prepare news data for brain enhancement
             news_data = {"news_items": [news_item]}
 
             # Route through Ziggy's brain for enhancement
-            enhanced = enhance_market_data(news_data, DataSource.NEWS, news_items=[news_item])
+            enhanced = enhance_market_data(
+                news_data, DataSource.NEWS, news_items=[news_item]
+            )
 
             # Extract enhanced news data
             if isinstance(enhanced, dict):
@@ -201,8 +208,12 @@ class NewsStreamer:
             # Limit memory usage - keep only recent IDs
             if len(self.seen_news_ids) > 1000:
                 # Keep only the most recent 500 IDs
-                recent_items = sorted(all_items, key=lambda x: x.get("ts", 0), reverse=True)[:500]
-                self.seen_news_ids = {item.get("id", "") for item in recent_items if item.get("id")}
+                recent_items = sorted(
+                    all_items, key=lambda x: x.get("ts", 0), reverse=True
+                )[:500]
+                self.seen_news_ids = {
+                    item.get("id", "") for item in recent_items if item.get("id")
+                }
 
             # Broadcast new items
             if new_items:

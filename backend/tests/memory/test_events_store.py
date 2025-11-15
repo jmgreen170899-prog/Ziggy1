@@ -96,7 +96,10 @@ class TestEventStore:
         assert stored_event["p_up"] == 0.63
         assert stored_event["decision"] == "BUY"
         assert stored_event["size"] == 0.35
-        assert stored_event["explain"]["shap_top"] == [["breadth", 0.21], ["sentiment", 0.17]]
+        assert stored_event["explain"]["shap_top"] == [
+            ["breadth", 0.21],
+            ["sentiment", 0.17],
+        ]
         assert stored_event["neighbors"][0]["id"] == "neighbor1"
         assert stored_event["neighbors"][0]["p_outcome"] == 0.68
 
@@ -108,7 +111,13 @@ class TestEventStore:
         event_id = append_event(event_data)
 
         # Update outcome
-        outcome_data = {"horizon": "1d", "label": 1, "pnl": 0.007, "mfe": 0.012, "mae": -0.004}
+        outcome_data = {
+            "horizon": "1d",
+            "label": 1,
+            "pnl": 0.007,
+            "mfe": 0.012,
+            "mae": -0.004,
+        }
 
         update_outcome(event_id, outcome_data)
 
@@ -180,7 +189,8 @@ class TestEventStore:
 
         # Missing required field
         invalid_event = {
-            "ts": datetime.utcnow().isoformat() + "Z"
+            "ts": datetime.utcnow().isoformat()
+            + "Z"
             # Missing ticker
         }
         assert validate_event_schema(invalid_event) is False
@@ -254,7 +264,10 @@ class TestEventStore:
 
         def append_worker(worker_id):
             for i in range(5):
-                event_data = {"ticker": f"STOCK{worker_id}_{i}", "p_up": 0.5 + worker_id * 0.1}
+                event_data = {
+                    "ticker": f"STOCK{worker_id}_{i}",
+                    "p_up": 0.5 + worker_id * 0.1,
+                }
                 event_id = append_event(event_data)
                 event_ids.append(event_id)
                 time.sleep(0.001)  # Small delay
@@ -323,8 +336,13 @@ def sample_event():
         "p_up": 0.63,
         "decision": "BUY",
         "size": 0.35,
-        "explain": {"shap_top": [["breadth", 0.21], ["sentiment", 0.17], ["vix", 0.12]]},
-        "neighbors": [{"id": "event1", "p_outcome": 0.68}, {"id": "event2", "p_outcome": 0.71}],
+        "explain": {
+            "shap_top": [["breadth", 0.21], ["sentiment", 0.17], ["vix", 0.12]]
+        },
+        "neighbors": [
+            {"id": "event1", "p_outcome": 0.68},
+            {"id": "event2", "p_outcome": 0.71},
+        ],
     }
 
 

@@ -63,7 +63,9 @@ class AuditLog:
             with suppress(Exception):
                 self._fh.close()
 
-    def replay_events(self, since_ts: datetime | None = None) -> Iterator[dict[str, Any]]:
+    def replay_events(
+        self, since_ts: datetime | None = None
+    ) -> Iterator[dict[str, Any]]:
         if not self.path.exists():
             return iter(())
         with open(self.path, encoding="utf-8") as fh:

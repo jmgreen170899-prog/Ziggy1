@@ -216,7 +216,12 @@ def calculate_calibration_metrics(
         return (
             1.0,
             0.0,
-            {"bin_centers": [], "observed_freq": [], "predicted_freq": [], "counts": []},
+            {
+                "bin_centers": [],
+                "observed_freq": [],
+                "predicted_freq": [],
+                "counts": [],
+            },
         )
 
     valid_mask = df["predicted_prob"].notna() & df["realized_pnl"].notna()
@@ -226,7 +231,12 @@ def calculate_calibration_metrics(
         return (
             1.0,
             0.0,
-            {"bin_centers": [], "observed_freq": [], "predicted_freq": [], "counts": []},
+            {
+                "bin_centers": [],
+                "observed_freq": [],
+                "predicted_freq": [],
+                "counts": [],
+            },
         )
 
     probabilities = valid_df["predicted_prob"].values
@@ -314,11 +324,17 @@ def calculate_psi(
             candidate_counts, _ = np.histogram(candidate_values, bins=bin_edges)
 
             # Add small constant to avoid division by zero
-            baseline_pct = (baseline_counts + 1e-6) / (baseline_counts.sum() + n_bins * 1e-6)
-            candidate_pct = (candidate_counts + 1e-6) / (candidate_counts.sum() + n_bins * 1e-6)
+            baseline_pct = (baseline_counts + 1e-6) / (
+                baseline_counts.sum() + n_bins * 1e-6
+            )
+            candidate_pct = (candidate_counts + 1e-6) / (
+                candidate_counts.sum() + n_bins * 1e-6
+            )
 
             # Calculate PSI
-            psi = np.sum((candidate_pct - baseline_pct) * np.log(candidate_pct / baseline_pct))
+            psi = np.sum(
+                (candidate_pct - baseline_pct) * np.log(candidate_pct / baseline_pct)
+            )
             psi_scores[feature] = psi
 
         except Exception:
@@ -412,8 +428,8 @@ def evaluate_trading_performance(
 
     # Probability calibration
     brier_score = calculate_brier_score(completed_df)
-    calibration_slope, calibration_intercept, reliability_diagram = calculate_calibration_metrics(
-        completed_df
+    calibration_slope, calibration_intercept, reliability_diagram = (
+        calculate_calibration_metrics(completed_df)
     )
 
     # Trading behavior metrics
@@ -422,7 +438,9 @@ def evaluate_trading_performance(
 
     if "timestamp" in completed_df.columns:
         # Calculate daily turnover
-        completed_df["date"] = pd.to_datetime(completed_df["timestamp"], unit="s").dt.date
+        completed_df["date"] = pd.to_datetime(
+            completed_df["timestamp"], unit="s"
+        ).dt.date
         daily_trades = completed_df.groupby("date").size()
         avg_daily_turnover = daily_trades.mean()
 
@@ -482,15 +500,18 @@ def compare_runs(
         Dict with comparison results and significance tests
     """
     comparison = {
-        "sharpe_improvement": candidate_metrics.sharpe_ratio - baseline_metrics.sharpe_ratio,
+        "sharpe_improvement": candidate_metrics.sharpe_ratio
+        - baseline_metrics.sharpe_ratio,
         "sharpe_improvement_pct": (
-            (candidate_metrics.sharpe_ratio / max(baseline_metrics.sharpe_ratio, 0.001)) - 1
+            (candidate_metrics.sharpe_ratio / max(baseline_metrics.sharpe_ratio, 0.001))
+            - 1
         )
         * 100,
         "brier_improvement": baseline_metrics.brier_score
         - candidate_metrics.brier_score,  # Lower is better
         "brier_improvement_pct": (
-            (baseline_metrics.brier_score / max(candidate_metrics.brier_score, 0.001)) - 1
+            (baseline_metrics.brier_score / max(candidate_metrics.brier_score, 0.001))
+            - 1
         )
         * 100,
         "win_rate_delta": candidate_metrics.win_rate - baseline_metrics.win_rate,
@@ -508,9 +529,11 @@ def compare_runs(
             - 1
         )
         * 100,
-        "max_drawdown_delta": candidate_metrics.max_drawdown - baseline_metrics.max_drawdown,
+        "max_drawdown_delta": candidate_metrics.max_drawdown
+        - baseline_metrics.max_drawdown,
         "max_drawdown_delta_pct": (
-            (candidate_metrics.max_drawdown / max(baseline_metrics.max_drawdown, 0.001)) - 1
+            (candidate_metrics.max_drawdown / max(baseline_metrics.max_drawdown, 0.001))
+            - 1
         )
         * 100,
         "calibration_slope_delta": candidate_metrics.calibration_slope
@@ -527,7 +550,9 @@ def compare_runs(
     candidate_ci = candidate_metrics.hit_rate_confidence_interval
 
     # Check if confidence intervals overlap
-    hit_rate_significant = (candidate_ci[0] > baseline_ci[1]) or (candidate_ci[1] < baseline_ci[0])
+    hit_rate_significant = (candidate_ci[0] > baseline_ci[1]) or (
+        candidate_ci[1] < baseline_ci[0]
+    )
 
     comparison["hit_rate_statistically_significant"] = hit_rate_significant
     comparison["baseline_hit_rate_ci"] = baseline_ci

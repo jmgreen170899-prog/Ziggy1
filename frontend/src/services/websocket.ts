@@ -1,21 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { liveDataService } from '@/services/liveData';
-import type { Portfolio, Quote, NewsItem, Alert, TradingSignal } from '@/types/api';
+import { liveDataService } from "@/services/liveData";
+import type {
+  Portfolio,
+  Quote,
+  NewsItem,
+  Alert,
+  TradingSignal,
+} from "@/types/api";
 
 // Compatibility types (kept for existing imports)
 export type WebSocketEventType =
-  | 'quote_update'
-  | 'news_update'
-  | 'alert_triggered'
-  | 'signal_generated'
-  | 'portfolio_update'
-  | 'market_status'
-  | 'heartbeat'
-  | 'subscription_ack'
-  | 'subscription_error';
+  | "quote_update"
+  | "news_update"
+  | "alert_triggered"
+  | "signal_generated"
+  | "portfolio_update"
+  | "market_status"
+  | "heartbeat"
+  | "subscription_ack"
+  | "subscription_error";
 
 export interface MarketStatusUpdate {
-  status: 'open' | 'closed' | 'pre_market' | 'after_hours';
+  status: "open" | "closed" | "pre_market" | "after_hours";
   timestamp: string;
   next_state_change?: string;
 }
@@ -30,7 +36,7 @@ export interface WebSocketError {
 export interface SubscriptionAck {
   type: string;
   symbol?: string;
-  status: 'subscribed' | 'unsubscribed';
+  status: "subscribed" | "unsubscribed";
   timestamp: number;
 }
 
@@ -60,7 +66,12 @@ export interface WebSocketConfig {
   enabled?: boolean;
 }
 
-export type SubscriptionType = 'quote' | 'news' | 'alert' | 'portfolio' | 'market_status';
+export type SubscriptionType =
+  | "quote"
+  | "news"
+  | "alert"
+  | "portfolio"
+  | "market_status";
 
 export interface SubscriptionData {
   type: SubscriptionType;
@@ -129,13 +140,23 @@ class WebSocketServiceShim {
   }
 
   // Symbol subscriptions map to LiveData subscribe/unsubscribe
-  addSubscription(type: SubscriptionType, key: string, params?: Record<string, unknown>): void {
+  addSubscription(
+    type: SubscriptionType,
+    key: string,
+    params?: Record<string, unknown>,
+  ): void {
     const subscriptionKey = `${type}:${key}`;
     if (this.subscriptions.has(subscriptionKey)) return;
-    const sub: SubscriptionData = { type, key, params: params || {}, active: true, createdAt: Date.now() };
+    const sub: SubscriptionData = {
+      type,
+      key,
+      params: params || {},
+      active: true,
+      createdAt: Date.now(),
+    };
     this.subscriptions.set(subscriptionKey, sub);
 
-    if (type === 'quote') {
+    if (type === "quote") {
       liveDataService.subscribeToSymbols([key]);
     }
   }
@@ -143,7 +164,7 @@ class WebSocketServiceShim {
   removeSubscription(type: SubscriptionType, key: string): void {
     const subscriptionKey = `${type}:${key}`;
     if (this.subscriptions.delete(subscriptionKey)) {
-      if (type === 'quote') {
+      if (type === "quote") {
         liveDataService.unsubscribeFromSymbols([key]);
       }
     }
@@ -151,8 +172,8 @@ class WebSocketServiceShim {
 
   resubscribeAll(): void {
     const symbols = Array.from(this.subscriptions.values())
-      .filter(s => s.type === 'quote' && s.active)
-      .map(s => s.key);
+      .filter((s) => s.type === "quote" && s.active)
+      .map((s) => s.key);
     if (symbols.length) liveDataService.subscribeToSymbols(symbols);
   }
 
@@ -161,17 +182,19 @@ class WebSocketServiceShim {
   }
 
   clearSubscriptions(): void {
-    const symbols = Array.from(this.subscriptions.values()).filter(s => s.type === 'quote').map(s => s.key);
+    const symbols = Array.from(this.subscriptions.values())
+      .filter((s) => s.type === "quote")
+      .map((s) => s.key);
     if (symbols.length) liveDataService.unsubscribeFromSymbols(symbols);
     this.subscriptions.clear();
   }
 
   subscribeToSymbol(symbol: string): void {
-    this.addSubscription('quote', symbol);
+    this.addSubscription("quote", symbol);
   }
 
   unsubscribeFromSymbol(symbol: string): void {
-    this.removeSubscription('quote', symbol);
+    this.removeSubscription("quote", symbol);
   }
 
   // Not needed with LiveData, kept as no-ops for compatibility
@@ -180,7 +203,7 @@ class WebSocketServiceShim {
 
   send(event: string, data: Record<string, unknown>): void {
     // Optional: map to chart commands if needed
-    if (event === 'chart_command') {
+    if (event === "chart_command") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (liveDataService as any).sendChartCommand?.(data);
     }
@@ -197,7 +220,9 @@ class WebSocketServiceShim {
   }
 
   getConnectionMetrics(): ConnectionMetrics {
-    const uptime = this.connectionStartTime ? Date.now() - this.connectionStartTime : 0;
+    const uptime = this.connectionStartTime
+      ? Date.now() - this.connectionStartTime
+      : 0;
     return { ...this.connectionMetrics, uptime };
   }
 
@@ -211,8 +236,12 @@ class WebSocketServiceShim {
 
   setReconnectDelay(_delay: number): void {}
   setMaxReconnectAttempts(_attempts: number): void {}
-  enableMockMode(): void { this.isEnabled = false; }
-  disableMockMode(): void { this.isEnabled = true; }
+  enableMockMode(): void {
+    this.isEnabled = false;
+  }
+  disableMockMode(): void {
+    this.isEnabled = true;
+  }
 
   disconnect(): void {
     this.clearSubscriptions();

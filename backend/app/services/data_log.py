@@ -105,7 +105,9 @@ class TradingDataLogger:
             df_new.to_csv(csv_path, mode="a", header=not csv_path.exists(), index=False)
             print(f"Warning: Parquet save failed, used CSV fallback: {e}")
 
-    def update_outcome(self, timestamp: float, ticker: str, outcome_data: dict[str, Any]) -> bool:
+    def update_outcome(
+        self, timestamp: float, ticker: str, outcome_data: dict[str, Any]
+    ) -> bool:
         """
         Update the outcome data for a previously logged decision.
 
@@ -204,7 +206,11 @@ class TradingDataLogger:
         df = self.load_window(days)
 
         if df.empty:
-            return {"total_decisions": 0, "period_days": days, "avg_decisions_per_day": 0}
+            return {
+                "total_decisions": 0,
+                "period_days": days,
+                "avg_decisions_per_day": 0,
+            }
 
         # Basic stats
         total_decisions = len(df)
@@ -232,10 +238,14 @@ class TradingDataLogger:
                     "avg_pnl_per_trade": completed_df["realized_pnl"].mean(),
                     "win_rate": (completed_df["realized_pnl"] > 0).mean(),
                     "avg_fees": (
-                        completed_df["fees_paid"].mean() if "fees_paid" in completed_df else 0
+                        completed_df["fees_paid"].mean()
+                        if "fees_paid" in completed_df
+                        else 0
                     ),
                     "avg_slippage": (
-                        completed_df["slippage"].mean() if "slippage" in completed_df else 0
+                        completed_df["slippage"].mean()
+                        if "slippage" in completed_df
+                        else 0
                     ),
                 }
             )

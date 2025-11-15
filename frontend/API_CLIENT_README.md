@@ -31,7 +31,7 @@ This is part of **Phase 2 – Typed client & frontend alignment** following Phas
 ### Basic Usage
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from "@/services/apiClient";
 
 // Health check - returns AckResponse
 const health = await apiClient.getHealth();
@@ -44,17 +44,17 @@ const riskData = await apiClient.getRiskLite({
 
 // Run backtest - returns BacktestOut
 const backtest = await apiClient.runBacktest({
-  symbol: 'AAPL',
-  strategy: 'sma50_cross',
-  timeframe: '1Y',
+  symbol: "AAPL",
+  strategy: "sma50_cross",
+  timeframe: "1Y",
 });
 ```
 
 ### With Type Safety
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
-import type { SentimentResponse } from '@/types/api';
+import { apiClient } from "@/services/apiClient";
+import type { SentimentResponse } from "@/types/api";
 
 async function fetchSentiment(ticker: string): Promise<SentimentResponse> {
   // Full type checking - parameters and return type
@@ -63,11 +63,11 @@ async function fetchSentiment(ticker: string): Promise<SentimentResponse> {
     lookback_days: 3,
     limit: 40,
   });
-  
+
   // TypeScript knows the shape of the response
   console.log(`Sentiment for ${sentiment.ticker}: ${sentiment.label}`);
   console.log(`Score: ${sentiment.score}, Confidence: ${sentiment.confidence}`);
-  
+
   return sentiment;
 }
 ```
@@ -77,8 +77,8 @@ async function fetchSentiment(ticker: string): Promise<SentimentResponse> {
 All errors follow the standardized `ErrorResponse` format:
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
-import type { ErrorResponse } from '@/types/api';
+import { apiClient } from "@/services/apiClient";
+import type { ErrorResponse } from "@/types/api";
 
 async function handleApiCall() {
   try {
@@ -88,7 +88,7 @@ async function handleApiCall() {
     // Error is typed as ErrorResponse
     const apiError = error as ErrorResponse;
     console.error(`Error ${apiError.code}: ${apiError.detail}`);
-    console.error('Metadata:', apiError.meta);
+    console.error("Metadata:", apiError.meta);
   }
 }
 ```
@@ -96,47 +96,57 @@ async function handleApiCall() {
 ## Available Endpoints
 
 ### Health & Core
+
 - `getHealth()` - Basic health check
 - `getHealthDetailed()` - Detailed health with routes
 - `getCoreHealth()` - Core health with dependencies
 
 ### RAG & Query
+
 - `queryRAG(request)` - Query RAG system
 - `ingestWeb(data)` - Ingest web content
 - `ingestPDF(file, sourceUrl?)` - Ingest PDF document
 - `resetVectorStore()` - Reset vector store
 
 ### Tasks
+
 - `scheduleTask(data)` - Schedule a watch task
 - `listTasks()` - List all tasks
 - `cancelTask(jobId)` - Cancel a task
 
 ### Risk & Market
+
 - `getRiskLite(params?)` - Get Put/Call ratio data
 
 ### Trading
+
 - `runBacktest(data)` - Run strategy backtest
 
 ### Alerts
+
 - `getAlertStatus()` - Get alert system status
 - `startAlerts()` - Start alert scanning
 - `stopAlerts()` - Stop alert scanning
 - `createSMA50Alert(data)` - Create 50-day SMA alert
 
 ### News
+
 - `getNewsSentiment(params)` - Get news sentiment
 - `pingNews()` - Ping news service
 
 ### Screener
+
 - `screenMarket(data)` - Screen market for signals
 - `getScreenerHealth()` - Get screener health
 
 ### Chat
+
 - `getChatHealth()` - Get chat service health
 - `getChatConfig()` - Get chat configuration
 - `chatComplete(request)` - Send chat completion request
 
 ### Generic Methods
+
 - `get<T>(url, config?)` - Custom GET request
 - `post<T>(url, data?, config?)` - Custom POST request
 - `put<T>(url, data?, config?)` - Custom PUT request
@@ -163,6 +173,7 @@ npm run generate:api
 ```
 
 This will:
+
 1. Fetch `/openapi.json` from the backend
 2. Generate TypeScript types in `src/types/api/generated.ts`
 3. Generate API client methods in `src/services/apiClient.ts`
@@ -173,10 +184,10 @@ This will:
 ### Before (old api.ts)
 
 ```typescript
-import { api } from '@/services/api';
+import { api } from "@/services/api";
 
 // Untyped, string-based paths
-const response = await api.get('/market-risk-lite');
+const response = await api.get("/market-risk-lite");
 // No type checking on response.data
 const cpc = response.data.cpc;
 ```
@@ -184,7 +195,7 @@ const cpc = response.data.cpc;
 ### After (new apiClient.ts)
 
 ```typescript
-import { apiClient } from '@/services/apiClient';
+import { apiClient } from "@/services/apiClient";
 
 // Fully typed
 const response = await apiClient.getRiskLite();

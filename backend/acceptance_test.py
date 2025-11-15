@@ -27,7 +27,12 @@ print("=" * 50)
 
 try:
     # Import after environment setup
-    from app.memory.events import append_event, get_event_by_id, iter_events, update_outcome
+    from app.memory.events import (
+        append_event,
+        get_event_by_id,
+        iter_events,
+        update_outcome,
+    )
     from app.memory.vecdb import build_embedding
     from app.tasks.learn import brier_score
 
@@ -57,7 +62,9 @@ try:
     assert "id" in stored_event  # Auto-generated ID
 
     print(f"   ✅ Event appended with ID: {event_id[:12]}...")
-    print(f"   ✅ Durable fields: ts={stored_event['ts']}, id={stored_event['id'][:12]}...")
+    print(
+        f"   ✅ Durable fields: ts={stored_event['ts']}, id={stored_event['id'][:12]}..."
+    )
 
     # Test 2: Outcome Updates (Immutable Append)
     print("\n🎯 Test 2: Outcome Updates")
@@ -77,7 +84,9 @@ try:
     assert updated_event["outcome"]["label"] == 1
     assert updated_event["outcome"]["pnl"] == 0.035
 
-    print(f"   ✅ Outcome updated: PnL={sample_outcome['pnl']}, Label={sample_outcome['label']}")
+    print(
+        f"   ✅ Outcome updated: PnL={sample_outcome['pnl']}, Label={sample_outcome['label']}"
+    )
 
     # Test 3: Vector Embeddings and Similarity Search
     print("\n🔍 Test 3: Vector Embeddings and Search")
@@ -103,7 +112,9 @@ try:
 
     similarity = _cosine_similarity(embedding, similar_embedding)
 
-    print(f"   ✅ Embedding generated: {len(embedding)} dimensions in {embed_time:.1f}ms")
+    print(
+        f"   ✅ Embedding generated: {len(embedding)} dimensions in {embed_time:.1f}ms"
+    )
     print(f"   ✅ Similarity computed: {similarity:.3f}")
 
     # Test 4: Learning System with Brier Scores
@@ -111,7 +122,9 @@ try:
 
     # Create multiple events with outcomes for Brier testing
     events_with_outcomes = []
-    for i, (pred, actual) in enumerate([(0.8, 1), (0.3, 0), (0.9, 1), (0.2, 0), (0.6, 1)]):
+    for i, (pred, actual) in enumerate(
+        [(0.8, 1), (0.3, 0), (0.9, 1), (0.2, 0), (0.6, 1)]
+    ):
         test_event = {
             "ticker": f"TEST{i}",
             "p_up": pred,
@@ -144,7 +157,11 @@ try:
 
         # Mock fast search (real implementation would query vector DB)
         dummy_neighbors = [
-            {"id": f"event_{i}", "score": 0.9 - i * 0.01, "metadata": {"p_outcome": 0.6 + i * 0.05}}
+            {
+                "id": f"event_{i}",
+                "score": 0.9 - i * 0.01,
+                "metadata": {"p_outcome": 0.6 + i * 0.05},
+            }
             for i in range(5)
         ]
 
@@ -172,7 +189,9 @@ try:
 
     assert abs(p_blend - expected_blend) < 0.001
 
-    print(f"   ✅ RAG blending: model={p_model}, prior={p_prior:.3f}, blend={p_blend:.3f}")
+    print(
+        f"   ✅ RAG blending: model={p_model}, prior={p_prior:.3f}, blend={p_blend:.3f}"
+    )
 
     # Test 7: Human Feedback Integration
     print("\n👤 Test 7: Human Feedback Hooks")
@@ -223,7 +242,9 @@ try:
     assert "shap_top" in context_event["explain"]
 
     print(f"   ✅ Context retained: {len(all_events)} events stored")
-    print(f"   ✅ Decision explanation available: {context_event['explain']['shap_top'][:2]}")
+    print(
+        f"   ✅ Decision explanation available: {context_event['explain']['shap_top'][:2]}"
+    )
 
     # Summary
     print("\n" + "=" * 50)

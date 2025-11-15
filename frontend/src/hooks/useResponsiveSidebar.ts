@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useResponsiveSidebar() {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
@@ -12,10 +12,10 @@ export function useResponsiveSidebar() {
     checkScreenSize();
 
     // Add resize listener
-    window.addEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
 
     // Cleanup
-    return () => window.removeEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   return { isLargeScreen };

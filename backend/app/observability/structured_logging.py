@@ -12,9 +12,9 @@ Provides consistent logging keys across all subsystems:
 
 Usage:
     from app.observability.structured_logging import get_structured_logger, log_operation
-    
+
     logger = get_structured_logger("trading")
-    
+
     with log_operation(logger, "backtest", ticker="AAPL", strategy="sma50_cross"):
         # Your code here
         pass
@@ -29,10 +29,10 @@ from typing import Any, Optional
 def get_structured_logger(subsystem: str) -> logging.Logger:
     """
     Get a logger with standardized subsystem name.
-    
+
     Args:
         subsystem: Module/domain name (e.g., "trading", "cognitive")
-        
+
     Returns:
         Logger instance configured for the subsystem
     """
@@ -47,14 +47,14 @@ def log_operation(
     run_id: Optional[str] = None,
     theory_name: Optional[str] = None,
     strategy: Optional[str] = None,
-    **extra_context: Any
+    **extra_context: Any,
 ):
     """
     Context manager for logging operations with standardized keys.
-    
+
     Automatically logs operation start, completion, and timing.
     Captures exceptions and logs them with full context.
-    
+
     Args:
         logger: Logger instance
         operation: Operation name (e.g., "backtest", "enhance_decision")
@@ -63,7 +63,7 @@ def log_operation(
         theory_name: Cognitive theory name (optional)
         strategy: Strategy name (optional)
         **extra_context: Additional context to log
-        
+
     Example:
         with log_operation(logger, "backtest", ticker="AAPL", strategy="sma50_cross"):
             result = run_backtest(...)
@@ -72,7 +72,7 @@ def log_operation(
     context = {
         "operation": operation,
     }
-    
+
     if ticker:
         context["ticker"] = ticker
     if run_id:
@@ -81,42 +81,39 @@ def log_operation(
         context["theory_name"] = theory_name
     if strategy:
         context["strategy"] = strategy
-    
+
     # Add any extra context
     context.update(extra_context)
-    
+
     # Log operation start
     logger.info(f"Starting {operation}", extra=context)
-    
+
     start_time = time.time()
     error_occurred = False
-    
+
     try:
         yield context  # Yield context so caller can add to it
-        
+
     except Exception as e:
         error_occurred = True
         duration = time.time() - start_time
-        
+
         error_context = {
             **context,
             "duration_sec": round(duration, 3),
             "error": str(e),
-            "error_type": type(e).__name__
+            "error_type": type(e).__name__,
         }
-        
+
         logger.error(f"Failed {operation}", extra=error_context, exc_info=True)
         raise
-        
+
     finally:
         if not error_occurred:
             duration = time.time() - start_time
-            
-            complete_context = {
-                **context,
-                "duration_sec": round(duration, 3)
-            }
-            
+
+            complete_context = {**context, "duration_sec": round(duration, 3)}
+
             logger.info(f"Completed {operation}", extra=complete_context)
 
 
@@ -127,11 +124,11 @@ def log_external_call(
     duration_sec: float,
     status: str = "success",
     timeout_sec: Optional[float] = None,
-    **extra: Any
+    **extra: Any,
 ):
     """
     Log an external service call with timing and timeout info.
-    
+
     Args:
         logger: Logger instance
         provider: External service name (e.g., "yfinance", "openai")
@@ -147,13 +144,13 @@ def log_external_call(
         "duration_sec": round(duration_sec, 3),
         "status": status,
     }
-    
+
     if timeout_sec:
         context["timeout_sec"] = timeout_sec
         context["timeout_exceeded"] = duration_sec > timeout_sec
-    
+
     context.update(extra)
-    
+
     if status == "timeout":
         logger.warning(f"External call timeout: {provider}.{operation}", extra=context)
     elif status == "error":
@@ -169,11 +166,11 @@ def log_slowdown(
     operation: str,
     duration_sec: float,
     threshold_sec: float = 5.0,
-    **context: Any
+    **context: Any,
 ):
     """
     Log when an operation exceeds expected duration.
-    
+
     Args:
         logger: Logger instance
         operation: Operation name
@@ -187,9 +184,9 @@ def log_slowdown(
             "duration_sec": round(duration_sec, 3),
             "threshold_sec": threshold_sec,
             "slowdown_factor": round(duration_sec / threshold_sec, 2),
-            **context
+            **context,
         }
-        
+
         logger.warning(f"Slow operation detected: {operation}", extra=log_context)
 
 

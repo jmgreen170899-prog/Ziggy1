@@ -168,7 +168,12 @@ def get_regime_weights(regime: str) -> dict[str, float]:
     """
 
     weights = {
-        "base": {"momentum": 1.0, "mean_reversion": 1.0, "volatility": 1.0, "sentiment": 1.0},
+        "base": {
+            "momentum": 1.0,
+            "mean_reversion": 1.0,
+            "volatility": 1.0,
+            "sentiment": 1.0,
+        },
         "vol_hi_liq_lo": {
             "momentum": 0.7,  # Momentum less reliable in volatile periods
             "mean_reversion": 1.3,  # Mean reversion stronger

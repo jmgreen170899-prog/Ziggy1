@@ -11,6 +11,7 @@ Successfully completed **Phase 5 – Operational polish** for the ZiggyAI backen
 Created `/ops/status` endpoint that aggregates health from all subsystems:
 
 **GET /ops/status**
+
 ```json
 {
   "overall_status": "healthy",
@@ -46,6 +47,7 @@ Created `/ops/status` endpoint that aggregates health from all subsystems:
 ```
 
 **Features:**
+
 - ✅ Checks 12 subsystems concurrently (5s timeout per subsystem)
 - ✅ Overall status: `healthy`, `degraded`, or `unhealthy`
 - ✅ Response time tracking per subsystem
@@ -54,6 +56,7 @@ Created `/ops/status` endpoint that aggregates health from all subsystems:
 - ✅ Single JSON snapshot for operators
 
 **Subsystems Monitored:**
+
 1. Core services
 2. Paper lab
 3. Screener
@@ -72,6 +75,7 @@ Created `/ops/status` endpoint that aggregates health from all subsystems:
 Created `/ops/timeout-audit` endpoint that documents all external call timeouts:
 
 **GET /ops/timeout-audit**
+
 ```json
 {
   "external_calls": {
@@ -126,6 +130,7 @@ Created `/ops/timeout-audit` endpoint that documents all external call timeouts:
 ```
 
 **Coverage:**
+
 - ✅ Market data downloads (10s timeout configured)
 - ✅ Chat/LLM calls (60s timeout configured)
 - ✅ News RSS feeds (8s timeout configured)
@@ -143,6 +148,7 @@ Created `/ops/timeout-audit` endpoint that documents all external call timeouts:
 Created `app/observability/structured_logging.py` with consistent logging patterns:
 
 **Key Logging Standards:**
+
 ```python
 # Standard keys across all subsystems
 {
@@ -162,6 +168,7 @@ Created `app/observability/structured_logging.py` with consistent logging patter
 **Usage Patterns:**
 
 **1. Operation Logging with Context Manager:**
+
 ```python
 from app.observability.structured_logging import get_structured_logger, log_operation
 
@@ -173,6 +180,7 @@ with log_operation(logger, "backtest", ticker="AAPL", strategy="sma50_cross"):
 ```
 
 **2. External Call Logging:**
+
 ```python
 from app.observability.structured_logging import log_external_call
 
@@ -192,6 +200,7 @@ log_external_call(
 ```
 
 **3. Slowdown Detection:**
+
 ```python
 from app.observability.structured_logging import log_slowdown
 
@@ -205,6 +214,7 @@ log_slowdown(
 ```
 
 **Pre-configured Loggers:**
+
 ```python
 from app.observability.structured_logging import (
     trading_logger,
@@ -226,6 +236,7 @@ trading_logger.info("Trade executed", extra={"ticker": "AAPL", "side": "buy"})
 All health endpoints are now aggregated by `/ops/status`:
 
 **Existing Health Endpoints:**
+
 - `/api/core/health` - Core services
 - `/api/paper/health` - Paper lab
 - `/screener/health` - Screener
@@ -240,6 +251,7 @@ All health endpoints are now aggregated by `/ops/status`:
 - `/performance/health` - Performance
 
 **New Aggregation:**
+
 - `/ops/status` - Unified status across all subsystems
 - `/ops/health` - Ops module health
 - `/ops/timeout-audit` - Timeout configuration audit
@@ -249,22 +261,28 @@ All health endpoints are now aggregated by `/ops/status`:
 ### For Operators
 
 **Single JSON Snapshot:**
+
 ```bash
 curl http://localhost:8000/ops/status
 ```
+
 Instantly see if ZiggyAI is "green" with:
+
 - Overall system health
 - Which subsystems are healthy/unhealthy
 - Response times
 - Detailed metrics
 
 **Timeout Visibility:**
+
 ```bash
 curl http://localhost:8000/ops/timeout-audit
 ```
+
 See all external calls and their timeout configurations.
 
 **Monitoring Integration:**
+
 - Prometheus metrics (future)
 - Grafana dashboards (future)
 - Alerting on degraded status
@@ -273,6 +291,7 @@ See all external calls and their timeout configurations.
 ### For Developers
 
 **Consistent Logging:**
+
 ```python
 # Before - inconsistent
 logger.info(f"Running backtest for {ticker}")
@@ -283,6 +302,7 @@ with log_operation(logger, "backtest", ticker=ticker, strategy=strategy):
 ```
 
 **Automatic Context:**
+
 - Operation name
 - Duration tracking
 - Error capture
@@ -290,6 +310,7 @@ with log_operation(logger, "backtest", ticker=ticker, strategy=strategy):
 - Standard key names
 
 **Debugging:**
+
 ```bash
 # Filter logs by subsystem
 grep "subsystem.*trading" logs.json
@@ -327,19 +348,21 @@ curl http://localhost:8000/ops/timeout-audit | jq '.recommendations'
 ### 3. Use Structured Logging
 
 **In Trading Module:**
+
 ```python
 from app.observability.structured_logging import trading_logger, log_operation
 
 with log_operation(trading_logger, "backtest", ticker="AAPL", strategy="sma50_cross"):
     # Runs backtest
     result = execute_backtest(ticker, strategy)
-    
+
 # Logs output:
 # INFO: Starting backtest {"subsystem": "trading", "operation": "backtest", "ticker": "AAPL", "strategy": "sma50_cross"}
 # INFO: Completed backtest {"subsystem": "trading", "operation": "backtest", "ticker": "AAPL", "strategy": "sma50_cross", "duration_sec": 2.456}
 ```
 
 **In Cognitive Module:**
+
 ```python
 from app.observability.structured_logging import cognitive_logger, log_operation
 
@@ -353,6 +376,7 @@ with log_operation(
 ```
 
 **In Screener Module:**
+
 ```python
 from app.observability.structured_logging import screener_logger, log_slowdown
 
@@ -378,7 +402,7 @@ start = time.time()
 try:
     data = await fetch_ohlc(ticker, timeout=10.0)
     duration = time.time() - start
-    
+
     log_external_call(
         market_data_logger,
         provider="yfinance",
@@ -390,7 +414,7 @@ try:
     )
 except asyncio.TimeoutError:
     duration = time.time() - start
-    
+
     log_external_call(
         market_data_logger,
         provider="yfinance",
@@ -405,44 +429,48 @@ except asyncio.TimeoutError:
 ## Files Created
 
 ### New Files
+
 - ✅ `backend/app/api/routes_ops.py` - Operational monitoring endpoints
 - ✅ `backend/app/observability/structured_logging.py` - Standardized logging utilities
 - ✅ `PHASE_5_COMPLETE.md` - This documentation
 
 ### Modified Files
+
 - ✅ `backend/app/main.py` - Registered ops router
 
 ## Current Timeout Status
 
 ### ✅ Configured (No Action Needed)
 
-| Component | Timeout | Location |
-|-----------|---------|----------|
-| Market data | 10s | `routes_trading._OHLC_TIMEOUT_SECS` |
-| Chat/LLM | 60s | `routes_chat.REQUEST_TIMEOUT` |
-| News RSS | 8s | `routes_news` |
-| RAG docs | 30s | `routes (httpx.Client)` |
-| Web browse | 30s | `browse_router (httpx.Client)` |
-| Paper tick | 1s | `paper.engine (asyncio.wait_for)` |
+| Component   | Timeout | Location                            |
+| ----------- | ------- | ----------------------------------- |
+| Market data | 10s     | `routes_trading._OHLC_TIMEOUT_SECS` |
+| Chat/LLM    | 60s     | `routes_chat.REQUEST_TIMEOUT`       |
+| News RSS    | 8s      | `routes_news`                       |
+| RAG docs    | 30s     | `routes (httpx.Client)`             |
+| Web browse  | 30s     | `browse_router (httpx.Client)`      |
+| Paper tick  | 1s      | `paper.engine (asyncio.wait_for)`   |
 
 ### ⚠️ Needs Configuration
 
-| Component | Recommendation |
-|-----------|----------------|
-| Screening jobs | Add 300s timeout for large scans |
-| Learning runs | Add 600s timeout for training |
-| Backtest execution | Add 120s timeout for long backtests |
-| Redis operations | Configure 5s connection/operation timeout |
-| Postgres queries | Configure 30s query timeout |
+| Component          | Recommendation                            |
+| ------------------ | ----------------------------------------- |
+| Screening jobs     | Add 300s timeout for large scans          |
+| Learning runs      | Add 600s timeout for training             |
+| Backtest execution | Add 120s timeout for long backtests       |
+| Redis operations   | Configure 5s connection/operation timeout |
+| Postgres queries   | Configure 30s query timeout               |
 
 ## Next Steps (Recommendations)
 
 ### Immediate
+
 1. ✅ Use `/ops/status` for health monitoring
 2. ✅ Apply structured logging to new code
 3. ✅ Review timeout audit recommendations
 
 ### Short Term
+
 1. Add explicit timeouts to screening jobs
 2. Add explicit timeouts to learning runs
 3. Add explicit timeouts to backtest execution
@@ -450,6 +478,7 @@ except asyncio.TimeoutError:
 5. Configure Postgres timeout
 
 ### Long Term
+
 1. Export `/ops/status` to Prometheus
 2. Create Grafana dashboards
 3. Set up alerting on degraded status
@@ -459,12 +488,14 @@ except asyncio.TimeoutError:
 ## Integration with Previous Phases
 
 **Phase 1-4 Foundation:**
+
 - Response models ensure health endpoints return structured data
 - TypeScript types include operational responses
 - Tests validate health endpoints
 - Auth protects sensitive operational endpoints
 
 **Phase 5 Enhancement:**
+
 - Aggregates all Phase 1-4 health endpoints
 - Provides operational visibility
 - Standardizes logging across all domains
@@ -519,19 +550,19 @@ rate(ziggy_subsystem_status{status="timeout"}[5m])
 ✅ **Context Managers** - Easy operation logging  
 ✅ **Slowdown Detection** - Automatic performance monitoring  
 ✅ **Pre-configured Loggers** - Ready to use in all modules  
-✅ **Recommendations** - Clear next steps for timeout configuration  
+✅ **Recommendations** - Clear next steps for timeout configuration
 
 **All five phases now complete!**
 
 ### Complete Initiative Summary
 
-| Phase | Status | Key Deliverable |
-|-------|--------|-----------------|
-| Phase 1 | ✅ | Response models, error standardization |
-| Phase 2 | ✅ | TypeScript types, typed API client |
-| Phase 3 | ✅ | 61 tests across 7 domains |
-| Phase 4 | ✅ | Flexible authentication |
-| Phase 5 | ✅ | Operational monitoring, structured logging |
+| Phase   | Status | Key Deliverable                            |
+| ------- | ------ | ------------------------------------------ |
+| Phase 1 | ✅     | Response models, error standardization     |
+| Phase 2 | ✅     | TypeScript types, typed API client         |
+| Phase 3 | ✅     | 61 tests across 7 domains                  |
+| Phase 4 | ✅     | Flexible authentication                    |
+| Phase 5 | ✅     | Operational monitoring, structured logging |
 
 The ZiggyAI API is now **production-ready** with complete type safety, comprehensive testing, flexible security, and operational visibility!
 

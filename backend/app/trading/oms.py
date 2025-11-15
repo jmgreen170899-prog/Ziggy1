@@ -85,7 +85,9 @@ class OMS:
         new_qty = qty + fill_qty
         if (qty >= 0 and fill_qty > 0) or (qty <= 0 and fill_qty < 0):
             total_shares = abs(qty) + abs(fill_qty)
-            new_avg = (abs(qty) * avg_price + abs(fill_qty) * f.avg_price) / max(total_shares, 1)
+            new_avg = (abs(qty) * avg_price + abs(fill_qty) * f.avg_price) / max(
+                total_shares, 1
+            )
         else:
             new_avg = avg_price if new_qty != 0 else 0.0
         if new_qty == 0:
@@ -98,7 +100,9 @@ class OMS:
 
     def positions(self) -> Iterable[Position]:
         with self._conn() as c:
-            for sym, qty, avg in c.execute("SELECT symbol, qty, avg_price FROM positions"):
+            for sym, qty, avg in c.execute(
+                "SELECT symbol, qty, avg_price FROM positions"
+            ):
                 yield Position(sym, qty, avg)
 
     def position_count(self) -> int:
@@ -109,7 +113,9 @@ class OMS:
     def gross_exposure(self, last_prices: dict[str, float] | None = None) -> float:
         exp = 0.0
         with self._conn() as c:
-            for sym, qty, avg in c.execute("SELECT symbol, qty, avg_price FROM positions"):
+            for sym, qty, avg in c.execute(
+                "SELECT symbol, qty, avg_price FROM positions"
+            ):
                 px = (last_prices or {}).get(sym, avg)
                 exp += abs(qty * px)
         return float(exp)

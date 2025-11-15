@@ -5,6 +5,7 @@ This guide explains how to set up Telegram notifications to receive real-time tr
 ## Overview
 
 ZiggyAI can send rich, detailed trading signals directly to your Telegram account, including:
+
 - **Buy/Sell recommendations** with confidence scores
 - **Detailed reasoning** from AI analysis
 - **Price levels** (entry, stop loss, take profit)
@@ -32,12 +33,14 @@ ZiggyAI can send rich, detailed trading signals directly to your Telegram accoun
 ## Step 2: Get Your Chat ID
 
 ### Option A: Using @userinfobot (Recommended)
+
 1. Search for `@userinfobot` in Telegram
 2. Start a chat and send any message
 3. The bot will reply with your Chat ID
 4. Save this ID (it will be a number like `123456789`)
 
 ### Option B: Using your bot
+
 1. Send a message to your newly created bot
 2. Visit this URL in your browser (replace `YOUR_BOT_TOKEN`):
    ```
@@ -51,17 +54,19 @@ ZiggyAI can send rich, detailed trading signals directly to your Telegram accoun
 ### Backend Configuration
 
 1. Navigate to your backend directory:
+
    ```bash
    cd backend
    ```
 
 2. Create or edit the `.env` file:
+
    ```bash
    # Telegram Configuration
    TELEGRAM_BOT_TOKEN=your_bot_token_here
    TELEGRAM_CHAT_ID=your_chat_id_here
    TELEGRAM_PARSE_MODE=Markdown
-   
+
    # Scanner Configuration
    SCAN_SYMBOLS=AAPL,MSFT,NVDA,AMZN,GOOGL,META,TSLA
    SCAN_INTERVAL_S=60
@@ -86,12 +91,14 @@ ZiggyAI can send rich, detailed trading signals directly to your Telegram accoun
 ### Using the API
 
 1. Start the ZiggyAI backend:
+
    ```bash
    cd backend
    python -m uvicorn app.main:app --reload
    ```
 
 2. Test the Telegram connection:
+
    ```bash
    curl -X POST http://localhost:8000/alerts/ping/test
    ```
@@ -108,11 +115,13 @@ ZiggyAI can send rich, detailed trading signals directly to your Telegram accoun
 ## Step 5: Enable Alert Scanning
 
 ### Via API
+
 ```bash
 curl -X POST http://localhost:8000/alerts/start
 ```
 
 ### Via Frontend
+
 1. Go to the Alerts dashboard
 2. Toggle the "Scanner Enabled" switch to ON
 3. The scanner will begin monitoring your configured symbols
@@ -120,7 +129,9 @@ curl -X POST http://localhost:8000/alerts/start
 ## Message Types
 
 ### 1. Trading Signals
+
 Sent when buy/sell opportunities are detected:
+
 ```
 🟢 📈 BUY SIGNAL 🟢
 
@@ -150,7 +161,9 @@ Mean reversion: RSI 28.5 oversold (< 30); Z-score -1.80 below -1.5
 ```
 
 ### 2. Market Regime Updates
+
 Sent when market conditions change:
+
 ```
 ⚠️ MARKET REGIME UPDATE ⚠️
 
@@ -167,7 +180,9 @@ Cautious market - defensive positioning recommended
 ```
 
 ### 3. Price Alerts
+
 Sent when configured price levels are reached:
+
 ```
 🔔 ALERT TRIGGERED 🔔
 
@@ -179,7 +194,9 @@ Sent when configured price levels are reached:
 ```
 
 ### 4. Heartbeat Messages
+
 Periodic status updates:
+
 - Daily: "Ziggy online ✅"
 - Hourly: "👍" (confirmation that backend is running)
 
@@ -188,12 +205,15 @@ Periodic status updates:
 ### No messages received
 
 1. **Check bot token and chat ID**:
+
    ```bash
    curl "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getMe"
    ```
+
    Should return bot info.
 
 2. **Verify environment variables**:
+
    ```bash
    cd backend
    python -c "import os; from dotenv import load_dotenv; load_dotenv(); print('Token:', os.getenv('TELEGRAM_BOT_TOKEN')[:10] + '...'); print('Chat ID:', os.getenv('TELEGRAM_CHAT_ID'))"
@@ -214,11 +234,13 @@ Periodic status updates:
 ### Scanner not running
 
 1. Check scanner status:
+
    ```bash
    curl http://localhost:8000/alerts/status
    ```
 
 2. Enable scanner:
+
    ```bash
    curl -X POST http://localhost:8000/alerts/start
    ```
@@ -281,6 +303,7 @@ To send to multiple Telegram accounts or groups:
 ## Support
 
 For issues or questions:
+
 1. Check the [main documentation](../README.md)
 2. Review backend logs for errors
 3. Open an issue on GitHub with:

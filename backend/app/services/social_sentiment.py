@@ -167,14 +167,18 @@ class SocialSentimentStreamer:
                                     post_id = post_data.get("id")
 
                                     if post_id and post_id not in self.seen_posts:
-                                        sentiment_item = await self._analyze_reddit_post(post_data)
+                                        sentiment_item = (
+                                            await self._analyze_reddit_post(post_data)
+                                        )
                                         if sentiment_item:
                                             sentiment_posts.append(sentiment_item)
                                             self.seen_posts.add(post_id)
 
                                         # Limit to prevent overload
                                         if len(self.seen_posts) > 1000:
-                                            self.seen_posts = set(list(self.seen_posts)[-500:])
+                                            self.seen_posts = set(
+                                                list(self.seen_posts)[-500:]
+                                            )
 
                     except Exception as e:
                         logger.warning(f"Error fetching from r/{subreddit}: {e}")
@@ -212,7 +216,9 @@ class SocialSentimentStreamer:
                 "symbols": symbols,
                 "sentiment_score": sentiment_score,
                 "sentiment_label": sentiment_label,
-                "timestamp": datetime.fromtimestamp(post_data.get("created_utc", 0)).isoformat(),
+                "timestamp": datetime.fromtimestamp(
+                    post_data.get("created_utc", 0)
+                ).isoformat(),
                 "source": f"r/{post_data.get('subreddit', 'unknown')}",
                 "url": f"https://reddit.com{post_data.get('permalink', '')}",
                 "engagement": {
@@ -262,7 +268,10 @@ class SocialSentimentStreamer:
                 "timestamp": datetime.utcnow().isoformat(),
                 "source": "google_trends",
                 "url": f"https://trends.google.com/trends/explore?q={symbol}",
-                "engagement": {"trend_score": abs(trend_score) * 100, "volume": "medium"},
+                "engagement": {
+                    "trend_score": abs(trend_score) * 100,
+                    "volume": "medium",
+                },
             }
 
         except Exception as e:
@@ -343,7 +352,9 @@ class SocialSentimentStreamer:
                             "text": f"Market discussion about {symbol}",
                             "symbols": [symbol],
                             "sentiment_score": sentiment_score,
-                            "sentiment_label": self._get_sentiment_label(sentiment_score),
+                            "sentiment_label": self._get_sentiment_label(
+                                sentiment_score
+                            ),
                             "timestamp": datetime.utcnow().isoformat(),
                             "source": platform["source"],
                             "url": f"#{symbol.lower()}",
@@ -446,7 +457,10 @@ class SocialSentimentStreamer:
                         continue
 
                 # Add to cache and processed list
-                self.sentiment_cache[item_hash] = {"timestamp": current_time, "data": item}
+                self.sentiment_cache[item_hash] = {
+                    "timestamp": current_time,
+                    "data": item,
+                }
                 processed.append(item)
 
             return processed

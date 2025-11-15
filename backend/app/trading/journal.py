@@ -333,7 +333,9 @@ class TradingBrainJournal:
         if self.enabled:
             return append_event(event.to_dict())
         else:
-            logger.info(f"Guardrail check: {symbol} {'ALLOWED' if allowed else 'BLOCKED'}")
+            logger.info(
+                f"Guardrail check: {symbol} {'ALLOWED' if allowed else 'BLOCKED'}"
+            )
             return f"mock_guardrail_{datetime.now().timestamp()}"
 
     def log_trade_submit(
@@ -399,7 +401,11 @@ class TradingBrainJournal:
             return f"mock_fill_{datetime.now().timestamp()}"
 
     def log_panic_activate(
-        self, trigger_reason: str, positions_count: int, orders_count: int, timeout_seconds: int
+        self,
+        trigger_reason: str,
+        positions_count: int,
+        orders_count: int,
+        timeout_seconds: int,
     ) -> str:
         """Log emergency panic activation."""
         event = PanicEvent(
@@ -474,11 +480,16 @@ class TradingBrainJournal:
         if self.enabled:
             return append_event(event.to_dict())
         else:
-            logger.info(f"Quality update: {symbol} slippage {slippage_bps:.1f}bps on {venue}")
+            logger.info(
+                f"Quality update: {symbol} slippage {slippage_bps:.1f}bps on {venue}"
+            )
             return f"mock_quality_{datetime.now().timestamp()}"
 
     def get_trading_history(
-        self, symbol: str | None = None, limit: int = 100, event_kinds: list[str] | None = None
+        self,
+        symbol: str | None = None,
+        limit: int = 100,
+        event_kinds: list[str] | None = None,
     ) -> list[dict[str, Any]]:
         """Get recent trading events for analysis."""
         if not self.enabled:
@@ -486,7 +497,9 @@ class TradingBrainJournal:
 
         try:
             # Get recent events and filter by trading events
-            events = get_recent_events(limit=limit * 2)  # Get more to account for filtering
+            events = get_recent_events(
+                limit=limit * 2
+            )  # Get more to account for filtering
 
             trading_events = []
             for event in events:
@@ -528,7 +541,11 @@ class TradingBrainJournal:
                 if (
                     event.get("order_id") == order_id
                     or event.get("intent_id") == order_id
-                    or any(order_id in str(v) for v in event.values() if isinstance(v, (str, dict)))
+                    or any(
+                        order_id in str(v)
+                        for v in event.values()
+                        if isinstance(v, (str, dict))
+                    )
                 ):
                     audit_trail.append(event)
 

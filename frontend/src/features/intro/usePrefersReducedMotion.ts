@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Hook to detect if the user prefers reduced motion
@@ -11,10 +11,10 @@ export function usePrefersReducedMotion(): boolean {
 
   useEffect(() => {
     // Check if we're in browser environment
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
     // Set initial value
     setPrefersReducedMotion(mediaQuery.matches);
 
@@ -23,11 +23,11 @@ export function usePrefersReducedMotion(): boolean {
       setPrefersReducedMotion(mediaQuery.matches);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
 
     // Cleanup
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.removeEventListener("change", handleChange);
     };
   }, []);
 
@@ -45,10 +45,12 @@ export function useFocusTrap() {
     if (!isTrapping) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Tab') {
+      if (event.key === "Tab") {
         // For intro overlay, we don't need complex tab trapping
         // Just prevent tabbing out of the overlay
-        const skipButton = document.querySelector('[data-intro-skip]') as HTMLElement;
+        const skipButton = document.querySelector(
+          "[data-intro-skip]",
+        ) as HTMLElement;
         if (skipButton) {
           event.preventDefault();
           skipButton.focus();
@@ -56,8 +58,8 @@ export function useFocusTrap() {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isTrapping]);
 
   return {

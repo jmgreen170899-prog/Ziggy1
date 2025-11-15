@@ -89,7 +89,10 @@ class PositionSize:
                 "position_value": self.position_value,
                 "entry_price": self.entry_price,
             },
-            "price_levels": {"stop_loss": self.stop_loss, "take_profit": self.take_profit},
+            "price_levels": {
+                "stop_loss": self.stop_loss,
+                "take_profit": self.take_profit,
+            },
             "risk_metrics": {
                 "risk_per_share": self.risk_per_share,
                 "total_risk_dollar": self.total_risk_dollar,
@@ -175,7 +178,9 @@ class PositionSizer:
         try:
             # Validate inputs
             if not self._validate_inputs(signal, features, validation_errors):
-                return self._create_invalid_position(signal, features, validation_errors, method)
+                return self._create_invalid_position(
+                    signal, features, validation_errors, method
+                )
 
             # Calculate position size based on method
             if method == SizingMethod.VOLATILITY_TARGET:
@@ -193,7 +198,9 @@ class PositionSizer:
             position = self._apply_risk_guardrails(position)
 
             # Final validation
-            position.is_valid = self._validate_final_position(position, validation_errors)
+            position.is_valid = self._validate_final_position(
+                position, validation_errors
+            )
             position.validation_errors = validation_errors
 
             return position
@@ -201,9 +208,13 @@ class PositionSizer:
         except Exception as e:
             logger.error(f"Error calculating position size for {signal.ticker}: {e}")
             validation_errors.append(f"Calculation error: {e!s}")
-            return self._create_invalid_position(signal, features, validation_errors, method)
+            return self._create_invalid_position(
+                signal, features, validation_errors, method
+            )
 
-    def _volatility_target_sizing(self, signal: Signal, features: FeatureSet) -> PositionSize:
+    def _volatility_target_sizing(
+        self, signal: Signal, features: FeatureSet
+    ) -> PositionSize:
         """Position sizing using volatility targeting."""
 
         # Calculate expected volatility
@@ -246,7 +257,9 @@ class PositionSizer:
         if signal.take_profit:
             reward_per_share = abs(signal.take_profit - signal.entry_price)
             reward_dollar = quantity * reward_per_share
-            risk_reward_ratio = reward_per_share / risk_per_share if risk_per_share > 0 else None
+            risk_reward_ratio = (
+                reward_per_share / risk_per_share if risk_per_share > 0 else None
+            )
 
         return PositionSize(
             ticker=signal.ticker,
@@ -273,7 +286,9 @@ class PositionSizer:
             confidence=signal.confidence,
         )
 
-    def _kelly_criterion_sizing(self, signal: Signal, features: FeatureSet) -> PositionSize:
+    def _kelly_criterion_sizing(
+        self, signal: Signal, features: FeatureSet
+    ) -> PositionSize:
         """Position sizing using Kelly Criterion."""
 
         # Get historical performance or use defaults
@@ -288,7 +303,9 @@ class PositionSizer:
         q = 1 - win_rate
 
         kelly_fraction = (b * p - q) / b
-        kelly_fraction = max(0, min(kelly_fraction, self.config["kelly_max_allocation"]))
+        kelly_fraction = max(
+            0, min(kelly_fraction, self.config["kelly_max_allocation"])
+        )
 
         # Calculate position size
         position_value = self.account_size * kelly_fraction
@@ -311,9 +328,13 @@ class PositionSizer:
         # Position size to achieve target risk
         quantity = int(risk_amount / atr_stop_distance)
 
-        return self._calculate_standard_metrics(signal, features, quantity, SizingMethod.ATR_BASED)
+        return self._calculate_standard_metrics(
+            signal, features, quantity, SizingMethod.ATR_BASED
+        )
 
-    def _fixed_percent_sizing(self, signal: Signal, features: FeatureSet) -> PositionSize:
+    def _fixed_percent_sizing(
+        self, signal: Signal, features: FeatureSet
+    ) -> PositionSize:
         """Fixed percentage of portfolio sizing."""
 
         allocation_percent = 0.05  # 5% of portfolio
@@ -346,7 +367,9 @@ class PositionSizer:
         if signal.take_profit:
             reward_per_share = abs(signal.take_profit - signal.entry_price)
             reward_dollar = quantity * reward_per_share
-            risk_reward_ratio = reward_per_share / risk_per_share if risk_per_share > 0 else None
+            risk_reward_ratio = (
+                reward_per_share / risk_per_share if risk_per_share > 0 else None
+            )
 
         # Volatility metrics
         daily_vol = features.volatility_20d / 100
@@ -383,7 +406,9 @@ class PositionSizer:
         # Maximum risk per trade check
         if position.total_risk_percent > self.config["max_risk_per_trade"]:
             # Scale down position
-            scale_factor = self.config["max_risk_per_trade"] / position.total_risk_percent
+            scale_factor = (
+                self.config["max_risk_per_trade"] / position.total_risk_percent
+            )
             position.quantity = int(position.quantity * scale_factor)
 
             # Recalculate metrics
@@ -411,7 +436,9 @@ class PositionSizer:
 
         return position
 
-    def _validate_inputs(self, signal: Signal, features: FeatureSet, errors: list) -> bool:
+    def _validate_inputs(
+        self, signal: Signal, features: FeatureSet, errors: list
+    ) -> bool:
         """Validate inputs for position sizing."""
 
         valid = True
@@ -443,11 +470,16 @@ class PositionSizer:
             errors.append("Invalid position quantity")
             valid = False
 
-        if position.total_risk_percent > self.config["max_risk_per_trade"] * 1.1:  # 10% tolerance
+        if (
+            position.total_risk_percent > self.config["max_risk_per_trade"] * 1.1
+        ):  # 10% tolerance
             errors.append(f"Risk too high: {position.total_risk_percent:.1%}")
             valid = False
 
-        if position.position_value > self.account_size * self.config["max_position_percent"] * 1.1:
+        if (
+            position.position_value
+            > self.account_size * self.config["max_position_percent"] * 1.1
+        ):
             errors.append("Position size too large")
             valid = False
 
@@ -497,7 +529,9 @@ position_sizer = PositionSizer()
 
 
 def calculate_position_for_signal(
-    signal: Signal, features: FeatureSet, method: SizingMethod = SizingMethod.VOLATILITY_TARGET
+    signal: Signal,
+    features: FeatureSet,
+    method: SizingMethod = SizingMethod.VOLATILITY_TARGET,
 ) -> PositionSize:
     """Convenience function to calculate position size."""
     return position_sizer.calculate_position_size(signal, features, method)

@@ -1,6 +1,7 @@
 # PROTECT.md - Critical Elements That Must Not Be Modified
 
 ## Summary
+
 This document lists all public interfaces, storage keys, environment variables, routes, and critical elements that must be preserved during cleanup operations. Any modification to these items could break functionality or lose user data.
 
 ---
@@ -8,18 +9,21 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 🔒 Backend API Routes (Public Contract)
 
 ### Core Routes
-- **/** - Root endpoint 
+
+- **/** - Root endpoint
 - **/health** - Health check endpoint (critical for frontend discovery)
-- **/__debug/routes** - Debug route listing (dev environment)
-- **/__debug/env/providers** - Provider status debug endpoint
-- **/__debug/env/telegram** - Telegram config debug endpoint
+- **/\_\_debug/routes** - Debug route listing (dev environment)
+- **/\_\_debug/env/providers** - Provider status debug endpoint
+- **/\_\_debug/env/telegram** - Telegram config debug endpoint
 
 ### Chat Routes
+
 - **/complete** - OpenAI-compatible chat completion
 - **/chat/health** - Chat service health check
 - **/chat/config** - Chat configuration endpoint
 
-### Trading Routes  
+### Trading Routes
+
 - **/trade/health** - Trading service health check
 - **/trade/screener** - Market screener data
 - **/trade/explain** - Trade explanation service
@@ -38,6 +42,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/trade/market** - Market trade endpoint
 
 ### Market Data Routes
+
 - **/market/overview** - Market overview data
 - **/market/breadth** - Market breadth indicators
 - **/market/risk-lite** - Risk assessment (lightweight)
@@ -46,7 +51,8 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/market/calendar** - Market calendar events
 - **/market/macro/history** - Macro economic history
 
-### Calendar Routes  
+### Calendar Routes
+
 - **/calendar** - Market calendar
 - **/holidays** - Market holidays
 - **/earnings** - Earnings calendar
@@ -56,6 +62,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/fred/{series_id}** - FRED economic data
 
 ### Alert Routes
+
 - **/alerts/status** - Alert service status
 - **/alerts/start** - Start alert service
 - **/alerts/stop** - Stop alert service
@@ -71,6 +78,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/alerts/{alert_id}/disable** - Disable alert (PUT)
 
 ### Signal Routes
+
 - **/features/{ticker}** - Signal features for ticker
 - **/features/bulk** - Bulk signal features
 - **/regime** - Current market regime
@@ -92,6 +100,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/strategy/backtest** - Strategy backtest
 
 ### News Routes
+
 - **/news/sources** - News sources
 - **/news/headlines** - News headlines
 - **/news/filings** - SEC filings
@@ -101,10 +110,12 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/news/ping** - News service ping
 
 ### Crypto Routes
+
 - **/crypto/quotes** - Cryptocurrency quotes
 - **/crypto/ohlc** - Crypto OHLC data
 
 ### Learning Routes
+
 - **/learning/status** - Learning system status
 - **/learning/data/summary** - Learning data summary
 - **/learning/rules/current** - Current learning rules
@@ -119,6 +130,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/learning/health** - Learning system health
 
 ### Integration Routes
+
 - **/integration/health** - Integration health
 - **/decision** - Decision endpoints
 - **/enhance** - Enhancement endpoints
@@ -130,19 +142,22 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **/test/decision** - Test decision
 
 ### Explain Routes
+
 - **/explain/events** - Explanation events
 - **/explain/events/{event_id}** - Specific event
 - **/explain/stats/summary** - Explanation statistics
-- **/explain/status** - Explanation status  
+- **/explain/status** - Explanation status
 - **/explain/stream** - Event stream
 - **/explain/test/signal** - Test signal explanation
 - **/explain/test/regime** - Test regime explanation
 
 ### Web Routes
+
 - **/web/browse/search** - Web browsing search
 - **/web/browse** - Web browsing interface
 
 ### Telegram Webhook
+
 - **{api_prefix}/telegram/callback** - Telegram webhook callback
 
 ---
@@ -150,6 +165,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 🔑 Environment Variables (Critical Configuration)
 
 ### API Keys & Secrets
+
 - **OPENAI_API_KEY** - OpenAI API access
 - **AZURE_OPENAI_API_KEY** - Azure OpenAI access
 - **HUGGINGFACE_HUB_TOKEN** - HuggingFace access
@@ -165,6 +181,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **TELEGRAM_WEBHOOK_SECRET** - Telegram webhook security
 
 ### Service Configuration
+
 - **APP_ENV** - Application environment (development/production)
 - **ALLOWED_ORIGINS** - CORS allowed origins
 - **DATA_PROVIDER** / **DATA_SOURCE** - Data provider selection
@@ -175,6 +192,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **SEC_USER_AGENT** / **USER_AGENT** - HTTP user agent strings
 
 ### Provider URLs & Base Paths
+
 - **POLYGON_BASE_URL** / **POLYGON_BASE** - Polygon API base
 - **ALPACA_DATA_BASE_URL** / **ALPACA_DATA_BASE** - Alpaca data base
 - **LOCAL_LLM_BASE_URL** - Local LLM server URL
@@ -184,11 +202,13 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 💾 Frontend Storage Keys (Data Persistence)
 
 ### Theme & UI Preferences
+
 - **ziggy-theme** - Theme selection (light/dark/system)
 - **ziggy_layout_trading_view** - TradingView layout sizes
 - **ziggy_settings** - Global settings object
 
 ### Market Tab Preferences
+
 - **ziggy_pd** - Period days setting
 - **ziggy_auto** - Auto-refresh toggle
 - **ziggy_risk** - Show risk toggle
@@ -201,50 +221,59 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **ziggy_wl_mode** - Watchlist mode (all/watchlist)
 
 ### API Discovery & Caching
+
 - **ziggy_api_base** - Discovered API base URL
 - **ziggy_api_prefix** - API prefix
 - **ziggy_api_ts** - API discovery timestamp
 
 ### Legacy Keys (Compatibility)
+
 - **ziggy_rr_timeframe** - Risk/return timeframe (legacy)
 
 ### Right Rail Preferences
-- **ziggy_rr_** prefix - Right rail panel settings
+
+- **ziggy*rr*** prefix - Right rail panel settings
 
 ---
 
 ## 🎨 CSS Custom Properties (Design System)
 
 ### Color Foundations
+
 - **--bg** - Main background color
-- **--panel** - Elevated panel background  
+- **--panel** - Elevated panel background
 - **--surface** - Interactive surface color
 - **--surface-hover** - Hover state color
 - **--border** - Subtle border color
 - **--border-strong** - Prominent border color
 
 ### Typography Colors
+
 - **--fg** - Primary text color
 - **--fg-muted** - Secondary text color
 - **--fg-subtle** - Tertiary text color
 
 ### Brand & Accent Colors
+
 - **--accent** - Primary accent color (cyan-blue)
 - **--accent-hover** - Accent hover state
 - **--accent-fg** - Accent foreground text
 
 ### Semantic Colors
+
 - **--success** - Success state color
-- **--warning** - Warning state color  
+- **--warning** - Warning state color
 - **--danger** - Error/danger state color
 
 ### Trading-Specific Colors
+
 - **--buy** - Bullish/long position color
 - **--sell** - Bearish/short position color
 - **--candle-up** - Green candlestick color
 - **--candle-down** - Red candlestick color
 
 ### Chart Elements
+
 - **--grid** - Chart grid line color
 
 ---
@@ -252,6 +281,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## ⌨️ Keyboard Shortcuts (User Workflow)
 
 ### Global Navigation
+
 - **r** - Refresh data
 - **s** - Toggle scan mode
 - **/** - Focus search box
@@ -260,6 +290,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **4** - Open charts view
 
 ### List Navigation
+
 - **j** - Move down in list
 - **k** - Move up in list
 - **enter** - Toggle pin/bookmark
@@ -267,6 +298,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **o** - Open current item
 
 ### Special Key Combinations
+
 - **Ctrl+K** / **Cmd+K** - Command palette (if implemented)
 - **Shift+[1-8]** - Tab switching (if implemented)
 - **^[1-9]$** - Direct numeric navigation
@@ -276,6 +308,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 🔗 Component Props & Public APIs
 
 ### Frontend Component Contracts
+
 - **PasscodeGate** - `onPassed`, `onSuccess`, `onSuceed` callbacks
 - **AppShell** - Layout and panel structure
 - **TradingViewShell** - Resizable layout persistence
@@ -285,6 +318,7 @@ This document lists all public interfaces, storage keys, environment variables, 
 - **RightRail** - News and market info sidebar
 
 ### API Service Contracts
+
 - **api()** function - Core API client
 - **api.get()**, **api.post()** etc. - HTTP method helpers
 - **testAPI()** - Health check function
@@ -295,12 +329,14 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 🎭 DOM IDs & Data Attributes
 
 ### Critical DOM Elements
+
 - **root** - React app mount point
 - Layout panel IDs used by resizable components
 - Modal backdrop and dialog IDs
 - Focus trap elements for accessibility
 
 ### Password Gate Elements
+
 - **password-face-text** - Passcode entry interface
 - Elements maintaining intro/onboarding flow
 
@@ -309,12 +345,14 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 📊 Analytics & Tracking IDs
 
 ### Event Tracking
+
 - **ziggy:api-changed** - API discovery events
-- **ziggy:api-retry** - API retry events  
+- **ziggy:api-retry** - API retry events
 - **ziggy:hotkey** - Keyboard shortcut events
 - **ziggy:status** - Status update events
 
 ### Performance Monitoring
+
 - Window performance markers
 - API response timing events
 - Error tracking and reporting
@@ -324,11 +362,13 @@ This document lists all public interfaces, storage keys, environment variables, 
 ## 🔄 Migration & Compatibility
 
 ### Feature Flags
+
 - Build-time feature toggles
 - Environment-based feature switches
 - Backward compatibility flags
 
 ### Version Migration
+
 - Settings schema versioning
 - Data format migrations
 - API version compatibility
@@ -347,4 +387,4 @@ This document lists all public interfaces, storage keys, environment variables, 
 
 ---
 
-*This protection list was generated during cleanup audit on 2025-10-18*
+_This protection list was generated during cleanup audit on 2025-10-18_

@@ -300,6 +300,7 @@ This document provides a visual guide to understanding the complete ZiggyAI mobi
 ## Mobile API Efficiency: Sync vs Individual Calls
 
 ### ❌ Inefficient Approach (Multiple Calls)
+
 ```
 App makes 5 separate API calls:
 1. GET /mobile/market/snapshot?symbols=...    (200ms)
@@ -314,13 +315,14 @@ Data usage: 5 separate HTTP overheads
 ```
 
 ### ✅ Efficient Approach (Single Sync Call)
+
 ```
 App makes 1 sync call:
 1. GET /mobile/sync?include=all               (300ms)
 
 Returns everything in one response:
 - Market quotes
-- Trading signals  
+- Trading signals
 - Portfolio data
 - Price alerts
 - News items
@@ -389,6 +391,7 @@ RESULT: 90% fewer API calls, better battery life!
 ## Technology Stack
 
 ### Android Application
+
 ```
 ┌────────────────────────────────────────┐
 │           Presentation Layer           │
@@ -422,6 +425,7 @@ RESULT: 90% fewer API calls, better battery life!
 ```
 
 ### Backend Services
+
 ```
 ┌────────────────────────────────────────┐
 │             Mobile API                 │

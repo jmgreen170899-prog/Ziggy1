@@ -4,7 +4,7 @@
  */
 
 export interface ChatStreamMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: "system" | "user" | "assistant";
   content: string;
 }
 
@@ -42,20 +42,20 @@ export interface ChatStreamCallbacks {
  */
 export async function streamChatCompletion(
   request: ChatStreamRequest,
-  callbacks: ChatStreamCallbacks
+  callbacks: ChatStreamCallbacks,
 ): Promise<void> {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const url = `${baseURL}/chat/complete`;
 
-  let fullContent = '';
+  let fullContent = "";
   let controller: AbortController | null = null;
 
   try {
     controller = new AbortController();
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(request),
       signal: controller.signal,
@@ -66,46 +66,46 @@ export async function streamChatCompletion(
     }
 
     if (!response.body) {
-      throw new Error('Response body is null');
+      throw new Error("Response body is null");
     }
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
+    let buffer = "";
 
     while (true) {
       const { done, value } = await reader.read();
-      
+
       if (done) {
         break;
       }
 
       buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      
+      const lines = buffer.split("\n");
+
       // Keep the last incomplete line in the buffer
-      buffer = lines.pop() || '';
+      buffer = lines.pop() || "";
 
       for (const line of lines) {
         const trimmed = line.trim();
-        
+
         // Skip empty lines and comments
-        if (!trimmed || trimmed.startsWith(':')) {
+        if (!trimmed || trimmed.startsWith(":")) {
           continue;
         }
 
         // Parse SSE format: "data: {...}"
-        if (trimmed.startsWith('data: ')) {
+        if (trimmed.startsWith("data: ")) {
           const data = trimmed.substring(6);
-          
+
           // Check for stream end marker
-          if (data === '[DONE]') {
+          if (data === "[DONE]") {
             break;
           }
 
           try {
             const chunk: ChatStreamChunk = JSON.parse(data);
-            
+
             // Extract content from chunk
             if (chunk.choices && chunk.choices.length > 0) {
               const delta = chunk.choices[0].delta;
@@ -115,7 +115,7 @@ export async function streamChatCompletion(
               }
             }
           } catch (parseError) {
-            console.warn('Failed to parse SSE chunk:', data, parseError);
+            console.warn("Failed to parse SSE chunk:", data, parseError);
           }
         }
       }
@@ -123,7 +123,6 @@ export async function streamChatCompletion(
 
     // Notify completion
     callbacks.onComplete?.(fullContent);
-
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
     callbacks.onError?.(err);
@@ -137,15 +136,15 @@ export async function streamChatCompletion(
  * Non-streaming chat completion for fallback
  */
 export async function chatCompletion(
-  request: Omit<ChatStreamRequest, 'stream'>
+  request: Omit<ChatStreamRequest, "stream">,
 ): Promise<string> {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const url = `${baseURL}/chat/complete`;
 
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ ...request, stream: false }),
   });
@@ -156,11 +155,11 @@ export async function chatCompletion(
   }
 
   const data = await response.json();
-  
+
   // Extract content from OpenAI-format response
   if (data.choices && data.choices.length > 0) {
-    return data.choices[0].message?.content || '';
+    return data.choices[0].message?.content || "";
   }
 
-  throw new Error('Unexpected response format');
+  throw new Error("Unexpected response format");
 }

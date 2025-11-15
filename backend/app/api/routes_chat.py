@@ -61,12 +61,18 @@ REQUEST_TIMEOUT = float(_env("CHAT_REQUEST_TIMEOUT_SEC", "90") or "90")
 
 
 def _provider_base() -> str:
-    return (OPENAI_BASE or LOCAL_BASE or "") if USE_OPENAI else (LOCAL_BASE or OPENAI_BASE or "")
+    return (
+        (OPENAI_BASE or LOCAL_BASE or "")
+        if USE_OPENAI
+        else (LOCAL_BASE or OPENAI_BASE or "")
+    )
 
 
 def _provider_model() -> str:
     return (
-        (OPENAI_MODEL or LOCAL_MODEL or "") if USE_OPENAI else (LOCAL_MODEL or OPENAI_MODEL or "")
+        (OPENAI_MODEL or LOCAL_MODEL or "")
+        if USE_OPENAI
+        else (LOCAL_MODEL or OPENAI_MODEL or "")
     )
 
 
@@ -147,16 +153,12 @@ async def chat_complete(req: ChatRequest):
         "temperature": (
             req.temperature
             if req.temperature is not None
-            else LOCAL_TEMP
-            if not USE_OPENAI
-            else req.temperature
+            else LOCAL_TEMP if not USE_OPENAI else req.temperature
         ),
         "max_tokens": (
             req.max_tokens
             if req.max_tokens is not None
-            else LOCAL_MAXTOK
-            if not USE_OPENAI
-            else req.max_tokens
+            else LOCAL_MAXTOK if not USE_OPENAI else req.max_tokens
         ),
         "stream": req.stream,
     }
@@ -169,12 +171,16 @@ async def chat_complete(req: ChatRequest):
         resp = await _post_chat(payload, stream=False)
         if not resp.is_success:
             text = await _safe_text(resp)
-            raise HTTPException(status_code=resp.status_code, detail=_fmt_detail(resp, text))
+            raise HTTPException(
+                status_code=resp.status_code, detail=_fmt_detail(resp, text)
+            )
         try:
             data = resp.json()
         except Exception:
             text = await _safe_text(resp)
-            raise HTTPException(status_code=502, detail=f"Invalid JSON from provider: {text[:500]}")
+            raise HTTPException(
+                status_code=502, detail=f"Invalid JSON from provider: {text[:500]}"
+            )
         return JSONResponse(content=data, status_code=resp.status_code)
 
     # Streaming (SSE) path — pass provider's SSE through unchanged
@@ -203,7 +209,7 @@ async def chat_complete(req: ChatRequest):
 async def chat_health() -> ChatHealthResponse:
     """
     Quick connectivity probe against the configured provider.
-    
+
     Tests LLM provider with a minimal no-op call.
     Does NOT consume tokens on local servers; on OpenAI this is a minimal request.
     """
@@ -245,7 +251,7 @@ async def chat_health() -> ChatHealthResponse:
 async def chat_config() -> ChatConfigResponse:
     """
     Get non-sensitive chat configuration snapshot.
-    
+
     Returns current LLM provider configuration for debugging.
     Note: Never returns API keys.
     """

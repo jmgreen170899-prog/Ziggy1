@@ -28,7 +28,10 @@ except Exception:
 
 # Market Brain Integration
 try:
-    from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+    from app.services.market_brain.simple_data_hub import (
+        DataSource,
+        enhance_market_data,
+    )
 
     BRAIN_AVAILABLE = True
     _enhance_market_data = enhance_market_data
@@ -342,7 +345,9 @@ def _fetch_feed(url: str) -> list[dict[str, Any]]:
             link = _pick_link(it)
             pub = _pick_published(it)
             summary = _pick_text(it, "description", "summary")
-            items.append({"title": title, "url": link, "published": pub, "summary": summary})
+            items.append(
+                {"title": title, "url": link, "published": pub, "summary": summary}
+            )
     else:
         # Atom
         for it in root.findall(".//entry"):
@@ -350,7 +355,9 @@ def _fetch_feed(url: str) -> list[dict[str, Any]]:
             link = _pick_link(it)
             pub = _pick_published(it)
             summary = _pick_text(it, "summary", "content")
-            items.append({"title": title, "url": link, "published": pub, "summary": summary})
+            items.append(
+                {"title": title, "url": link, "published": pub, "summary": summary}
+            )
 
     return _cache_put(cache_key, items)
 
@@ -395,16 +402,21 @@ def news_headlines(
     # NEW: compatibility with UI calling ?symbol=SYM
     symbol: str | None = Query(None, description="Single ticker (compat)"),
     symbols: str | None = Query(
-        None, description="Comma-separated tickers to match in title/summary (e.g., AAPL,MSFT)"
+        None,
+        description="Comma-separated tickers to match in title/summary (e.g., AAPL,MSFT)",
     ),
     q: str | None = Query(
         None, description="Keyword filter (case-insensitive) across title/summary"
     ),
     sources: str | None = Query(
-        None, description="Comma-separated source IDs or URLs; defaults to the service's built-ins"
+        None,
+        description="Comma-separated source IDs or URLs; defaults to the service's built-ins",
     ),
     lookback_days: int = Query(
-        3, ge=1, le=30, description="Limit items to roughly the last N days (as supported by feeds)"
+        3,
+        ge=1,
+        le=30,
+        description="Limit items to roughly the last N days (as supported by feeds)",
     ),
     limit: int = Query(
         30, ge=1, le=200, description="Max items after merge & sort (freshest first)"
@@ -536,13 +548,17 @@ def news_headlines(
                 blob = f"{title} {summary}".lower()
                 if q_lc and q_lc not in blob:
                     continue
-                matched_syms = sorted([s for s in sym_set if s and s in blob]) if sym_set else []
+                matched_syms = (
+                    sorted([s for s in sym_set if s and s in blob]) if sym_set else []
+                )
                 if sym_set and not matched_syms:
                     continue
 
                 # ── NEW: per-headline sentiment (fallback/naive) ───────────────
                 sc = _naive_sentiment_score(f"{title}. {summary}".strip())
-                lb = "negative" if sc < -0.05 else "positive" if sc > 0.05 else "neutral"
+                lb = (
+                    "negative" if sc < -0.05 else "positive" if sc > 0.05 else "neutral"
+                )
 
                 merged.append(
                     {
@@ -575,7 +591,9 @@ def news_headlines(
                 title = _strip_html(it.get("title"))
                 summary = _strip_html(it.get("summary") or it.get("description"))
                 # Build symbols/tickers set
-                svc_syms = it.get("symbols") or it.get("tickers") or it.get("related") or []
+                svc_syms = (
+                    it.get("symbols") or it.get("tickers") or it.get("related") or []
+                )
                 if isinstance(svc_syms, str):
                     svc_syms = _split_csv(svc_syms)
                 svc_syms = [str(s).upper() for s in (svc_syms or [])]
@@ -599,16 +617,26 @@ def news_headlines(
                             if isinstance(val_any, (int, float)):
                                 sc = float(val_any)
                             else:
-                                sc = _naive_sentiment_score(f"{title}. {summary}".strip())
+                                sc = _naive_sentiment_score(
+                                    f"{title}. {summary}".strip()
+                                )
 
                 if "label" in it and isinstance(it.get("label"), str):
                     lb = str(it.get("label")).lower()
-                elif "sentiment_label" in it and isinstance(it.get("sentiment_label"), str):
+                elif "sentiment_label" in it and isinstance(
+                    it.get("sentiment_label"), str
+                ):
                     lb = str(it.get("sentiment_label")).lower()
-                elif "sentimentLabel" in it and isinstance(it.get("sentimentLabel"), str):
+                elif "sentimentLabel" in it and isinstance(
+                    it.get("sentimentLabel"), str
+                ):
                     lb = str(it.get("sentimentLabel")).lower()
                 else:
-                    lb = "negative" if sc < -0.05 else "positive" if sc > 0.05 else "neutral"
+                    lb = (
+                        "negative"
+                        if sc < -0.05
+                        else "positive" if sc > 0.05 else "neutral"
+                    )
 
                 merged.append(
                     {
@@ -905,7 +933,9 @@ def _aggregate_sentiment(samples: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _compute_sentiment_locally(ticker: str, items: list[dict[str, Any]]) -> dict[str, Any]:
+def _compute_sentiment_locally(
+    ticker: str, items: list[dict[str, Any]]
+) -> dict[str, Any]:
     samples: list[dict[str, Any]] = []
     for it in items:
         title = _strip_html(it.get("title"))
@@ -958,10 +988,10 @@ def news_sentiment(
 ) -> SentimentResponse:
     """
     Return NLP sentiment summary for recent headlines mentioning ticker.
-    
+
     Analyzes recent news articles and returns aggregated sentiment score,
     label, and individual article sentiments.
-    
+
     Output includes:
     - ticker: Symbol analyzed
     - score: Mean sentiment in [-1,1]
@@ -1003,7 +1033,9 @@ def news_sentiment(
 
         if isinstance(out, dict) and "score" in out and "label" in out:
             out.setdefault("ticker", t)
-            out.setdefault("updated_at", datetime.now(UTC).isoformat().replace("+00:00", "Z"))
+            out.setdefault(
+                "updated_at", datetime.now(UTC).isoformat().replace("+00:00", "Z")
+            )
             return _cache_put(cache_key, out)
 
         # If analyzer returned per-sample scores, aggregate them
@@ -1063,7 +1095,7 @@ def news_headwind(
     """
     **DEPRECATED:** This endpoint is maintained for backward compatibility only.
     Please use `/sentiment` instead.
-    
+
     This alias will be removed in a future version.
     """
     return news_sentiment(ticker=ticker, symbol=symbol, lookback_days=lookback_days, limit=limit)  # type: ignore[arg-type]

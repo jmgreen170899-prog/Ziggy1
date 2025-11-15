@@ -87,17 +87,23 @@ class ExecutionRecord:
             )
 
         if self.vwap_window and self.fill_price:
-            self.slippage_vs_vwap_bps = slippage_bps(self.fill_price, self.vwap_window, self.side)
+            self.slippage_vs_vwap_bps = slippage_bps(
+                self.fill_price, self.vwap_window, self.side
+            )
 
         # Market impact (difference between submit and fill mid)
         if self.mid_at_submit and self.mid_at_fill:
             if self.side.lower() == "buy":
                 self.market_impact_bps = (
-                    10000.0 * (self.mid_at_fill - self.mid_at_submit) / self.mid_at_submit
+                    10000.0
+                    * (self.mid_at_fill - self.mid_at_submit)
+                    / self.mid_at_submit
                 )
             else:
                 self.market_impact_bps = (
-                    10000.0 * (self.mid_at_submit - self.mid_at_fill) / self.mid_at_submit
+                    10000.0
+                    * (self.mid_at_submit - self.mid_at_fill)
+                    / self.mid_at_submit
                 )
 
     def to_dict(self) -> dict[str, Any]:
@@ -175,7 +181,9 @@ class QualityMonitor:
     def __init__(self):
         self.executions: list[ExecutionRecord] = []
         self.market_data: dict[str, deque] = defaultdict(lambda: deque(maxlen=1000))
-        self.quality_stats: dict[tuple[str, str, str], QualityStats] = {}  # (venue, symbol, bucket)
+        self.quality_stats: dict[tuple[str, str, str], QualityStats] = (
+            {}
+        )  # (venue, symbol, bucket)
         self._load_state()
 
     def record_market_data(
@@ -250,7 +258,9 @@ class QualityMonitor:
             try:
                 submit_dt = datetime.fromisoformat(submit_time.replace("Z", "+00:00"))
                 fill_dt = datetime.fromisoformat(fill_time.replace("Z", "+00:00"))
-                execution.time_to_fill_ms = int((fill_dt - submit_dt).total_seconds() * 1000)
+                execution.time_to_fill_ms = int(
+                    (fill_dt - submit_dt).total_seconds() * 1000
+                )
             except Exception as e:
                 logger.warning(f"Failed to calculate time to fill: {e}")
 
@@ -263,7 +273,9 @@ class QualityMonitor:
         # Cleanup old data
         self._cleanup_old_data()
 
-        logger.info(f"Recorded execution {execution_id}: {symbol} {side} {quantity} @ {fill_price}")
+        logger.info(
+            f"Recorded execution {execution_id}: {symbol} {side} {quantity} @ {fill_price}"
+        )
         return execution
 
     def _calculate_market_context(self, execution: ExecutionRecord) -> None:
@@ -285,13 +297,17 @@ class QualityMonitor:
 
             # For mid at submit, try to find data point closest to submit time
             if execution.submit_time:
-                submit_dt = datetime.fromisoformat(execution.submit_time.replace("Z", "+00:00"))
+                submit_dt = datetime.fromisoformat(
+                    execution.submit_time.replace("Z", "+00:00")
+                )
 
                 closest_data = None
                 min_time_diff = float("inf")
 
                 for data_point in symbol_data:
-                    data_dt = datetime.fromisoformat(data_point.timestamp.replace("Z", "+00:00"))
+                    data_dt = datetime.fromisoformat(
+                        data_point.timestamp.replace("Z", "+00:00")
+                    )
                     time_diff = abs((data_dt - submit_dt).total_seconds())
 
                     if time_diff < min_time_diff:
@@ -304,7 +320,9 @@ class QualityMonitor:
                 execution.mid_at_submit = execution.mid_at_fill
 
             # Calculate VWAP over window
-            execution.vwap_window = self._calculate_vwap(symbol_data, fill_dt, QUALITY_VWAP_WINDOW)
+            execution.vwap_window = self._calculate_vwap(
+                symbol_data, fill_dt, QUALITY_VWAP_WINDOW
+            )
 
         except Exception as e:
             logger.error(f"Failed to calculate market context: {e}")
@@ -320,7 +338,9 @@ class QualityMonitor:
             total_volume = 0.0
 
             for data_point in symbol_data:
-                data_time = datetime.fromisoformat(data_point.timestamp.replace("Z", "+00:00"))
+                data_time = datetime.fromisoformat(
+                    data_point.timestamp.replace("Z", "+00:00")
+                )
 
                 if start_time <= data_time <= reference_time:
                     total_value += data_point.price * data_point.volume
@@ -366,17 +386,20 @@ class QualityMonitor:
             # Update averages
             if execution.slippage_vs_mid_submit_bps is not None:
                 stats.avg_slippage_vs_mid_bps = (
-                    stats.avg_slippage_vs_mid_bps * old_count + execution.slippage_vs_mid_submit_bps
+                    stats.avg_slippage_vs_mid_bps * old_count
+                    + execution.slippage_vs_mid_submit_bps
                 ) / new_count
 
             if execution.slippage_vs_vwap_bps is not None:
                 stats.avg_slippage_vs_vwap_bps = (
-                    stats.avg_slippage_vs_vwap_bps * old_count + execution.slippage_vs_vwap_bps
+                    stats.avg_slippage_vs_vwap_bps * old_count
+                    + execution.slippage_vs_vwap_bps
                 ) / new_count
 
             if execution.market_impact_bps is not None:
                 stats.avg_market_impact_bps = (
-                    stats.avg_market_impact_bps * old_count + execution.market_impact_bps
+                    stats.avg_market_impact_bps * old_count
+                    + execution.market_impact_bps
                 ) / new_count
 
             # Track best/worst executions
@@ -428,8 +451,14 @@ class QualityMonitor:
         cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
         results = []
 
-        for (stat_venue, stat_symbol, bucket_start_str), stats in self.quality_stats.items():
-            bucket_start = datetime.fromisoformat(bucket_start_str.replace("Z", "+00:00"))
+        for (
+            stat_venue,
+            stat_symbol,
+            bucket_start_str,
+        ), stats in self.quality_stats.items():
+            bucket_start = datetime.fromisoformat(
+                bucket_start_str.replace("Z", "+00:00")
+            )
 
             if bucket_start < cutoff_time:
                 continue
@@ -455,7 +484,9 @@ class QualityMonitor:
             ]
 
             if bucket_executions:
-                slippages = [exec.slippage_vs_mid_submit_bps for exec in bucket_executions]
+                slippages = [
+                    exec.slippage_vs_mid_submit_bps for exec in bucket_executions
+                ]
                 stats.slippage_percentiles = {
                     "p50": statistics.median(slippages),
                     "p75": (
@@ -495,7 +526,9 @@ class QualityMonitor:
         cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
 
         for execution in self.executions:
-            exec_time = datetime.fromisoformat(execution.fill_time.replace("Z", "+00:00"))
+            exec_time = datetime.fromisoformat(
+                execution.fill_time.replace("Z", "+00:00")
+            )
 
             if exec_time < cutoff_time:
                 continue
@@ -552,13 +585,16 @@ class QualityMonitor:
         self.executions = [
             exec
             for exec in self.executions
-            if datetime.fromisoformat(exec.fill_time.replace("Z", "+00:00")) > cutoff_time
+            if datetime.fromisoformat(exec.fill_time.replace("Z", "+00:00"))
+            > cutoff_time
         ]
 
         # Clean quality stats
         old_keys = []
         for key, stats in self.quality_stats.items():
-            bucket_start = datetime.fromisoformat(stats.bucket_start.replace("Z", "+00:00"))
+            bucket_start = datetime.fromisoformat(
+                stats.bucket_start.replace("Z", "+00:00")
+            )
             if bucket_start < cutoff_time:
                 old_keys.append(key)
 
@@ -662,7 +698,9 @@ def record_market_data(symbol: str, price: float, volume: float) -> None:
     quality_monitor.record_market_data(symbol, price, volume)
 
 
-def get_quality_report(venue: str | None = None, symbol: str | None = None) -> dict[str, Any]:
+def get_quality_report(
+    venue: str | None = None, symbol: str | None = None
+) -> dict[str, Any]:
     """Get comprehensive quality report."""
     stats = quality_monitor.get_quality_stats(venue, symbol)
     venue_performance = quality_monitor.get_venue_performance()

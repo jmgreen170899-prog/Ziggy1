@@ -22,6 +22,7 @@ ZiggyAI is an **intelligent paper trading platform** combining autonomous tradin
 ### Primary Technology Stack
 
 **Backend:**
+
 - **Language:** Python 3.11+
 - **Framework:** FastAPI (async, high-performance)
 - **Database:** PostgreSQL (production), SQLite (development)
@@ -31,6 +32,7 @@ ZiggyAI is an **intelligent paper trading platform** combining autonomous tradin
 - **Migrations:** Alembic
 
 **Frontend:**
+
 - **Framework:** Next.js 15 with App Router
 - **UI Library:** React 19
 - **Language:** TypeScript 5+ (strict mode)
@@ -42,6 +44,7 @@ ZiggyAI is an **intelligent paper trading platform** combining autonomous tradin
 - **Animations:** Framer Motion
 
 **Infrastructure:**
+
 - **Containerization:** Docker & Docker Compose
 - **CI/CD:** GitHub Actions
 - **Code Quality:** Ruff, Black, ESLint, Pre-commit hooks
@@ -50,6 +53,7 @@ ZiggyAI is an **intelligent paper trading platform** combining autonomous tradin
 ### Major Frameworks & Libraries
 
 **Backend Dependencies:**
+
 - `fastapi` - Web framework
 - `uvicorn` - ASGI server
 - `pydantic` - Data validation
@@ -65,6 +69,7 @@ ZiggyAI is an **intelligent paper trading platform** combining autonomous tradin
 - `passlib[bcrypt]` - Authentication
 
 **Frontend Dependencies:**
+
 - `next` 15.5.6 - React framework
 - `react` 19.1.0 - UI library
 - `axios` - HTTP client
@@ -118,17 +123,20 @@ backend/
 #### Core Modules
 
 **`app/main.py`** - Application Entry Point
+
 - FastAPI app initialization
 - Optional SlowAPI rate limiting (graceful degradation if unavailable)
 - Health check endpoint
 - Middleware setup
 
 **`app/core/`** - Configuration & Settings
+
 - `settings.py` - Pydantic settings management
 - `time_tuning.py` - Timing and scheduling utilities
 - Environment variable management
 
 **`app/db.py`** - Database Management
+
 - SQLAlchemy session management
 - Connection pooling
 - DB state tracking
@@ -137,33 +145,34 @@ backend/
 
 All API routes are organized by domain:
 
-| Route Module | Domain | Key Endpoints |
-|-------------|---------|---------------|
-| `routes.py` | Core RAG & Agent | `/core/health`, `/query`, `/ingest`, `/agent` |
-| `routes_paper.py` | Paper Trading Lab | Paper trading operations, theory testing |
-| `routes_trading.py` | Live Trading | Signals, regime detection, backtests |
-| `routes_market.py` | Market Data | Price quotes, OHLC, ticker info |
-| `routes_news.py` | News & Sentiment | News feeds, sentiment analysis |
-| `routes_chat.py` | AI Chat | LLM chat with RAG context |
-| `routes_cognitive.py` | Cognitive Systems | Meta-learning, episodic memory |
-| `routes_learning.py` | Learning System | Training, feedback, adaptation |
-| `routes_signals.py` | Trading Signals | Signal generation and validation |
-| `routes_screener.py` | Stock Screener | Screening and filtering |
-| `routes_crypto.py` | Cryptocurrency | Crypto prices and data |
-| `routes_portfolio.py` | Portfolio | Holdings, performance tracking |
-| `routes_performance.py` | Performance | Metrics and analytics |
-| `routes_alerts.py` | Alerts | Alert management |
-| `routes_risk_lite.py` | Risk Management | Risk metrics and checks |
-| `routes_market_calendar.py` | Calendar | Market hours and holidays |
-| `routes_trace.py` | Tracing | Request tracing |
-| `routes_feedback.py` | Feedback | User feedback collection |
-| `routes_integration.py` | Integrations | External service integrations |
-| `routes_explain.py` | Explainability | Model explanations |
-| `routes_dev.py` | Development | Dev-only utilities |
+| Route Module                | Domain            | Key Endpoints                                 |
+| --------------------------- | ----------------- | --------------------------------------------- |
+| `routes.py`                 | Core RAG & Agent  | `/core/health`, `/query`, `/ingest`, `/agent` |
+| `routes_paper.py`           | Paper Trading Lab | Paper trading operations, theory testing      |
+| `routes_trading.py`         | Live Trading      | Signals, regime detection, backtests          |
+| `routes_market.py`          | Market Data       | Price quotes, OHLC, ticker info               |
+| `routes_news.py`            | News & Sentiment  | News feeds, sentiment analysis                |
+| `routes_chat.py`            | AI Chat           | LLM chat with RAG context                     |
+| `routes_cognitive.py`       | Cognitive Systems | Meta-learning, episodic memory                |
+| `routes_learning.py`        | Learning System   | Training, feedback, adaptation                |
+| `routes_signals.py`         | Trading Signals   | Signal generation and validation              |
+| `routes_screener.py`        | Stock Screener    | Screening and filtering                       |
+| `routes_crypto.py`          | Cryptocurrency    | Crypto prices and data                        |
+| `routes_portfolio.py`       | Portfolio         | Holdings, performance tracking                |
+| `routes_performance.py`     | Performance       | Metrics and analytics                         |
+| `routes_alerts.py`          | Alerts            | Alert management                              |
+| `routes_risk_lite.py`       | Risk Management   | Risk metrics and checks                       |
+| `routes_market_calendar.py` | Calendar          | Market hours and holidays                     |
+| `routes_trace.py`           | Tracing           | Request tracing                               |
+| `routes_feedback.py`        | Feedback          | User feedback collection                      |
+| `routes_integration.py`     | Integrations      | External service integrations                 |
+| `routes_explain.py`         | Explainability    | Model explanations                            |
+| `routes_dev.py`             | Development       | Dev-only utilities                            |
 
 #### Trading Systems (`app/trading/`)
 
 **Core Components:**
+
 - `oms.py` - Order Management System
 - `signals.py` - Signal generation
 - `risk.py` - Risk management
@@ -177,16 +186,19 @@ All API routes are organized by domain:
 - `brackets.py` - Bracket orders
 
 **Adapters (`adapters/`):**
+
 - Integration with different broker APIs
 - Paper broker implementation
 
 **Backtest (`backtest/`):**
+
 - Historical simulation
 - Performance metrics
 
 #### Paper Trading Engine (`app/paper/`)
 
 **Features:**
+
 - Autonomous micro-trades (thousands concurrent)
 - Online learning integration
 - Theory testing framework
@@ -196,6 +208,7 @@ All API routes are organized by domain:
 - Ingestion pipeline
 
 **Key Files:**
+
 - `engine.py` - Core paper trading engine
 - `learner.py` - Online learning system
 - `learner_gateway.py` - Learning interface
@@ -208,6 +221,7 @@ All API routes are organized by domain:
 #### RAG System (`app/rag/`)
 
 **Components:**
+
 - `vectorstore.py` - Qdrant vector database interface
 - `embeddings.py` - Sentence transformer embeddings
 - `retriever.py` - Semantic search and retrieval
@@ -216,6 +230,7 @@ All API routes are organized by domain:
 - `ingest_pdf.py` - PDF document processing
 
 **Workflow:**
+
 1. Documents ingested via web search or PDF upload
 2. Content extracted and cleaned
 3. Chunked into semantic units
@@ -226,6 +241,7 @@ All API routes are organized by domain:
 #### Cognitive Systems (`app/cognitive/`)
 
 Advanced AI capabilities:
+
 - `cognitive_hub.py` - Central coordination
 - `meta_learner.py` - Meta-learning algorithms
 - `episodic_memory.py` - Experience replay
@@ -240,6 +256,7 @@ Advanced AI capabilities:
 #### Services (`app/services/`)
 
 **Market Data:**
+
 - `market_providers.py` - Multi-provider support (Alpaca, Polygon)
 - `crypto_providers.py` - Cryptocurrency data
 - `provider_factory.py` - Provider selection
@@ -247,12 +264,14 @@ Advanced AI capabilities:
 - `iex_cloud_provider.py` - IEX Cloud integration
 
 **Market Brain (`market_brain/`):**
+
 - `market_data_fetcher.py` - Unified data fetching
 - Feature generation
 - Regime detection
 - Signal generation
 
 **News & Sentiment:**
+
 - `news.py` - News aggregation
 - `news_nlp.py` - NLP processing
 - `news_streaming.py` - Real-time news
@@ -260,6 +279,7 @@ Advanced AI capabilities:
 - `social_sentiment.py` - Social media sentiment
 
 **Other Services:**
+
 - `screener.py` - Stock screening
 - `explain.py` - Explainability
 - `integration_hub.py` - External integrations
@@ -271,15 +291,18 @@ Advanced AI capabilities:
 #### Background Tasks (`app/tasks/`)
 
 **Scheduler (`scheduler.py`):**
+
 - APScheduler integration
 - Cron-based job scheduling
 - Scan enable/disable management
 
 **Workers:**
+
 - `paper_worker.py` - Paper trading worker
 - `learn.py` - Learning tasks
 
 **Telegram Integration:**
+
 - `telegram.py` - Core Telegram bot
 - `telegram_formatter.py` - Message formatting
 - `telegram_notifications.py` - Alert notifications
@@ -288,6 +311,7 @@ Advanced AI capabilities:
 #### Database Models (`app/models/`)
 
 **Models:**
+
 - `users.py` - User accounts and authentication
 - `trading.py` - Trades, orders, positions
 - `paper.py` - Paper trades, runs, theories, snapshots
@@ -296,6 +320,7 @@ Advanced AI capabilities:
 - `base.py` - Base model classes
 
 **Key Paper Trading Models:**
+
 - `PaperRun` - Trading sessions
 - `Trade` - Individual trades
 - `TradeStatus` - Trade lifecycle states
@@ -306,6 +331,7 @@ Advanced AI capabilities:
 #### WebSocket (`app/web/`)
 
 Real-time streaming:
+
 - Portfolio updates
 - Market data streams
 - Trade execution updates
@@ -371,48 +397,52 @@ frontend/
 
 **Pages (App Router):**
 
-| Path | Purpose |
-|------|---------|
-| `/` | Dashboard/home |
-| `/auth/*` | Sign in, sign up, password reset, verification |
-| `/account/*` | Account settings, billing |
-| `/paper/*` | Paper trading interface and status |
-| `/paper-trading` | Alternative paper trading view |
-| `/portfolio` | Portfolio overview |
-| `/market` | Market data and charts |
-| `/trading` | Live trading interface |
-| `/crypto` | Cryptocurrency trading |
-| `/news` | News feed and sentiment |
-| `/alerts` | Alert management |
-| `/chat` | AI chat with RAG |
-| `/learning` | Learning system interface |
-| `/predictions` | AI predictions dashboard |
-| `/live` | Live market view |
-| `/demo` | Demo/sandbox mode |
-| `/dev/*` | Developer tools (API coverage, etc.) |
-| `/help` | Help and documentation |
-| `/websocket-test` | WebSocket testing utility |
+| Path              | Purpose                                        |
+| ----------------- | ---------------------------------------------- |
+| `/`               | Dashboard/home                                 |
+| `/auth/*`         | Sign in, sign up, password reset, verification |
+| `/account/*`      | Account settings, billing                      |
+| `/paper/*`        | Paper trading interface and status             |
+| `/paper-trading`  | Alternative paper trading view                 |
+| `/portfolio`      | Portfolio overview                             |
+| `/market`         | Market data and charts                         |
+| `/trading`        | Live trading interface                         |
+| `/crypto`         | Cryptocurrency trading                         |
+| `/news`           | News feed and sentiment                        |
+| `/alerts`         | Alert management                               |
+| `/chat`           | AI chat with RAG                               |
+| `/learning`       | Learning system interface                      |
+| `/predictions`    | AI predictions dashboard                       |
+| `/live`           | Live market view                               |
+| `/demo`           | Demo/sandbox mode                              |
+| `/dev/*`          | Developer tools (API coverage, etc.)           |
+| `/help`           | Help and documentation                         |
+| `/websocket-test` | WebSocket testing utility                      |
 
 ### Design System & UI Libraries
 
 **Tailwind CSS 4:**
+
 - Utility-first styling
 - Custom design tokens
 - Dark/light mode support
 - Responsive by default
 
 **Component Libraries:**
+
 - **Lucide React** - 500+ icons
 - **Framer Motion** - Smooth animations
 - **Custom Components** - Built on Tailwind
 
 **Styling Utilities:**
+
 - `clsx` - Conditional class names
 - `tailwind-merge` - Merge Tailwind classes intelligently
 
 ### State Management
 
 **Zustand:**
+
 - Lightweight (1KB)
 - Simple API
 - No boilerplate
@@ -420,24 +450,27 @@ frontend/
 - DevTools support
 
 **Store Structure (typical):**
+
 ```typescript
 // Example store
 const useStore = create((set) => ({
   portfolio: null,
   setPortfolio: (portfolio) => set({ portfolio }),
   // ...
-}))
+}));
 ```
 
 ### API Integration
 
 **Backend Connection:**
+
 - Base URL: `http://localhost:8000` (dev) or configured via `VITE_API_BASE`
 - REST API via Axios
 - WebSocket for real-time updates
 - Type-safe API clients in `services/`
 
 **Service Layer:**
+
 - Centralized API calls
 - Error handling
 - Request/response transformation
@@ -479,17 +512,20 @@ const useStore = create((set) => ({
 ### Testing
 
 **Unit Tests (Jest):**
+
 - Component testing
 - Hook testing
 - Utility testing
 - Coverage reporting
 
 **E2E Tests (Playwright):**
+
 - `tests/e2e/smoke.spec.ts` - Smoke tests
 - `tests/e2e/sandbox-smoke.spec.ts` - Sandbox validation
 - Configuration: `playwright.e2e.config.ts`
 
 **Audit Scripts:**
+
 - `audit:fe:types` - TypeScript strict checking
 - `audit:fe:lint` - ESLint validation
 - `audit:fe:dup` - Code duplication detection (jscpd)
@@ -508,14 +544,15 @@ const useStore = create((set) => ({
 
 ```yaml
 services:
-  backend:      # FastAPI on port 8000
-  frontend:     # Next.js on port 5173
-  qdrant:       # Vector DB on ports 6333/6334
-  postgres:     # PostgreSQL on port 5432
-  redis:        # Redis on port 6379
+  backend: # FastAPI on port 8000
+  frontend: # Next.js on port 5173
+  qdrant: # Vector DB on ports 6333/6334
+  postgres: # PostgreSQL on port 5432
+  redis: # Redis on port 6379
 ```
 
 **Backend Service:**
+
 - Image: `python:3.11-slim`
 - Ports: `8000:8000`
 - Volumes: Backend code, data directory
@@ -524,6 +561,7 @@ services:
 - Auto-restart: yes
 
 **Frontend Service:**
+
 - Image: `node:20-alpine`
 - Ports: `5173:5173`
 - Volumes: Frontend code, node_modules cache
@@ -532,12 +570,14 @@ services:
 - Hot reload: Enabled with Chokidar polling
 
 **Qdrant Service:**
+
 - Image: `qdrant/qdrant:v1.11.4`
 - Ports: `6333:6333`, `6334:6334`
 - Persistent storage volume
 - Health check: `/readyz` or `/ready` endpoint
 
 **PostgreSQL Service:**
+
 - Image: `postgres:16`
 - Default DB: `ziggy`
 - Default user: `ziggy`
@@ -545,6 +585,7 @@ services:
 - Health check: `pg_isready`
 
 **Redis Service:**
+
 - Image: `redis:7`
 - Ports: `6379:6379`
 - AOF persistence enabled
@@ -554,6 +595,7 @@ services:
 ### Environment Configuration
 
 **Backend Environment Variables:**
+
 ```bash
 DATABASE_URL=postgresql+psycopg://ziggy:ziggy@postgres:5432/ziggy
 QDRANT_URL=http://qdrant:6333
@@ -568,6 +610,7 @@ ALPACA_SECRET_KEY=<key>
 ```
 
 **Frontend Environment Variables:**
+
 ```bash
 VITE_API_BASE=http://localhost:8000
 ```
@@ -575,12 +618,14 @@ VITE_API_BASE=http://localhost:8000
 ### Build System
 
 **Backend (Poetry):**
+
 - `pyproject.toml` - Dependency management
 - `requirements.lock` - Locked versions
 - CPU-optimized PyTorch installation
 - Constraint files for reproducibility
 
 **Frontend (npm):**
+
 - `package.json` - Dependencies
 - Turbopack for fast builds
 - Next.js 15 with App Router
@@ -589,6 +634,7 @@ VITE_API_BASE=http://localhost:8000
 ### CI/CD (GitHub Actions)
 
 **Workflow: `.github/workflows/ci.yml`**
+
 - Automated testing
 - Lint checks
 - Build validation
@@ -597,6 +643,7 @@ VITE_API_BASE=http://localhost:8000
 ### Code Quality Tools
 
 **Backend (Python):**
+
 - **Ruff** - Fast linter (replaces flake8, isort, etc.)
 - **Black** - Code formatter
 - **mypy** - Static type checking
@@ -606,6 +653,7 @@ VITE_API_BASE=http://localhost:8000
 - **Schemathesis** - API testing
 
 **Configuration in `pyproject.toml`:**
+
 ```toml
 [tool.ruff]
 line-length = 100
@@ -622,6 +670,7 @@ markers = ["slow", "integration", "unit", "performance"]
 ```
 
 **Frontend (TypeScript/JavaScript):**
+
 - **ESLint** - Linting
 - **TypeScript** - Type checking (strict mode)
 - **Prettier** (implied) - Code formatting
@@ -633,6 +682,7 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Pre-commit Hooks
 
 **`.pre-commit-config.yaml`:**
+
 - Automated checks before commit
 - Code formatting
 - Lint checks
@@ -641,6 +691,7 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Makefile Commands
 
 **Key Make targets:**
+
 - `audit-quick` - Fast audit
 - `audit-all` - Comprehensive audit
 - `audit-frontend-full` - Frontend audit
@@ -653,6 +704,7 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Market Data Providers
 
 **Polygon.io:**
+
 - Real-time and historical market data
 - Stock quotes, OHLC, aggregates
 - Crypto data
@@ -660,6 +712,7 @@ markers = ["slow", "integration", "unit", "performance"]
 - Auth: API key
 
 **Alpaca Markets:**
+
 - Real-time market data
 - Paper trading support
 - Order execution (planned)
@@ -667,29 +720,34 @@ markers = ["slow", "integration", "unit", "performance"]
 - Auth: API key + secret
 
 **Yahoo Finance (yfinance):**
+
 - Free historical data
 - Fallback provider
 - Company fundamentals
 
 **IEX Cloud (optional):**
+
 - Real-time data
 - Market stats
 
 ### AI/ML Services
 
 **OpenAI API:**
+
 - GPT models for chat
 - Embeddings (alternative to sentence-transformers)
 - Configurable base URL for custom deployments
 - Used in: Chat, agent, RAG
 
 **Sentence Transformers (local):**
+
 - Embedding models
 - Runs locally (no API cost)
 - Used for RAG embeddings
 - CPU-optimized
 
 **Qdrant Vector Database:**
+
 - Semantic search
 - RAG context retrieval
 - Document storage with metadata
@@ -698,11 +756,13 @@ markers = ["slow", "integration", "unit", "performance"]
 ### News & Sentiment
 
 **RSS Feeds:**
+
 - Customizable feed sources
 - Cached and parsed with feedparser
 - Stored for analysis
 
 **DuckDuckGo Search:**
+
 - Web search for RAG ingestion
 - No API key required
 - Used for research and context gathering
@@ -710,6 +770,7 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Communication
 
 **Telegram Bot:**
+
 - Trade notifications
 - Alert delivery
 - System status updates
@@ -718,18 +779,21 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Database & Cache
 
 **PostgreSQL:**
+
 - Primary data store
 - Users, trades, positions, theories
 - SQLAlchemy ORM
 - Alembic migrations
 
 **Redis:**
+
 - Session cache
 - Rate limiting
 - Pub/sub for real-time events
 - Temporary data storage
 
 **Qdrant:**
+
 - Vector embeddings
 - RAG document store
 - Semantic search
@@ -741,29 +805,34 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Strengths
 
 ✅ **Modern Tech Stack:**
+
 - Next.js 15, React 19, FastAPI
 - Strong type safety (TypeScript strict, mypy)
 - Excellent tooling (Ruff, ESLint, Pre-commit)
 
 ✅ **Comprehensive Testing:**
+
 - pytest with markers (slow, integration, unit, performance)
 - Playwright E2E tests
 - Jest for frontend unit tests
 - Coverage tracking
 
 ✅ **Code Quality Infrastructure:**
+
 - Extensive audit scripts
 - Pre-commit hooks
 - CI/CD pipeline
 - Multiple linters and formatters
 
 ✅ **Scalable Architecture:**
+
 - Microservices-ready with Docker Compose
 - Async/await throughout
 - WebSocket for real-time
 - Background task scheduling
 
 ✅ **Advanced AI Features:**
+
 - RAG with Qdrant
 - Meta-learning and cognitive systems
 - Online learning in paper trading
@@ -772,11 +841,13 @@ markers = ["slow", "integration", "unit", "performance"]
 ### Observations
 
 ⚠️ **Optional Dependencies:**
+
 - SlowAPI gracefully degraded if unavailable
 - Market Brain system has fallback logic
 - Qdrant loading may fail in some environments
 
 **From `main.py`:**
+
 ```python
 HAVE_SLOWAPI = False
 try:
@@ -787,11 +858,13 @@ except Exception as e:
 ```
 
 ⚠️ **Provider Flexibility:**
+
 - Multiple market data providers with fallbacks
 - Provider factory pattern for abstraction
 - Health monitoring for providers
 
 **From `routes_trading.py`:**
+
 ```python
 try:
     from app.services.provider_factory import get_price_provider
@@ -801,6 +874,7 @@ except Exception:
 ```
 
 ⚠️ **Integration Complexity:**
+
 - Multiple external APIs (Polygon, Alpaca, OpenAI, etc.)
 - Dependency on external services
 - API key management required
@@ -832,6 +906,7 @@ except Exception:
 ### Build & Runtime Health
 
 **Backend:**
+
 - ✅ FastAPI runs cleanly
 - ✅ Health endpoint at `/health`
 - ✅ Optional dependencies handled gracefully
@@ -839,6 +914,7 @@ except Exception:
 - ⚠️ External API keys required for full functionality
 
 **Frontend:**
+
 - ✅ Next.js 15 with Turbopack
 - ✅ TypeScript strict mode
 - ✅ Hot reload working
@@ -846,6 +922,7 @@ except Exception:
 - ⚠️ API coverage may be incomplete
 
 **Integration:**
+
 - ✅ Docker Compose orchestrates all services
 - ✅ Health checks configured for all services
 - ✅ Auto-restart enabled
@@ -855,12 +932,14 @@ except Exception:
 ### Security Considerations
 
 **Implemented:**
+
 - Password hashing with bcrypt
 - Environment variable for secrets
 - CORS configuration
 - Rate limiting (when SlowAPI available)
 
 **Needs Attention:**
+
 - API key rotation strategy
 - Production secret management (vault)
 - HTTPS/TLS in production
@@ -870,6 +949,7 @@ except Exception:
 ### Performance
 
 **Optimizations Present:**
+
 - Async/await throughout backend
 - Connection pooling (SQLAlchemy)
 - Redis caching
@@ -877,6 +957,7 @@ except Exception:
 - Lazy loading where appropriate
 
 **Potential Issues:**
+
 - Qdrant embedding generation can be slow
 - Multiple API calls per request in some routes
 - WebSocket overhead for many concurrent connections
@@ -889,6 +970,7 @@ except Exception:
 ### Backend Testing
 
 **pytest Configuration (`pytest.ini`):**
+
 ```ini
 [pytest]
 minversion = 6.0
@@ -902,6 +984,7 @@ markers =
 ```
 
 **Test Files:**
+
 - `tests/test_health.py` - Health endpoint tests
 - `tests/test_integration.py` - Integration tests
 - `tests/test_paper_lab.py` - Paper trading tests
@@ -913,6 +996,7 @@ markers =
 - `tests/tasks/test_*.py` - Background task tests
 
 **Coverage Configuration:**
+
 ```toml
 [tool.coverage.run]
 source = ["app"]
@@ -922,17 +1006,20 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 ### Frontend Testing
 
 **Jest Configuration:**
+
 - Config: `jest.config.ts`
 - Setup: `jest.setup.ts`
 - Testing Library React
 - jsdom environment
 
 **Playwright E2E:**
+
 - Config: `playwright.e2e.config.ts`
 - `tests/e2e/smoke.spec.ts` - Basic smoke tests
 - `tests/e2e/sandbox-smoke.spec.ts` - Sandbox validation
 
 **Audit Scripts:**
+
 ```json
 {
   "audit:fe:types": "tsc -p tsconfig.strict.json --noEmit",
@@ -953,20 +1040,23 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 ### Request Flow (Typical)
 
 1. **Frontend → Backend API:**
+
    ```
    React Component → Axios Service → FastAPI Route → Service Layer → Database/Cache
    ```
 
 2. **RAG Query Flow:**
+
    ```
-   User Question → Chat Route → RAG Retriever → Qdrant Search → 
+   User Question → Chat Route → RAG Retriever → Qdrant Search →
    LLM with Context → Response with Citations
    ```
 
 3. **Paper Trading Flow:**
+
    ```
-   Paper Worker (scheduled) → Market Data → Decision Engine → 
-   Theory Evaluation → Trade Execution → Database → 
+   Paper Worker (scheduled) → Market Data → Decision Engine →
+   Theory Evaluation → Trade Execution → Database →
    WebSocket Broadcast → Frontend Update
    ```
 
@@ -978,15 +1068,18 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 ### Database Schema (Key Tables)
 
 **Users & Auth:**
+
 - `users` - User accounts
 - Sessions (in Redis)
 
 **Trading:**
+
 - `trades` - All trades (paper and live)
 - `positions` - Current positions
 - `orders` - Order history
 
 **Paper Trading:**
+
 - `paper_runs` - Trading sessions
 - `paper_trades` - Paper trades
 - `theory_perf` - Theory performance metrics
@@ -994,6 +1087,7 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 - `model_snapshots` - ML model versions
 
 **Market Data:**
+
 - Market data cache (Redis + DB)
 - News articles
 - Sentiment scores
@@ -1001,12 +1095,14 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 ### State Management Patterns
 
 **Backend:**
+
 - Database as source of truth
 - Redis for ephemeral state
 - In-memory caching where appropriate
 - Event-driven for real-time updates
 
 **Frontend:**
+
 - Zustand stores for global state
 - Component state for local UI
 - API as source of truth
@@ -1019,6 +1115,7 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 ### Why These Choices?
 
 **FastAPI over Flask/Django:**
+
 - Async by default (high concurrency)
 - Automatic OpenAPI docs
 - Pydantic validation
@@ -1026,6 +1123,7 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 - Excellent performance
 
 **Next.js over CRA/Vite:**
+
 - Server-side rendering
 - App Router for modern patterns
 - Built-in optimization
@@ -1033,18 +1131,21 @@ omit = ["*/tests/*", "*/migrations/*", "*/__pycache__/*"]
 - Production-ready features
 
 **Qdrant over Pinecone/Weaviate:**
+
 - Self-hosted (no API costs)
 - Open source
 - Fast and scalable
 - Rich filtering capabilities
 
 **PostgreSQL over MySQL:**
+
 - Better JSON support
 - Advanced features (CTEs, window functions)
 - ACID compliance
 - Excellent Python support
 
 **Zustand over Redux:**
+
 - Simpler API
 - Less boilerplate
 - Smaller bundle size
@@ -1134,6 +1235,7 @@ ZiggyAI is a **sophisticated paper trading platform** with:
 - **Production-Ready Infrastructure:** Docker Compose, CI/CD, monitoring hooks
 
 **Key Strengths:**
+
 - Well-architected modular design
 - Strong type safety and code quality tools
 - Graceful degradation for optional dependencies
@@ -1141,6 +1243,7 @@ ZiggyAI is a **sophisticated paper trading platform** with:
 - Active development with clean Git history
 
 **Areas for Improvement:**
+
 - Test coverage and performance
 - Production deployment hardening
 - Monitoring and observability
@@ -1153,4 +1256,4 @@ This system is **ready for optimization** and represents a high-quality foundati
 
 **End of Technical Assessment**
 
-*This document provides GPT-5 with complete architectural context for understanding ZiggyAI's structure, integrations, and capabilities without direct code access.*
+_This document provides GPT-5 with complete architectural context for understanding ZiggyAI's structure, integrations, and capabilities without direct code access._

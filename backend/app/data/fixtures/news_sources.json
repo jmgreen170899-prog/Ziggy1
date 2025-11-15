@@ -1,3 +1,7 @@
 [
-  {"id": "fixture-news", "label": "Fixture News", "url": "https://example.com/news"}
+  {
+    "id": "fixture-news",
+    "label": "Fixture News",
+    "url": "https://example.com/news"
+  }
 ]

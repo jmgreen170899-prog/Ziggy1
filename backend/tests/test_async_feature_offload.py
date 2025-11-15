@@ -100,7 +100,8 @@ async def test_compute_features_batch_concurrent_execution(async_computer):
 
     start_time = time.perf_counter()
     tasks = [
-        async_computer.execute_blocking_operation(f"task_{i}", slow_compute, i) for i in range(4)
+        async_computer.execute_blocking_operation(f"task_{i}", slow_compute, i)
+        for i in range(4)
     ]
     results = await asyncio.gather(*tasks)
     duration = time.perf_counter() - start_time
@@ -150,7 +151,9 @@ async def test_event_loop_lag_under_load():
         # Create 500 concurrent tasks that perform "blocking" work
         tasks = []
         for i in range(500):
-            task = computer.execute_blocking_operation(f"blocking_task_{i}", mock_blocking_work)
+            task = computer.execute_blocking_operation(
+                f"blocking_task_{i}", mock_blocking_work
+            )
             tasks.append(task)
 
         # Wait for all tasks to complete
@@ -176,14 +179,14 @@ async def test_event_loop_lag_under_load():
             print(f"  P95 lag: {p95_lag:.2f}ms")
 
             # Assert that P95 lag is under threshold
-            assert p95_lag < THRESHOLD_MS, (
-                f"P95 loop lag {p95_lag:.2f}ms exceeds {THRESHOLD_MS}ms threshold"
-            )
+            assert (
+                p95_lag < THRESHOLD_MS
+            ), f"P95 loop lag {p95_lag:.2f}ms exceeds {THRESHOLD_MS}ms threshold"
             # Relax average lag threshold as it can be affected by system load
             avg_threshold = THRESHOLD_MS * 1.5
-            assert avg_lag < avg_threshold, (
-                f"Average loop lag {avg_lag:.2f}ms exceeds {avg_threshold}ms threshold"
-            )
+            assert (
+                avg_lag < avg_threshold
+            ), f"Average loop lag {avg_lag:.2f}ms exceeds {avg_threshold}ms threshold"
 
     finally:
         await computer.stop()
@@ -330,7 +333,9 @@ async def test_process_pool_execution():
                 total += i
             return {"result": total, "completed": True}
 
-        result = await computer.execute_blocking_operation("cpu_work", cpu_intensive_work)
+        result = await computer.execute_blocking_operation(
+            "cpu_work", cpu_intensive_work
+        )
 
         assert result is not None
         assert result["completed"] is True
@@ -360,13 +365,17 @@ async def test_global_instance_management():
 async def test_queue_full_handling(async_computer):
     """Test handling of queue full condition."""
     # Fill up the queue
-    small_queue_computer = AsyncFeatureComputer(TaskPoolConfig(max_workers=1, queue_size=5))
+    small_queue_computer = AsyncFeatureComputer(
+        TaskPoolConfig(max_workers=1, queue_size=5)
+    )
     await small_queue_computer.start()
 
     try:
         # Enqueue more tasks than queue size
         for i in range(10):
-            await small_queue_computer.enqueue_task(f"task_{i}", lambda x: time.sleep(0.1), i)
+            await small_queue_computer.enqueue_task(
+                f"task_{i}", lambda x: time.sleep(0.1), i
+            )
 
         # Should not raise exception, just log warning
         # Test passes if no exception is raised

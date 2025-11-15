@@ -53,61 +53,46 @@ class ZiggyEndpointVerifier:
             # Health & Status
             ("GET", "/health"),
             ("GET", "/api/core/health"),
-            
             # Paper Trading System
             ("GET", "/paper/health"),
             ("GET", "/paper/runs"),
-            
             # Market Data
             ("GET", "/market/overview"),
             ("GET", "/market/breadth"),
             ("GET", "/market/calendar"),
             ("GET", "/market/schedule"),
-            
             # News
             ("GET", "/news/sources"),
             ("GET", "/news/headlines"),
             ("GET", "/news/sentiment"),
-            
             # Signals & Brain
             ("GET", "/signals/status"),
             ("GET", "/signals/regime"),
-            
             # Alerts
             ("GET", "/alerts/status"),
-            
             # Learning
             ("GET", "/learning/status"),
             ("GET", "/learning/health"),
-            
             # Crypto
             ("GET", "/crypto/quotes?symbols=BTC-USD"),
-            
             # Cognitive
             ("GET", "/cognitive/health"),
             ("GET", "/cognitive/status"),
-            
             # Screener
             ("GET", "/screener/health"),
-            
             # Feedback
             ("GET", "/feedback/health"),
             ("GET", "/feedback/stats"),
-            
             # Integration
             ("GET", "/integration/health"),
             ("GET", "/integration/status"),
-            
             # Performance
             ("GET", "/api/performance/health"),
             ("GET", "/api/performance/metrics"),
-            
             # Trading
             ("GET", "/trading/trade/health"),
-            
             # Dev (optional - may be disabled in production)
             ("GET", "/dev/db/status"),
-            
             # Static/Documentation routes
             ("GET", "/docs"),
             ("GET", "/redoc"),
@@ -163,10 +148,14 @@ class ZiggyEndpointVerifier:
             "cpu_percent": psutil.cpu_percent(),
             "memory_percent": psutil.virtual_memory().percent,
             "disk_usage": (
-                psutil.disk_usage("/").percent if hasattr(psutil.disk_usage("/"), "percent") else 0
+                psutil.disk_usage("/").percent
+                if hasattr(psutil.disk_usage("/"), "percent")
+                else 0
             ),
             "python_version": (
-                psutil.Process().exe() if hasattr(psutil.Process(), "exe") else "unknown"
+                psutil.Process().exe()
+                if hasattr(psutil.Process(), "exe")
+                else "unknown"
             ),
         }
 

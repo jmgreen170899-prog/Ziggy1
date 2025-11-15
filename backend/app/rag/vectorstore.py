@@ -9,41 +9,43 @@ logger = logging.getLogger(__name__)
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.http import models as qmodels
+
     QDRANT_AVAILABLE = True
 except Exception as e:
     logger.warning("Qdrant unavailable, continuing without vector store: %s", e)
+
     # Create dummy classes for type compatibility
     class QdrantClient:
         def __init__(self, *args, **kwargs):
             pass
-        
+
         def collection_exists(self, *args, **kwargs):
             return False
-        
+
         def create_collection(self, *args, **kwargs):
             pass
-        
+
         def upsert(self, *args, **kwargs):
             pass
-        
+
         def search(self, *args, **kwargs):
             return []
-        
+
         def delete_collection(self, *args, **kwargs):
             pass
-    
+
     class _DummyModels:
         class VectorParams:
             def __init__(self, *args, **kwargs):
                 pass
-        
+
         class Distance:
             COSINE = "cosine"
-        
+
         class PointStruct:
             def __init__(self, *args, **kwargs):
                 pass
-    
+
     qmodels = _DummyModels()
     QDRANT_AVAILABLE = False
 
@@ -60,18 +62,22 @@ def get_client():
         return None
 
 
-def ensure_collection(client: QdrantClient, collection: str | None = None, dim: int = 768):
+def ensure_collection(
+    client: QdrantClient, collection: str | None = None, dim: int = 768
+):
     if not QDRANT_AVAILABLE or client is None:
         logger.warning("Qdrant not available, skipping collection creation")
         return "dummy_collection"
-    
+
     s = get_settings()
     coll = collection or s.QDRANT_COLLECTION
     try:
         if not client.collection_exists(coll):
             client.create_collection(
                 collection_name=coll,
-                vectors_config=qmodels.VectorParams(size=dim, distance=qmodels.Distance.COSINE),
+                vectors_config=qmodels.VectorParams(
+                    size=dim, distance=qmodels.Distance.COSINE
+                ),
             )
     except Exception as e:
         logger.warning("Failed to ensure collection: %s", e)
@@ -89,7 +95,7 @@ def upsert_texts(
     if not QDRANT_AVAILABLE or client is None:
         logger.warning("Qdrant not available, skipping text upsert")
         return
-    
+
     try:
         s = get_settings()
         coll = collection or s.QDRANT_COLLECTION
@@ -105,12 +111,15 @@ def upsert_texts(
 
 
 def search(
-    client: QdrantClient, query_vector: list[float], top_k: int = 5, collection: str | None = None
+    client: QdrantClient,
+    query_vector: list[float],
+    top_k: int = 5,
+    collection: str | None = None,
 ):
     if not QDRANT_AVAILABLE or client is None:
         logger.warning("Qdrant not available, returning empty search results")
         return []
-    
+
     try:
         s = get_settings()
         coll = collection or s.QDRANT_COLLECTION
@@ -132,11 +141,13 @@ def search(
         return []
 
 
-def reset_collection(client: QdrantClient, collection: str | None = None, dim: int = 768):
+def reset_collection(
+    client: QdrantClient, collection: str | None = None, dim: int = 768
+):
     if not QDRANT_AVAILABLE or client is None:
         logger.warning("Qdrant not available, skipping collection reset")
         return
-    
+
     try:
         s = get_settings()
         coll = collection or s.QDRANT_COLLECTION

@@ -1,8 +1,20 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useMarketStore, usePortfolioStore, useNewsStore, useCryptoStore, useAlertsStore } from '@/store';
-import { apiClient } from '@/services/api';
-import { wsService } from '@/services/websocket';
-import type { Quote, NewsItem, Alert, TradingSignal, CryptoPrice } from '@/types/api';
+import { useEffect, useRef, useState, useCallback } from "react";
+import {
+  useMarketStore,
+  usePortfolioStore,
+  useNewsStore,
+  useCryptoStore,
+  useAlertsStore,
+} from "@/store";
+import { apiClient } from "@/services/api";
+import { wsService } from "@/services/websocket";
+import type {
+  Quote,
+  NewsItem,
+  Alert,
+  TradingSignal,
+  CryptoPrice,
+} from "@/types/api";
 
 // Enhanced error handling and retry logic
 interface UseAsyncStateOptions {
@@ -14,7 +26,7 @@ interface UseAsyncStateOptions {
 function useAsyncState<T>(
   asyncFn: () => Promise<T>,
   dependencies: React.DependencyList = [],
-  options: UseAsyncStateOptions = {}
+  options: UseAsyncStateOptions = {},
 ) {
   const { retryAttempts = 3, retryDelay = 1000, onError } = options;
   const [data, setData] = useState<T | null>(null);
@@ -25,7 +37,7 @@ function useAsyncState<T>(
   const execute = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     for (let attempt = 0; attempt <= retryAttempts; attempt++) {
       try {
         const result = await asyncFn();
@@ -34,20 +46,23 @@ function useAsyncState<T>(
         setLoading(false);
         return result;
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Unknown error occurred');
-        
+        const error =
+          err instanceof Error ? err : new Error("Unknown error occurred");
+
         if (attempt === retryAttempts) {
           setError(error);
           setRetryCount(attempt + 1);
           onError?.(error);
           break;
         }
-        
+
         // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * Math.pow(2, attempt)),
+        );
       }
     }
-    
+
     setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asyncFn, retryAttempts, retryDelay, onError, ...dependencies]);
@@ -62,13 +77,14 @@ function useAsyncState<T>(
     error,
     retryCount,
     execute,
-    retry
+    retry,
   };
 }
 
 // Enhanced real-time market data hook with connection management
 export function useRealTimeMarket() {
-  const { quotes, watchlist, updateQuote, setError, setLoading } = useMarketStore();
+  const { quotes, watchlist, updateQuote, setError, setLoading } =
+    useMarketStore();
   const [connected, setConnected] = useState(false);
   const [metrics, setMetrics] = useState({ latency: 0, reconnectCount: 0 });
   const connectionRef = useRef(false);
@@ -78,7 +94,7 @@ export function useRealTimeMarket() {
       const connectionMetrics = wsService.getConnectionMetrics();
       setMetrics({
         latency: connectionMetrics.latency,
-        reconnectCount: connectionMetrics.reconnectCount
+        reconnectCount: connectionMetrics.reconnectCount,
       });
     }
   }, []);
@@ -86,36 +102,36 @@ export function useRealTimeMarket() {
   useEffect(() => {
     if (connectionRef.current) return; // Prevent duplicate connections
     connectionRef.current = true;
-    
+
     setLoading(true);
-    
+
     // Configure WebSocket callbacks
     wsService.updateCallbacks({
       onConnect: () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         setConnected(true);
         setError(null);
         setLoading(false);
-        
+
         // Subscribe to all watchlist symbols using enhanced subscription management
-        watchlist.forEach(symbol => {
-          wsService.addSubscription('quote', symbol);
+        watchlist.forEach((symbol) => {
+          wsService.addSubscription("quote", symbol);
         });
       },
-      
+
       onDisconnect: (reason: string) => {
-        console.log('WebSocket disconnected:', reason);
+        console.log("WebSocket disconnected:", reason);
         setConnected(false);
         setLoading(false);
       },
-      
+
       onError: (error) => {
-        console.error('WebSocket error:', error);
+        console.error("WebSocket error:", error);
         setError(error.message);
         setConnected(false);
         setLoading(false);
       },
-      
+
       onQuoteUpdate: (quote: Quote) => {
         updateQuote(quote);
       },
@@ -136,13 +152,13 @@ export function useRealTimeMarket() {
 
   const subscribeToSymbol = useCallback((symbol: string) => {
     if (wsService.isConnected()) {
-      wsService.addSubscription('quote', symbol);
+      wsService.addSubscription("quote", symbol);
     }
   }, []);
 
   const unsubscribeFromSymbol = useCallback((symbol: string) => {
     if (wsService.isConnected()) {
-      wsService.removeSubscription('quote', symbol);
+      wsService.removeSubscription("quote", symbol);
     }
   }, []);
 
@@ -151,13 +167,16 @@ export function useRealTimeMarket() {
     setTimeout(() => wsService.connect(), 1000);
   }, []);
 
-  const getConnectionStatus = useCallback(() => ({
-    connected: wsService.isConnected(),
-    isMockMode: wsService.isMockMode(),
-    subscriptionCount: wsService.getSubscriptionCount(),
-    activeSubscriptions: wsService.getActiveSubscriptionCount(),
-    metrics: wsService.getConnectionMetrics()
-  }), []);
+  const getConnectionStatus = useCallback(
+    () => ({
+      connected: wsService.isConnected(),
+      isMockMode: wsService.isMockMode(),
+      subscriptionCount: wsService.getSubscriptionCount(),
+      activeSubscriptions: wsService.getActiveSubscriptionCount(),
+      metrics: wsService.getConnectionMetrics(),
+    }),
+    [],
+  );
 
   return {
     quotes,
@@ -174,51 +193,57 @@ export function useRealTimeMarket() {
 export function useMarketData() {
   const { setQuotes, setLoading, setError, watchlist } = useMarketStore();
 
-  const fetchQuotes = useCallback(async (symbols: string[] = watchlist) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const quotes = await apiClient.getMultipleQuotes(symbols);
-      setQuotes(quotes);
-      return quotes;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch quotes';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [watchlist, setQuotes, setLoading, setError]);
+  const fetchQuotes = useCallback(
+    async (symbols: string[] = watchlist) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const quotes = await apiClient.getMultipleQuotes(symbols);
+        setQuotes(quotes);
+        return quotes;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to fetch quotes";
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [watchlist, setQuotes, setLoading, setError],
+  );
 
-  const fetchSingleQuote = useCallback(async (symbol: string) => {
-    try {
-      setError(null);
-      const quote = await apiClient.getQuote(symbol);
-      setQuotes([quote]);
-      return quote;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : `Failed to fetch quote for ${symbol}`;
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  }, [setQuotes, setError]);
+  const fetchSingleQuote = useCallback(
+    async (symbol: string) => {
+      try {
+        setError(null);
+        const quote = await apiClient.getQuote(symbol);
+        setQuotes([quote]);
+        return quote;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : `Failed to fetch quote for ${symbol}`;
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      }
+    },
+    [setQuotes, setError],
+  );
 
   const {
     data: quotesData,
     loading: quotesLoading,
     error: quotesError,
-    retry: retryQuotes
-  } = useAsyncState(
-    () => fetchQuotes(watchlist),
-    [watchlist],
-    {
-      retryAttempts: 3,
-      retryDelay: 2000,
-      onError: (error) => {
-        console.error('Failed to fetch quotes after retries:', error);
-      }
-    }
-  );
+    retry: retryQuotes,
+  } = useAsyncState(() => fetchQuotes(watchlist), [watchlist], {
+    retryAttempts: 3,
+    retryDelay: 2000,
+    onError: (error) => {
+      console.error("Failed to fetch quotes after retries:", error);
+    },
+  });
 
   return {
     fetchQuotes,
@@ -233,7 +258,16 @@ export function useMarketData() {
 // Enhanced portfolio hook with comprehensive error handling
 // Enhanced portfolio hook with comprehensive error handling
 export function usePortfolio() {
-  const { portfolio, signals, setPortfolio, setSignals, setLoading, setError, loading, error } = usePortfolioStore();
+  const {
+    portfolio,
+    signals,
+    setPortfolio,
+    setSignals,
+    setLoading,
+    setError,
+    loading,
+    error,
+  } = usePortfolioStore();
 
   const fetchPortfolio = useCallback(async () => {
     try {
@@ -242,7 +276,8 @@ export function usePortfolio() {
       const portfolioData = await apiClient.getPortfolio();
       setPortfolio(portfolioData);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch portfolio';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch portfolio";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -257,7 +292,8 @@ export function usePortfolio() {
       const signalsData = await apiClient.getTradingSignals();
       setSignals(signalsData);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch signals';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch signals";
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -269,7 +305,7 @@ export function usePortfolio() {
     try {
       await Promise.all([fetchPortfolio(), fetchSignals()]);
     } catch (error) {
-      console.error('Retry failed:', error);
+      console.error("Retry failed:", error);
     }
   }, [fetchPortfolio, fetchSignals]);
 
@@ -300,30 +336,35 @@ export function usePortfolio() {
 
 // Enhanced news hook with error handling
 export function useNews() {
-  const { news, setNews, addNews, setLoading, setError, loading, error } = useNewsStore();
+  const { news, setNews, addNews, setLoading, setError, loading, error } =
+    useNewsStore();
 
-  const fetchNews = useCallback(async (symbol?: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const newsData = symbol 
-        ? await apiClient.getNewsForSymbol(symbol)
-        : await apiClient.getNews();
-      setNews(newsData);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch news';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [setNews, setLoading, setError]);
+  const fetchNews = useCallback(
+    async (symbol?: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const newsData = symbol
+          ? await apiClient.getNewsForSymbol(symbol)
+          : await apiClient.getNews();
+        setNews(newsData);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to fetch news";
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setNews, setLoading, setError],
+  );
 
   const retry = useCallback(async () => {
     try {
       await fetchNews();
     } catch (error) {
-      console.error('News retry failed:', error);
+      console.error("News retry failed:", error);
     }
   }, [fetchNews]);
 
@@ -347,7 +388,8 @@ export function useNews() {
 
 // Hook for crypto data
 export function useCrypto() {
-  const { prices, setPrices, updatePrice, setLoading, setError } = useCryptoStore();
+  const { prices, setPrices, updatePrice, setLoading, setError } =
+    useCryptoStore();
 
   const fetchCryptoPrices = useCallback(async () => {
     try {
@@ -355,7 +397,11 @@ export function useCrypto() {
       const cryptoPrices = await apiClient.getCryptoPrices();
       setPrices(cryptoPrices);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to fetch crypto prices');
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch crypto prices",
+      );
     } finally {
       setLoading(false);
     }
@@ -366,7 +412,7 @@ export function useCrypto() {
     wsService.updateCallbacks({
       onQuoteUpdate: (quote: Quote) => {
         // Convert quote to crypto price if it's a crypto symbol
-        if (quote.symbol.endsWith('-USD') || quote.symbol.length <= 5) {
+        if (quote.symbol.endsWith("-USD") || quote.symbol.length <= 5) {
           const cryptoPrice: CryptoPrice = {
             symbol: quote.symbol,
             name: quote.symbol,
@@ -391,7 +437,15 @@ export function useCrypto() {
 
 // Hook for alerts management
 export function useAlerts() {
-  const { alerts, setAlerts, addAlert, removeAlert, triggerAlert, setLoading, setError } = useAlertsStore();
+  const {
+    alerts,
+    setAlerts,
+    addAlert,
+    removeAlert,
+    triggerAlert,
+    setLoading,
+    setError,
+  } = useAlertsStore();
 
   const fetchAlerts = useCallback(async () => {
     try {
@@ -399,39 +453,51 @@ export function useAlerts() {
       const alertsData = await apiClient.getAlerts();
       setAlerts(alertsData);
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to fetch alerts');
+      setError(
+        error instanceof Error ? error.message : "Failed to fetch alerts",
+      );
     } finally {
       setLoading(false);
     }
   }, [setAlerts, setLoading, setError]);
 
-  const createAlert = useCallback(async (alertData: Omit<Alert, 'id' | 'created_at'>) => {
-    try {
-      setLoading(true);
-      const newAlert = await apiClient.createAlert(alertData);
-      addAlert(newAlert);
-      wsService.subscribeToAlert(newAlert.id);
-      return newAlert;
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to create alert');
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [addAlert, setLoading, setError]);
+  const createAlert = useCallback(
+    async (alertData: Omit<Alert, "id" | "created_at">) => {
+      try {
+        setLoading(true);
+        const newAlert = await apiClient.createAlert(alertData);
+        addAlert(newAlert);
+        wsService.subscribeToAlert(newAlert.id);
+        return newAlert;
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Failed to create alert",
+        );
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [addAlert, setLoading, setError],
+  );
 
-  const deleteAlert = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      await apiClient.deleteAlert(id);
-      removeAlert(id);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to delete alert');
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [removeAlert, setLoading, setError]);
+  const deleteAlert = useCallback(
+    async (id: string) => {
+      try {
+        setLoading(true);
+        await apiClient.deleteAlert(id);
+        removeAlert(id);
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : "Failed to delete alert",
+        );
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [removeAlert, setLoading, setError],
+  );
 
   useEffect(() => {
     // Setup WebSocket for alert notifications
@@ -439,10 +505,10 @@ export function useAlerts() {
       onAlertTriggered: (alert: Alert) => {
         triggerAlert(alert);
         // Show notification
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification('Alert Triggered', {
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Alert Triggered", {
             body: `${alert.symbol}: ${alert.message || alert.condition}`,
-            icon: '/favicon.ico',
+            icon: "/favicon.ico",
           });
         }
       },

@@ -23,7 +23,9 @@ from app.core.config.time_tuning import TIMEOUTS
 
 # Use env or default
 DATA_PROVIDER = (
-    (os.getenv("DATA_PROVIDER", os.getenv("DATA_SOURCE", "yfinance")) or "yfinance").lower().strip()
+    (os.getenv("DATA_PROVIDER", os.getenv("DATA_SOURCE", "yfinance")) or "yfinance")
+    .lower()
+    .strip()
 )
 
 
@@ -181,7 +183,9 @@ class YFinanceProvider(MarketProvider):
                 return self._normalize_df(df) if df is not None else self._empty_frame()
 
             try:
-                df_norm = await asyncio.wait_for(_run(), timeout=TIMEOUTS["provider_market_data"])
+                df_norm = await asyncio.wait_for(
+                    _run(), timeout=TIMEOUTS["provider_market_data"]
+                )
                 # Mark status for the manager (ok/nodata)
                 self._last_status = (
                     "ok" if (df_norm is not None and not df_norm.empty) else "nodata"
@@ -236,11 +240,15 @@ class PolygonProvider(MarketProvider):
     def __init__(self):
         # Accept multiple env names for the API key
         self.api_key = (
-            os.getenv("POLYGON_API_KEY") or os.getenv("POLYGON_KEY") or os.getenv("POLY_API_KEY")
+            os.getenv("POLYGON_API_KEY")
+            or os.getenv("POLYGON_KEY")
+            or os.getenv("POLY_API_KEY")
         )
         # Base URL with default
         self.base = (
-            os.getenv("POLYGON_BASE_URL") or os.getenv("POLYGON_BASE") or "https://api.polygon.io"
+            os.getenv("POLYGON_BASE_URL")
+            or os.getenv("POLYGON_BASE")
+            or "https://api.polygon.io"
         ).rstrip("/")
 
         # Create a shared AsyncClient; never raise if httpx missing
@@ -252,7 +260,9 @@ class PolygonProvider(MarketProvider):
             if self.api_key:
                 headers["Authorization"] = f"Bearer {self.api_key}"
             self.http = httpx.AsyncClient(
-                base_url=self.base, timeout=TIMEOUTS["http_client_default"], headers=headers
+                base_url=self.base,
+                timeout=TIMEOUTS["http_client_default"],
+                headers=headers,
             )
         except Exception:
             self.http = None  # soft-fail; provider stays usable but yields empties
@@ -299,13 +309,16 @@ class PolygonProvider(MarketProvider):
                 df = pd.DataFrame(
                     {
                         "Date": [
-                            dt.datetime.utcfromtimestamp(r.get("t", 0) / 1000.0) for r in rows
+                            dt.datetime.utcfromtimestamp(r.get("t", 0) / 1000.0)
+                            for r in rows
                         ],
                         "Open": [r.get("o") for r in rows],
                         "High": [r.get("h") for r in rows],
                         "Low": [r.get("l") for r in rows],
                         "Close": [r.get("c") for r in rows],
-                        "Adj Close": [r.get("c") for r in rows],  # already adjusted if requested
+                        "Adj Close": [
+                            r.get("c") for r in rows
+                        ],  # already adjusted if requested
                         "Volume": [r.get("v") for r in rows],
                     }
                 )
@@ -392,7 +405,9 @@ class AlpacaProvider(MarketProvider):
                     }
                 )
             self.http = httpx.AsyncClient(
-                base_url=self.base, timeout=TIMEOUTS["http_client_default"], headers=headers
+                base_url=self.base,
+                timeout=TIMEOUTS["http_client_default"],
+                headers=headers,
             )
         except Exception:
             self.http = None
@@ -404,8 +419,14 @@ class AlpacaProvider(MarketProvider):
         import pandas as pd
 
         async def _fetch_one(t: str) -> pd.DataFrame:
-            if not self._is_equity_symbol(t) or not self.http or not (self.key and self.secret):
-                self._last_status = "missing_key" if not (self.key and self.secret) else "no_client"
+            if (
+                not self._is_equity_symbol(t)
+                or not self.http
+                or not (self.key and self.secret)
+            ):
+                self._last_status = (
+                    "missing_key" if not (self.key and self.secret) else "no_client"
+                )
                 return self._empty_frame()
 
             # date range
@@ -445,13 +466,16 @@ class AlpacaProvider(MarketProvider):
                 df = pd.DataFrame(
                     {
                         "Date": [
-                            pd.to_datetime(r.get("t"), utc=True).tz_convert(None) for r in rows
+                            pd.to_datetime(r.get("t"), utc=True).tz_convert(None)
+                            for r in rows
                         ],
                         "Open": [r.get("o") for r in rows],
                         "High": [r.get("h") for r in rows],
                         "Low": [r.get("l") for r in rows],
                         "Close": [r.get("c") for r in rows],
-                        "Adj Close": [r.get("c") for r in rows],  # adjusted per 'adjustment'
+                        "Adj Close": [
+                            r.get("c") for r in rows
+                        ],  # adjusted per 'adjustment'
                         "Volume": [r.get("v") for r in rows],
                     }
                 )
@@ -529,7 +553,10 @@ def get_provider() -> MarketProvider:
                 supports_intraday = False
 
                 async def fetch_ohlc(
-                    self, tickers: list[str], period_days: int = 60, adjusted: bool = True
+                    self,
+                    tickers: list[str],
+                    period_days: int = 60,
+                    adjusted: bool = True,
                 ):
                     return {t: self._empty_frame() for t in tickers}
 

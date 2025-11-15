@@ -134,7 +134,9 @@ class Position:
             self.avg_price = price
         else:
             # Existing position - calculate new average
-            if (self.quantity > 0 and quantity > 0) or (self.quantity < 0 and quantity < 0):
+            if (self.quantity > 0 and quantity > 0) or (
+                self.quantity < 0 and quantity < 0
+            ):
                 # Same side - add to position
                 total_cost = (self.quantity * self.avg_price) + (quantity * price)
                 self.quantity += quantity
@@ -181,7 +183,9 @@ class TradingSignalsManager:
         self.paper_trading = True
         logger.info("Paper trading mode enabled")
 
-    async def enqueue_execute(self, signal_id: str, signal_data: dict[str, Any]) -> dict[str, Any]:
+    async def enqueue_execute(
+        self, signal_id: str, signal_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Enhanced execute function that handles real broker integration.
         """
@@ -195,7 +199,11 @@ class TradingSignalsManager:
             stop_price = signal_data.get("stop_price") or signal_data.get("stop")
 
             if not symbol or quantity <= 0:
-                return {"ok": False, "error": "Invalid symbol or quantity", "signal_id": signal_id}
+                return {
+                    "ok": False,
+                    "error": "Invalid symbol or quantity",
+                    "signal_id": signal_id,
+                }
 
             # Convert to enums
             side = OrderSide.BUY if side_str in ["buy", "long"] else OrderSide.SELL
@@ -278,7 +286,11 @@ class TradingSignalsManager:
             if not order:
                 return {"ok": False, "error": "Order not found", "signal_id": signal_id}
 
-            if order.status in [OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED]:
+            if order.status in [
+                OrderStatus.FILLED,
+                OrderStatus.CANCELLED,
+                OrderStatus.REJECTED,
+            ]:
                 return {
                     "ok": False,
                     "error": f"Cannot cancel order in {order.status.value} status",
@@ -288,7 +300,12 @@ class TradingSignalsManager:
             if self.paper_trading:
                 # Paper trading - simple cancellation
                 order.status = OrderStatus.CANCELLED
-                result = {"ok": True, "cancelled": True, "mode": "paper", "signal_id": signal_id}
+                result = {
+                    "ok": True,
+                    "cancelled": True,
+                    "mode": "paper",
+                    "signal_id": signal_id,
+                }
             else:
                 # Live trading - cancel with broker
                 if not self.broker_connector or not order.broker_order_id:
@@ -298,10 +315,17 @@ class TradingSignalsManager:
                         "signal_id": signal_id,
                     }
 
-                broker_result = await self.broker_connector.cancel_order(order.broker_order_id)
+                broker_result = await self.broker_connector.cancel_order(
+                    order.broker_order_id
+                )
                 if broker_result.get("ok"):
                     order.status = OrderStatus.CANCELLED
-                    result = {"ok": True, "cancelled": True, "mode": "live", "signal_id": signal_id}
+                    result = {
+                        "ok": True,
+                        "cancelled": True,
+                        "mode": "live",
+                        "signal_id": signal_id,
+                    }
                 else:
                     result = {
                         "ok": False,
@@ -374,7 +398,9 @@ class TradingSignalsManager:
             "total_value": total_value,
             "total_cost": total_cost,
             "total_pnl": total_pnl,
-            "total_pnl_percent": (total_pnl / total_cost * 100) if total_cost > 0 else 0,
+            "total_pnl_percent": (
+                (total_pnl / total_cost * 100) if total_cost > 0 else 0
+            ),
             "position_count": len(self.positions),
             "mode": "paper" if self.paper_trading else "live",
             "timestamp": datetime.now(UTC).isoformat(),
@@ -386,7 +412,9 @@ _trading_manager = TradingSignalsManager()
 
 
 # Enhanced public API functions
-async def enqueue_execute(signal_id: str, signal_data: dict | None = None) -> dict[str, Any]:
+async def enqueue_execute(
+    signal_id: str, signal_data: dict | None = None
+) -> dict[str, Any]:
     """Enhanced execute function - now supports full signal data."""
     if signal_data is None:
         # Backward compatibility - treat signal_id as simple identifier

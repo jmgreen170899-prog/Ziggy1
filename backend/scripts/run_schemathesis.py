@@ -219,7 +219,9 @@ def parse_schemathesis_report(report_data: dict) -> dict:
 @click.command()
 @click.option("--base-url", default="http://localhost:8000", help="Base URL of the API")
 @click.option(
-    "--output", default="artifacts/backend/schemathesis_report.json", help="Output file path"
+    "--output",
+    default="artifacts/backend/schemathesis_report.json",
+    help="Output file path",
 )
 @click.option("--max-examples", default=50, help="Maximum examples per endpoint")
 @click.option("--timeout", default=30, help="Request timeout in seconds")
@@ -227,7 +229,10 @@ def main(base_url: str, output: str, max_examples: int, timeout: int):
     """Run schemathesis API fuzzing tests"""
 
     summary = run_schemathesis_tests(
-        base_url=base_url, output_path=output, max_examples=max_examples, timeout=timeout
+        base_url=base_url,
+        output_path=output,
+        max_examples=max_examples,
+        timeout=timeout,
     )
 
     print("\\n" + "=" * 50)
@@ -241,7 +246,9 @@ def main(base_url: str, output: str, max_examples: int, timeout: int):
 
     if summary["failures"]:
         print("\\n🔍 FAILURE DETAILS:")
-        for i, failure in enumerate(summary["failures"][:5], 1):  # Show first 5 failures
+        for i, failure in enumerate(
+            summary["failures"][:5], 1
+        ):  # Show first 5 failures
             print(f"  {i}. {failure['endpoint']}")
             print(f"     Status: {failure['status']}")
             print(f"     Error: {failure['error'][:100]}...")

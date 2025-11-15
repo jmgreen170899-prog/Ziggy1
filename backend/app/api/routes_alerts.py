@@ -12,7 +12,10 @@ from pydantic import BaseModel, Field  # type: ignore
 
 # Market Brain Integration
 try:
-    from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+    from app.services.market_brain.simple_data_hub import (
+        DataSource,
+        enhance_market_data,
+    )
 
     BRAIN_AVAILABLE = True
     _enhance_market_data = enhance_market_data
@@ -57,7 +60,9 @@ class AlertStatusResponse(BaseModel):
 
     ok: bool = Field(True, description="Status check succeeded")
     enabled: bool = Field(..., description="Whether alerts are enabled")
-    status: dict[str, Any] | None = Field(None, description="Detailed status information")
+    status: dict[str, Any] | None = Field(
+        None, description="Detailed status information"
+    )
     asof: float = Field(..., description="Response timestamp")
 
 
@@ -163,7 +168,9 @@ except Exception:
     _create_alert_service = None  # type: ignore
 
 
-def _create_alert_fallback(symbol: str, atype: str, params: dict[str, Any]) -> dict[str, Any]:
+def _create_alert_fallback(
+    symbol: str, atype: str, params: dict[str, Any]
+) -> dict[str, Any]:
     """Very small in-memory placeholder when no alert service is present."""
     entry = {
         "id": f"inmem-{int(time.time() * 1000)}-{symbol}-{atype}",
@@ -244,7 +251,7 @@ def alerts_status():
 def alerts_start() -> AlertStatusResponse:
     """
     Start the background scan loop and enable alerts.
-    
+
     Side effects: Starts alert scanner service and updates enabled flag.
     """
     try:
@@ -276,9 +283,9 @@ def alerts_start() -> AlertStatusResponse:
 def alerts_stop() -> AlertStatusResponse:
     """
     Disable the background scan loop.
-    
+
     Stops scanner if available, otherwise just flips the enable flag to pause alerts.
-    
+
     Side effects: Stops alert scanner service and updates enabled flag.
     """
     try:
@@ -348,7 +355,9 @@ class AlertCreateIn(BaseModel):
     ticker: str | None = Field(default=None, description="Alias for symbol")
     type: str = Field(default="sma", description="Alert type (e.g. sma)")
     window: int | None = Field(default=None, description="Lookback window (e.g. 50)")
-    rule: str | None = Field(default="cross", description="Rule (e.g. cross, cross_up, cross_down)")
+    rule: str | None = Field(
+        default="cross", description="Rule (e.g. cross, cross_up, cross_down)"
+    )
     # Any extra params are accepted pass-through
     # NOTE: FastAPI will store unknown keys under .__dict__ but not in model;
     # we'll accept an optional 'params' bag for explicit extra kwargs.
@@ -438,7 +447,8 @@ async def alerts_create(body: AlertCreateIn):
         raise
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail={"error": "failed to create alert", "reason": str(e)}
+            status_code=500,
+            detail={"error": "failed to create alert", "reason": str(e)},
         )
 
 
@@ -446,9 +456,9 @@ async def alerts_create(body: AlertCreateIn):
 def alerts_sma50(body: dict[str, Any]) -> AlertResponse:
     """
     Create a 50DMA cross alert.
-    
+
     Accepts { symbol | ticker } and optional rule override.
-    
+
     Side effects: Creates alert in alert system or in-memory store.
     """
     symbol = _normalize_symbol(body.get("symbol"), body.get("ticker"))
@@ -457,10 +467,13 @@ def alerts_sma50(body: dict[str, Any]) -> AlertResponse:
     rule = (body.get("rule") or "cross").strip().lower()
     try:
         rec = _create_alert(symbol, "sma", {"window": 50, "rule": rule})
-        return AlertResponse(ok=True, message="50DMA alert set", alert=rec, asof=time.time())
+        return AlertResponse(
+            ok=True, message="50DMA alert set", alert=rec, asof=time.time()
+        )
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail={"error": "failed to set 50DMA alert", "reason": str(e)}
+            status_code=500,
+            detail={"error": "failed to set 50DMA alert", "reason": str(e)},
         )
 
 
@@ -474,7 +487,7 @@ def alerts_ma50_alias(body: dict[str, Any]) -> AlertResponse:
     """
     **DEPRECATED:** This endpoint is maintained for backward compatibility only.
     Please use `/sma50` instead.
-    
+
     This alias will be removed in a future version.
     """
     return alerts_sma50(body)
@@ -543,7 +556,9 @@ def alerts_production_status():
 
 
 @router.get("/history", response_model=None)
-def alerts_history(alert_id: str | None = None, symbol: str | None = None, limit: int = 100):
+def alerts_history(
+    alert_id: str | None = None, symbol: str | None = None, limit: int = 100
+):
     """Get alert trigger history."""
     if _HAS_PRODUCTION_ALERTS and _production_alerts:
         try:
@@ -587,7 +602,9 @@ def delete_alert(alert_id: str):
                     "asof": time.time(),
                 }
             else:
-                raise HTTPException(status_code=404, detail={"error": "Alert not found"})
+                raise HTTPException(
+                    status_code=404, detail={"error": "Alert not found"}
+                )
         except Exception as e:
             raise HTTPException(status_code=500, detail={"error": str(e)})
     else:
@@ -610,7 +627,9 @@ def enable_alert(alert_id: str):
                     "asof": time.time(),
                 }
             else:
-                raise HTTPException(status_code=404, detail={"error": "Alert not found"})
+                raise HTTPException(
+                    status_code=404, detail={"error": "Alert not found"}
+                )
         except Exception as e:
             raise HTTPException(status_code=500, detail={"error": str(e)})
     else:
@@ -633,7 +652,9 @@ def disable_alert(alert_id: str):
                     "asof": time.time(),
                 }
             else:
-                raise HTTPException(status_code=404, detail={"error": "Alert not found"})
+                raise HTTPException(
+                    status_code=404, detail={"error": "Alert not found"}
+                )
         except Exception as e:
             raise HTTPException(status_code=500, detail={"error": str(e)})
     else:

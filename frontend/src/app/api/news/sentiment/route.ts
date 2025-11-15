@@ -1,5 +1,5 @@
-import { proxyJson } from '../../_lib/proxy'
+import { proxyJson } from "../../_lib/proxy";
 
 export async function GET(req: Request) {
-  return proxyJson(req, '/news/sentiment', { timeoutMs: 8000 })
+  return proxyJson(req, "/news/sentiment", { timeoutMs: 8000 });
 }

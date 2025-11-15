@@ -308,10 +308,14 @@ def validate_calibration(
     )
 
     # Generate calibration curve
-    cal_curve_x, cal_curve_y = generate_calibration_curve(calibrated_test_probs, test_outcomes)
+    cal_curve_x, cal_curve_y = generate_calibration_curve(
+        calibrated_test_probs, test_outcomes
+    )
 
     # Calculate calibration quality
-    quality_metrics = calculate_calibration_quality(calibrated_test_probs, test_outcomes)
+    quality_metrics = calculate_calibration_quality(
+        calibrated_test_probs, test_outcomes
+    )
 
     return CalibrationReport(
         method=method,
@@ -371,7 +375,9 @@ def build_and_save_calibrator(
     test_outcomes = outcomes[split_idx:]
 
     # Validate calibration
-    report = validate_calibration(train_probs, train_outcomes, test_probs, test_outcomes, method)
+    report = validate_calibration(
+        train_probs, train_outcomes, test_probs, test_outcomes, method
+    )
 
     # Build final calibrator on all data
     calibrator = ProbabilityCalibrator(method=method)

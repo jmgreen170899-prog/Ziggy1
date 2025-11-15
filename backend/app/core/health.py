@@ -48,7 +48,9 @@ class HealthChecker:
 
         try:
             # Run check with timeout
-            result = await asyncio.wait_for(check_info["func"](), timeout=check_info["timeout"])
+            result = await asyncio.wait_for(
+                check_info["func"](), timeout=check_info["timeout"]
+            )
 
             response_time = (time.time() - start_time) * 1000  # ms
 
@@ -227,7 +229,10 @@ async def check_external_apis() -> dict[str, Any]:
             except Exception as e:
                 results[service] = {"status": "Unreachable", "error": str(e)}
 
-    return {"configured_apis": list(configured_apis.keys()), "connectivity_tests": results}
+    return {
+        "configured_apis": list(configured_apis.keys()),
+        "connectivity_tests": results,
+    }
 
 
 async def check_market_data_providers() -> dict[str, Any]:
@@ -246,7 +251,9 @@ async def check_market_data_providers() -> dict[str, Any]:
 
         if hasattr(provider, "providers"):
             provider_info["chain_length"] = len(provider.providers)
-            provider_info["provider_names"] = [type(p).__name__ for p in provider.providers]
+            provider_info["provider_names"] = [
+                type(p).__name__ for p in provider.providers
+            ]
 
         return {"provider_info": provider_info, "circuit_breakers": circuit_breakers}
     except Exception as e:

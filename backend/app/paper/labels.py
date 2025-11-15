@@ -70,7 +70,10 @@ class LabelGenerator:
 
         logger.info(
             "LabelGenerator initialized",
-            extra={"horizons_mins": self.horizons_mins, "direction_threshold": direction_threshold},
+            extra={
+                "horizons_mins": self.horizons_mins,
+                "direction_threshold": direction_threshold,
+            },
         )
 
     def add_price_data(self, price_data: PriceData) -> None:
@@ -82,7 +85,9 @@ class LabelGenerator:
 
         # Keep only recent data (e.g., last 500 points)
         if len(self.price_history[price_data.symbol]) > 500:
-            self.price_history[price_data.symbol] = self.price_history[price_data.symbol][-500:]
+            self.price_history[price_data.symbol] = self.price_history[
+                price_data.symbol
+            ][-500:]
 
     def generate_trade_label(
         self, symbol: str, entry_time: datetime, entry_price: float, side: str
@@ -99,7 +104,9 @@ class LabelGenerator:
         Returns:
             TradeLabel with forward returns and metrics
         """
-        label = TradeLabel(symbol=symbol, entry_time=entry_time, entry_price=entry_price, side=side)
+        label = TradeLabel(
+            symbol=symbol, entry_time=entry_time, entry_price=entry_price, side=side
+        )
 
         if symbol not in self.price_history:
             return label
@@ -137,8 +144,8 @@ class LabelGenerator:
                     label.direction_60m = self._classify_direction(forward_return)
 
         # Calculate max favorable/adverse excursions
-        label.max_favorable_excursion, label.max_adverse_excursion = self._calculate_excursions(
-            price_data, entry_idx, entry_price, side
+        label.max_favorable_excursion, label.max_adverse_excursion = (
+            self._calculate_excursions(price_data, entry_idx, entry_price, side)
         )
 
         return label

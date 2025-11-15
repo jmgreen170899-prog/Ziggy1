@@ -164,7 +164,9 @@ class BacktestResults:
 
         self.winning_trades = len(winning_trades)
         self.losing_trades = len(losing_trades)
-        self.win_rate = self.winning_trades / self.total_trades if self.total_trades > 0 else 0
+        self.win_rate = (
+            self.winning_trades / self.total_trades if self.total_trades > 0 else 0
+        )
 
         if winning_trades:
             self.avg_win = np.mean([t.pnl for t in winning_trades])
@@ -215,7 +217,9 @@ class Backtester:
 
         logger.info("Backtester initialized")
 
-    def run_backtest(self, tickers: list[str], config: BacktestConfig) -> BacktestResults:
+    def run_backtest(
+        self, tickers: list[str], config: BacktestConfig
+    ) -> BacktestResults:
         """
         Run comprehensive backtest.
 
@@ -235,7 +239,9 @@ class Backtester:
         results = BacktestResults(config=config, trades=[])
 
         # Generate date range
-        date_range = pd.date_range(start=config.start_date, end=config.end_date, freq="D")
+        date_range = pd.date_range(
+            start=config.start_date, end=config.end_date, freq="D"
+        )
 
         # Initialize portfolio state
         capital = config.initial_capital
@@ -321,9 +327,13 @@ class Backtester:
 
                 # Update current value
                 if trade.side == "LONG":
-                    current_value += (current_price - trade.entry_price) * trade.quantity
+                    current_value += (
+                        current_price - trade.entry_price
+                    ) * trade.quantity
                 else:
-                    current_value += (trade.entry_price - current_price) * trade.quantity
+                    current_value += (
+                        trade.entry_price - current_price
+                    ) * trade.quantity
 
             except Exception as e:
                 logger.warning(f"Error checking exit for {ticker}: {e}")
@@ -339,7 +349,11 @@ class Backtester:
         return current_value
 
     def _check_exit_conditions(
-        self, trade: Trade, current_price: float, current_date: datetime, config: BacktestConfig
+        self,
+        trade: Trade,
+        current_price: float,
+        current_date: datetime,
+        config: BacktestConfig,
     ) -> str | None:
         """Check if position should be exited."""
 
@@ -463,10 +477,14 @@ class Backtester:
     def _calculate_commission(self, trade: Trade, config: BacktestConfig) -> float:
         """Calculate commission for trade."""
         trade_value = trade.quantity * (trade.exit_price or trade.entry_price)
-        commission = max(config.commission_per_trade, trade_value * config.commission_percent)
+        commission = max(
+            config.commission_per_trade, trade_value * config.commission_percent
+        )
         return commission * 2  # Entry + exit
 
-    def run_single_ticker_backtest(self, ticker: str, period: BacktestPeriod) -> BacktestResults:
+    def run_single_ticker_backtest(
+        self, ticker: str, period: BacktestPeriod
+    ) -> BacktestResults:
         """Run backtest for single ticker over specified period."""
 
         # Calculate date range
@@ -492,7 +510,9 @@ class Backtester:
 
         return self.run_backtest([ticker], config)
 
-    def analyze_signal_quality(self, ticker: str, period: BacktestPeriod) -> dict[str, Any]:
+    def analyze_signal_quality(
+        self, ticker: str, period: BacktestPeriod
+    ) -> dict[str, Any]:
         """Analyze quality and consistency of signals for a ticker."""
 
         results = self.run_single_ticker_backtest(ticker, period)

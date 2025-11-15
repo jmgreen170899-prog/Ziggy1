@@ -19,19 +19,21 @@ else:
     class Limiter:
         def __init__(self, **kwargs):
             pass
-        
+
         def limit(self, rate_limit: str):
             """No-op decorator when rate limiting is not available"""
+
             def decorator(func):
                 return func
+
             return decorator
-    
+
     class RateLimitExceeded(Exception):
         def __init__(self, detail="Rate limit exceeded"):
             self.detail = detail
             self.retry_after = 60
             super().__init__(detail)
-    
+
     def get_remote_address(request):
         return "127.0.0.1"
 
@@ -71,7 +73,9 @@ def create_limiter() -> Limiter:
             storage_uri = redis_url
             logger.info(f"Rate limiter using Redis backend: {redis_url}")
         except Exception as e:
-            logger.warning(f"Redis not available for rate limiting ({e}), using in-memory storage")
+            logger.warning(
+                f"Redis not available for rate limiting ({e}), using in-memory storage"
+            )
             storage_uri = "memory://"
     else:
         logger.info("Rate limiter using in-memory storage")

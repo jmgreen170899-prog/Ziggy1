@@ -6,7 +6,7 @@ on:
       - "backend/**"
       - ".github/workflows/ci.yml"
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   backend-tests:
@@ -36,7 +36,7 @@ jobs:
         env:
           # isolate file outputs so counts don't explode between runs
           EVENTS_STORE_PATH: ${{ runner.temp }}/events.jsonl
-          LEARN_REPORT_PATH:  ${{ runner.temp }}/learn_report.json
+          LEARN_REPORT_PATH: ${{ runner.temp }}/learn_report.json
 
           # predictable behavior for health/feedback in CI
           FEEDBACK_ENABLED: "false"

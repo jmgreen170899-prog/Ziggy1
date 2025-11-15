@@ -403,9 +403,9 @@ git commit -m "merge: resolve conflicts"
 main ──●────●────●────●────●────●────●──▶
        │              │              │
        │              │         ┌────●────● feature/b
-       │              │         │    
+       │              │         │
        │         ┌────●────●────●  feature/a (merged)
-       │         │    
+       │         │
        └─────────┘
 ```
 
@@ -436,31 +436,31 @@ Use this checklist to verify your local files match GitHub:
 ```
 □ 1. Checked current branch:
      git branch
-     
+
 □ 2. Fetched latest from GitHub:
      git fetch origin
-     
+
 □ 3. Pulled changes into my branch:
      git pull origin main
-     
+
 □ 4. Verified no uncommitted changes blocking:
      git status
-     
+
 □ 5. Checked recent commits match:
      git log --oneline -5
-     
+
 □ 6. Compared with remote:
      git diff main origin/main
      (should be empty if synced)
-     
+
 □ 7. Reinstalled dependencies if needed:
      - Check if package.json changed → npm install
      - Check if requirements.lock changed → pip install
-     
+
 □ 8. Cleared build artifacts:
      - Deleted __pycache__/ folders
      - Deleted .next/ folder
-     
+
 ✅ All checks passed = Files are synced!
 ```
 
@@ -471,7 +471,7 @@ Use this checklist to verify your local files match GitHub:
 The key takeaway:
 
 > **Git automatically updates your core files when you pull. The flow is:**
-> 
+>
 > 1. **GitHub** (source of truth)
 > 2. **git pull** (sync mechanism)
 > 3. **Working Directory** (your core files)

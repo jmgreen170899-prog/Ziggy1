@@ -168,7 +168,9 @@ def test_calibration():
     print(f"Calibrated: {calibrated}")
 
     # Calibrated should differ from raw (unless perfectly calibrated)
-    assert not np.allclose(test_probs, calibrated), "Calibration should adjust probabilities"
+    assert not np.allclose(
+        test_probs, calibrated
+    ), "Calibration should adjust probabilities"
     print("✓ Calibration adjusts probabilities")
 
     return calibrator
@@ -278,15 +280,21 @@ def test_reliability_score():
     # Test with different sample sizes
     test_cases = [
         (
-            HistoricalPerformance("Test", "Test", 10, 7, 0.70, 0.65, 0.15, datetime.now()),
+            HistoricalPerformance(
+                "Test", "Test", 10, 7, 0.70, 0.65, 0.15, datetime.now()
+            ),
             "small sample",
         ),
         (
-            HistoricalPerformance("Test", "Test", 100, 65, 0.65, 0.62, 0.18, datetime.now()),
+            HistoricalPerformance(
+                "Test", "Test", 100, 65, 0.65, 0.62, 0.18, datetime.now()
+            ),
             "good sample",
         ),
         (
-            HistoricalPerformance("Test", "Test", 500, 325, 0.65, 0.64, 0.12, datetime.now()),
+            HistoricalPerformance(
+                "Test", "Test", 500, 325, 0.65, 0.64, 0.12, datetime.now()
+            ),
             "large sample",
         ),
         (None, "no data"),

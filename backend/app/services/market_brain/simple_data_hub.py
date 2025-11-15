@@ -114,7 +114,9 @@ class SimpleMarketBrainDataHub:
             context.processing_time_ms = (time.time() - start_time) * 1000
 
             # Update metadata with actual processing time
-            enhanced_data["brain_metadata"]["processing_time_ms"] = context.processing_time_ms
+            enhanced_data["brain_metadata"][
+                "processing_time_ms"
+            ] = context.processing_time_ms
 
             return EnhancedData(
                 original_data=symbols_data, enhanced_data=enhanced_data, context=context
@@ -201,7 +203,9 @@ class SimpleMarketBrainDataHub:
             context.warnings.append(f"Enhancement failed: {e!s}")
             context.processing_time_ms = (time.time() - start_time) * 1000
 
-            return EnhancedData(original_data=risk_data, enhanced_data=risk_data, context=context)
+            return EnhancedData(
+                original_data=risk_data, enhanced_data=risk_data, context=context
+            )
 
     def enhance_calendar_data(self, calendar_data: dict[str, Any]) -> EnhancedData:
         """Enhance calendar data with basic impact analysis."""
@@ -228,7 +232,9 @@ class SimpleMarketBrainDataHub:
             context.processing_time_ms = (time.time() - start_time) * 1000
 
             return EnhancedData(
-                original_data=calendar_data, enhanced_data=enhanced_data, context=context
+                original_data=calendar_data,
+                enhanced_data=enhanced_data,
+                context=context,
             )
 
         except Exception as e:
@@ -237,7 +243,9 @@ class SimpleMarketBrainDataHub:
             context.processing_time_ms = (time.time() - start_time) * 1000
 
             return EnhancedData(
-                original_data=calendar_data, enhanced_data=calendar_data, context=context
+                original_data=calendar_data,
+                enhanced_data=calendar_data,
+                context=context,
             )
 
     def _get_available_modules(self) -> list[str]:
@@ -336,9 +344,13 @@ class SimpleMarketBrainDataHub:
             z_score = cpc_data.get("z20", 0)
 
             if z_score > 2:
-                warnings.append("Extremely high put/call ratio - potential oversold condition")
+                warnings.append(
+                    "Extremely high put/call ratio - potential oversold condition"
+                )
             elif z_score < -2:
-                warnings.append("Extremely low put/call ratio - potential overbought condition")
+                warnings.append(
+                    "Extremely low put/call ratio - potential overbought condition"
+                )
             elif abs(z_score) > 1.5:
                 warnings.append("Elevated put/call ratio - monitor for trend changes")
 
@@ -359,7 +371,14 @@ class SimpleMarketBrainDataHub:
                     event_name = event.get("event", "")
                     if any(
                         keyword in event_name.lower()
-                        for keyword in ["cpi", "fomc", "fed", "gdp", "employment", "earnings"]
+                        for keyword in [
+                            "cpi",
+                            "fomc",
+                            "fed",
+                            "gdp",
+                            "employment",
+                            "earnings",
+                        ]
                     ):
                         high_impact.append(event_name)
 
@@ -373,7 +392,9 @@ class SimpleMarketBrainDataHub:
 simple_data_hub = SimpleMarketBrainDataHub()
 
 
-def enhance_market_data(data: dict[str, Any], source: DataSource, **kwargs) -> dict[str, Any]:
+def enhance_market_data(
+    data: dict[str, Any], source: DataSource, **kwargs
+) -> dict[str, Any]:
     """
     Universal function to enhance any market data through the simple brain hub.
 

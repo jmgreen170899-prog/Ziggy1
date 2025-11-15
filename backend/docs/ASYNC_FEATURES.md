@@ -7,6 +7,7 @@ This document describes the async feature execution refactoring that prevents ev
 ## Problem Statement
 
 **Before Refactoring:**
+
 - Blocking feature computations (pandas, numpy) executed directly in event loop
 - CPU-bound indicator calculations blocked async operations
 - Signal generation stalled other concurrent tasks
@@ -14,6 +15,7 @@ This document describes the async feature execution refactoring that prevents ev
 - Degraded responsiveness during heavy market data processing
 
 **After Refactoring:**
+
 - All blocking operations offloaded to executor threads/processes
 - Event loop remains responsive (P95 lag < 10ms)
 - Concurrent task throughput improved by 4-5x
@@ -29,6 +31,7 @@ This document describes the async feature execution refactoring that prevents ev
 The central component that manages async execution of blocking operations.
 
 **Key Features:**
+
 - ThreadPoolExecutor for I/O-bound operations
 - ProcessPoolExecutor for CPU-intensive work
 - Background TaskPool workers for queued operations
@@ -36,6 +39,7 @@ The central component that manages async execution of blocking operations.
 - Automatic lifecycle management
 
 **Configuration (Environment Variables):**
+
 ```bash
 ASYNC_FEATURES_WORKERS=8              # Number of worker threads (default: 8)
 ASYNC_FEATURES_USE_PROCESS_POOL=false # Enable process pool (default: false)
@@ -45,6 +49,7 @@ ASYNC_FEATURES_QUEUE_SIZE=1000        # Task queue size (default: 1000)
 #### 2. Feature Computation Wrappers
 
 **Paper Trading Features:**
+
 ```python
 from app.paper import compute_features_async
 
@@ -53,6 +58,7 @@ features = await compute_features_async("AAPL")
 ```
 
 **Market Brain Features:**
+
 ```python
 from app.services.market_brain.features import async_get_ticker_features
 
@@ -209,6 +215,7 @@ GET /api/performance/benchmarks
 ```
 
 **Example Benchmark Output:**
+
 ```json
 {
   "comparison": {
@@ -235,26 +242,26 @@ GET /api/performance/benchmarks
 
 ### Event Loop Responsiveness
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| P95 Loop Lag | 89.3ms | 8.9ms | 90.0% ↓ |
-| Avg Loop Lag | 45.2ms | 3.2ms | 92.9% ↓ |
-| Max Loop Lag | 175.8ms | 12.1ms | 93.1% ↓ |
+| Metric       | Before  | After  | Improvement |
+| ------------ | ------- | ------ | ----------- |
+| P95 Loop Lag | 89.3ms  | 8.9ms  | 90.0% ↓     |
+| Avg Loop Lag | 45.2ms  | 3.2ms  | 92.9% ↓     |
+| Max Loop Lag | 175.8ms | 12.1ms | 93.1% ↓     |
 
 ### Throughput
 
-| Operation | Before (ops/sec) | After (ops/sec) | Improvement |
-|-----------|------------------|-----------------|-------------|
-| Feature Computation | 22.1 | 81.3 | 267.9% ↑ |
-| Signal Generation | 18.5 | 75.2 | 306.5% ↑ |
-| Concurrent Tasks | 12.3 | 58.7 | 377.2% ↑ |
+| Operation           | Before (ops/sec) | After (ops/sec) | Improvement |
+| ------------------- | ---------------- | --------------- | ----------- |
+| Feature Computation | 22.1             | 81.3            | 267.9% ↑    |
+| Signal Generation   | 18.5             | 75.2            | 306.5% ↑    |
+| Concurrent Tasks    | 12.3             | 58.7            | 377.2% ↑    |
 
 ### Under Load (500 Concurrent Operations)
 
-| Metric | Target | Achieved | Status |
-|--------|--------|----------|--------|
-| P95 Loop Lag | < 10ms | 0.01ms | ✅ PASS |
-| Success Rate | > 95% | 99.5% | ✅ PASS |
+| Metric         | Target       | Achieved     | Status  |
+| -------------- | ------------ | ------------ | ------- |
+| P95 Loop Lag   | < 10ms       | 0.01ms       | ✅ PASS |
+| Success Rate   | > 95%        | 99.5%        | ✅ PASS |
 | Avg Throughput | > 50 ops/sec | 81.3 ops/sec | ✅ PASS |
 
 ## Testing
@@ -272,6 +279,7 @@ pytest tests/test_async_feature_offload.py -v -m performance
 ```
 
 **Test Coverage:**
+
 - ✅ Async operation offloading
 - ✅ Concurrent batch execution
 - ✅ Event loop lag under 500 concurrent tasks
@@ -289,6 +297,7 @@ pytest tests/test_async_feature_offload.py -v -m performance
 ### For Existing Code
 
 1. **Identify blocking operations:**
+
    ```python
    # Look for these patterns:
    - Direct calls to FeatureComputer.compute_features()
@@ -298,6 +307,7 @@ pytest tests/test_async_feature_offload.py -v -m performance
    ```
 
 2. **Replace with async wrappers:**
+
    ```python
    # OLD:
    def process_ticker(ticker):
@@ -313,6 +323,7 @@ pytest tests/test_async_feature_offload.py -v -m performance
    ```
 
 3. **Use concurrent batch processing:**
+
    ```python
    # OLD: Sequential processing
    results = []
@@ -359,6 +370,7 @@ pytest tests/test_async_feature_offload.py -v -m performance
 **Symptoms:** P95 lag > 10ms
 
 **Solutions:**
+
 1. Check for remaining blocking operations
 2. Increase worker pool size
 3. Enable process pool for CPU-intensive work
@@ -378,6 +390,7 @@ curl http://localhost:8000/api/performance/metrics?last_n=100 | \
 **Symptoms:** ops/sec < 50
 
 **Solutions:**
+
 1. Verify concurrent execution is used
 2. Increase worker pool size
 3. Check for queue bottlenecks
@@ -396,6 +409,7 @@ curl -X POST http://localhost:8000/api/performance/benchmarks/feature-computatio
 **Symptoms:** "Task queue full" in logs
 
 **Solutions:**
+
 1. Increase `ASYNC_FEATURES_QUEUE_SIZE`
 2. Process tasks faster (more workers)
 3. Rate limit task submission
@@ -419,6 +433,7 @@ curl -X POST http://localhost:8000/api/performance/benchmarks/feature-computatio
 ## Support
 
 For issues or questions:
+
 1. Check `/api/performance/health` endpoint
 2. Review metrics at `/api/performance/metrics`
 3. Run benchmarks to validate performance

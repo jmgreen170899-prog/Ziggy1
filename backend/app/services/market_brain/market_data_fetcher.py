@@ -46,7 +46,9 @@ def fetch_yfinance_ohlcv(ticker, lookback_days=365):
             logger.info(f"[DATA] yfinance success for {ticker} in {latency:.2f}s")
             return data
         else:
-            logger.warning(f"[DATA] yfinance returned empty for {ticker} in {latency:.2f}s")
+            logger.warning(
+                f"[DATA] yfinance returned empty for {ticker} in {latency:.2f}s"
+            )
             return None
     except Exception as e:
         latency = time.time() - start
@@ -107,7 +109,9 @@ def get_recent_ohlcv(
                 failures[name] = "empty"
             except FuturesTimeoutError:
                 failures[name] = "timeout"
-                logger.warning(f"[DATA] {name} OHLCV timeout for {ticker} after {timeout}s")
+                logger.warning(
+                    f"[DATA] {name} OHLCV timeout for {ticker} after {timeout}s"
+                )
             except Exception as e:
                 failures[name] = str(e)
                 logger.warning(f"[DATA] {name} OHLCV failed for {ticker}: {e}")
@@ -119,7 +123,9 @@ def get_recent_ohlcv(
             df, ts = entry
             if df is not None and not df.empty:
                 age = int(now - ts)
-                logger.warning(f"[DATA] OHLCV stale cache for {ticker}, stale_seconds={age}")
+                logger.warning(
+                    f"[DATA] OHLCV stale cache for {ticker}, stale_seconds={age}"
+                )
                 return {"data": df, "from_cache": True, "stale_seconds": age}
 
     raise DataFetchUnavailableError(ticker, failures)
@@ -147,12 +153,16 @@ def get_realtime_quote(ticker: str, timeout: float = PROVIDER_TIMEOUT) -> dict:
             quote = {"ticker": ticker, "price": price, "latency": latency}
             with _quote_cache_lock:
                 _quote_cache[ticker] = (quote, now)
-            logger.info(f"[DATA] yfinance quote for {ticker} in {latency:.2f}s: {price}")
+            logger.info(
+                f"[DATA] yfinance quote for {ticker} in {latency:.2f}s: {price}"
+            )
             return {"data": quote, "from_cache": False, "stale_seconds": None}
         logger.warning(f"[DATA] yfinance quote missing for {ticker} in {latency:.2f}s")
     except Exception as e:
         latency = time.time() - start
-        logger.warning(f"[DATA] yfinance quote failed for {ticker} in {latency:.2f}s: {e}")
+        logger.warning(
+            f"[DATA] yfinance quote failed for {ticker} in {latency:.2f}s: {e}"
+        )
 
     # Stale cache fallback
     with _quote_cache_lock:
@@ -161,7 +171,9 @@ def get_realtime_quote(ticker: str, timeout: float = PROVIDER_TIMEOUT) -> dict:
             q, ts = entry
             if q is not None:
                 age = int(now - ts)
-                logger.warning(f"[DATA] Quote stale cache for {ticker}, stale_seconds={age}")
+                logger.warning(
+                    f"[DATA] Quote stale cache for {ticker}, stale_seconds={age}"
+                )
                 return {"data": q, "from_cache": True, "stale_seconds": age}
 
     raise DataFetchUnavailableError(ticker, {"yfinance": "failed"})

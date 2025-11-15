@@ -51,7 +51,12 @@ SCAN_SYMBOLS = os.getenv("SCAN_SYMBOLS", "AAPL,MSFT,NVDA,AMZN,TSLA,BTC-USD,ETH-U
 SCAN_INTERVAL_S = int(os.getenv("SCAN_INTERVAL_S", "60"))
 
 # Back-compat env knobs (still honored if set)
-_DEFAULT_ON = os.getenv("ZIGGY_SCAN_DEFAULT", "1").lower() not in ("0", "false", "no", "off")
+_DEFAULT_ON = os.getenv("ZIGGY_SCAN_DEFAULT", "1").lower() not in (
+    "0",
+    "false",
+    "no",
+    "off",
+)
 _DEBOUNCE = int(os.getenv("ZIGGY_SIGNAL_MIN_GAP", "900"))
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -111,7 +116,9 @@ def _run_maybe_async(func_or_value, *args, **kwargs):
     """
     try:
         # If it's callable, call it first
-        result = func_or_value(*args, **kwargs) if callable(func_or_value) else func_or_value
+        result = (
+            func_or_value(*args, **kwargs) if callable(func_or_value) else func_or_value
+        )
         if inspect.isawaitable(result):
             # In this background thread there is no running loop → safe to use asyncio.run
             return asyncio.run(result)
@@ -166,7 +173,9 @@ def _heartbeat_hourly() -> None:
 
         now = datetime.datetime.now()
         # Send ping on the hour (XX:00) and half hour (XX:30)
-        if now.minute in [0, 30] and now.second < 60:  # within first minute of hour/half-hour
+        if (
+            now.minute in [0, 30] and now.second < 60
+        ):  # within first minute of hour/half-hour
             # Check if we already sent a ping for this time slot to avoid spam
             current_slot = f"{now.hour:02d}:{now.minute:02d}"
 
@@ -189,7 +198,9 @@ def _heartbeat_hourly() -> None:
 
                         pattern = os.path.join(temp_dir, "ziggy_ping_*.lock")
                         for old_file in glob.glob(pattern):
-                            if os.path.getctime(old_file) < time.time() - 7200:  # 2 hours
+                            if (
+                                os.path.getctime(old_file) < time.time() - 7200
+                            ):  # 2 hours
                                 os.remove(old_file)
                     except Exception:
                         pass
@@ -201,7 +212,9 @@ def _heartbeat_hourly() -> None:
 
                     # Clean up old entries
                     cutoff = time.time() - 7200  # 2 hours ago
-                    _hourly_pings_sent = {k: v for k, v in _hourly_pings_sent.items() if v > cutoff}
+                    _hourly_pings_sent = {
+                        k: v for k, v in _hourly_pings_sent.items() if v > cutoff
+                    }
 
     except Exception:
         pass
@@ -247,7 +260,9 @@ def _loop():
                         pass
 
                 noteworthy = [
-                    s for s in results if isinstance(s, dict) and s.get("signal") in ("BUY", "SELL")
+                    s
+                    for s in results
+                    if isinstance(s, dict) and s.get("signal") in ("BUY", "SELL")
                 ]
 
                 # Filter signals that should trigger alerts
@@ -269,7 +284,9 @@ def _loop():
                         # Use enhanced formatter if available
                         if _HAS_FORMATTER:
                             # Send bulk summary first
-                            summary = format_bulk_signals(signals_to_send, max_signals=5)
+                            summary = format_bulk_signals(
+                                signals_to_send, max_signals=5
+                            )
                             tg_send(
                                 summary,
                                 kind="scheduler-summary",

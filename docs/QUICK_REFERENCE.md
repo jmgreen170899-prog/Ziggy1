@@ -29,11 +29,13 @@ cd backend && pip install -r requirements.lock  # Backend
 ## 🤖 Automated Sync (Recommended)
 
 **Linux/Mac:**
+
 ```bash
 ./scripts/sync-from-github.sh
 ```
 
 **Windows:**
+
 ```powershell
 .\scripts\sync-from-github.ps1
 ```
@@ -53,6 +55,7 @@ git diff origin/main     # Should be empty if synced
 ## 🔀 Common Workflows
 
 ### Start New Work
+
 ```bash
 git checkout main
 git pull origin main
@@ -61,6 +64,7 @@ git checkout -b feature/my-feature
 ```
 
 ### Commit and Push
+
 ```bash
 git add .
 git commit -m "feat: description"
@@ -68,6 +72,7 @@ git push origin feature/my-feature
 ```
 
 ### After PR Merged
+
 ```bash
 git checkout main
 git pull origin main
@@ -79,6 +84,7 @@ git branch -d feature/my-feature
 ## 🚨 Quick Fixes
 
 ### "I have uncommitted changes"
+
 ```bash
 git stash                # Save changes
 git pull origin main     # Pull updates
@@ -86,6 +92,7 @@ git stash pop           # Restore changes
 ```
 
 ### "Merge conflict!"
+
 ```bash
 # 1. Open conflicted files
 # 2. Look for <<<<<<< markers
@@ -96,6 +103,7 @@ git commit -m "merge: resolve conflicts"
 ```
 
 ### "My files didn't update"
+
 ```bash
 git fetch origin --prune
 git pull origin main
@@ -106,11 +114,11 @@ git pull origin main
 
 ## 📚 Full Documentation
 
-| Quick Link | Purpose |
-|------------|---------|
-| [SYNC_GUIDE.md](./SYNC_GUIDE.md) | Detailed sync guide |
-| [GITHUB_WORKFLOW.md](./GITHUB_WORKFLOW.md) | Visual workflows |
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Complete guide |
+| Quick Link                                 | Purpose             |
+| ------------------------------------------ | ------------------- |
+| [SYNC_GUIDE.md](./SYNC_GUIDE.md)           | Detailed sync guide |
+| [GITHUB_WORKFLOW.md](./GITHUB_WORKFLOW.md) | Visual workflows    |
+| [CONTRIBUTING.md](../CONTRIBUTING.md)      | Complete guide      |
 
 ---
 
@@ -119,11 +127,13 @@ git pull origin main
 **Core Files** = Your working directory files (`backend/`, `frontend/`, etc.)
 
 **The Flow:**
+
 ```
 GitHub → git pull → Core Files Updated ✅
 ```
 
 **Dependencies** = Separate step after pulling:
+
 ```
 npm install / pip install
 ```

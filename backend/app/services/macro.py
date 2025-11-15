@@ -186,17 +186,25 @@ def get_macro_snapshot(ttl: int = 600) -> dict[str, Any]:
 
     # Inflation YoY using units=pc1 (Percent change from year ago)
     cpi_yoy = get_series_latest(SERIES["CPI"], units="pc1", frequency="m", ttl=ttl)
-    core_cpi_yoy = get_series_latest(SERIES["CORE_CPI"], units="pc1", frequency="m", ttl=ttl)
+    core_cpi_yoy = get_series_latest(
+        SERIES["CORE_CPI"], units="pc1", frequency="m", ttl=ttl
+    )
     pce_yoy = get_series_latest(SERIES["PCE"], units="pc1", frequency="m", ttl=ttl)
-    core_pce_yoy = get_series_latest(SERIES["CORE_PCE"], units="pc1", frequency="m", ttl=ttl)
+    core_pce_yoy = get_series_latest(
+        SERIES["CORE_PCE"], units="pc1", frequency="m", ttl=ttl
+    )
 
     # Labor
     unrate = get_series_latest(SERIES["UNRATE"], frequency="m", ttl=ttl)
 
     # Rates (daily → monthly avg for consistency)
     fedfunds = get_series_latest(SERIES["FEDFUNDS"], frequency="m", ttl=ttl)
-    dgs2 = get_series_latest(SERIES["DGS2"], frequency="m", aggregation_method="avg", ttl=ttl)
-    dgs10 = get_series_latest(SERIES["DGS10"], frequency="m", aggregation_method="avg", ttl=ttl)
+    dgs2 = get_series_latest(
+        SERIES["DGS2"], frequency="m", aggregation_method="avg", ttl=ttl
+    )
+    dgs10 = get_series_latest(
+        SERIES["DGS10"], frequency="m", aggregation_method="avg", ttl=ttl
+    )
 
     slope = None
     if dgs2["value"] is not None and dgs10["value"] is not None:
@@ -264,16 +272,28 @@ def get_macro_dashboard(
         return _error("Missing FRED_API_KEY")
 
     cpi = get_series(SERIES["CPI"], units="pc1", frequency="m", limit=months, ttl=ttl)
-    core_cpi = get_series(SERIES["CORE_CPI"], units="pc1", frequency="m", limit=months, ttl=ttl)
+    core_cpi = get_series(
+        SERIES["CORE_CPI"], units="pc1", frequency="m", limit=months, ttl=ttl
+    )
     unrate = get_series(SERIES["UNRATE"], frequency="m", limit=months, ttl=ttl)
     fedf = get_series(SERIES["FEDFUNDS"], frequency="m", limit=months_rates, ttl=ttl)
     d2 = get_series(
-        SERIES["DGS2"], frequency="m", aggregation_method="avg", limit=months_rates, ttl=ttl
+        SERIES["DGS2"],
+        frequency="m",
+        aggregation_method="avg",
+        limit=months_rates,
+        ttl=ttl,
     )
     d10 = get_series(
-        SERIES["DGS10"], frequency="m", aggregation_method="avg", limit=months_rates, ttl=ttl
+        SERIES["DGS10"],
+        frequency="m",
+        aggregation_method="avg",
+        limit=months_rates,
+        ttl=ttl,
     )
-    gdp = get_series(SERIES["REAL_GDP"], frequency="q", units="pc1", limit=quarters, ttl=ttl)
+    gdp = get_series(
+        SERIES["REAL_GDP"], frequency="q", units="pc1", limit=quarters, ttl=ttl
+    )
 
     # Compute 2s10s spread aligned by date
     spread = _diff_series(d10.get("points", []), d2.get("points", []))
@@ -347,7 +367,9 @@ def _to_iso_utc(s: str | None) -> str | None:
         return s
 
 
-def _diff_series(a: list[dict[str, Any]], b: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _diff_series(
+    a: list[dict[str, Any]], b: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
     """
     Align by date and compute a.value - b.value (None if any missing).
     """
@@ -357,7 +379,12 @@ def _diff_series(a: list[dict[str, Any]], b: list[dict[str, Any]]) -> list[dict[
         d = row.get("date")
         va = row.get("value")
         vb = by_b.get(d)
-        out.append({"date": d, "value": (va - vb) if (va is not None and vb is not None) else None})
+        out.append(
+            {
+                "date": d,
+                "value": (va - vb) if (va is not None and vb is not None) else None,
+            }
+        )
     return out
 
 
@@ -380,7 +407,9 @@ class MarketCalendar:
         self.cache_duration = timedelta(hours=1)
         self._cache = {}
 
-    async def get_market_holidays(self, year: int | None = None) -> list[dict[str, Any]]:
+    async def get_market_holidays(
+        self, year: int | None = None
+    ) -> list[dict[str, Any]]:
         """Get market holidays for specified year."""
         if year is None:
             year = datetime.now().year
@@ -584,7 +613,11 @@ class MarketCalendar:
         """Fallback holidays when API fails."""
         holidays = [
             {"date": f"{year}-01-01", "name": "New Year's Day", "type": "holiday"},
-            {"date": f"{year}-01-15", "name": "Martin Luther King Jr. Day", "type": "holiday"},
+            {
+                "date": f"{year}-01-15",
+                "name": "Martin Luther King Jr. Day",
+                "type": "holiday",
+            },
             {"date": f"{year}-02-19", "name": "Presidents Day", "type": "holiday"},
             {"date": f"{year}-04-07", "name": "Good Friday", "type": "holiday"},
             {"date": f"{year}-05-27", "name": "Memorial Day", "type": "holiday"},
@@ -606,7 +639,9 @@ class FredEconomicData:
         self.cache_duration = timedelta(hours=2)
         self._cache = {}
 
-    async def get_series_data(self, series_id: str, limit: int = 100) -> list[dict[str, Any]]:
+    async def get_series_data(
+        self, series_id: str, limit: int = 100
+    ) -> list[dict[str, Any]]:
         """Get economic data series from FRED."""
         if not self.api_key:
             import logging
@@ -646,7 +681,10 @@ class FredEconomicData:
                             }
                         )
 
-                self._cache[cache_key] = {"data": observations, "timestamp": datetime.now()}
+                self._cache[cache_key] = {
+                    "data": observations,
+                    "timestamp": datetime.now(),
+                }
                 return observations
 
         except Exception as e:
@@ -699,7 +737,9 @@ async def get_market_calendar_data() -> dict[str, Any]:
             fred_data.get_key_indicators(),
         ]
 
-        holidays, earnings, economic, schedule, indicators = await asyncio.gather(*tasks)
+        holidays, earnings, economic, schedule, indicators = await asyncio.gather(
+            *tasks
+        )
 
         return {
             "holidays": holidays,
@@ -715,4 +755,8 @@ async def get_market_calendar_data() -> dict[str, Any]:
         import logging
 
         logging.error(f"Error getting market calendar data: {e}")
-        return {"error": str(e), "status": "error", "timestamp": datetime.now().isoformat()}
+        return {
+            "error": str(e),
+            "status": "error",
+            "timestamp": datetime.now().isoformat(),
+        }

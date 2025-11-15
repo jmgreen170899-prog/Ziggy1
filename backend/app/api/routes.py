@@ -99,7 +99,9 @@ class TaskScheduleResponse(BaseModel):
 class TaskListResponse(BaseModel):
     """Task list response."""
 
-    jobs: list[dict[str, Any]] = Field(default_factory=list, description="List of scheduled jobs")
+    jobs: list[dict[str, Any]] = Field(
+        default_factory=list, description="List of scheduled jobs"
+    )
 
 
 class TaskCancelResponse(BaseModel):
@@ -135,9 +137,9 @@ def _get_settings():
 def core_health() -> CoreHealthResponse:
     """
     Checks FastAPI and optional dependencies (Qdrant, Postgres, Redis, Scheduler).
-    
+
     Returns status of each dependency component.
-    
+
     Side effects: May start scheduler if not already running.
     """
     s = _get_settings()
@@ -234,7 +236,9 @@ def api_ingest_web(req: WebIngestRequest) -> WebIngestResponse:
     try:
         from app.rag.ingest_web import ingest_from_web  # type: ignore
     except Exception as e:
-        raise HTTPException(status_code=501, detail=f"Ingest (web) not available: {e!s}")
+        raise HTTPException(
+            status_code=501, detail=f"Ingest (web) not available: {e!s}"
+        )
 
     res = ingest_from_web(req.query, max_results=req.max_results)
     return WebIngestResponse(**res)
@@ -246,16 +250,18 @@ def api_ingest_pdf(
 ) -> IngestPdfResponse:
     """
     Ingest PDF document into vector store.
-    
+
     Accepts PDF file upload and optional source URL.
     Extracts text, chunks it, and indexes in vector store.
-    
+
     Side effects: Adds document chunks to vector store.
     """
     try:
         from app.rag.ingest_pdf import ingest_pdf  # type: ignore
     except Exception as e:
-        raise HTTPException(status_code=501, detail=f"Ingest (pdf) not available: {e!s}")
+        raise HTTPException(
+            status_code=501, detail=f"Ingest (pdf) not available: {e!s}"
+        )
 
     import os as _os
     import tempfile
@@ -286,15 +292,17 @@ def api_ingest_pdf(
 def api_reset() -> ResetResponse:
     """
     Reset the vector store collection.
-    
+
     Deletes all documents and recreates the collection.
-    
+
     Side effects: Removes all indexed documents from vector store.
     """
     try:
         from app.rag.vectorstore import get_client, reset_collection  # type: ignore
     except Exception as e:
-        raise HTTPException(status_code=501, detail=f"Vector store not available: {e!s}")
+        raise HTTPException(
+            status_code=501, detail=f"Vector store not available: {e!s}"
+        )
 
     client = get_client()
     reset_collection(client)
@@ -332,12 +340,12 @@ def api_agent(req: AgentRequest):
 def api_tasks_watch(req: WatchReq) -> TaskScheduleResponse:
     """
     Schedule a repeating agent run for a topic.
-    
+
     Cron examples:
       - '0 9 * * *'     -> every day at 09:00
       - '0 */2 * * *'   -> every 2 hours
       - '30 8 * * 1-5'  -> 08:30 on weekdays
-    
+
     Side effects: Creates scheduled job in task scheduler.
     """
     try:
@@ -347,14 +355,16 @@ def api_tasks_watch(req: WatchReq) -> TaskScheduleResponse:
 
     start_scheduler()
     jid = schedule_watch_topic(req.topic, req.cron, req.job_id)
-    return TaskScheduleResponse(status="scheduled", job_id=jid, topic=req.topic, cron=req.cron)
+    return TaskScheduleResponse(
+        status="scheduled", job_id=jid, topic=req.topic, cron=req.cron
+    )
 
 
 @router.get("/tasks", response_model=TaskListResponse)
 def api_tasks_list() -> TaskListResponse:
     """
     List all scheduled jobs.
-    
+
     Returns list of scheduled tasks with their IDs, topics, and schedules.
     """
     try:
@@ -370,7 +380,7 @@ def api_tasks_list() -> TaskListResponse:
 def api_tasks_cancel(req: CancelReq) -> TaskCancelResponse:
     """
     Cancel a scheduled job by ID.
-    
+
     Side effects: Removes job from task scheduler.
     """
     try:
@@ -437,7 +447,9 @@ def browse_search(
         if used_provider == "tavily":
             s = _get_settings()
             api_key = (
-                tavily_key or getattr(s, "TAVILY_API_KEY", None) or os.getenv("TAVILY_API_KEY")
+                tavily_key
+                or getattr(s, "TAVILY_API_KEY", None)
+                or os.getenv("TAVILY_API_KEY")
             )
             if not api_key:
                 return JSONResponse(
@@ -519,7 +531,12 @@ def browse_search(
 
         logging.getLogger("ziggy").exception("BROWSE_ERROR")
         return JSONResponse(
-            {"provider": _which_provider(provider), "query": q, "results": [], "error": str(e)},
+            {
+                "provider": _which_provider(provider),
+                "query": q,
+                "results": [],
+                "error": str(e),
+            },
             status_code=200,
         )
 
@@ -531,4 +548,6 @@ def browse_alias(
     provider: str | None = None,
     tavily_key: str | None = None,
 ):
-    return browse_search(q=q, max_results=max_results, provider=provider, tavily_key=tavily_key)
+    return browse_search(
+        q=q, max_results=max_results, provider=provider, tavily_key=tavily_key
+    )

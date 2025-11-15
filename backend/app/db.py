@@ -44,7 +44,9 @@ db_state: dict[str, object] = {
 
 def get_engine_with_connectivity(url: str | None) -> tuple[Engine | None, bool, str]:
     env = (os.getenv("APP_ENV") or os.getenv("ENV") or "development").strip().lower()
-    allow_fallback = (os.getenv("ALLOW_SQLITE_FALLBACK") or "false").strip().lower() in {
+    allow_fallback = (
+        os.getenv("ALLOW_SQLITE_FALLBACK") or "false"
+    ).strip().lower() in {
         "1",
         "true",
         "yes",
@@ -138,12 +140,15 @@ async def try_connect(url: str | None = None) -> bool:
     db_state["connected"] = bool(connected)
     db_state["dialect"] = dialect
     # Heuristic: if caller provided non-sqlite URL but we ended up with sqlite, treat as fallback
-    db_state["fallback"] = bool(connected and dialect == "sqlite" and provided_dialect != "sqlite")
+    db_state["fallback"] = bool(
+        connected and dialect == "sqlite" and provided_dialect != "sqlite"
+    )
     if connected:
         logger.info("DB connectivity OK", extra={"dialect": dialect})
     else:
         logger.warning(
-            "DB connectivity failed", extra={"configured": bool(url), "dialect": dialect}
+            "DB connectivity failed",
+            extra={"configured": bool(url), "dialect": dialect},
         )
     return bool(connected)
 
@@ -205,7 +210,9 @@ async def init_with_backoff(
                     with contextlib.suppress(Exception):
                         models_base.create_tables()
                 except Exception as e:  # pragma: no cover - defensive
-                    logger.warning("ORM init failed after DB connect", extra={"error": str(e)})
+                    logger.warning(
+                        "ORM init failed after DB connect", extra={"error": str(e)}
+                    )
                     # keep going; SessionLocal may still be usable if engine bound
                 db_state["connected"] = True
                 db_state["fallback"] = False  # primary connected

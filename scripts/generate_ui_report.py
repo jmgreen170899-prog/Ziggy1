@@ -121,20 +121,20 @@ def generate_tab_section(
 
     # Data Quality Issues
     if data_metrics.get("nanValues"):
-        priority = get_priority_tag("nanValues", "critical", len(data_metrics["nanValues"]))
-        section += (
-            f"\n**{priority} - NaN/Undefined Values** ({len(data_metrics['nanValues'])} found)\n"
+        priority = get_priority_tag(
+            "nanValues", "critical", len(data_metrics["nanValues"])
         )
+        section += f"\n**{priority} - NaN/Undefined Values** ({len(data_metrics['nanValues'])} found)\n"
         for value in data_metrics["nanValues"][:3]:  # Show first 3
             section += f"- {value}\n"
         if len(data_metrics["nanValues"]) > 3:
             section += f"- ... and {len(data_metrics['nanValues']) - 3} more\n"
 
     if data_metrics.get("missingFields"):
-        priority = get_priority_tag("missingFields", "medium", len(data_metrics["missingFields"]))
-        section += (
-            f"\n**{priority} - Missing Data Fields** ({len(data_metrics['missingFields'])} found)\n"
+        priority = get_priority_tag(
+            "missingFields", "medium", len(data_metrics["missingFields"])
         )
+        section += f"\n**{priority} - Missing Data Fields** ({len(data_metrics['missingFields'])} found)\n"
         for field in data_metrics["missingFields"][:3]:
             section += f"- {field}\n"
         if len(data_metrics["missingFields"]) > 3:
@@ -144,9 +144,7 @@ def generate_tab_section(
         priority = get_priority_tag(
             "staleTimestamps", "medium", len(data_metrics["staleTimestamps"])
         )
-        section += (
-            f"\n**{priority} - Stale Timestamps** ({len(data_metrics['staleTimestamps'])} found)\n"
-        )
+        section += f"\n**{priority} - Stale Timestamps** ({len(data_metrics['staleTimestamps'])} found)\n"
         for timestamp in data_metrics["staleTimestamps"][:3]:
             section += f"- {timestamp}\n"
 
@@ -181,10 +179,14 @@ def generate_tab_section(
 
     if data_metrics.get("nanValues"):
         section += "- **Fix NaN Values:** Add null checks and fallback values in data processing\n"
-        section += "- **Validation:** Implement client-side data validation before rendering\n"
+        section += (
+            "- **Validation:** Implement client-side data validation before rendering\n"
+        )
 
     if data_metrics.get("missingFields"):
-        section += "- **Empty States:** Add loading skeletons and empty state components\n"
+        section += (
+            "- **Empty States:** Add loading skeletons and empty state components\n"
+        )
         section += "- **Data Fallbacks:** Implement graceful degradation for missing API data\n"
 
     if data_metrics.get("staleTimestamps"):
@@ -193,17 +195,24 @@ def generate_tab_section(
 
     if layout_issues.get("overflowElements"):
         section += "- **Responsive Design:** Fix horizontal overflow with proper CSS constraints\n"
-        section += "- **Content Truncation:** Implement text truncation for long content\n"
+        section += (
+            "- **Content Truncation:** Implement text truncation for long content\n"
+        )
 
     if layout_issues.get("responsiveIssues"):
-        section += "- **Touch Targets:** Increase button/link sizes for mobile (min 44px)\n"
+        section += (
+            "- **Touch Targets:** Increase button/link sizes for mobile (min 44px)\n"
+        )
         section += "- **Mobile Layout:** Improve responsive breakpoints and layouts\n"
 
     if console_errors:
         section += "- **Error Handling:** Fix JavaScript errors and add proper error boundaries\n"
         section += "- **Debugging:** Add error tracking and monitoring for production\n"
 
-    if lighthouse_data and lighthouse_data.get("scores", {}).get("performance", 100) < 70:
+    if (
+        lighthouse_data
+        and lighthouse_data.get("scores", {}).get("performance", 100) < 70
+    ):
         section += "- **Performance:** Optimize bundle size, lazy loading, and image compression\n"
         section += "- **Caching:** Implement better caching strategies for API calls\n"
 
@@ -328,7 +337,9 @@ def main():
     # Generate sections for each tab
     tabs = playwright_data.get("tabs", [])
     lighthouse_results = (
-        {r["route"]: r for r in lighthouse_data.get("results", [])} if lighthouse_data else {}
+        {r["route"]: r for r in lighthouse_data.get("results", [])}
+        if lighthouse_data
+        else {}
     )
 
     for tab in tabs:

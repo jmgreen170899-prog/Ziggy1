@@ -226,8 +226,12 @@ class BanditAllocator:
         summary = {}
 
         for theory_id, arm in self.arms.items():
-            win_rate = arm.winning_trades / arm.total_trades if arm.total_trades > 0 else 0.0
-            avg_pnl_bps = arm.total_pnl_bps / arm.total_trades if arm.total_trades > 0 else 0.0
+            win_rate = (
+                arm.winning_trades / arm.total_trades if arm.total_trades > 0 else 0.0
+            )
+            avg_pnl_bps = (
+                arm.total_pnl_bps / arm.total_trades if arm.total_trades > 0 else 0.0
+            )
 
             # Calculate Sharpe-like ratio (avg return / volatility proxy)
             # Using fees as a volatility proxy for simplicity
@@ -323,8 +327,12 @@ class BanditAllocator:
             arm.recent_alpha = float(data.get("recent_alpha", arm.recent_alpha))
             arm.recent_beta = float(data.get("recent_beta", arm.recent_beta))
             arm.recent_reward = float(data.get("recent_reward", arm.recent_reward))
-            arm.recent_selections = int(data.get("recent_selections", arm.recent_selections))
-            arm.last_allocation = float(data.get("last_allocation", arm.last_allocation))
+            arm.recent_selections = int(
+                data.get("recent_selections", arm.recent_selections)
+            )
+            arm.last_allocation = float(
+                data.get("last_allocation", arm.last_allocation)
+            )
 
     def _apply_decay(self) -> None:
         """Apply exponential decay to recent performance metrics."""
@@ -354,7 +362,9 @@ class BanditAllocator:
 
         for theory_id in theories:
             base_allocation = (
-                samples[theory_id] / total_sample if total_sample > 0 else 1.0 / len(theories)
+                samples[theory_id] / total_sample
+                if total_sample > 0
+                else 1.0 / len(theories)
             )
             # Ensure minimum allocation
             allocations[theory_id] = max(self.min_allocation, base_allocation)
@@ -432,7 +442,8 @@ class BanditAllocator:
                 "ucb_values": ucb_values,
                 "avg_rewards": {
                     theory_id: (
-                        self.arms[theory_id].recent_reward / self.arms[theory_id].recent_selections
+                        self.arms[theory_id].recent_reward
+                        / self.arms[theory_id].recent_selections
                         if self.arms[theory_id].recent_selections > 0
                         else 0.0
                     )

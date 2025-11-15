@@ -82,7 +82,9 @@ class MindFlipInfo(BaseModel):
 
     since_event: str | None = Field(None, description="Previous event ID")
     flipped: bool = Field(..., description="Whether mind flipped")
-    diff: list[list[Any]] = Field(default_factory=list, description="Feature differences")
+    diff: list[list[Any]] = Field(
+        default_factory=list, description="Feature differences"
+    )
 
 
 class CalibrationInfo(BaseModel):
@@ -149,7 +151,10 @@ def _find_last_event_for_ticker(
 
         last_event = None
         for event in iter_events():
-            if event.get("ticker") == ticker and event.get("interval", "1D") == interval:
+            if (
+                event.get("ticker") == ticker
+                and event.get("interval", "1D") == interval
+            ):
                 event_dt = datetime.fromisoformat(event["ts"].replace("Z", "+00:00"))
 
                 # Skip events after before_ts
@@ -160,7 +165,9 @@ def _find_last_event_for_ticker(
                 if last_event is None:
                     last_event = event
                 else:
-                    last_dt = datetime.fromisoformat(last_event["ts"].replace("Z", "+00:00"))
+                    last_dt = datetime.fromisoformat(
+                        last_event["ts"].replace("Z", "+00:00")
+                    )
                     if event_dt > last_dt:
                         last_event = event
 
@@ -170,7 +177,9 @@ def _find_last_event_for_ticker(
         return None
 
 
-def _build_explain_data(ticker: str, interval: str, dt: str | None = None) -> dict[str, Any]:
+def _build_explain_data(
+    ticker: str, interval: str, dt: str | None = None
+) -> dict[str, Any]:
     """Build explanation data by computing or retrieving from memory."""
     start_time = time.time()
 
@@ -221,7 +230,10 @@ def _build_explain_data(ticker: str, interval: str, dt: str | None = None) -> di
         if EXPLAIN_AVAILABLE:
             calibration = sample_calibration(EXPLAIN_CALIB_POINTS)
         else:
-            calibration = {"bins": [[i / 12, i / 12] for i in range(1, 13)], "ece": 0.05}
+            calibration = {
+                "bins": [[i / 12, i / 12] for i in range(1, 13)],
+                "ece": 0.05,
+            }
 
         # Search for neighbors
         neighbors = []
@@ -339,7 +351,9 @@ def _build_explain_data(ticker: str, interval: str, dt: str | None = None) -> di
 
         except Exception as e:
             if BRAIN_STRICT:
-                raise HTTPException(status_code=500, detail=f"Brain storage failed: {e}")
+                raise HTTPException(
+                    status_code=500, detail=f"Brain storage failed: {e}"
+                )
             else:
                 logger.warning(f"Brain storage failed: {e}")
                 explain_data["event_id"] = "temp_" + str(int(time.time()))
@@ -348,7 +362,9 @@ def _build_explain_data(ticker: str, interval: str, dt: str | None = None) -> di
 
     except Exception as e:
         if BRAIN_STRICT:
-            raise HTTPException(status_code=500, detail=f"Explanation computation failed: {e}")
+            raise HTTPException(
+                status_code=500, detail=f"Explanation computation failed: {e}"
+            )
         else:
             # Fallback minimal response
             return {
@@ -362,7 +378,11 @@ def _build_explain_data(ticker: str, interval: str, dt: str | None = None) -> di
                 "top_features": [],
                 "waterfall": [],
                 "neighbors": [],
-                "staleness": {"age_ms": 0, "ttl_s": STALE_TTL_SECONDS, "is_stale": True},
+                "staleness": {
+                    "age_ms": 0,
+                    "ttl_s": STALE_TTL_SECONDS,
+                    "is_stale": True,
+                },
                 "mind_flip": {"since_event": None, "flipped": False, "diff": []},
                 "trace_available": False,
                 "latency_ms": (time.time() - start_time) * 1000,
@@ -416,7 +436,9 @@ async def submit_explanation_feedback(request: ExplainFeedbackRequest):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Feedback submission failed: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Feedback submission failed: {e!s}"
+        )
 
 
 @router.get("/explain/health", response_model=None)

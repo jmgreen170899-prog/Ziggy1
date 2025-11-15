@@ -7,15 +7,18 @@ ZiggyAI uses the Inter font family for its UI, self-hosted locally to ensure rel
 ## Font Configuration
 
 ### Font Family
+
 - **Primary Font**: Inter (self-hosted)
-- **Weights Available**: 
+- **Weights Available**:
   - Regular (400)
   - Medium (500)
   - Semi-Bold (600)
   - Bold (700)
 
 ### Font Location
+
 All font files are stored in:
+
 ```
 frontend/public/fonts/inter/
 ├── Inter-Regular.woff2    (109 KB)
@@ -36,28 +39,28 @@ import localFont from "next/font/local";
 const inter = localFont({
   src: [
     {
-      path: '../../public/fonts/inter/Inter-Regular.woff2',
-      weight: '400',
-      style: 'normal',
+      path: "../../public/fonts/inter/Inter-Regular.woff2",
+      weight: "400",
+      style: "normal",
     },
     {
-      path: '../../public/fonts/inter/Inter-Medium.woff2',
-      weight: '500',
-      style: 'normal',
+      path: "../../public/fonts/inter/Inter-Medium.woff2",
+      weight: "500",
+      style: "normal",
     },
     {
-      path: '../../public/fonts/inter/Inter-SemiBold.woff2',
-      weight: '600',
-      style: 'normal',
+      path: "../../public/fonts/inter/Inter-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
     },
     {
-      path: '../../public/fonts/inter/Inter-Bold.woff2',
-      weight: '700',
-      style: 'normal',
+      path: "../../public/fonts/inter/Inter-Bold.woff2",
+      weight: "700",
+      style: "normal",
     },
   ],
-  variable: '--font-inter',
-  display: 'swap',
+  variable: "--font-inter",
+  display: "swap",
 });
 ```
 
@@ -99,13 +102,16 @@ body {
   background: var(--background);
   color: var(--foreground);
   line-height: 1.5;
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
 }
 ```
 
 ## Why Self-Hosted Fonts?
 
 ### Advantages
+
 1. **Reliability**: No dependency on external CDNs (e.g., Google Fonts)
 2. **Performance**: Fonts load from the same origin, reducing DNS lookups and connection overhead
 3. **Privacy**: No third-party requests that could track users
@@ -113,7 +119,9 @@ body {
 5. **Consistent Loading**: Guaranteed font availability in all environments
 
 ### Previous Issue
+
 The application previously used `next/font/google` to load Inter from Google Fonts, which caused failures:
+
 - "Failed to download `Inter` from Google Fonts"
 - "There was an issue establishing a connection while requesting https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
 
@@ -137,6 +145,7 @@ Components automatically inherit the Inter font through Tailwind's default `font
 ## Fallback Strategy
 
 The font stack ensures graceful degradation:
+
 1. **Inter (Custom)**: Loads from local files
 2. **System Fonts**: Uses native fonts if Inter fails to load
 3. **Generic Sans-Serif**: Final fallback ensures text remains readable
@@ -152,6 +161,7 @@ npx playwright test scripts/font-check.spec.ts
 ```
 
 This test:
+
 - Monitors all font requests
 - Checks for HTTP errors (404, 500, etc.)
 - Validates that all 4 Inter font weights load successfully
@@ -160,6 +170,7 @@ This test:
 ## Maintenance
 
 ### Adding New Weights
+
 If additional font weights are needed:
 
 1. Download the font file (`.woff2` format preferred)
@@ -168,6 +179,7 @@ If additional font weights are needed:
 4. Test the change with the font-check test
 
 ### Updating Font Version
+
 To update to a newer version of Inter:
 
 1. Download the latest Inter release from https://github.com/rsms/inter/releases
@@ -177,6 +189,7 @@ To update to a newer version of Inter:
 5. Run the font-check test to verify
 
 ### Changing to a Different Font
+
 To use a different font family:
 
 1. Add font files to `public/fonts/<font-name>/`
@@ -188,18 +201,21 @@ To use a different font family:
 ## Troubleshooting
 
 ### Font Not Loading
+
 - Check that font files exist in `public/fonts/inter/`
 - Verify file permissions (should be readable)
 - Check browser DevTools Network tab for 404 errors
 - Run the font-check test
 
 ### Font Appears Different Than Expected
+
 - Clear browser cache
 - Check that the correct weight is being applied
 - Verify `tailwind.config.ts` has the correct font stack
 - Inspect computed styles in browser DevTools
 
 ### Build Errors
+
 - Ensure font files are committed to Git
 - Verify paths in `layout.tsx` are correct relative to the file location
 - Check that all referenced weights exist as files
@@ -214,6 +230,7 @@ To use a different font family:
 ## Browser Support
 
 WOFF2 format is supported by:
+
 - Chrome 36+
 - Firefox 39+
 - Safari 12+
@@ -237,6 +254,6 @@ This covers 98%+ of users. Legacy browsers will fallback to system fonts.
 ✅ Production build completes without font warnings  
 ✅ All 4 font weights (Regular, Medium, SemiBold, Bold) load correctly  
 ✅ Font fallback stack configured  
-✅ Automated test in place  
+✅ Automated test in place
 
 Last verified: 2025-11-13

@@ -141,7 +141,13 @@ def customize_openapi():
         "authentication": "Optional authentication via JWT Bearer token or API Key",
         "development": "Authentication disabled by default in development mode",
         "production": "Authentication can be enabled via ENABLE_AUTH environment variable",
-        "public_endpoints": ["/health", "/health/detailed", "/docs", "/redoc", "/openapi.json"],
+        "public_endpoints": [
+            "/health",
+            "/health/detailed",
+            "/docs",
+            "/redoc",
+            "/openapi.json",
+        ],
     }
 
     app.openapi_schema = openapi_schema
@@ -395,9 +401,7 @@ except Exception as e:
 try:
     from app.api.routes_performance import router as performance_router
 
-    app.include_router(
-        performance_router
-    )  # already has prefix="/api/performance"
+    app.include_router(performance_router)  # already has prefix="/api/performance"
 except Exception as e:
     logger.warning("Failed to include performance router: %s", e)
 

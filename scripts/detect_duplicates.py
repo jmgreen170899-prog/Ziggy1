@@ -69,7 +69,9 @@ class ZiggyDuplicateDetector:
         return [
             f
             for f in files
-            if not any(part.startswith(".") or part == "__pycache__" for part in f.parts)
+            if not any(
+                part.startswith(".") or part == "__pycache__" for part in f.parts
+            )
         ]
 
     def find_frontend_files(self) -> list[Path]:
@@ -83,7 +85,8 @@ class ZiggyDuplicateDetector:
             f
             for f in files
             if not any(
-                part in ["node_modules", ".next", "build", "dist", "coverage"] for part in f.parts
+                part in ["node_modules", ".next", "build", "dist", "coverage"]
+                for part in f.parts
             )
         ]
 
@@ -122,7 +125,10 @@ class ZiggyDuplicateDetector:
                             }
                             self.report.add_python_duplicate(duplicate)
                         else:
-                            functions[func_body] = {"file": file_path, "name": func_name}
+                            functions[func_body] = {
+                                "file": file_path,
+                                "name": func_name,
+                            }
 
             except Exception as e:
                 print(f"⚠️  Error analyzing {file_path}: {e}")
@@ -170,7 +176,10 @@ class ZiggyDuplicateDetector:
                                 }
                                 self.report.add_typescript_duplicate(duplicate)
                             else:
-                                components[normalized_body] = {"file": file_path, "name": comp_name}
+                                components[normalized_body] = {
+                                    "file": file_path,
+                                    "name": comp_name,
+                                }
 
             except Exception as e:
                 print(f"⚠️  Error analyzing {file_path}: {e}")
@@ -191,7 +200,9 @@ class ZiggyDuplicateDetector:
                     content = f.read()
 
                 # Look for route definitions
-                route_pattern = r'@router\\.(get|post|put|delete)\\(["\']([^"\']+)["\']\\)'
+                route_pattern = (
+                    r'@router\\.(get|post|put|delete)\\(["\']([^"\']+)["\']\\)'
+                )
                 matches = re.finditer(route_pattern, content)
 
                 for match in matches:
@@ -220,7 +231,10 @@ class ZiggyDuplicateDetector:
         try:
             # Check if jscpd is installed
             result = subprocess.run(
-                ["npx", "jscpd", "--version"], capture_output=True, text=True, cwd="frontend"
+                ["npx", "jscpd", "--version"],
+                capture_output=True,
+                text=True,
+                cwd="frontend",
             )
 
             if result.returncode == 0:
@@ -243,9 +257,14 @@ class ZiggyDuplicateDetector:
                     "src/",
                 ]
 
-                result = subprocess.run(cmd, cwd="frontend", capture_output=True, text=True)
+                result = subprocess.run(
+                    cmd, cwd="frontend", capture_output=True, text=True
+                )
 
-                if result.returncode == 0 and Path("reports/jscpd-report.json").exists():
+                if (
+                    result.returncode == 0
+                    and Path("reports/jscpd-report.json").exists()
+                ):
                     with open("reports/jscpd-report.json") as f:
                         return json.load(f)
 
@@ -307,7 +326,9 @@ class ZiggyDuplicateDetector:
 
         if self.report.critical_duplications > 0:
             print("\\n❌ CRITICAL DUPLICATIONS FOUND:")
-            for dup in self.report.python_duplicates + self.report.typescript_duplicates:
+            for dup in (
+                self.report.python_duplicates + self.report.typescript_duplicates
+            ):
                 if dup.get("lines", 0) > 15:
                     print(f"  📄 {dup['name']} ({dup['lines']} lines)")
                     print(f"     Original: {dup['original_file']}")
@@ -336,7 +357,9 @@ def main():
 
         # Exit with error if critical duplications found
         if detector.report.critical_duplications > 0:
-            print(f"\\n⚠️  {detector.report.critical_duplications} critical duplications found!")
+            print(
+                f"\\n⚠️  {detector.report.critical_duplications} critical duplications found!"
+            )
             sys.exit(1)
         else:
             print("\\n✅ Code duplication analysis complete!")

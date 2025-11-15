@@ -1,5 +1,20 @@
 {
-  "AAPL": {"signal": "BUY", "confidence": 0.72, "reason": "Momentum and positive earnings outlook", "indicators": {"rsi": 58.2, "sma50_cross": true}},
-  "MSFT": {"signal": "NEUTRAL", "confidence": 0.55, "reason": "Consolidation phase", "indicators": {"rsi": 50.1}},
-  "NVDA": {"signal": "SELL", "confidence": 0.66, "reason": "Overextended after strong run", "indicators": {"rsi": 72.5}}
+  "AAPL": {
+    "signal": "BUY",
+    "confidence": 0.72,
+    "reason": "Momentum and positive earnings outlook",
+    "indicators": { "rsi": 58.2, "sma50_cross": true }
+  },
+  "MSFT": {
+    "signal": "NEUTRAL",
+    "confidence": 0.55,
+    "reason": "Consolidation phase",
+    "indicators": { "rsi": 50.1 }
+  },
+  "NVDA": {
+    "signal": "SELL",
+    "confidence": 0.66,
+    "reason": "Overextended after strong run",
+    "indicators": { "rsi": 72.5 }
+  }
 }

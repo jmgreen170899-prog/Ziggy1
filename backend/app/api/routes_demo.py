@@ -3,6 +3,7 @@ Demo mode endpoints.
 
 Provides demo status and configuration information.
 """
+
 from typing import Any
 
 from fastapi import APIRouter
@@ -24,6 +25,7 @@ router = APIRouter(prefix="/demo", tags=["demo"])
 
 class DemoStatusResponse(BaseModel):
     """Demo mode status response."""
+
     demo_mode: bool
     message: str
     safe_actions_only: bool
@@ -32,6 +34,7 @@ class DemoStatusResponse(BaseModel):
 
 class DemoDataResponse(BaseModel):
     """Demo data sample response."""
+
     data_type: str
     sample_data: dict[str, Any]
 
@@ -40,11 +43,11 @@ class DemoDataResponse(BaseModel):
 async def get_demo_status() -> DemoStatusResponse:
     """
     Get current demo mode status.
-    
+
     Returns information about whether demo mode is active and what features are disabled.
     """
     demo_active = is_demo_mode()
-    
+
     features_disabled = []
     if demo_active:
         features_disabled = [
@@ -53,10 +56,14 @@ async def get_demo_status() -> DemoStatusResponse:
             "system_modifications",
             "live_market_data",
         ]
-    
+
     return DemoStatusResponse(
         demo_mode=demo_active,
-        message="Demo mode is active - using deterministic demo data" if demo_active else "Demo mode is disabled - using live data",
+        message=(
+            "Demo mode is active - using deterministic demo data"
+            if demo_active
+            else "Demo mode is disabled - using live data"
+        ),
         safe_actions_only=demo_active,
         features_disabled=features_disabled,
     )
@@ -99,7 +106,9 @@ async def get_demo_news_sample(ticker: str | None = None) -> DemoDataResponse:
 
 
 @router.get("/data/backtest", response_model=DemoDataResponse)
-async def get_demo_backtest_sample(symbol: str = "AAPL", strategy: str = "sma50_cross") -> DemoDataResponse:
+async def get_demo_backtest_sample(
+    symbol: str = "AAPL", strategy: str = "sma50_cross"
+) -> DemoDataResponse:
     """Get demo backtest sample."""
     return DemoDataResponse(
         data_type="backtest",
@@ -117,7 +126,9 @@ async def get_demo_screener_sample(preset: str = "momentum") -> DemoDataResponse
 
 
 @router.get("/data/cognitive", response_model=DemoDataResponse)
-async def get_demo_cognitive_sample(question: str = "What should I know about AAPL?") -> DemoDataResponse:
+async def get_demo_cognitive_sample(
+    question: str = "What should I know about AAPL?",
+) -> DemoDataResponse:
     """Get demo cognitive response sample."""
     return DemoDataResponse(
         data_type="cognitive",

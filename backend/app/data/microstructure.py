@@ -69,7 +69,9 @@ def vwap_deviation(df: pd.DataFrame, window: int = 20) -> pd.Series:
     return deviation.fillna(0.0)
 
 
-def vol_of_vol(df: pd.DataFrame, window: int = 20, volatility_window: int = 10) -> pd.Series:
+def vol_of_vol(
+    df: pd.DataFrame, window: int = 20, volatility_window: int = 10
+) -> pd.Series:
     """
     Calculate volatility of volatility (vol-of-vol).
 
@@ -264,7 +266,9 @@ def intraday_intensity(df: pd.DataFrame) -> pd.Series:
     Returns:
         Series with intraday intensity values
     """
-    if df.empty or not all(col in df.columns for col in ["high", "low", "close", "volume"]):
+    if df.empty or not all(
+        col in df.columns for col in ["high", "low", "close", "volume"]
+    ):
         return pd.Series(dtype=float, name="intraday_intensity")
 
     # Calculate where close is within high-low range
@@ -306,7 +310,9 @@ def compute_all_features(
         # Basic features
         features["opening_gap"] = opening_gap(df)
         features["vwap_deviation"] = vwap_deviation(df, window=default_window)
-        features["vol_of_vol"] = vol_of_vol(df, window=default_window, volatility_window=vol_window)
+        features["vol_of_vol"] = vol_of_vol(
+            df, window=default_window, volatility_window=vol_window
+        )
         features["liquidity_proxy"] = liquidity_proxy(df)
         features["order_imbalance"] = imbalance_from_ohlc(df)
 
@@ -314,7 +320,9 @@ def compute_all_features(
         features["high_low_ratio"] = high_low_ratio(df, window=default_window)
         features["price_momentum"] = price_momentum(df, window=momentum_window)
         features["volume_momentum"] = volume_momentum(df, window=momentum_window)
-        features["volume_price_correlation"] = volume_price_correlation(df, window=default_window)
+        features["volume_price_correlation"] = volume_price_correlation(
+            df, window=default_window
+        )
         features["intraday_intensity"] = intraday_intensity(df)
 
         logger.debug(f"Computed {len(features)} microstructure features")
@@ -349,7 +357,13 @@ def get_feature_summary(features: dict[str, pd.Series]) -> dict[str, dict[str, f
 
     for feature_name, series in features.items():
         if series.empty:
-            summary[feature_name] = {"count": 0, "mean": 0.0, "std": 0.0, "min": 0.0, "max": 0.0}
+            summary[feature_name] = {
+                "count": 0,
+                "mean": 0.0,
+                "std": 0.0,
+                "min": 0.0,
+                "max": 0.0,
+            }
         else:
             # Remove infinite values for summary
             clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
@@ -391,7 +405,9 @@ def validate_features(features: dict[str, pd.Series]) -> dict[str, bool]:
             # Check for basic issues
             has_data = not series.empty
             no_all_nan = not series.isna().all()
-            no_all_inf = not np.isinf(series.replace([np.inf, -np.inf], np.nan)).isna().all()
+            no_all_inf = (
+                not np.isinf(series.replace([np.inf, -np.inf], np.nan)).isna().all()
+            )
             finite_values = np.isfinite(series.replace([np.inf, -np.inf], np.nan)).any()
 
             validation_results[feature_name] = has_data and no_all_nan and finite_values

@@ -1,10 +1,10 @@
 /**
  * API Types Index
- * 
+ *
  * Re-exports all generated API types for easy importing
  */
 
-export * from './generated';
+export * from "./generated";
 
 // Re-export the original api.ts types for backward compatibility
 export type {
@@ -23,4 +23,4 @@ export type {
   TradeDataSubmission,
   ZiggyBrainLearning,
   TradeDataPrivacySettings,
-} from '../api';
+} from "../api";

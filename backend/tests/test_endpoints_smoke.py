@@ -49,8 +49,14 @@ class EndpointSmokeTest:
 
                 for path, methods in openapi_data.get("paths", {}).items():
                     for method in methods.keys():
-                        if method.lower() in ["get", "head", "options"]:  # Safe methods only
-                            routes.append({"path": path, "method": method.upper(), "safe": True})
+                        if method.lower() in [
+                            "get",
+                            "head",
+                            "options",
+                        ]:  # Safe methods only
+                            routes.append(
+                                {"path": path, "method": method.upper(), "safe": True}
+                            )
 
                 return routes
         except Exception as e:
@@ -90,7 +96,11 @@ class EndpointSmokeTest:
 
             # Determine success based on status code
             success = response.status_code < 400
-            error = None if success else f"HTTP {response.status_code}: {response.text[:200]}"
+            error = (
+                None
+                if success
+                else f"HTTP {response.status_code}: {response.text[:200]}"
+            )
 
             return EndpointResult(
                 path=path,
@@ -99,7 +109,9 @@ class EndpointSmokeTest:
                 response_time_ms=response_time_ms,
                 success=success,
                 error=error,
-                response_size=len(response.content) if hasattr(response, "content") else 0,
+                response_size=(
+                    len(response.content) if hasattr(response, "content") else 0
+                ),
             )
 
         except Exception as e:
@@ -146,7 +158,9 @@ class EndpointSmokeTest:
             "total_endpoints": total_tests,
             "passed": passed_tests,
             "failed": failed_tests,
-            "success_rate": (passed_tests / total_tests * 100) if total_tests > 0 else 0,
+            "success_rate": (
+                (passed_tests / total_tests * 100) if total_tests > 0 else 0
+            ),
             "failures": [asdict(f) for f in failures],
             "all_results": [asdict(r) for r in self.results],
         }
@@ -182,7 +196,11 @@ class EndpointSmokeTest:
 async def main():
     """Main entry point for smoke tests"""
     base_url = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8000"
-    output_path = sys.argv[2] if len(sys.argv) > 2 else "artifacts/backend/endpoints_failures.json"
+    output_path = (
+        sys.argv[2]
+        if len(sys.argv) > 2
+        else "artifacts/backend/endpoints_failures.json"
+    )
 
     print(f"🚀 Starting API smoke tests for: {base_url}")
 
@@ -206,9 +224,9 @@ async def test_all_endpoints():
         summary = await tester.run_smoke_tests()
 
         # Assert no failures
-        assert summary["failed"] == 0, (
-            f"{summary['failed']} endpoints failed: {summary['failures']}"
-        )
+        assert (
+            summary["failed"] == 0
+        ), f"{summary['failed']} endpoints failed: {summary['failures']}"
 
 
 if __name__ == "__main__":

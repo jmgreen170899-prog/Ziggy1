@@ -72,7 +72,9 @@ class ChartStreamer:
         self.error_count = 0
         self.last_update_time = 0.0
 
-    async def start_streaming(self, symbols: list[str], timeframes: list[str] | None = None):
+    async def start_streaming(
+        self, symbols: list[str], timeframes: list[str] | None = None
+    ):
         """Start chart data streaming for specified symbols and timeframes"""
         if timeframes is None:
             timeframes = ["1m", "5m", "1h"]  # Default timeframes
@@ -144,7 +146,10 @@ class ChartStreamer:
         if not self.active_subscriptions:
             self.is_running = False
 
-        logger.info("Chart streaming stopped", extra={"symbols": symbols, "timeframes": timeframes})
+        logger.info(
+            "Chart streaming stopped",
+            extra={"symbols": symbols, "timeframes": timeframes},
+        )
 
     async def _stream_chart_data(self, symbol: str, timeframe: str):
         """Stream chart data for a specific symbol and timeframe"""
@@ -158,7 +163,11 @@ class ChartStreamer:
 
         logger.info(
             f"Starting chart streaming for {symbol} {timeframe}",
-            extra={"symbol": symbol, "timeframe": timeframe, "update_interval": update_interval},
+            extra={
+                "symbol": symbol,
+                "timeframe": timeframe,
+                "update_interval": update_interval,
+            },
         )
 
         while self.is_running and symbol in self.active_subscriptions:
@@ -170,7 +179,9 @@ class ChartStreamer:
             try:
                 # Upstream backpressure: if charts queue is near capacity, skip this tick
                 try:
-                    size, cap, ratio = self.connection_manager.get_queue_utilization("charts")
+                    size, cap, ratio = self.connection_manager.get_queue_utilization(
+                        "charts"
+                    )
                     if cap and ratio >= 0.8:
                         logger.debug(
                             "Skipping chart update due to high queue utilization",
@@ -228,7 +239,9 @@ class ChartStreamer:
                 )
                 await asyncio.sleep(60)  # Longer pause on error
 
-    async def _fetch_chart_data(self, symbol: str, timeframe: str) -> dict[str, Any] | None:
+    async def _fetch_chart_data(
+        self, symbol: str, timeframe: str
+    ) -> dict[str, Any] | None:
         """Fetch chart data from yfinance"""
         cache_key = f"{symbol}_{timeframe}"
         current_time = time.time()
@@ -241,7 +254,13 @@ class ChartStreamer:
 
         try:
             # Map our timeframes to yfinance intervals
-            interval_map = {"1m": "1m", "5m": "5m", "15m": "15m", "1h": "1h", "1d": "1d"}
+            interval_map = {
+                "1m": "1m",
+                "5m": "5m",
+                "15m": "15m",
+                "1h": "1h",
+                "1d": "1d",
+            }
 
             # Determine period based on timeframe
             period_map = {
@@ -263,7 +282,10 @@ class ChartStreamer:
                     asyncio.get_event_loop().run_in_executor(
                         None,
                         lambda: ticker.history(
-                            period=period, interval=interval, auto_adjust=True, prepost=True
+                            period=period,
+                            interval=interval,
+                            auto_adjust=True,
+                            prepost=True,
                         ),
                     ),
                     timeout=TIMEOUTS["provider_market_data"],
@@ -277,7 +299,9 @@ class ChartStreamer:
                 logger.error(f"Timeout fetching chart data for {symbol} {timeframe}")
                 return None
             except Exception as fetch_error:
-                logger.error(f"Failed to fetch data from yfinance for {symbol}: {fetch_error}")
+                logger.error(
+                    f"Failed to fetch data from yfinance for {symbol}: {fetch_error}"
+                )
                 return None
 
             # Convert to our candlestick format
@@ -305,7 +329,9 @@ class ChartStreamer:
                 candlesticks.append(asdict(candlestick))
 
             # Calculate basic technical indicators
-            indicators = await self._calculate_indicators(candlesticks, symbol, timeframe)
+            indicators = await self._calculate_indicators(
+                candlesticks, symbol, timeframe
+            )
 
             chart_data = {
                 "symbol": symbol,
@@ -316,7 +342,10 @@ class ChartStreamer:
             }
 
             # Update cache
-            self.chart_cache[cache_key] = {"data": chart_data, "timestamp": current_time}
+            self.chart_cache[cache_key] = {
+                "data": chart_data,
+                "timestamp": current_time,
+            }
 
             return chart_data
 
@@ -524,14 +553,18 @@ class ChartStreamer:
                         "data": chart_data,
                         "timestamp": time.time(),
                     }
-                    await self.connection_manager.send_json_personal(response, websocket)
+                    await self.connection_manager.send_json_personal(
+                        response, websocket
+                    )
                 except Exception as e:
                     error_response = {
                         "type": "error",
                         "message": f"Failed to get chart snapshot: {e!s}",
                         "timestamp": time.time(),
                     }
-                    await self.connection_manager.send_json_personal(error_response, websocket)
+                    await self.connection_manager.send_json_personal(
+                        error_response, websocket
+                    )
 
         elif action == "get_stats":
             stats = {

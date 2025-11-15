@@ -194,7 +194,9 @@ async def get_counterfactual_insights() -> dict[str, Any]:
     try:
         hub = get_cognitive_hub()
         if hub.counterfactual_engine is None:
-            raise HTTPException(status_code=503, detail="Counterfactual reasoning not enabled")
+            raise HTTPException(
+                status_code=503, detail="Counterfactual reasoning not enabled"
+            )
 
         return hub.counterfactual_engine.get_aggregate_insights()
     except HTTPException:

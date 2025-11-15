@@ -26,7 +26,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from app.memory import vecdb
 
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -72,7 +74,9 @@ def generate_test_events(n: int = 50) -> list[dict[str, Any]]:
             # Random normal events
             ticker = tickers[ticker_idx]
             regime = regimes[regime_idx]
-            top_features = [[features[j % len(features)], (i * j % 100) / 100.0] for j in range(3)]
+            top_features = [
+                [features[j % len(features)], (i * j % 100) / 100.0] for j in range(3)
+            ]
             headlines = [f"Market update for {ticker}"]
 
         event = {
@@ -217,14 +221,18 @@ def evaluate_embeddings(
 
     for k in k_values:
         scores = recall_scores[k]
-        metrics["recall_at_k"][f"recall@{k}"] = sum(scores) / len(scores) if scores else 0
+        metrics["recall_at_k"][f"recall@{k}"] = (
+            sum(scores) / len(scores) if scores else 0
+        )
 
     return metrics
 
 
 def main():
     """Run vector memory evaluation."""
-    parser = argparse.ArgumentParser(description="Evaluate vector memory semantic recall")
+    parser = argparse.ArgumentParser(
+        description="Evaluate vector memory semantic recall"
+    )
     parser.add_argument(
         "--test-size", type=int, default=50, help="Number of test events (default: 50)"
     )
@@ -276,10 +284,14 @@ def main():
 
     logger.info("\n--- Transformer Model ---")
     logger.info(f"Encoding time: {transformer_metrics['encoding_time_total']:.2f}s")
-    logger.info(f"Query time (avg): {transformer_metrics['query_time_avg'] * 1000:.2f}ms")
+    logger.info(
+        f"Query time (avg): {transformer_metrics['query_time_avg'] * 1000:.2f}ms"
+    )
     for k in k_values:
         recall_key = f"recall@{k}"
-        logger.info(f"{recall_key}: {transformer_metrics['recall_at_k'][recall_key]:.4f}")
+        logger.info(
+            f"{recall_key}: {transformer_metrics['recall_at_k'][recall_key]:.4f}"
+        )
     logger.info(f"Mean similarity: {transformer_metrics['mean_similarity_score']:.4f}")
 
     logger.info("\n--- Hash Baseline ---")

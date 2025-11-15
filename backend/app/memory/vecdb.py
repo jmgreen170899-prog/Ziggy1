@@ -60,7 +60,9 @@ def _get_qdrant_client():
             logger.warning("qdrant-client not installed, falling back to OFF mode")
             return None
         except Exception as e:
-            logger.warning(f"Failed to connect to Qdrant: {e}, falling back to OFF mode")
+            logger.warning(
+                f"Failed to connect to Qdrant: {e}, falling back to OFF mode"
+            )
             return None
 
     return _qdrant_client
@@ -163,7 +165,9 @@ def build_embedding(event: dict[str, Any], use_transformer: bool = True) -> list
                 embedding = model.encode(text, convert_to_numpy=True)
                 return embedding.tolist()
             except Exception as e:
-                logger.warning(f"Transformer encoding failed: {e}, falling back to hash")
+                logger.warning(
+                    f"Transformer encoding failed: {e}, falling back to hash"
+                )
 
     # Fallback to hash-based embedding
     embedding = _hash_to_embedding(text, dim=384)
@@ -222,7 +226,9 @@ def build_embeddings_batch(
                 )
                 return [emb.tolist() for emb in embeddings]
             except Exception as e:
-                logger.warning(f"Batch transformer encoding failed: {e}, falling back to hash")
+                logger.warning(
+                    f"Batch transformer encoding failed: {e}, falling back to hash"
+                )
 
     # Fallback to hash-based embedding
     return [_hash_to_embedding(text, dim=384) for text in texts]
@@ -356,7 +362,9 @@ def search_similar(
 
                 conditions = []
                 for key, value in filter_metadata.items():
-                    conditions.append(FieldCondition(key=key, match=MatchValue(value=value)))
+                    conditions.append(
+                        FieldCondition(key=key, match=MatchValue(value=value))
+                    )
                 if conditions:
                     query_filter = Filter(must=conditions)
 
@@ -406,14 +414,20 @@ def search_similar(
 
                     # Apply filter if provided
                     if filter_metadata:
-                        matches = all(metadata.get(k) == v for k, v in filter_metadata.items())
+                        matches = all(
+                            metadata.get(k) == v for k, v in filter_metadata.items()
+                        )
                         if not matches:
                             continue
 
                     # Calculate cosine similarity
                     similarity = _cosine_similarity(vec, stored_vec)
                     similarities.append(
-                        {"id": event_id.decode(), "score": similarity, "metadata": metadata}
+                        {
+                            "id": event_id.decode(),
+                            "score": similarity,
+                            "metadata": metadata,
+                        }
                     )
 
             # Sort by similarity and return top k

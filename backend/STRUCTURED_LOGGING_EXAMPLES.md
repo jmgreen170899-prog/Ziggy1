@@ -26,7 +26,7 @@ from app.observability.structured_logging import trading_logger, log_operation
 @router.post("/backtest")
 async def run_backtest(request: BacktestRequest):
     """Run backtest with structured logging"""
-    
+
     with log_operation(
         trading_logger,
         "backtest",
@@ -50,14 +50,14 @@ import time
 
 async def fetch_ohlc(ticker: str, timeout: float = 10.0):
     """Fetch OHLC data with timeout logging"""
-    
+
     start = time.time()
-    
+
     try:
         # Make external call
         data = await provider.get_ohlc(ticker, timeout=timeout)
         duration = time.time() - start
-        
+
         # Log successful call
         log_external_call(
             market_data_logger,
@@ -69,12 +69,12 @@ async def fetch_ohlc(ticker: str, timeout: float = 10.0):
             ticker=ticker,
             bars_count=len(data)
         )
-        
+
         return data
-        
+
     except asyncio.TimeoutError:
         duration = time.time() - start
-        
+
         # Log timeout
         log_external_call(
             market_data_logger,
@@ -86,10 +86,10 @@ async def fetch_ohlc(ticker: str, timeout: float = 10.0):
             ticker=ticker
         )
         raise
-        
+
     except Exception as e:
         duration = time.time() - start
-        
+
         # Log error
         log_external_call(
             market_data_logger,
@@ -114,7 +114,7 @@ from app.observability.structured_logging import cognitive_logger, log_operation
 @router.post("/cognitive/enhance-decision")
 async def enhance_decision(request: DecisionRequest):
     """Enhance decision with market brain"""
-    
+
     with log_operation(
         cognitive_logger,
         "enhance_decision",
@@ -123,14 +123,14 @@ async def enhance_decision(request: DecisionRequest):
     ) as context:
         # Add dynamic context
         context["confidence_threshold"] = 0.7
-        
+
         # Execute enhancement
         result = await brain.enhance(request)
-        
+
         # Add result metrics to context
         context["confidence_score"] = result.confidence
         context["action"] = result.action
-        
+
         return result
 
 # Logs output:
@@ -147,9 +147,9 @@ import time
 @router.post("/learning/train")
 async def train_model(request: TrainingRequest):
     """Train model with timeout monitoring"""
-    
+
     start = time.time()
-    
+
     with log_operation(
         learning_logger,
         "train_model",
@@ -158,9 +158,9 @@ async def train_model(request: TrainingRequest):
     ):
         # Execute training
         result = await trainer.train(request)
-        
+
         duration = time.time() - start
-        
+
         # Check for slowdown
         log_slowdown(
             learning_logger,
@@ -170,7 +170,7 @@ async def train_model(request: TrainingRequest):
             theory_name=request.theory,
             epochs=request.epochs
         )
-        
+
         return result
 ```
 
@@ -184,7 +184,7 @@ from app.observability.structured_logging import paper_lab_logger, log_operation
 @router.post("/paper/trade")
 async def execute_paper_trade(request: TradeRequest):
     """Execute paper trade with logging"""
-    
+
     with log_operation(
         paper_lab_logger,
         "execute_trade",
@@ -195,14 +195,14 @@ async def execute_paper_trade(request: TradeRequest):
         context["side"] = request.side
         context["quantity"] = request.quantity
         context["order_type"] = request.order_type
-        
+
         # Execute trade
         result = await paper_engine.execute(request)
-        
+
         # Add execution details
         context["fill_price"] = result.fill_price
         context["status"] = result.status
-        
+
         return result
 
 # Logs output:
@@ -221,9 +221,9 @@ import time
 @router.post("/screener/scan")
 async def scan_market(request: ScanRequest):
     """Scan market with performance monitoring"""
-    
+
     start = time.time()
-    
+
     with log_operation(
         screener_logger,
         "market_scan",
@@ -231,13 +231,13 @@ async def scan_market(request: ScanRequest):
     ) as context:
         # Execute scan
         results = await screener.scan(request)
-        
+
         duration = time.time() - start
-        
+
         # Add scan metrics
         context["tickers_scanned"] = len(request.tickers)
         context["results_count"] = len(results)
-        
+
         # Check for slowdown
         if duration > 5.0:
             log_slowdown(
@@ -248,7 +248,7 @@ async def scan_market(request: ScanRequest):
                 tickers_scanned=len(request.tickers),
                 preset=request.preset
             )
-        
+
         return results
 ```
 
@@ -263,7 +263,7 @@ import time
 @router.post("/chat/completion")
 async def chat_completion(request: ChatRequest):
     """Chat completion with LLM call logging"""
-    
+
     with log_operation(
         chat_logger,
         "chat_completion",
@@ -273,14 +273,14 @@ async def chat_completion(request: ChatRequest):
         # Add request details
         context["message_count"] = len(request.messages)
         context["max_tokens"] = request.max_tokens
-        
+
         # Make LLM call with timeout logging
         start = time.time()
-        
+
         try:
             response = await llm_client.complete(request, timeout=60.0)
             duration = time.time() - start
-            
+
             # Log external LLM call
             log_external_call(
                 chat_logger,
@@ -292,16 +292,16 @@ async def chat_completion(request: ChatRequest):
                 model=request.model,
                 tokens_used=response.usage.total_tokens
             )
-            
+
             # Add response details to operation context
             context["tokens_used"] = response.usage.total_tokens
             context["finish_reason"] = response.finish_reason
-            
+
             return response
-            
+
         except asyncio.TimeoutError:
             duration = time.time() - start
-            
+
             log_external_call(
                 chat_logger,
                 provider=request.provider,
@@ -332,16 +332,16 @@ news_logger = get_structured_logger("news")
 
 async def fetch_rss_feed(url: str):
     """Fetch RSS feed with timeout logging"""
-    
+
     start = time.time()
-    
+
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "ziggy-rss/1.0"})
-        
+
         with urllib.request.urlopen(req, timeout=8.0) as resp:
             data = resp.read()
             duration = time.time() - start
-            
+
             log_external_call(
                 news_logger,
                 provider="rss_feed",
@@ -352,13 +352,13 @@ async def fetch_rss_feed(url: str):
                 url=url,
                 bytes_received=len(data)
             )
-            
+
             return data
-            
+
     except urllib.error.URLError as e:
         if "timeout" in str(e).lower():
             duration = time.time() - start
-            
+
             log_external_call(
                 news_logger,
                 provider="rss_feed",
@@ -381,7 +381,7 @@ from app.observability.structured_logging import signals_logger, log_operation
 @router.post("/signals/generate")
 async def generate_signal(request: SignalRequest):
     """Generate trading signal with logging"""
-    
+
     with log_operation(
         signals_logger,
         "generate_signal",
@@ -390,12 +390,12 @@ async def generate_signal(request: SignalRequest):
     ) as context:
         # Generate signal
         signal = await signal_generator.generate(request)
-        
+
         # Add signal details
         context["signal_type"] = signal.type
         context["strength"] = signal.strength
         context["confidence"] = signal.confidence
-        
+
         return signal
 ```
 
@@ -409,7 +409,7 @@ from app.observability.structured_logging import trading_logger, log_operation
 @router.post("/trade/execute")
 async def execute_trade(request: TradeRequest):
     """Execute trade with automatic error logging"""
-    
+
     try:
         with log_operation(
             trading_logger,
@@ -420,7 +420,7 @@ async def execute_trade(request: TradeRequest):
             # This will automatically log errors with full context
             result = await broker.execute(request)
             return result
-            
+
     except Exception as e:
         # Error is already logged by log_operation context manager
         # Just handle the error appropriately
@@ -546,6 +546,7 @@ if duration > threshold:
 ## Summary
 
 Use structured logging to:
+
 - ✅ Consistent log format across all subsystems
 - ✅ Automatic duration tracking
 - ✅ Error capture with full context

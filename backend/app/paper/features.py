@@ -75,7 +75,9 @@ class RollingWindow:
         if len(symbol_list) > self.max_size:
             symbol_list.pop(0)
 
-    def get_symbol_data(self, symbol: str, lookback: int | None = None) -> list[PriceData]:
+    def get_symbol_data(
+        self, symbol: str, lookback: int | None = None
+    ) -> list[PriceData]:
         """Get recent data for a symbol."""
         if symbol not in self.symbol_data:
             return []
@@ -206,7 +208,9 @@ class FeatureComputer:
 
         # Stochastic
         if len(data) >= 14:
-            indicators.stochastic_k, indicators.stochastic_d = self._compute_stochastic(data[-14:])
+            indicators.stochastic_k, indicators.stochastic_d = self._compute_stochastic(
+                data[-14:]
+            )
 
         return indicators
 
@@ -300,7 +304,9 @@ class FeatureComputer:
         if highest_high == lowest_low:
             k_percent = 50.0
         else:
-            k_percent = ((current_close - lowest_low) / (highest_high - lowest_low)) * 100
+            k_percent = (
+                (current_close - lowest_low) / (highest_high - lowest_low)
+            ) * 100
 
         # Simplified %D (usually 3-period SMA of %K)
         d_percent = k_percent  # Would normally be smoothed
@@ -321,7 +327,9 @@ class FeatureComputer:
         if not recent_returns:
             return "normal"
 
-        volatility = self._compute_std_dev(recent_returns) * math.sqrt(252)  # Annualized
+        volatility = self._compute_std_dev(recent_returns) * math.sqrt(
+            252
+        )  # Annualized
 
         # Simple thresholds (would be more sophisticated in practice)
         if volatility > 0.3:  # 30% annualized
@@ -331,7 +339,9 @@ class FeatureComputer:
         else:
             return "normal"
 
-    def _classify_trend_regime(self, data: list[PriceData], indicators: TechnicalIndicators) -> str:
+    def _classify_trend_regime(
+        self, data: list[PriceData], indicators: TechnicalIndicators
+    ) -> str:
         """Classify current trend regime."""
         if len(data) < 20:
             return "sideways"

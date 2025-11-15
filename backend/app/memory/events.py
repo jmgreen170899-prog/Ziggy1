@@ -38,7 +38,11 @@ def _get_jsonl_path() -> str:
     Returns:
         Path to the JSONL events file
     """
-    return os.getenv("EVENT_STORE_PATH") or os.getenv("MEMORY_PATH") or "data/memory/events.jsonl"
+    return (
+        os.getenv("EVENT_STORE_PATH")
+        or os.getenv("MEMORY_PATH")
+        or "data/memory/events.jsonl"
+    )
 
 
 # Thread-local storage for SQLite connections
@@ -192,14 +196,19 @@ def append_event(payload: dict[str, Any]) -> str:
 
             # Emit telemetry for single write operations (periodically to avoid overhead)
             try:
-                if int(_metrics.get("writes_total", 0)) % 10 == 0:  # Sample every 10th write
+                if (
+                    int(_metrics.get("writes_total", 0)) % 10 == 0
+                ):  # Sample every 10th write
                     from app.services.telemetry import emit_custom_metric
 
                     emit_custom_metric(
                         "event_store_write_latency_ms",
                         latency_ms,
                         tags={"backend": MODE},
-                        metadata={"component": "event_store", "operation": "append_event"},
+                        metadata={
+                            "component": "event_store",
+                            "operation": "append_event",
+                        },
                     )
             except ImportError:
                 pass
@@ -261,8 +270,12 @@ def write_batch(events: list[dict[str, Any]]) -> list[str]:
                 os.fsync(f.fileno())
 
             _metrics["writes_total"] = int(_metrics.get("writes_total", 0)) + batch_size
-            _metrics["batch_writes_total"] = int(_metrics.get("batch_writes_total", 0)) + 1
-            _metrics["batch_events_total"] = int(_metrics.get("batch_events_total", 0)) + batch_size
+            _metrics["batch_writes_total"] = (
+                int(_metrics.get("batch_writes_total", 0)) + 1
+            )
+            _metrics["batch_events_total"] = (
+                int(_metrics.get("batch_events_total", 0)) + batch_size
+            )
 
         elif MODE == "SQLITE":
             conn = _get_sqlite_conn()
@@ -297,8 +310,12 @@ def write_batch(events: list[dict[str, Any]]) -> list[str]:
             conn.commit()
 
             _metrics["writes_total"] = int(_metrics.get("writes_total", 0)) + batch_size
-            _metrics["batch_writes_total"] = int(_metrics.get("batch_writes_total", 0)) + 1
-            _metrics["batch_events_total"] = int(_metrics.get("batch_events_total", 0)) + batch_size
+            _metrics["batch_writes_total"] = (
+                int(_metrics.get("batch_writes_total", 0)) + 1
+            )
+            _metrics["batch_events_total"] = (
+                int(_metrics.get("batch_events_total", 0)) + batch_size
+            )
 
         else:
             raise ValueError(f"Unsupported MEMORY_MODE: {MODE}")
@@ -554,7 +571,12 @@ def build_durable_event(
     Returns:
         Properly structured event dictionary with brain-first fields
     """
-    event = {"ts": _now_iso(), "ticker": ticker, "features_v": features_v, **extra_fields}
+    event = {
+        "ts": _now_iso(),
+        "ticker": ticker,
+        "features_v": features_v,
+        **extra_fields,
+    }
 
     # Add optional fields if provided
     if regime is not None:

@@ -18,6 +18,7 @@ The mobile API layer has been fully implemented and tested. It provides:
 - **Working Test Suite** that validates all endpoints
 
 **Test Results:**
+
 ```
 ✅ All 11 test cases passed
 ✅ Health check working
@@ -93,6 +94,7 @@ The mobile API layer has been fully implemented and tested. It provides:
 **Goal:** Understand what has been built and how to proceed
 
 **Tasks:**
+
 1. ✅ Review this Getting Started guide
 2. ✅ Read the [Mobile API Guide](MOBILE_API_GUIDE.md) - 15 minutes
 3. ✅ Read the [Android Development Guide](ANDROID_DEVELOPMENT_GUIDE.md) - 30 minutes
@@ -108,20 +110,22 @@ The mobile API layer has been fully implemented and tested. It provides:
 **Goal:** Connect mobile API to real ZiggyAI services
 
 **Current State:**
+
 - Mobile API routes exist with mock data
 - Authentication is stubbed out
 - All endpoints return sample responses
 
 **Tasks:**
+
 1. **Connect Market Data** (2-3 days)
    - Import existing market data services
    - Replace mock responses with real data
    - Test with actual stock symbols
-   
+
    ```python
    # In routes_mobile.py, replace mock data:
    from app.services.market import MarketDataService
-   
+
    @router.get("/mobile/market/snapshot")
    async def get_market_snapshot(symbols: str):
        service = MarketDataService()
@@ -134,11 +138,11 @@ The mobile API layer has been fully implemented and tested. It provides:
    - Create user authentication against database
    - Implement token refresh mechanism
    - Add proper authorization checks
-   
+
    ```python
    from jose import jwt
    from passlib.context import CryptContext
-   
+
    # Configure in routes_mobile.py
    async def authenticate_user(username: str, password: str):
        user = await get_user_from_db(username)
@@ -167,6 +171,7 @@ The mobile API layer has been fully implemented and tested. It provides:
    - Add cache invalidation logic
 
 **Testing:**
+
 ```bash
 # After each integration, test the endpoint
 cd mobile
@@ -184,6 +189,7 @@ python test_mobile_api.py  # Update tests as needed
 #### Week 1: Project Setup & Authentication
 
 **Tasks:**
+
 1. **Create Android Project** (Day 1)
    - Open Android Studio
    - Create new project with Kotlin + Compose
@@ -217,6 +223,7 @@ python test_mobile_api.py  # Update tests as needed
 #### Week 2: Core Features - Market & Dashboard
 
 **Tasks:**
+
 1. **Build Dashboard Screen** (Day 1-2)
    - Create dashboard layout
    - Show portfolio summary
@@ -244,6 +251,7 @@ python test_mobile_api.py  # Update tests as needed
 #### Week 3: Advanced Features
 
 **Tasks:**
+
 1. **Build Signals Screen** (Day 1-2)
    - Display trading signals
    - Show confidence scores
@@ -271,6 +279,7 @@ python test_mobile_api.py  # Update tests as needed
 #### Week 4: Polish & Testing
 
 **Tasks:**
+
 1. **Background Sync** (Day 1)
    - Implement WorkManager
    - Set up periodic sync
@@ -304,6 +313,7 @@ python test_mobile_api.py  # Update tests as needed
 **Goal:** Deploy app to production
 
 **Tasks:**
+
 1. **Beta Testing** (Week 1)
    - Set up internal testing track
    - Recruit beta testers
@@ -335,12 +345,14 @@ python test_mobile_api.py  # Update tests as needed
 ## Quick Start Commands
 
 ### Test the Mobile API
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI/mobile
 python test_mobile_api.py
 ```
 
 ### Start Development Server
+
 ```bash
 cd backend
 python -m uvicorn app.main:app --reload --port 8000
@@ -348,6 +360,7 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 
 ### Create Android Project
+
 ```bash
 # Open Android Studio
 # File → New → New Project
@@ -356,6 +369,7 @@ python -m uvicorn app.main:app --reload --port 8000
 ```
 
 ### Test API from Command Line
+
 ```bash
 # Health check
 curl http://localhost:8000/mobile/health
@@ -373,6 +387,7 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 ## Development Tools
 
 ### Required Tools
+
 - **Python 3.11+** - For backend API
 - **Android Studio** - For Android development
 - **JDK 11+** - Java Development Kit
@@ -380,6 +395,7 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 - **Postman** or **curl** - API testing
 
 ### Recommended Tools
+
 - **VS Code** - For backend development
 - **Android Emulator** - For testing
 - **Charles Proxy** - For debugging network traffic
@@ -389,18 +405,21 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 ## Resources
 
 ### Documentation
+
 - **[Mobile API Guide](MOBILE_API_GUIDE.md)** - Complete API reference
 - **[Android Development Guide](ANDROID_DEVELOPMENT_GUIDE.md)** - Build the app
 - **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Deploy to production
 - **[Main README](../README.md)** - Project overview
 
 ### External Resources
+
 - **[FastAPI Docs](https://fastapi.tiangolo.com/)** - Backend framework
 - **[Android Developers](https://developer.android.com)** - Android platform
 - **[Jetpack Compose](https://developer.android.com/jetpack/compose)** - UI framework
 - **[Kotlin Docs](https://kotlinlang.org/docs/)** - Programming language
 
 ### Code Examples
+
 - All API endpoints have example requests/responses
 - Android guide includes complete code examples
 - Test suite demonstrates API usage
@@ -408,6 +427,7 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 ## Best Practices
 
 ### Mobile API Development
+
 1. ✅ Always test endpoints after changes
 2. ✅ Use efficient batch endpoints (e.g., `/sync`)
 3. ✅ Implement proper error handling
@@ -415,6 +435,7 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 5. ✅ Monitor API performance
 
 ### Android Development
+
 1. ✅ Follow Material Design guidelines
 2. ✅ Implement offline-first architecture
 3. ✅ Use Compose for UI
@@ -422,6 +443,7 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 5. ✅ Optimize battery usage
 
 ### Security
+
 1. ✅ Never commit API keys or secrets
 2. ✅ Use certificate pinning
 3. ✅ Implement proper authentication
@@ -431,20 +453,26 @@ curl "http://localhost:8000/mobile/market/snapshot?symbols=AAPL,GOOGL" \
 ## Common Issues & Solutions
 
 ### Issue: "Module not found" when testing API
+
 **Solution:** Make sure you're in the correct directory and Python path is set correctly
+
 ```bash
 cd /home/runner/work/ZiggyAI/ZiggyAI/mobile
 python test_mobile_api.py
 ```
 
 ### Issue: Cannot connect to API from Android
+
 **Solution:** Use `10.0.2.2` instead of `localhost` in Android emulator
+
 ```kotlin
 const val API_BASE_URL = "http://10.0.2.2:8000/mobile"
 ```
 
 ### Issue: Token expired errors
+
 **Solution:** Implement token refresh before expiration
+
 ```kotlin
 if (tokenExpiresIn < 5 * 60) {  // 5 minutes
     refreshToken()
@@ -452,7 +480,9 @@ if (tokenExpiresIn < 5 * 60) {  // 5 minutes
 ```
 
 ### Issue: App crashes on network error
+
 **Solution:** Always wrap API calls in try-catch
+
 ```kotlin
 try {
     val response = api.getQuotes()
@@ -465,24 +495,28 @@ try {
 ## Next Steps Based on Your Role
 
 ### If you're a Backend Developer:
+
 1. Start with Phase 2: Backend Integration
 2. Focus on connecting real data sources
 3. Implement JWT authentication
 4. Set up push notification service
 
 ### If you're an Android Developer:
+
 1. Review the Android Development Guide thoroughly
 2. Set up Android Studio project
 3. Start with authentication flow
 4. Build UI incrementally
 
 ### If you're a Full-Stack Developer:
+
 1. Start with backend integration (Phase 2)
 2. Test thoroughly with mobile API test suite
 3. Move to Android development (Phase 3)
 4. Iterate between backend and frontend as needed
 
 ### If you're a Project Manager:
+
 1. Use this guide to understand timeline
 2. Break down phases into sprints
 3. Set up testing program
@@ -491,13 +525,16 @@ try {
 ## Support & Help
 
 ### Getting Help
+
 - **Technical Issues:** Check documentation first
 - **Bug Reports:** Create GitHub issue
 - **Feature Requests:** Discuss in GitHub discussions
 - **General Questions:** See Resources section above
 
 ### Contributing
+
 We welcome contributions! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
@@ -509,6 +546,7 @@ We welcome contributions! Please:
 Track these metrics to measure progress:
 
 ### Backend API
+
 - [ ] All endpoints return real data
 - [ ] JWT authentication working
 - [ ] API response time < 200ms
@@ -516,6 +554,7 @@ Track these metrics to measure progress:
 - [ ] Push notifications working
 
 ### Android App
+
 - [ ] All screens implemented
 - [ ] Offline mode working
 - [ ] Background sync working

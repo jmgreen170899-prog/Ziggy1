@@ -165,7 +165,9 @@ class PaperEngine:
 
         # Reset statistics
         self.stats = RunStats()
-        self.theory_stats = {theory: self._init_theory_stats() for theory in params.theories}
+        self.theory_stats = {
+            theory: self._init_theory_stats() for theory in params.theories
+        }
 
         logger.info(
             "Starting paper trading run",
@@ -183,7 +185,9 @@ class PaperEngine:
             self.status = RunStatus.RUNNING
             await self._start_background_tasks()
 
-            logger.info("Paper trading run started successfully", extra={"run_id": self.run_id})
+            logger.info(
+                "Paper trading run started successfully", extra={"run_id": self.run_id}
+            )
 
             return self.run_id
 
@@ -191,7 +195,8 @@ class PaperEngine:
             self.status = RunStatus.ERROR
             self.stats.last_error = str(e)
             logger.error(
-                "Failed to start paper trading run", extra={"run_id": self.run_id, "error": str(e)}
+                "Failed to start paper trading run",
+                extra={"run_id": self.run_id, "error": str(e)},
             )
             raise
 
@@ -264,7 +269,12 @@ class PaperEngine:
     async def get_status(self) -> dict[str, Any]:
         """Get current engine status."""
         if self.params is None:
-            return {"status": self.status.value, "run_id": None, "uptime_mins": 0, "stats": {}}
+            return {
+                "status": self.status.value,
+                "run_id": None,
+                "uptime_mins": 0,
+                "stats": {},
+            }
 
         uptime_mins = 0
         if self.start_time:
@@ -339,7 +349,9 @@ class PaperEngine:
             while self.status == RunStatus.RUNNING:
                 try:
                     # Wait for signal with timeout
-                    signal = await asyncio.wait_for(self.signal_queue.get(), timeout=1.0)
+                    signal = await asyncio.wait_for(
+                        self.signal_queue.get(), timeout=1.0
+                    )
 
                     # Process signal
                     await self._handle_signal(signal)
@@ -402,7 +414,9 @@ class PaperEngine:
             while self.status == RunStatus.RUNNING:
                 try:
                     # Wait for trade request
-                    request = await asyncio.wait_for(self.trade_requests.get(), timeout=1.0)
+                    request = await asyncio.wait_for(
+                        self.trade_requests.get(), timeout=1.0
+                    )
 
                     # Check rate limit
                     if not await self._check_rate_limit():
@@ -666,7 +680,11 @@ class PaperEngine:
             pos_map = await self.broker.positions()
             for sym, pos in pos_map.items():
                 positions.append(
-                    {"symbol": sym, "qty": int(pos.qty), "avg_price": float(pos.avg_price)}
+                    {
+                        "symbol": sym,
+                        "qty": int(pos.qty),
+                        "avg_price": float(pos.avg_price),
+                    }
                 )
         except Exception:
             pass
@@ -679,7 +697,9 @@ class PaperEngine:
             equity_curve.append(
                 {
                     "ts": datetime.utcnow().isoformat(),
-                    "equity": float(self.broker.get_performance_summary().get("net_pnl", 0.0)),
+                    "equity": float(
+                        self.broker.get_performance_summary().get("net_pnl", 0.0)
+                    ),
                     "idx": 0,
                 }
             )
@@ -706,8 +726,12 @@ class PaperEngine:
             with contextlib.suppress(Exception):
                 # Attempt to coerce to RunParams if structure matches
                 self.params = RunParams(
-                    universe=params.get("universe", self.params.universe if self.params else []),
-                    theories=params.get("theories", self.params.theories if self.params else []),
+                    universe=params.get(
+                        "universe", self.params.universe if self.params else []
+                    ),
+                    theories=params.get(
+                        "theories", self.params.theories if self.params else []
+                    ),
                     horizons_mins=params.get("horizons_mins", [5, 15, 60]),
                     max_concurrency=params.get("max_concurrency", 64),
                     max_trades_per_minute=params.get("max_trades_per_minute", 600),

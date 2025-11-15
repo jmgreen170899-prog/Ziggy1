@@ -87,7 +87,9 @@ def get_learning_status():
     data_stats = logger.get_summary_stats(30)
 
     # Check if we have enough data for learning
-    completed_trades = (recent_data["realized_pnl"].notna()).sum() if not recent_data.empty else 0
+    completed_trades = (
+        (recent_data["realized_pnl"].notna()).sum() if not recent_data.empty else 0
+    )
 
     return {
         "system_ready": completed_trades >= learner.gates.min_trades,
@@ -95,7 +97,9 @@ def get_learning_status():
             "total_decisions": len(recent_data),
             "completed_trades": completed_trades,
             "data_window_days": 30,
-            "last_decision": recent_data["timestamp"].max() if not recent_data.empty else None,
+            "last_decision": (
+                recent_data["timestamp"].max() if not recent_data.empty else None
+            ),
         },
         "learning_config": {
             "data_window_days": learner.data_window_days,
@@ -138,7 +142,9 @@ def get_learning_data_summary(days: int = Query(90, ge=7, le=365)):
         },
         "symbols": df["ticker"].unique().tolist() if "ticker" in df.columns else [],
         "regimes": df["regime"].unique().tolist() if "regime" in df.columns else [],
-        "signal_types": df["signal_name"].unique().tolist() if "signal_name" in df.columns else [],
+        "signal_types": (
+            df["signal_name"].unique().tolist() if "signal_name" in df.columns else []
+        ),
     }
 
     if len(completed_df) > 0:
@@ -255,7 +261,9 @@ def get_latest_learning_result():
 
         return result_data
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to load learning result: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to load learning result: {e}"
+        )
 
 
 @router.get("/results/history", response_model=None)
@@ -348,7 +356,9 @@ def get_calibration_status():
     return {
         "calibrator_exists": calibrator_path.exists(),
         "calibrator_path": str(calibrator_path),
-        "last_modified": calibrator_path.stat().st_mtime if calibrator_path.exists() else None,
+        "last_modified": (
+            calibrator_path.stat().st_mtime if calibrator_path.exists() else None
+        ),
         "recommendation": (
             "Build calibrator" if not calibrator_path.exists() else "Calibrator ready"
         ),
@@ -399,7 +409,9 @@ def get_learning_health():
 
     # Check data availability
     recent_data = logger.load_window(7)  # Last week
-    completed_trades = (recent_data["realized_pnl"].notna()).sum() if not recent_data.empty else 0
+    completed_trades = (
+        (recent_data["realized_pnl"].notna()).sum() if not recent_data.empty else 0
+    )
 
     # Check calibrator
     from pathlib import Path
@@ -408,7 +420,9 @@ def get_learning_health():
 
     # Check recent learning activity
     result_files = list(learner.learning_dir.glob("learning_*.json"))
-    latest_learning = max([f.stat().st_mtime for f in result_files]) if result_files else 0
+    latest_learning = (
+        max([f.stat().st_mtime for f in result_files]) if result_files else 0
+    )
 
     health_score = 0
     issues = []
@@ -437,7 +451,11 @@ def get_learning_health():
     else:
         issues.append("No learning activity detected")
 
-    status = "healthy" if health_score >= 80 else "warning" if health_score >= 50 else "critical"
+    status = (
+        "healthy"
+        if health_score >= 80
+        else "warning" if health_score >= 50 else "critical"
+    )
 
     return {
         "status": status,

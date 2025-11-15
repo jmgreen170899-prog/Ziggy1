@@ -38,7 +38,9 @@ class HealthTracker:
 
     window: int = field(default_factory=lambda: HEALTH_WINDOW_SIZE)
     decay: float = field(default_factory=lambda: PROVIDER_HEALTH_DECAY)
-    events: deque[tuple[bool, int, bool]] = field(default_factory=lambda: deque(maxlen=200))
+    events: deque[tuple[bool, int, bool]] = field(
+        default_factory=lambda: deque(maxlen=200)
+    )
     last_success_ts: float | None = None
     consecutive_failures: int = 0
     _lock: Lock = field(default_factory=Lock)
@@ -78,18 +80,22 @@ class HealthTracker:
             recent_events = list(self.events)[-self.window :]
 
             # Success rate component
-            success_count = sum(1 for ok, _, contract_ok in recent_events if ok and contract_ok)
+            success_count = sum(
+                1 for ok, _, contract_ok in recent_events if ok and contract_ok
+            )
             success_rate = success_count / len(recent_events)
 
             # Latency penalty component
             latencies = [lat for _, lat, _ in recent_events]
             avg_latency = sum(latencies) / len(latencies)
-            latency_penalty = 1.0 / (1.0 + avg_latency / 1000.0)  # Penalty for high latency
+            latency_penalty = 1.0 / (
+                1.0 + avg_latency / 1000.0
+            )  # Penalty for high latency
 
             # Contract compliance component
-            contract_rate = sum(1 for _, _, contract_ok in recent_events if contract_ok) / len(
-                recent_events
-            )
+            contract_rate = sum(
+                1 for _, _, contract_ok in recent_events if contract_ok
+            ) / len(recent_events)
 
             # Consecutive failure penalty
             failure_penalty = max(0.0, 1.0 - (self.consecutive_failures * 0.1))
@@ -121,7 +127,9 @@ class HealthTracker:
             recent_events = list(self.events)[-self.window :]
 
             # Success metrics
-            success_count = sum(1 for ok, _, contract_ok in recent_events if ok and contract_ok)
+            success_count = sum(
+                1 for ok, _, contract_ok in recent_events if ok and contract_ok
+            )
             success_rate = success_count / len(recent_events)
 
             # Latency metrics
@@ -131,9 +139,9 @@ class HealthTracker:
             p95_latency = latencies[p95_idx] if latencies else 0.0
 
             # Contract compliance
-            contract_rate = sum(1 for _, _, contract_ok in recent_events if contract_ok) / len(
-                recent_events
-            )
+            contract_rate = sum(
+                1 for _, _, contract_ok in recent_events if contract_ok
+            ) / len(recent_events)
 
             return {
                 "score": self.score(),
@@ -173,9 +181,13 @@ class ProviderHealthManager:
 
         # Log significant events
         if not ok:
-            logger.warning(f"Provider {provider} failed request (latency: {latency_ms}ms)")
+            logger.warning(
+                f"Provider {provider} failed request (latency: {latency_ms}ms)"
+            )
         elif latency_ms > PROVIDER_TIMEOUT_MS:
-            logger.warning(f"Provider {provider} slow response (latency: {latency_ms}ms)")
+            logger.warning(
+                f"Provider {provider} slow response (latency: {latency_ms}ms)"
+            )
         elif not contract_ok:
             logger.warning(f"Provider {provider} contract violation")
 

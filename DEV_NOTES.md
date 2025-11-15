@@ -11,6 +11,7 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 ## Pages Reviewed
 
 ### Core Application Pages
+
 1. **Dashboard** (`/`) - Home/Landing page
 2. **Market Overview** (`/market`) - Real-time market data and analysis
 3. **News** (`/news`) - Financial news with AI sentiment analysis
@@ -21,6 +22,7 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 8. **Paper Trading** (`/paper-trading`) - Admin-only autonomous trading lab
 
 ### Additional Pages Identified
+
 - `/crypto` - Cryptocurrency tracking
 - `/live` - Live data streaming
 - `/predictions` - AI predictions
@@ -33,7 +35,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 ### Layout Components
 
 #### 1. Root Layout (`app/layout.tsx`)
+
 ✅ **Structure:**
+
 - Uses Inter font from Google Fonts
 - Implements ThemeProvider for dark mode
 - Includes ErrorBoundary for error handling
@@ -44,7 +48,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 - Has skip link for accessibility
 
 #### 2. PageLayout Component (`components/layout/PageLayout.tsx`)
+
 ✅ **Features:**
+
 - Theme-aware gradient headers
 - Breadcrumb support
 - Subtitle and action buttons
@@ -53,7 +59,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 - Includes ThemedCard, ThemedButton, and StatusIndicator subcomponents
 
 #### 3. Sidebar Component (`components/ui/Sidebar.tsx`)
+
 ✅ **Features:**
+
 - Responsive design (collapsible on desktop, overlay on mobile)
 - Role-based navigation (admin items conditional)
 - Keyboard accessibility with focus trap on mobile
@@ -66,7 +74,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 ### Core UI Components
 
 #### Card System
+
 ✅ **Consistent Implementation:**
+
 - Base Card component with rounded-xl borders
 - Backdrop blur and shadow effects
 - CardHeader, CardTitle, CardDescription, CardContent, CardFooter subcomponents
@@ -74,7 +84,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 - Hover effects (shadow-xl on hover)
 
 #### Button System
+
 ✅ **Variants:**
+
 - Primary: Gradient blue-to-purple
 - Secondary: Gray with hover effects
 - Outline: Border-only with hover fill
@@ -87,7 +99,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
   - Consistent border-radius (rounded-xl)
 
 #### Loading States
+
 ✅ **Components:**
+
 - LoadingSpinner: Animated spinner with size variants
 - LoadingState: Spinner + message + bouncing dots
 - Skeleton: Placeholder content (text, circular, rectangular)
@@ -96,7 +110,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 - DataLoading: Wrapper component for loading/error/empty states
 
 #### Empty States
+
 ✅ **Implementation:**
+
 - EmptyState component with:
   - Icon/emoji support
   - Title and description
@@ -105,7 +121,9 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
   - Grayscale to color hover transition
 
 #### Error States
+
 ✅ **Pattern:**
+
 - ErrorBoundary wrapper on all major pages
 - User-friendly error messages (no stack traces)
 - Retry action buttons
@@ -115,6 +133,7 @@ Completed a comprehensive visual/UX sanity pass on the ZiggyAI frontend applicat
 ### Theme System (`styles/themes.ts`)
 
 ✅ **Unified Theme Architecture:**
+
 - 7 page themes with consistent structure:
   - Primary/secondary gradient colors
   - Accent colors
@@ -249,6 +268,7 @@ Created `tests/ui_visual_sanity.spec.ts` with comprehensive test coverage:
 ### Key Differences from Existing Crawler
 
 The existing `scripts/ui_audit.spec.ts` is an **operational health checker** that:
+
 - Captures screenshots for each route
 - Counts UI elements (cards, tables)
 - Detects data issues (NaN, Infinity)
@@ -256,6 +276,7 @@ The existing `scripts/ui_audit.spec.ts` is an **operational health checker** tha
 - Generates JSON audit reports
 
 The new `tests/ui_visual_sanity.spec.ts` is a **visual consistency validator** that:
+
 - Checks structural correctness
 - Validates state handling (loading/error/empty)
 - Ensures component consistency
@@ -269,6 +290,7 @@ The new `tests/ui_visual_sanity.spec.ts` is a **visual consistency validator** t
 ### None Required ✨
 
 After thorough review, no code changes were necessary. The codebase demonstrates:
+
 - Excellent visual consistency
 - Proper loading/error/empty state handling
 - Well-structured component architecture
@@ -373,6 +395,7 @@ export default function Page() {
 ```
 
 This pattern ensures:
+
 - Consistent authentication checks
 - Proper error boundaries
 - Themed headers

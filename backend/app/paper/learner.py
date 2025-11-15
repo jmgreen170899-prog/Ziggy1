@@ -212,7 +212,9 @@ class OnlineLearner:
         # Initialize model
         self.model = self._create_model()
         self.scaler = (
-            StandardScaler() if (self.backend == "sklearn" and SKLEARN_AVAILABLE) else None
+            StandardScaler()
+            if (self.backend == "sklearn" and SKLEARN_AVAILABLE)
+            else None
         )
         self.is_fitted = False
 
@@ -228,7 +230,11 @@ class OnlineLearner:
 
         logger.info(
             "OnlineLearner initialized",
-            extra={"task_type": task_type, "backend": self.backend, "feature_dim": feature_dim},
+            extra={
+                "task_type": task_type,
+                "backend": self.backend,
+                "feature_dim": feature_dim,
+            },
         )
 
     def _select_backend(self, backend: str) -> str:
@@ -294,7 +300,9 @@ class OnlineLearner:
                 import torch.nn as _nn  # type: ignore
             except Exception as e:
                 raise ImportError("PyTorch not available") from e
-            layers.extend([_nn.Linear(input_dim, hidden_dim), _nn.ReLU(), _nn.Dropout(0.2)])
+            layers.extend(
+                [_nn.Linear(input_dim, hidden_dim), _nn.ReLU(), _nn.Dropout(0.2)]
+            )
             input_dim = hidden_dim
 
         # Output layer
@@ -374,7 +382,9 @@ class OnlineLearner:
         if self.task_type == "classification":
             classes = np.array([0, 1])  # Binary classification
             model_any: Any = self.model
-            model_any.partial_fit(X_scaled, y, classes=classes, sample_weight=sample_weight)
+            model_any.partial_fit(
+                X_scaled, y, classes=classes, sample_weight=sample_weight
+            )
         else:
             model_any: Any = self.model
             model_any.partial_fit(X_scaled, y, sample_weight=sample_weight)
@@ -385,7 +395,9 @@ class OnlineLearner:
 
         if self.task_type == "classification":
             assert accuracy_score is not None
-            accuracy = float(accuracy_score(y, predictions, sample_weight=sample_weight))
+            accuracy = float(
+                accuracy_score(y, predictions, sample_weight=sample_weight)
+            )
             self.training_metrics["accuracy"].append(accuracy)
             return {"accuracy": accuracy}
         else:
@@ -531,7 +543,9 @@ class OnlineLearner:
                 predictions = (probabilities > 0.5).astype(int).flatten()
                 confidence = np.maximum(probabilities, 1 - probabilities).flatten()
                 # Convert to two-class format
-                prob_array = np.column_stack([1 - probabilities.flatten(), probabilities.flatten()])
+                prob_array = np.column_stack(
+                    [1 - probabilities.flatten(), probabilities.flatten()]
+                )
             else:
                 predictions = outputs.numpy().flatten()
                 probabilities = None
@@ -583,7 +597,9 @@ class OnlineLearner:
                 if self.scaler is not None:
                     x_scaled = self.scaler.transform(x.reshape(1, -1)).flatten()
                     feature_contributions = feature_importance * x_scaled
-                    explanation["feature_contributions"] = feature_contributions.tolist()
+                    explanation["feature_contributions"] = (
+                        feature_contributions.tolist()
+                    )
 
         elif self.backend == "simple":
             # Use model weights
@@ -623,7 +639,11 @@ class OnlineLearner:
             model_data["torch_model_path"] = str(filepath.with_suffix(".pt"))
         else:  # simple
             model_data["simple_model"] = {
-                "weights": self.model.weights.tolist() if self.model.weights is not None else None,
+                "weights": (
+                    self.model.weights.tolist()
+                    if self.model.weights is not None
+                    else None
+                ),
                 "bias": self.model.bias,
                 "feature_means": (
                     self.model.feature_means.tolist()
@@ -676,10 +696,14 @@ class OnlineLearner:
             )
             self.model.bias = simple_data["bias"]
             self.model.feature_means = (
-                np.array(simple_data["feature_means"]) if simple_data["feature_means"] else None
+                np.array(simple_data["feature_means"])
+                if simple_data["feature_means"]
+                else None
             )
             self.model.feature_stds = (
-                np.array(simple_data["feature_stds"]) if simple_data["feature_stds"] else None
+                np.array(simple_data["feature_stds"])
+                if simple_data["feature_stds"]
+                else None
             )
             self.model.n_samples = simple_data["n_samples"]
 

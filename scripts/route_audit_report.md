@@ -3,6 +3,7 @@
 Generated: January 2025
 
 ## Summary
+
 - **Static Routes Found**: 179 routes defined in code
 - **Runtime Routes Available**: 1 route actually registered
 - **Missing Routes**: 178 routes (99.4% unavailable)
@@ -10,18 +11,21 @@ Generated: January 2025
 ## Analysis
 
 ### Available Routes (Runtime)
+
 These routes are properly registered and available:
 
-| Method | Path | Source |
-|--------|------|---------|
-| GET | `/health` | `app\main.py:43` |
+| Method | Path      | Source           |
+| ------ | --------- | ---------------- |
+| GET    | `/health` | `app\main.py:43` |
 
 ### Unavailable Routes (Static Definitions Only)
+
 The following routes are defined in code but **NOT registered at runtime**:
 
 #### Core API Routes (`app\api\routes.py`)
+
 - `GET /core/health` (line 90) - **UNAVAILABLE**
-- `POST /query` (line 153) - **UNAVAILABLE**  
+- `POST /query` (line 153) - **UNAVAILABLE**
 - `POST /ingest/web` (line 185) - **UNAVAILABLE**
 - `POST /ingest/pdf` (line 196) - **UNAVAILABLE**
 - `POST /reset` (line 221) - **UNAVAILABLE**
@@ -33,6 +37,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /browse` (line 445) - **UNAVAILABLE**
 
 #### Alert Routes (`app\api\routes_alerts.py`)
+
 - `GET /alerts/status` (line 174) - **UNAVAILABLE**
 - `POST /alerts/start` (line 206) - **UNAVAILABLE**
 - `POST /alerts/stop` (line 236) - **UNAVAILABLE**
@@ -48,11 +53,13 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `PUT /alerts/{alert_id}/disable` (line 569) - **UNAVAILABLE**
 
 #### Chat Routes (`app\api\routes_chat.py`)
+
 - `POST /complete` (line 109) - **UNAVAILABLE**
 - `GET /health` (line 176) - **UNAVAILABLE**
 - `GET /config` (line 213) - **UNAVAILABLE**
 
 #### Cognitive Routes (`app\api\routes_cognitive.py`)
+
 - `GET /status` (line 75) - **UNAVAILABLE**
 - `POST /enhance-decision` (line 93) - **UNAVAILABLE**
 - `POST /record-outcome` (line 125) - **UNAVAILABLE**
@@ -62,10 +69,12 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /health` (line 228) - **UNAVAILABLE**
 
 #### Crypto Routes (`app\api\routes_crypto.py`)
+
 - `GET /crypto/quotes` (line 63) - **UNAVAILABLE**
 - `GET /crypto/ohlc` (line 165) - **UNAVAILABLE**
 
 #### Development Routes (`app\api\routes_dev.py`)
+
 - `GET /user` (line 40) - **UNAVAILABLE**
 - `POST /portfolio/setup` (line 71) - **UNAVAILABLE**
 - `GET /portfolio/status` (line 97) - **UNAVAILABLE**
@@ -77,11 +86,13 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /state/summary` (line 237) - **UNAVAILABLE**
 
 #### Explain Routes (`app\api\routes_explain.py`)
+
 - `GET /explain` (line 372) - **UNAVAILABLE**
 - `POST /explain/feedback` (line 394) - **UNAVAILABLE**
 - `GET /explain/health` (line 422) - **UNAVAILABLE**
 
 #### Feedback Routes (`app\api\routes_feedback.py`)
+
 - `POST /decision` (line 66) - **UNAVAILABLE**
 - `GET /event/{event_id}` (line 125) - **UNAVAILABLE**
 - `GET /stats` (line 195) - **UNAVAILABLE**
@@ -89,6 +100,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /health` (line 375) - **UNAVAILABLE**
 
 #### Integration Routes (`app\api\routes_integration.py`)
+
 - `GET /health` (line 110) - **UNAVAILABLE**
 - `POST /decision` (line 129) - **UNAVAILABLE**
 - `POST /enhance` (line 156) - **UNAVAILABLE**
@@ -100,6 +112,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `POST /test/decision` (line 352) - **UNAVAILABLE**
 
 #### Learning Routes (`app\api\routes_learning.py`)
+
 - `GET /learning/status` (line 79) - **UNAVAILABLE**
 - `GET /learning/data/summary` (line 111) - **UNAVAILABLE**
 - `GET /learning/rules/current` (line 155) - **UNAVAILABLE**
@@ -115,12 +128,14 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /learning/health` (line 394) - **UNAVAILABLE**
 
 #### Market Routes (`app\api\routes_market.py`)
+
 - `GET /market/overview` (line 86) - **UNAVAILABLE**
 - `GET /market/breadth` (line 235) - **UNAVAILABLE**
 - `GET /market/risk-lite` (line 506) - **UNAVAILABLE**
 - `GET /market/macro/history` (line 704) - **UNAVAILABLE**
 
 #### Market Calendar Routes (`app\api\routes_market_calendar.py`)
+
 - `GET /calendar` (line 31) - **UNAVAILABLE**
 - `GET /holidays` (line 51) - **UNAVAILABLE**
 - `GET /earnings` (line 64) - **UNAVAILABLE**
@@ -130,6 +145,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /fred/{series_id}` (line 132) - **UNAVAILABLE**
 
 #### News Routes (`app\api\routes_news.py`)
+
 - `GET /news/sources` (line 324) - **UNAVAILABLE**
 - `GET /news/headlines` (line 354) - **UNAVAILABLE**
 - `GET /news/filings` (line 647) - **UNAVAILABLE**
@@ -139,6 +155,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /news/ping` (line 1028) - **UNAVAILABLE**
 
 #### Paper Trading Routes (`app\api\routes_paper.py`)
+
 - `POST /runs` (line 187) - **UNAVAILABLE**
 - `GET /runs` (line 221) - **UNAVAILABLE**
 - `GET /runs/{run_id}` (line 245) - **UNAVAILABLE**
@@ -152,6 +169,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /health` (line 540) - **UNAVAILABLE**
 
 #### Performance Routes (`app\api\routes_performance.py`)
+
 - `GET /metrics` (line 26) - **UNAVAILABLE**
 - `GET /metrics/summary` (line 54) - **UNAVAILABLE**
 - `POST /metrics/clear` (line 76) - **UNAVAILABLE**
@@ -162,10 +180,12 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /health` (line 199) - **UNAVAILABLE**
 
 #### Risk Routes (`app\api\routes_risk_lite.py`)
+
 - `GET /market-risk-lite` (line 51) - **UNAVAILABLE**
 - `GET /market/risk-lite` (line 90) - **UNAVAILABLE**
 
 #### Screener Routes (`app\api\routes_screener.py`)
+
 - `POST /scan` (line 65) - **UNAVAILABLE**
 - `GET /universe/sp500` (line 191) - **UNAVAILABLE**
 - `GET /universe/nasdaq100` (line 256) - **UNAVAILABLE**
@@ -175,6 +195,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /health` (line 448) - **UNAVAILABLE**
 
 #### Signals Routes (`app\api\routes_signals.py`)
+
 - `GET /features/{ticker}` (line 195) - **UNAVAILABLE**
 - `POST /features/bulk` (line 216) - **UNAVAILABLE**
 - `GET /regime` (line 254) - **UNAVAILABLE**
@@ -198,11 +219,13 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `GET /cognitive/health` (line 1211) - **UNAVAILABLE**
 
 #### Trace Routes (`app\api\routes_trace.py`)
+
 - `GET /trace` (line 230) - **UNAVAILABLE**
 - `GET /trace/list` (line 253) - **UNAVAILABLE**
 - `GET /trace/health` (line 296) - **UNAVAILABLE**
 
 #### Trading Routes (`app\api\routes_trading.py`)
+
 - `GET /trade/health` (line 196) - **UNAVAILABLE**
 - `GET /trade/screener` (line 243) - **UNAVAILABLE**
 - `POST /trade/explain` (line 275) - **UNAVAILABLE**
@@ -230,6 +253,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `POST /trade/mode/{mode}` (line 2071) - **UNAVAILABLE**
 
 #### Trading Module Routes (`app\trading\router.py`)
+
 - `POST /market` (line 219) - **UNAVAILABLE**
 - `POST /bracket` (line 367) - **UNAVAILABLE**
 - `GET /health` (line 415) - **UNAVAILABLE**
@@ -238,6 +262,7 @@ The following routes are defined in code but **NOT registered at runtime**:
 - `POST /resume` (line 584) - **UNAVAILABLE**
 
 #### Web Browse Routes (`app\web\browse_router.py`)
+
 - `GET /web/browse/search` (line 19) - **UNAVAILABLE**
 - `GET /web/browse` (line 88) - **UNAVAILABLE**
 
@@ -248,6 +273,7 @@ The critical issue is that **NO router modules are being included** in the main 
 ### Missing Router Registrations
 
 The application should include routers like:
+
 ```python
 app.include_router(routes.router, prefix="/api")
 app.include_router(routes_alerts.router, prefix="/api")
@@ -256,6 +282,7 @@ app.include_router(routes_chat.router, prefix="/api")
 ```
 
 ### Impact Assessment
+
 - **Severity**: CRITICAL - 99.4% of intended functionality unavailable
 - **User Impact**: Only health check works, all business logic endpoints missing
 - **Development Impact**: Extensive route definitions exist but are unused
@@ -270,8 +297,9 @@ app.include_router(routes_chat.router, prefix="/api")
 ## Files Requiring Router Registration
 
 The following router modules need to be included in `main.py`:
+
 - `app.api.routes`
-- `app.api.routes_alerts` 
+- `app.api.routes_alerts`
 - `app.api.routes_chat`
 - `app.api.routes_cognitive`
 - `app.api.routes_crypto`

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 /**
  * Journey configuration
@@ -24,104 +24,104 @@ export interface JourneyConfig {
  */
 export const journeyConfigs: Record<string, JourneyConfig> = {
   trader: {
-    id: 'trader',
-    name: 'Trader Journey',
-    title: '📈 Trader Journey',
-    description: 'Experience real-time market data, signals, and paper trading',
-    estimatedDuration: '5-7 minutes',
+    id: "trader",
+    name: "Trader Journey",
+    title: "📈 Trader Journey",
+    description: "Experience real-time market data, signals, and paper trading",
+    estimatedDuration: "5-7 minutes",
     steps: [
       {
-        id: 'select_ticker',
-        title: 'Select Ticker',
-        description: 'Search and choose a stock symbol to analyze',
+        id: "select_ticker",
+        title: "Select Ticker",
+        description: "Search and choose a stock symbol to analyze",
       },
       {
-        id: 'view_chart',
-        title: 'View Chart',
-        description: 'See live price chart with technical indicators',
+        id: "view_chart",
+        title: "View Chart",
+        description: "See live price chart with technical indicators",
       },
       {
-        id: 'analyze_signals',
-        title: 'Analyze Signals',
-        description: 'Review Market Brain insights and trading signals',
+        id: "analyze_signals",
+        title: "Analyze Signals",
+        description: "Review Market Brain insights and trading signals",
       },
       {
-        id: 'execute_trade',
-        title: 'Execute Paper Trade',
-        description: 'Place a simulated trade without real money',
+        id: "execute_trade",
+        title: "Execute Paper Trade",
+        description: "Place a simulated trade without real money",
       },
       {
-        id: 'monitor_portfolio',
-        title: 'Monitor Portfolio',
-        description: 'Track your paper trading positions and performance',
+        id: "monitor_portfolio",
+        title: "Monitor Portfolio",
+        description: "Track your paper trading positions and performance",
       },
     ],
   },
   analyst: {
-    id: 'analyst',
-    name: 'Analyst Journey',
-    title: '🔍 Analyst Journey',
-    description: 'Screen the market and discover trading opportunities',
-    estimatedDuration: '4-6 minutes',
+    id: "analyst",
+    name: "Analyst Journey",
+    title: "🔍 Analyst Journey",
+    description: "Screen the market and discover trading opportunities",
+    estimatedDuration: "4-6 minutes",
     steps: [
       {
-        id: 'open_screener',
-        title: 'Open Screener',
-        description: 'Access the market screening tool',
+        id: "open_screener",
+        title: "Open Screener",
+        description: "Access the market screening tool",
       },
       {
-        id: 'choose_preset',
-        title: 'Choose Preset',
-        description: 'Select momentum or mean reversion strategy',
+        id: "choose_preset",
+        title: "Choose Preset",
+        description: "Select momentum or mean reversion strategy",
       },
       {
-        id: 'run_scan',
-        title: 'Run Scan',
-        description: 'Execute screening query across the market',
+        id: "run_scan",
+        title: "Run Scan",
+        description: "Execute screening query across the market",
       },
       {
-        id: 'review_results',
-        title: 'Review Results',
-        description: 'Analyze sorted results with key metrics',
+        id: "review_results",
+        title: "Review Results",
+        description: "Analyze sorted results with key metrics",
       },
       {
-        id: 'drill_down',
-        title: 'Drill Down',
-        description: 'Explore detailed analysis for selected symbols',
+        id: "drill_down",
+        title: "Drill Down",
+        description: "Explore detailed analysis for selected symbols",
       },
     ],
   },
   research: {
-    id: 'research',
-    name: 'Research Journey',
-    title: '🤖 Research Journey',
-    description: 'Leverage AI for market insights and decision support',
-    estimatedDuration: '3-5 minutes',
+    id: "research",
+    name: "Research Journey",
+    title: "🤖 Research Journey",
+    description: "Leverage AI for market insights and decision support",
+    estimatedDuration: "3-5 minutes",
     steps: [
       {
-        id: 'open_chat',
-        title: 'Open Chat',
-        description: 'Access the AI-powered research assistant',
+        id: "open_chat",
+        title: "Open Chat",
+        description: "Access the AI-powered research assistant",
       },
       {
-        id: 'ask_question',
-        title: 'Ask Question',
-        description: 'Type a market or strategy question',
+        id: "ask_question",
+        title: "Ask Question",
+        description: "Type a market or strategy question",
       },
       {
-        id: 'review_response',
-        title: 'Review Response',
-        description: 'Read AI-generated insights and analysis',
+        id: "review_response",
+        title: "Review Response",
+        description: "Read AI-generated insights and analysis",
       },
       {
-        id: 'explore_cognitive',
-        title: 'Explore Cognitive',
-        description: 'Discover advanced cognitive features',
+        id: "explore_cognitive",
+        title: "Explore Cognitive",
+        description: "Discover advanced cognitive features",
       },
       {
-        id: 'validate_data',
-        title: 'Validate Data',
-        description: 'Cross-check insights with real market data',
+        id: "validate_data",
+        title: "Validate Data",
+        description: "Cross-check insights with real market data",
       },
     ],
   },
@@ -132,7 +132,7 @@ export const journeyConfigs: Record<string, JourneyConfig> = {
  */
 export function useJourney(journeyId: string) {
   const config = journeyConfigs[journeyId];
-  
+
   if (!config) {
     throw new Error(`Unknown journey: ${journeyId}`);
   }
@@ -156,12 +156,15 @@ export function useJourney(journeyId: string) {
     }
   }, [currentStep]);
 
-  const goToStep = useCallback((step: number) => {
-    if (step >= 1 && step <= totalSteps) {
-      setCurrentStep(step);
-      setCompleted(false);
-    }
-  }, [totalSteps]);
+  const goToStep = useCallback(
+    (step: number) => {
+      if (step >= 1 && step <= totalSteps) {
+        setCurrentStep(step);
+        setCompleted(false);
+      }
+    },
+    [totalSteps],
+  );
 
   const reset = useCallback(() => {
     setCurrentStep(1);
@@ -207,10 +210,10 @@ export function getJourneyById(id: string): JourneyConfig | null {
 export function trackJourneyCompletion(journeyId: string, stepId: string) {
   // In production, send to analytics service
   console.log(`Journey ${journeyId} - Step ${stepId} completed`);
-  
+
   // Store in localStorage for persistence
   const key = `journey_${journeyId}_progress`;
-  const progress = JSON.parse(localStorage.getItem(key) || '{}');
+  const progress = JSON.parse(localStorage.getItem(key) || "{}");
   progress[stepId] = {
     completed: true,
     timestamp: new Date().toISOString(),
@@ -223,7 +226,7 @@ export function trackJourneyCompletion(journeyId: string, stepId: string) {
  */
 export function getJourneyProgress(journeyId: string): Record<string, any> {
   const key = `journey_${journeyId}_progress`;
-  return JSON.parse(localStorage.getItem(key) || '{}');
+  return JSON.parse(localStorage.getItem(key) || "{}");
 }
 
 /**

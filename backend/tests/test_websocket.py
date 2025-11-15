@@ -16,7 +16,9 @@ async def test_websocket():
                 try:
                     message = await asyncio.wait_for(websocket.recv(), timeout=3.0)
                     data = json.loads(message)
-                    print(f"📊 Received: {data.get('type', 'unknown')} - {str(data)[:100]}...")
+                    print(
+                        f"📊 Received: {data.get('type', 'unknown')} - {str(data)[:100]}..."
+                    )
                 except TimeoutError:
                     print(f"⏰ Timeout {i + 1}/5")
                 except Exception as e:

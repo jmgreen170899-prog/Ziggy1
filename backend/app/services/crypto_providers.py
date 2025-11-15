@@ -38,7 +38,9 @@ class CryptoPolygon(CryptoProvider):
 
     def __init__(self):
         self.key = (os.getenv("POLYGON_API_KEY") or "").strip()
-        self.base = (os.getenv("POLYGON_BASE_URL") or "https://api.polygon.io").rstrip("/")
+        self.base = (os.getenv("POLYGON_BASE_URL") or "https://api.polygon.io").rstrip(
+            "/"
+        )
         self.http = httpx.AsyncClient(timeout=TIMEOUTS["http_client_default"])
 
     async def quotes(self, symbols: list[str]) -> dict[str, dict | None]:
@@ -71,7 +73,9 @@ class CryptoPolygon(CryptoProvider):
         return out
 
     async def bars(self, symbols: list[str], interval: str = "1m", minutes: int = 240):
-        gran = {"1m": ("1", "minute"), "5m": ("5", "minute")}.get(interval, ("1", "minute"))
+        gran = {"1m": ("1", "minute"), "5m": ("5", "minute")}.get(
+            interval, ("1", "minute")
+        )
         n = minutes
         end = dt.datetime.utcnow()
         start = end - dt.timedelta(minutes=n + 5)
@@ -101,7 +105,9 @@ class CryptoPolygon(CryptoProvider):
                         }
                     )
                 df = (
-                    pd.DataFrame(rows, columns=NORM_COLS).sort_values("Date").reset_index(drop=True)
+                    pd.DataFrame(rows, columns=NORM_COLS)
+                    .sort_values("Date")
+                    .reset_index(drop=True)
                 )
                 out[s] = df
             except Exception:

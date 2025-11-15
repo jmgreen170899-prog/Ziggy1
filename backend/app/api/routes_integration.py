@@ -83,7 +83,9 @@ class IntegratedDecisionResponse(BaseModel):
     risk_score: float
 
     @classmethod
-    def from_decision(cls, decision: "IntegratedDecision") -> "IntegratedDecisionResponse":
+    def from_decision(
+        cls, decision: "IntegratedDecision"
+    ) -> "IntegratedDecisionResponse":
         """Create response from IntegratedDecision object."""
         return cls(
             timestamp=decision.timestamp,
@@ -123,7 +125,9 @@ async def get_system_health():
         return {"status": "success", "data": health, "timestamp": time.time()}
     except Exception as e:
         logger.error(f"Failed to get system health: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get system health: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get system health: {e!s}"
+        )
 
 
 @router.post("/decision", response_model=IntegratedDecisionResponse)
@@ -142,7 +146,9 @@ async def make_decision(request: DecisionRequest):
 
     try:
         decision = make_intelligent_decision(
-            ticker=request.ticker, market_data=request.market_data, signal_data=request.signal_data
+            ticker=request.ticker,
+            market_data=request.market_data,
+            signal_data=request.signal_data,
         )
 
         response = IntegratedDecisionResponse.from_decision(decision)
@@ -203,7 +209,9 @@ async def get_market_context():
 
     except Exception as e:
         logger.error(f"Failed to get market context: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get market context: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get market context: {e!s}"
+        )
 
 
 @router.get("/rules/active", response_model=None)
@@ -225,7 +233,9 @@ async def get_active_rules():
 
     except Exception as e:
         logger.error(f"Failed to get active rules: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get active rules: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get active rules: {e!s}"
+        )
 
 
 @router.post("/calibration/apply", response_model=None)
@@ -248,13 +258,18 @@ async def apply_calibration(probabilities: list[float]):
 
         return {
             "status": "success",
-            "data": {"raw_probabilities": probabilities, "calibrated_probabilities": calibrated},
+            "data": {
+                "raw_probabilities": probabilities,
+                "calibrated_probabilities": calibrated,
+            },
             "timestamp": time.time(),
         }
 
     except Exception as e:
         logger.error(f"Failed to apply calibration: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to apply calibration: {e!s}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to apply calibration: {e!s}"
+        )
 
 
 @router.post("/outcome/update", response_model=None)
@@ -317,13 +332,15 @@ async def get_integration_status():
                     "integration_score": health["integration_score"],
                     "overall_status": health["overall_status"],
                     "capabilities": {
-                        "brain_intelligence": health["components"]["brain_intelligence"][
+                        "brain_intelligence": health["components"][
+                            "brain_intelligence"
+                        ]["available"],
+                        "learning_system": health["components"]["learning_system"][
                             "available"
                         ],
-                        "learning_system": health["components"]["learning_system"]["available"],
-                        "calibration_system": health["components"]["calibration_system"][
-                            "available"
-                        ],
+                        "calibration_system": health["components"][
+                            "calibration_system"
+                        ]["available"],
                         "integrated_decisions": True,
                         "data_enhancement": True,
                         "automatic_logging": True,
@@ -374,7 +391,9 @@ async def test_decision():
 
         if INTEGRATION_AVAILABLE and "make_intelligent_decision" in globals():
             decision = make_intelligent_decision(
-                ticker="TEST", market_data=test_market_data, signal_data=test_signal_data
+                ticker="TEST",
+                market_data=test_market_data,
+                signal_data=test_signal_data,
             )
 
             response = IntegratedDecisionResponse.from_decision(decision)

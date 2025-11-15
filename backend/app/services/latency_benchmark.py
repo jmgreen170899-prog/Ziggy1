@@ -89,7 +89,10 @@ class ComparisonResult:
         if self.baseline.throughput_ops_per_sec == 0:
             return 0.0
         return (
-            (self.optimized.throughput_ops_per_sec - self.baseline.throughput_ops_per_sec)
+            (
+                self.optimized.throughput_ops_per_sec
+                - self.baseline.throughput_ops_per_sec
+            )
             / self.baseline.throughput_ops_per_sec
             * 100
         )
@@ -126,10 +129,14 @@ class ComparisonResult:
             parts.append(f"Latency reduced by {self.latency_improvement_pct:.1f}%")
 
         if self.throughput_improvement_pct > 0:
-            parts.append(f"Throughput increased by {self.throughput_improvement_pct:.1f}%")
+            parts.append(
+                f"Throughput increased by {self.throughput_improvement_pct:.1f}%"
+            )
 
         if self.loop_lag_improvement_pct > 0:
-            parts.append(f"Event loop lag reduced by {self.loop_lag_improvement_pct:.1f}%")
+            parts.append(
+                f"Event loop lag reduced by {self.loop_lag_improvement_pct:.1f}%"
+            )
 
         return ". ".join(parts) if parts else "No significant improvements"
 
@@ -176,7 +183,9 @@ class LatencyBenchmark:
         # Start loop lag monitor if requested
         monitor_task = None
         if monitor_loop_lag:
-            monitor_task = asyncio.create_task(self._monitor_loop_lag(loop_lags, duration_sec=10))
+            monitor_task = asyncio.create_task(
+                self._monitor_loop_lag(loop_lags, duration_sec=10)
+            )
 
         # Run benchmark
         start_time = time.perf_counter()
@@ -238,20 +247,28 @@ class LatencyBenchmark:
             min_latency_ms=min(latencies),
             max_latency_ms=max(latencies),
             p50_latency_ms=latencies_sorted[len(latencies_sorted) // 2],
-            p95_latency_ms=latencies_sorted[int(len(latencies_sorted) * 0.95)]
-            if len(latencies_sorted) > 1
-            else latencies_sorted[0],
-            p99_latency_ms=latencies_sorted[int(len(latencies_sorted) * 0.99)]
-            if len(latencies_sorted) > 1
-            else latencies_sorted[0],
-            throughput_ops_per_sec=num_operations / (total_duration / 1000)
-            if total_duration > 0
-            else 0,
+            p95_latency_ms=(
+                latencies_sorted[int(len(latencies_sorted) * 0.95)]
+                if len(latencies_sorted) > 1
+                else latencies_sorted[0]
+            ),
+            p99_latency_ms=(
+                latencies_sorted[int(len(latencies_sorted) * 0.99)]
+                if len(latencies_sorted) > 1
+                else latencies_sorted[0]
+            ),
+            throughput_ops_per_sec=(
+                num_operations / (total_duration / 1000) if total_duration > 0 else 0
+            ),
             event_loop_lag_avg_ms=sum(loop_lags) / len(loop_lags) if loop_lags else 0,
-            event_loop_lag_p95_ms=sorted(loop_lags)[int(len(loop_lags) * 0.95)]
-            if len(loop_lags) > 1
-            else (loop_lags[0] if loop_lags else 0),
-            success_rate=(success_count / num_operations * 100) if num_operations > 0 else 0,
+            event_loop_lag_p95_ms=(
+                sorted(loop_lags)[int(len(loop_lags) * 0.95)]
+                if len(loop_lags) > 1
+                else (loop_lags[0] if loop_lags else 0)
+            ),
+            success_rate=(
+                (success_count / num_operations * 100) if num_operations > 0 else 0
+            ),
         )
 
         self.results.append(result)
@@ -319,7 +336,9 @@ class LatencyBenchmark:
             concurrent=True,
         )
 
-        comparison = ComparisonResult(baseline=baseline_result, optimized=optimized_result)
+        comparison = ComparisonResult(
+            baseline=baseline_result, optimized=optimized_result
+        )
 
         logger.info(
             f"Comparison complete: {description}",

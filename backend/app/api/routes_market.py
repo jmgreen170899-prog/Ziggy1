@@ -12,7 +12,10 @@ from app.services.provider_factory import get_price_provider
 
 # Market Brain Integration
 try:
-    from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+    from app.services.market_brain.simple_data_hub import (
+        DataSource,
+        enhance_market_data,
+    )
 
     BRAIN_AVAILABLE = True
     _enhance_market_data = enhance_market_data
@@ -211,7 +214,8 @@ async def market_overview(
     if debug_source:
         resp["source"] = {k: sources.get(k) for k in syms}
         resp["provider_chain"] = [
-            getattr(p, "name", p.__class__.__name__).lower() for p in getattr(mp, "providers", [])
+            getattr(p, "name", p.__class__.__name__).lower()
+            for p in getattr(mp, "providers", [])
         ]
 
     # Enhance with Market Brain Intelligence
@@ -260,7 +264,9 @@ async def market_breadth(
             _DEF = ["AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA"]
 
         tickers: list[str] = (
-            [t.strip().upper() for t in symbols.split(",") if t.strip()] if symbols else _DEF
+            [t.strip().upper() for t in symbols.split(",") if t.strip()]
+            if symbols
+            else _DEF
         )
 
         # Use provider factory (which defaults to yfinance for no-key usage)
@@ -445,7 +451,12 @@ def _risk_lite_payload() -> dict[str, Any]:
     for t in tickers_try:
         try:
             df = yf.download(
-                t, period="6mo", interval="1d", auto_adjust=False, progress=False, threads=False
+                t,
+                period="6mo",
+                interval="1d",
+                auto_adjust=False,
+                progress=False,
+                threads=False,
             )
             if isinstance(df, pd.DataFrame) and not df.empty and "Close" in df.columns:
                 s = pd.to_numeric(df["Close"], errors="coerce").dropna()
@@ -496,7 +507,9 @@ _risk_already_exposed = False
 try:
     from app.api import routes_trading as _rt  # type: ignore
 
-    if hasattr(_rt, "router") and _router_has_path(_rt.router, "/market/risk-lite", "GET"):
+    if hasattr(_rt, "router") and _router_has_path(
+        _rt.router, "/market/risk-lite", "GET"
+    ):
         _risk_already_exposed = True
 except Exception:
     _risk_already_exposed = False
@@ -525,7 +538,10 @@ if not _risk_already_exposed:
             last_ok = _CPC_STATE.get("last_ok")
             if last_ok:
                 payload = _add_block_meta(
-                    dict(last_ok), remaining, retry_until, str(_CPC_STATE.get("last_err", ""))
+                    dict(last_ok),
+                    remaining,
+                    retry_until,
+                    str(_CPC_STATE.get("last_err", "")),
                 )
                 # cache this blocked response briefly to avoid thrash
                 _CPC_CACHE["ts"] = now
@@ -533,7 +549,10 @@ if not _risk_already_exposed:
                 return payload
             # no last_ok: return a minimal blocked shape (non-breaking keys intact)
             minimal = _add_block_meta(
-                {"cpc": None}, remaining, retry_until, str(_CPC_STATE.get("last_err", ""))
+                {"cpc": None},
+                remaining,
+                retry_until,
+                str(_CPC_STATE.get("last_err", "")),
             )
             _CPC_CACHE["ts"] = now
             _CPC_CACHE["data"] = minimal
@@ -570,10 +589,14 @@ if not _risk_already_exposed:
 
             last_ok = _CPC_STATE.get("last_ok")
             if last_ok:
-                payload = _add_block_meta(dict(last_ok), int(backoff), retry_until, repr(e))
+                payload = _add_block_meta(
+                    dict(last_ok), int(backoff), retry_until, repr(e)
+                )
             else:
                 payload = _add_block_meta(
-                    {"cpc": None, "error": f"risk-lite error: {e!r}"}, int(backoff), retry_until
+                    {"cpc": None, "error": f"risk-lite error: {e!r}"},
+                    int(backoff),
+                    retry_until,
                 )
 
             _CPC_CACHE["ts"] = now
@@ -740,7 +763,9 @@ async def market_macro_history(
             actual = _to_float(r.get("actual", r.get("value")))
             consensus = _to_float(r.get("consensus", r.get("estimate")))
             previous = _to_float(r.get("previous", r.get("prior")))
-            surprise = _compute_surprise_pct(actual, consensus, _to_float(r.get("surprise")))
+            surprise = _compute_surprise_pct(
+                actual, consensus, _to_float(r.get("surprise"))
+            )
             notes = r.get("notes") or ""
             norm.append(
                 {
@@ -802,7 +827,9 @@ async def market_macro_history(
                 spx_df = spx_df.dropna(subset=["_close"]).reset_index(drop=True)
                 spx_df["_next_close"] = spx_df["_close"].shift(-1)
                 spx_df["_next_pct"] = (
-                    (spx_df["_next_close"] - spx_df["_close"]) / spx_df["_close"] * 100.0
+                    (spx_df["_next_close"] - spx_df["_close"])
+                    / spx_df["_close"]
+                    * 100.0
                 )
                 spx_map = dict(zip(spx_df["_dstr"], spx_df["_next_pct"]))
                 for r in norm:
@@ -823,7 +850,10 @@ async def market_macro_history(
             row["spx5d"] = spx.get("spx5d")
             # Fallback: if provider-based next-day pct wasn't set, use computed spx1d
             try:
-                if row.get("spx_reaction_next_pct") is None and row.get("spx1d") is not None:
+                if (
+                    row.get("spx_reaction_next_pct") is None
+                    and row.get("spx1d") is not None
+                ):
                     row["spx_reaction_next_pct"] = float(row.get("spx1d"))
             except Exception:
                 pass

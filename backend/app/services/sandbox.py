@@ -66,7 +66,9 @@ class SandboxPriceProvider(MarketProvider):
                     df.insert(
                         0,
                         "Date",
-                        pd.to_datetime(df.index, utc=True, errors="coerce").tz_convert(None),
+                        pd.to_datetime(df.index, utc=True, errors="coerce").tz_convert(
+                            None
+                        ),
                     )
                 # Ensure all required columns exist
                 for col in ["Open", "High", "Low", "Close", "Volume"]:
@@ -115,7 +117,9 @@ class SandboxNewsProvider:
 
     def __init__(self) -> None:
         self._items: list[dict[str, Any]] = list(_load_json("news.json") or [])
-        self._sources: list[dict[str, str]] = list(_load_json("news_sources.json") or [])
+        self._sources: list[dict[str, str]] = list(
+            _load_json("news_sources.json") or []
+        )
 
     def list_sources(self) -> list[dict[str, str]]:
         if self._sources:
@@ -128,7 +132,11 @@ class SandboxNewsProvider:
             if src not in seen:
                 seen[src] = True
                 out.append(
-                    {"id": src.lower().replace(" ", "-"), "label": src, "url": it.get("url") or "#"}
+                    {
+                        "id": src.lower().replace(" ", "-"),
+                        "label": src,
+                        "url": it.get("url") or "#",
+                    }
                 )
         return out
 
@@ -149,7 +157,10 @@ class SandboxNewsProvider:
 
         def _match(it: dict[str, Any]) -> bool:
             if symset:
-                ticks = {s.strip().upper() for s in (it.get("tickers") or it.get("symbols") or [])}
+                ticks = {
+                    s.strip().upper()
+                    for s in (it.get("tickers") or it.get("symbols") or [])
+                }
                 if not (ticks & symset):
                     return False
             if srcset:

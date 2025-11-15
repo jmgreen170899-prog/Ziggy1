@@ -33,10 +33,16 @@ class ScreenerRequest(BaseModel):
 
     universe: list[str] = Field(..., description="List of symbols to screen")
     min_confidence: float = Field(0.6, description="Minimum signal confidence")
-    min_probability: float | None = Field(None, description="Minimum probability threshold")
-    max_probability: float | None = Field(None, description="Maximum probability threshold")
+    min_probability: float | None = Field(
+        None, description="Minimum probability threshold"
+    )
+    max_probability: float | None = Field(
+        None, description="Maximum probability threshold"
+    )
     regimes: list[str] | None = Field(None, description="Filter by specific regimes")
-    sort_by: str = Field("confidence", description="Sort by: confidence, probability, regime")
+    sort_by: str = Field(
+        "confidence", description="Sort by: confidence, probability, regime"
+    )
     limit: int = Field(50, description="Maximum results to return")
 
 
@@ -68,7 +74,9 @@ class ScreenerHealthResponse(BaseModel):
     cognitive_core_available: bool = Field(
         ..., description="Whether cognitive core is available"
     )
-    supported_universes: list[str] = Field(..., description="Supported symbol universes")
+    supported_universes: list[str] = Field(
+        ..., description="Supported symbol universes"
+    )
     max_symbols_per_request: int = Field(..., description="Maximum symbols per request")
     available_presets: list[str] = Field(..., description="Available screening presets")
     timestamp: str = Field(..., description="Response timestamp")
@@ -83,13 +91,17 @@ async def screen_market(request: ScreenerRequest):
     sorted by signal quality and confidence.
     """
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     start_time = datetime.now()
 
     try:
         if len(request.universe) > 500:
-            raise HTTPException(status_code=400, detail="Maximum 500 symbols per screening request")
+            raise HTTPException(
+                status_code=400, detail="Maximum 500 symbols per screening request"
+            )
 
         results = []
         regime_counts = {}
@@ -337,7 +349,9 @@ async def momentum_screen(
 ):
     """Pre-configured momentum screening."""
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     # Get universe
     if universe == "sp500":
@@ -367,7 +381,9 @@ async def mean_reversion_screen(
 ):
     """Pre-configured mean reversion screening."""
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     # Get universe
     if universe == "sp500":
@@ -392,10 +408,14 @@ async def mean_reversion_screen(
 
 
 @router.get("/regime_summary", response_model=None)
-async def get_regime_summary(universe: str = Query("sp500", description="Universe to analyze")):
+async def get_regime_summary(
+    universe: str = Query("sp500", description="Universe to analyze")
+):
     """Get regime breakdown for a universe."""
     if not COGNITIVE_CORE_AVAILABLE:
-        raise HTTPException(status_code=503, detail="Cognitive core components not available")
+        raise HTTPException(
+            status_code=503, detail="Cognitive core components not available"
+        )
 
     try:
         # Get universe
@@ -461,7 +481,7 @@ async def get_regime_summary(universe: str = Query("sp500", description="Univers
 async def screener_health_check() -> ScreenerHealthResponse:
     """
     Health check for screener functionality.
-    
+
     Returns availability status and configuration information.
     """
     return ScreenerHealthResponse(

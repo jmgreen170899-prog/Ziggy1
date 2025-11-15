@@ -1,15 +1,18 @@
 # ZiggyClean Authentication
 
 ## Overview
+
 The ZiggyClean platform uses a mock authentication system for development and testing purposes. All features are protected behind a sign-in page.
 
 ## Default Credentials
 
 ### Administrator Access
+
 - **Email**: `admin@ziggyclean.com` (or just `admin`)
 - **Password**: `admin`
 
 ### Access Levels
+
 - **Admin**: Full system access with administrative privileges
 - **User**: Standard trading platform access (not implemented in mock)
 
@@ -31,12 +34,14 @@ NEXT_PUBLIC_AUTH_SESSION_TTL_MIN=43200  # 30 days
 ## Features
 
 ### Authentication Flow
+
 1. **Unauthenticated users** are redirected to `/auth/signin`
 2. **Authenticated users** accessing auth pages are redirected to dashboard
 3. **Session persistence** using localStorage
 4. **Auto-refresh** tokens before expiry
 
 ### Security Features
+
 - Rate limiting on authentication attempts
 - Security event logging
 - Device session management
@@ -44,7 +49,9 @@ NEXT_PUBLIC_AUTH_SESSION_TTL_MIN=43200  # 30 days
 - Password reset flow
 
 ### Protected Routes
+
 All routes except authentication pages require authentication:
+
 - `/auth/signin` - Sign in page
 - `/auth/signup` - User registration
 - `/auth/forgot-password` - Password reset
@@ -53,6 +60,7 @@ All routes except authentication pages require authentication:
 ## Mock Authentication Provider
 
 The system uses a mock authentication provider (`mockAuthProvider.ts`) that:
+
 - Simulates real authentication flows
 - Stores data in memory/localStorage
 - Provides realistic user experience
@@ -76,6 +84,7 @@ The system uses a mock authentication provider (`mockAuthProvider.ts`) that:
 ## Future Implementation
 
 The mock provider can be replaced with a real authentication API by:
+
 1. Creating a new provider implementing the same interface
 2. Updating `NEXT_PUBLIC_AUTH_PROVIDER` to `'api'`
 3. Configuring API endpoints in the new provider

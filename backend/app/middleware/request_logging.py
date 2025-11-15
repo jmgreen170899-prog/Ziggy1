@@ -45,7 +45,9 @@ def json_log(level: int, message: str, **fields: Any) -> None:
 class RequestContextLoggerMiddleware(BaseHTTPMiddleware):
     """Assigns/propagates X-Request-ID and emits JSON access logs with duration."""
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         rid = request.headers.get("X-Request-ID") or uuid.uuid4().hex
         _set_request_id(rid)
 

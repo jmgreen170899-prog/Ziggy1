@@ -156,7 +156,9 @@ class MetaLearner:
 
         # Strategy portfolio
         self.strategies: dict[str, LearningStrategy] = {}
-        self.state = MetaLearningState(current_strategy="balanced_default", regime="unknown")
+        self.state = MetaLearningState(
+            current_strategy="balanced_default", regime="unknown"
+        )
 
         # Initialize with default strategies
         self._initialize_default_strategies()
@@ -327,7 +329,9 @@ class MetaLearner:
         logger.info("Evolving new strategies...")
 
         # Get top 2 performing strategies
-        sorted_strategies = sorted(self.strategies.values(), key=lambda s: s.accuracy, reverse=True)
+        sorted_strategies = sorted(
+            self.strategies.values(), key=lambda s: s.accuracy, reverse=True
+        )
 
         if len(sorted_strategies) < 2:
             logger.warning("Not enough strategies for evolution")
@@ -367,7 +371,9 @@ class MetaLearner:
             if key in parent2.parameters:
                 # Average numeric parameters
                 if isinstance(parent1.parameters[key], (int, float)):
-                    new_params[key] = (parent1.parameters[key] + parent2.parameters[key]) / 2
+                    new_params[key] = (
+                        parent1.parameters[key] + parent2.parameters[key]
+                    ) / 2
                 else:
                     # Randomly choose for non-numeric
                     new_params[key] = (
@@ -378,7 +384,9 @@ class MetaLearner:
 
         # Determine strategy type based on parents
         strategy_type = (
-            parent1.strategy_type if parent1.accuracy > parent2.accuracy else parent2.strategy_type
+            parent1.strategy_type
+            if parent1.accuracy > parent2.accuracy
+            else parent2.strategy_type
         )
 
         # Generate name
@@ -416,7 +424,9 @@ class MetaLearner:
 
     def _prune_strategies(self, keep_top: int = 8) -> None:
         """Remove worst-performing strategies to maintain portfolio size."""
-        sorted_strategies = sorted(self.strategies.values(), key=lambda s: s.accuracy, reverse=True)
+        sorted_strategies = sorted(
+            self.strategies.values(), key=lambda s: s.accuracy, reverse=True
+        )
 
         # Always keep default strategies and top performers
         protected_names = {
@@ -498,7 +508,9 @@ class MetaLearner:
                     parent_strategies=data.get("parent_strategies", []),
                     mutations=data.get("mutations", []),
                     created_at=data.get("created_at", datetime.utcnow().isoformat()),
-                    last_updated=data.get("last_updated", datetime.utcnow().isoformat()),
+                    last_updated=data.get(
+                        "last_updated", datetime.utcnow().isoformat()
+                    ),
                 )
                 self.strategies[name] = strategy
 

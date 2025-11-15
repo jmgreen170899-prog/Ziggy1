@@ -76,7 +76,9 @@ class PaperRun(Base):
     max_trades_per_minute = Column(Integer, nullable=False, default=100)
 
     # Status and timing
-    status = Column(String(20), nullable=False, default="ACTIVE")  # ACTIVE, PAUSED, STOPPED
+    status = Column(
+        String(20), nullable=False, default="ACTIVE"
+    )  # ACTIVE, PAUSED, STOPPED
     started_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     ended_at = Column(DateTime, nullable=True)
 
@@ -92,10 +94,14 @@ class PaperRun(Base):
     error_rate = Column(Numeric(5, 4), nullable=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     # Relationships
-    trades = relationship("Trade", back_populates="paper_run", cascade="all, delete-orphan")
+    trades = relationship(
+        "Trade", back_populates="paper_run", cascade="all, delete-orphan"
+    )
     theory_perfs = relationship(
         "TheoryPerf", back_populates="paper_run", cascade="all, delete-orphan"
     )
@@ -113,11 +119,15 @@ class Trade(Base):
     __tablename__ = "trades"
 
     id = Column(Integer, primary_key=True, index=True)
-    paper_run_id = Column(Integer, ForeignKey("paper_runs.id"), nullable=False, index=True)
+    paper_run_id = Column(
+        Integer, ForeignKey("paper_runs.id"), nullable=False, index=True
+    )
 
     # Trade identification
     trade_id = Column(String(36), nullable=False, unique=True, index=True)  # UUID
-    correlation_id = Column(String(36), nullable=True, index=True)  # For grouping related trades
+    correlation_id = Column(
+        String(36), nullable=True, index=True
+    )  # For grouping related trades
 
     # Market data
     ticker = Column(String(20), nullable=False, index=True)
@@ -162,7 +172,9 @@ class Trade(Base):
 
     # Indexes for performance
     __table_args__ = (
-        Index("ix_trades_paper_run_ticker_time", "paper_run_id", "ticker", "signal_time"),
+        Index(
+            "ix_trades_paper_run_ticker_time", "paper_run_id", "ticker", "signal_time"
+        ),
         Index("ix_trades_theory_status_time", "theory_name", "status", "signal_time"),
         Index("ix_trades_status_filled_at", "status", "filled_at"),
     )
@@ -177,14 +189,20 @@ class TheoryPerf(Base):
     __tablename__ = "theory_perfs"
 
     id = Column(Integer, primary_key=True, index=True)
-    paper_run_id = Column(Integer, ForeignKey("paper_runs.id"), nullable=False, index=True)
+    paper_run_id = Column(
+        Integer, ForeignKey("paper_runs.id"), nullable=False, index=True
+    )
 
     # Theory identification
     theory_name = Column(String(50), nullable=False, index=True)
-    theory_status = Column(String(20), nullable=False, default=TheoryStatus.ACTIVE.value)
+    theory_status = Column(
+        String(20), nullable=False, default=TheoryStatus.ACTIVE.value
+    )
 
     # Allocation and usage
-    current_allocation = Column(Numeric(5, 4), nullable=False, default=0.0)  # 0.0 to 1.0
+    current_allocation = Column(
+        Numeric(5, 4), nullable=False, default=0.0
+    )  # 0.0 to 1.0
     total_signals_generated = Column(Integer, nullable=False, default=0)
     total_trades_executed = Column(Integer, nullable=False, default=0)
 
@@ -214,15 +232,21 @@ class TheoryPerf(Base):
     last_trade_time = Column(DateTime, nullable=True)
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(
+        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     # Relationships
     paper_run = relationship("PaperRun", back_populates="theory_perfs")
 
     # Constraints and indexes
     __table_args__ = (
-        UniqueConstraint("paper_run_id", "theory_name", name="uq_theory_perf_run_theory"),
-        Index("ix_theory_perf_status_allocation", "theory_status", "current_allocation"),
+        UniqueConstraint(
+            "paper_run_id", "theory_name", name="uq_theory_perf_run_theory"
+        ),
+        Index(
+            "ix_theory_perf_status_allocation", "theory_status", "current_allocation"
+        ),
         Index("ix_theory_perf_updated_at", "updated_at"),
     )
 
@@ -236,13 +260,17 @@ class ModelSnapshot(Base):
     __tablename__ = "model_snapshots"
 
     id = Column(Integer, primary_key=True, index=True)
-    paper_run_id = Column(Integer, ForeignKey("paper_runs.id"), nullable=False, index=True)
+    paper_run_id = Column(
+        Integer, ForeignKey("paper_runs.id"), nullable=False, index=True
+    )
 
     # Model identification
     model_name = Column(String(50), nullable=False, index=True)
     model_type = Column(String(30), nullable=False)  # sklearn, pytorch, fallback
     version = Column(String(20), nullable=False)
-    snapshot_reason = Column(String(50), nullable=False)  # periodic, performance_change, manual
+    snapshot_reason = Column(
+        String(50), nullable=False
+    )  # periodic, performance_change, manual
 
     # Model state
     model_params = Column(JSON, nullable=False)  # Hyperparameters
@@ -289,7 +317,9 @@ class TradingSession(Base):
     __tablename__ = "trading_sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    paper_run_id = Column(Integer, ForeignKey("paper_runs.id"), nullable=False, index=True)
+    paper_run_id = Column(
+        Integer, ForeignKey("paper_runs.id"), nullable=False, index=True
+    )
 
     # Session identification
     session_id = Column(String(36), nullable=False, unique=True, index=True)  # UUID
@@ -319,4 +349,6 @@ class TradingSession(Base):
     paper_run = relationship("PaperRun")
 
     # Indexes
-    __table_args__ = (Index("ix_trading_session_active_heartbeat", "is_active", "last_heartbeat"),)
+    __table_args__ = (
+        Index("ix_trading_session_active_heartbeat", "is_active", "last_heartbeat"),
+    )

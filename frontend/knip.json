@@ -10,10 +10,7 @@
     "!src/**/*.{test,spec}.{ts,tsx}",
     "!src/__tests__/**"
   ],
-  "ignore": [
-    "src/types/**",
-    "**/*.d.ts"
-  ],
+  "ignore": ["src/types/**", "**/*.d.ts"],
   "ignoreDependencies": [
     "@types/*",
     "tailwindcss",

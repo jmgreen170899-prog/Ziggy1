@@ -23,7 +23,12 @@ def ingest_pdf(file_path: str, source_url: str | None = None) -> dict[str, Any]:
     chunks = chunk_document(text)
     vecs = embed_texts(chunks)
     metas = [
-        {"source": "pdf", "url": source_url, "title": source_url or file_path, "type": "pdf"}
+        {
+            "source": "pdf",
+            "url": source_url,
+            "title": source_url or file_path,
+            "type": "pdf",
+        }
         for _ in chunks
     ]
     client = get_client()

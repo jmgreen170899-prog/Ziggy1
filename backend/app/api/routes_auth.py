@@ -39,7 +39,9 @@ class TokenResponse(BaseModel):
     """JWT token response"""
 
     access_token: str = Field(..., description="JWT access token")
-    token_type: str = Field(default="bearer", description="Token type (always 'bearer')")
+    token_type: str = Field(
+        default="bearer", description="Token type (always 'bearer')"
+    )
     expires_in: int = Field(..., description="Token expiration time in seconds")
     user: dict[str, Any] = Field(..., description="User information")
 
@@ -48,7 +50,9 @@ class AuthStatusResponse(BaseModel):
     """Authentication status response"""
 
     authenticated: bool = Field(..., description="Whether user is authenticated")
-    user: dict[str, Any] | None = Field(None, description="User information if authenticated")
+    user: dict[str, Any] | None = Field(
+        None, description="User information if authenticated"
+    )
     auth_config: dict[str, Any] = Field(..., description="Authentication configuration")
 
 
@@ -68,10 +72,10 @@ class UserInfoResponse(BaseModel):
 async def login(credentials: LoginRequest) -> TokenResponse:
     """
     Authenticate user and return JWT token.
-    
+
     **Note:** Authentication may be disabled in development mode.
     Check `/auth/status` to see if authentication is required.
-    
+
     **Default credentials:**
     - Username: `ziggy`, Password: `secret` (admin)
     - Username: `demo`, Password: `secret` (read-only)
@@ -85,22 +89,22 @@ async def login(credentials: LoginRequest) -> TokenResponse:
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     if user.disabled:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User account is disabled",
         )
-    
+
     # Create access token
     from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES
-    
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username, "scopes": user.scopes},
         expires_delta=access_token_expires,
     )
-    
+
     return TokenResponse(
         access_token=access_token,
         token_type="bearer",
@@ -120,19 +124,21 @@ async def auth_status(
 ) -> AuthStatusResponse:
     """
     Get authentication status and configuration.
-    
+
     Returns whether authentication is enabled and current user info if authenticated.
     """
     return AuthStatusResponse(
         authenticated=current_user is not None,
-        user={
-            "username": current_user.username,
-            "email": current_user.email,
-            "full_name": current_user.full_name,
-            "scopes": current_user.scopes,
-        }
-        if current_user
-        else None,
+        user=(
+            {
+                "username": current_user.username,
+                "email": current_user.email,
+                "full_name": current_user.full_name,
+                "scopes": current_user.scopes,
+            }
+            if current_user
+            else None
+        ),
         auth_config=get_auth_status(),
     )
 
@@ -143,7 +149,7 @@ async def get_current_user_info(
 ) -> UserInfoResponse:
     """
     Get current authenticated user information.
-    
+
     Requires authentication (JWT token or API key).
     """
     return UserInfoResponse(
@@ -160,17 +166,17 @@ async def refresh_token(
 ) -> TokenResponse:
     """
     Refresh JWT token.
-    
+
     Requires valid JWT token. Returns new token with extended expiration.
     """
     from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES
-    
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": current_user.username, "scopes": current_user.scopes},
         expires_delta=access_token_expires,
     )
-    
+
     return TokenResponse(
         access_token=access_token,
         token_type="bearer",

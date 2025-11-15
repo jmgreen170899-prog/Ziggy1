@@ -25,7 +25,9 @@ def _env_path(key: str, default: str) -> str:
 
 class Snapshotter:
     def __init__(self) -> None:
-        self.snapshot_dir = _env_path("SNAPSHOT_DIR", str(Path("./data/snapshots").resolve()))
+        self.snapshot_dir = _env_path(
+            "SNAPSHOT_DIR", str(Path("./data/snapshots").resolve())
+        )
         self.audit_log_path = _env_path(
             "AUDIT_LOG_PATH", str(Path("./data/paper_events.jsonl").resolve())
         )
@@ -152,7 +154,12 @@ class Snapshotter:
             )
         if bandit_state:
             self.audit.append_event(
-                {"ts": now_iso, "type": "bandit", "run_id": run_id, "payload": bandit_state}
+                {
+                    "ts": now_iso,
+                    "type": "bandit",
+                    "run_id": run_id,
+                    "payload": bandit_state,
+                }
             )
         if learner_state:
             # Don't dump raw bytes to JSONL; include only meta
@@ -169,11 +176,18 @@ class Snapshotter:
             )
         if queues_state:
             self.audit.append_event(
-                {"ts": now_iso, "type": "queue", "run_id": run_id, "payload": queues_state}
+                {
+                    "ts": now_iso,
+                    "type": "queue",
+                    "run_id": run_id,
+                    "payload": queues_state,
+                }
             )
 
         self._last_checkpoint_ts = datetime.utcnow()
-        logger.info("Checkpoint complete", extra={"persisted": persisted, "run_id": run_id})
+        logger.info(
+            "Checkpoint complete", extra={"persisted": persisted, "run_id": run_id}
+        )
         return {
             "ok": True,
             "persisted": persisted,
@@ -182,7 +196,9 @@ class Snapshotter:
         }
 
     def last_checkpoint_iso(self) -> str | None:
-        return self._last_checkpoint_ts.isoformat() if self._last_checkpoint_ts else None
+        return (
+            self._last_checkpoint_ts.isoformat() if self._last_checkpoint_ts else None
+        )
 
 
 async def _safe_get_state(obj: Any, component: str) -> dict[str, Any] | None:
@@ -192,7 +208,9 @@ async def _safe_get_state(obj: Any, component: str) -> dict[str, Any] | None:
         elif hasattr(obj, "get_state"):
             return obj.get_state()  # type: ignore[attr-defined]
     except Exception as e:
-        logger.warning("State collection failed", extra={"component": component, "error": str(e)})
+        logger.warning(
+            "State collection failed", extra={"component": component, "error": str(e)}
+        )
     return None
 
 
@@ -201,5 +219,7 @@ def _safe_get_state_sync(obj: Any, component: str) -> dict[str, Any] | None:
         if hasattr(obj, "get_state"):
             return obj.get_state()  # type: ignore[attr-defined]
     except Exception as e:
-        logger.warning("State collection failed", extra={"component": component, "error": str(e)})
+        logger.warning(
+            "State collection failed", extra={"component": component, "error": str(e)}
+        )
     return None

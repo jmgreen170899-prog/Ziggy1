@@ -40,12 +40,15 @@ def test_health():
 def test_login():
     """Test login endpoint"""
     print("\nTesting login endpoint...")
-    response = client.post("/mobile/auth/login", json={
-        "username": "test@example.com",
-        "password": "password123",
-        "device_id": "test_device_123",
-        "device_name": "Test Device"
-    })
+    response = client.post(
+        "/mobile/auth/login",
+        json={
+            "username": "test@example.com",
+            "password": "password123",
+            "device_id": "test_device_123",
+            "device_name": "Test Device",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
     assert "access_token" in data
@@ -60,7 +63,7 @@ def test_market_snapshot(token):
     print("\nTesting market snapshot endpoint...")
     response = client.get(
         "/mobile/market/snapshot?symbols=AAPL,GOOGL,MSFT",
-        headers={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -75,8 +78,7 @@ def test_single_quote(token):
     """Test single quote endpoint"""
     print("\nTesting single quote endpoint...")
     response = client.get(
-        "/mobile/market/quote/AAPL",
-        headers={"Authorization": f"Bearer {token}"}
+        "/mobile/market/quote/AAPL", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -90,8 +92,7 @@ def test_signals(token):
     """Test signals endpoint"""
     print("\nTesting signals endpoint...")
     response = client.get(
-        "/mobile/signals?limit=5",
-        headers={"Authorization": f"Bearer {token}"}
+        "/mobile/signals?limit=5", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -102,7 +103,9 @@ def test_signals(token):
         assert signal["action"] in ["BUY", "SELL", "HOLD"]
         assert 0.0 <= signal["confidence"] <= 1.0
         print(f"✓ Signals passed: Got {len(data)} signals")
-        print(f"  Sample: {signal['action']} {signal['symbol']} (confidence: {signal['confidence']})")
+        print(
+            f"  Sample: {signal['action']} {signal['symbol']} (confidence: {signal['confidence']})"
+        )
     else:
         print(f"✓ Signals passed: Got empty list (expected for mock)")
 
@@ -111,8 +114,7 @@ def test_portfolio(token):
     """Test portfolio endpoint"""
     print("\nTesting portfolio endpoint...")
     response = client.get(
-        "/mobile/portfolio",
-        headers={"Authorization": f"Bearer {token}"}
+        "/mobile/portfolio", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -125,21 +127,20 @@ def test_portfolio(token):
 def test_alerts(token):
     """Test alerts endpoints"""
     print("\nTesting alerts endpoints...")
-    
+
     # List alerts
     response = client.get(
-        "/mobile/alerts",
-        headers={"Authorization": f"Bearer {token}"}
+        "/mobile/alerts", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     alerts = response.json()
     assert isinstance(alerts, list)
     print(f"✓ List alerts passed: Got {len(alerts)} alerts")
-    
+
     # Create alert
     response = client.post(
         "/mobile/alerts?symbol=AAPL&condition=above&price=160.0",
-        headers={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
     data = response.json()
@@ -151,8 +152,7 @@ def test_news(token):
     """Test news endpoint"""
     print("\nTesting news endpoint...")
     response = client.get(
-        "/mobile/news?limit=5",
-        headers={"Authorization": f"Bearer {token}"}
+        "/mobile/news?limit=5", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -170,8 +170,7 @@ def test_sync(token):
     """Test sync endpoint"""
     print("\nTesting sync endpoint...")
     response = client.get(
-        "/mobile/sync?include=all",
-        headers={"Authorization": f"Bearer {token}"}
+        "/mobile/sync?include=all", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     data = response.json()
@@ -200,14 +199,14 @@ def run_all_tests():
     print("=" * 60)
     print("ZiggyAI Mobile API Test Suite")
     print("=" * 60)
-    
+
     try:
         # Test health (no auth required)
         test_health()
-        
+
         # Test login and get token
         token = test_login()
-        
+
         # Test authenticated endpoints
         test_market_snapshot(token)
         test_single_quote(token)
@@ -216,10 +215,10 @@ def run_all_tests():
         test_alerts(token)
         test_news(token)
         test_sync(token)
-        
+
         # Test security
         test_unauthorized_access()
-        
+
         print("\n" + "=" * 60)
         print("✅ All tests passed!")
         print("=" * 60)
@@ -229,15 +228,16 @@ def run_all_tests():
         print("2. Implement JWT authentication")
         print("3. Add push notification support")
         print("4. Start building the Android app")
-        
+
         return True
-        
+
     except AssertionError as e:
         print(f"\n❌ Test failed: {e}")
         return False
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

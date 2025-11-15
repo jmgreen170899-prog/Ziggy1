@@ -97,7 +97,9 @@ TIMEZONE_ALIASES = {
 }
 
 
-def normalize_event_ts(source_ts: str | datetime, source_tz: str, exchange: str) -> dict[str, Any]:
+def normalize_event_ts(
+    source_ts: str | datetime, source_tz: str, exchange: str
+) -> dict[str, Any]:
     """
     Normalize event timestamp to exchange timezone with full context.
 
@@ -372,7 +374,9 @@ def convert_market_time(
             "to_exchange": to_exchange,
             "from_timezone": from_tz,
             "to_timezone": to_tz,
-            "time_difference_hours": (target_dt.utcoffset() - dt.utcoffset()).total_seconds()
+            "time_difference_hours": (
+                target_dt.utcoffset() - dt.utcoffset()
+            ).total_seconds()
             / 3600,
             "success": True,
         }

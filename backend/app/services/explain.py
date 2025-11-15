@@ -103,7 +103,9 @@ def get_top_features(ticker: str, limit: int = None) -> list[list[Any]]:
     # Normalize so they sum to ~1.0
     total = sum(contrib for _, contrib in noisy_features)
     if total > 0:
-        noisy_features = [[name, round(contrib / total, 3)] for name, contrib in noisy_features]
+        noisy_features = [
+            [name, round(contrib / total, 3)] for name, contrib in noisy_features
+        ]
 
     return noisy_features
 
@@ -126,7 +128,12 @@ def build_waterfall(top_features: list[list[Any]]) -> list[dict[str, Any]]:
 
     # Starting point (base probability)
     waterfall.append(
-        {"name": "base", "delta": 0.0, "cumulative": 0.5, "type": "base"}  # Start at neutral
+        {
+            "name": "base",
+            "delta": 0.0,
+            "cumulative": 0.5,
+            "type": "base",
+        }  # Start at neutral
     )
     cumulative = 0.5
 
@@ -146,7 +153,12 @@ def build_waterfall(top_features: list[list[Any]]) -> list[dict[str, Any]]:
 
     # Final result
     waterfall.append(
-        {"name": "final", "delta": 0.0, "cumulative": round(cumulative, 3), "type": "result"}
+        {
+            "name": "final",
+            "delta": 0.0,
+            "cumulative": round(cumulative, 3),
+            "type": "result",
+        }
     )
 
     return waterfall
@@ -188,7 +200,9 @@ def sample_calibration(curve_points: int = 12) -> dict[str, Any]:
         "bins": bins,
         "ece": round(total_ece, 4),
         "num_bins": curve_points,
-        "reliability": "good" if total_ece < 0.05 else "fair" if total_ece < 0.10 else "poor",
+        "reliability": (
+            "good" if total_ece < 0.05 else "fair" if total_ece < 0.10 else "poor"
+        ),
     }
 
 
@@ -237,7 +251,12 @@ def compute_mind_flip(
         Mind-flip analysis with feature differences
     """
     if not last_event:
-        return {"since_event": None, "flipped": False, "diff": [], "reason": "no_previous_event"}
+        return {
+            "since_event": None,
+            "flipped": False,
+            "diff": [],
+            "reason": "no_previous_event",
+        }
 
     # Extract previous features
     last_explain = last_event.get("explain", {})
@@ -290,7 +309,13 @@ def compute_mind_flip(
     for feature_name, contrib in last_dict.items():
         if feature_name not in current_dict:
             differences.append(
-                [feature_name, 0.0, round(contrib, 3), round(-contrib, 3), "removed_feature"]
+                [
+                    feature_name,
+                    0.0,
+                    round(contrib, 3),
+                    round(-contrib, 3),
+                    "removed_feature",
+                ]
             )
             significant_changes += 1
 
@@ -307,7 +332,9 @@ def compute_mind_flip(
     }
 
 
-def generate_explanation_hash(ticker: str, features: list[list[Any]], regime: str) -> str:
+def generate_explanation_hash(
+    ticker: str, features: list[list[Any]], regime: str
+) -> str:
     """
     Generate a hash for explanation caching.
 
@@ -388,6 +415,8 @@ def validate_explanation_quality(explanation_data: dict[str, Any]) -> dict[str, 
         "issues": issues,
         "is_high_quality": quality_score >= 0.8,
         "recommendation": (
-            "use" if quality_score >= 0.7 else "caution" if quality_score >= 0.5 else "avoid"
+            "use"
+            if quality_score >= 0.7
+            else "caution" if quality_score >= 0.5 else "avoid"
         ),
     }

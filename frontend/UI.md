@@ -14,52 +14,50 @@ A comprehensive design system for the Ziggy platform featuring dark-first themes
 
 ### Color System
 
-| Token | Dark Value | Light Value | Usage |
-|-------|------------|-------------|-------|
-| `--fg` | #e4e4e7 | #18181b | Primary text |
-| `--fg-muted` | #a1a1aa | #52525b | Secondary text |
-| `--bg` | #09090b | #ffffff | Primary background |
-| `--bg-elevated` | #18181b | #f4f4f5 | Cards, panels |
-| `--border` | #27272a | #e4e4e7 | Default borders |
-| `--accent` | #00ff88 | #00ff88 | Brand color |
+| Token           | Dark Value | Light Value | Usage              |
+| --------------- | ---------- | ----------- | ------------------ |
+| `--fg`          | #e4e4e7    | #18181b     | Primary text       |
+| `--fg-muted`    | #a1a1aa    | #52525b     | Secondary text     |
+| `--bg`          | #09090b    | #ffffff     | Primary background |
+| `--bg-elevated` | #18181b    | #f4f4f5     | Cards, panels      |
+| `--border`      | #27272a    | #e4e4e7     | Default borders    |
+| `--accent`      | #00ff88    | #00ff88     | Brand color        |
 
 ### Spacing System (8px grid)
 
-| Token | Value | Usage |
-|-------|-------|--------|
-| space-1 | 4px | Tight spacing |
-| space-2 | 8px | Small gaps |
-| space-4 | 16px | Default spacing |
-| space-6 | 24px | Section spacing |
-| space-8 | 32px | Large spacing |
+| Token   | Value | Usage           |
+| ------- | ----- | --------------- |
+| space-1 | 4px   | Tight spacing   |
+| space-2 | 8px   | Small gaps      |
+| space-4 | 16px  | Default spacing |
+| space-6 | 24px  | Section spacing |
+| space-8 | 32px  | Large spacing   |
 
 ## Component Library
 
 ### Buttons
 
 ```jsx
-import Button from '@/components/ui/Button';
+import Button from "@/components/ui/Button";
 
 // Variants: primary, secondary, ghost, destructive, link, outline
 // Sizes: sm, md, lg, icon
 <Button variant="primary" size="md" loading={isLoading}>
   Save Changes
-</Button>
+</Button>;
 ```
 
 ### Cards
 
 ```jsx
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import Card, { CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 
 <Card>
   <CardHeader>
     <CardTitle>Title</CardTitle>
   </CardHeader>
-  <CardContent>
-    Content here
-  </CardContent>
-</Card>
+  <CardContent>Content here</CardContent>
+</Card>;
 ```
 
 ### Form Inputs
@@ -68,9 +66,9 @@ import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Input from '@/components/ui/Input';
 import Select, { SelectOption } from '@/components/ui/Select';
 
-<Input 
-  label="Email" 
-  required 
+<Input
+  label="Email"
+  required
   error={errors.email}
   hint="We'll never share your email"
 />
@@ -95,49 +93,39 @@ import Badge from '@/components/ui/Badge';
 ### Data Tables
 
 ```jsx
-import { DataTable } from '@/components/ui/Table';
+import { DataTable } from "@/components/ui/Table";
 
 const columns = [
-  { key: 'name', header: 'Name', sortable: true },
-  { key: 'status', header: 'Status' }
+  { key: "name", header: "Name", sortable: true },
+  { key: "status", header: "Status" },
 ];
 
-<DataTable 
-  data={users}
-  columns={columns}
-  sortable
-  pagination
-  pageSize={10}
-/>
+<DataTable data={users} columns={columns} sortable pagination pageSize={10} />;
 ```
 
 ### Dialogs
 
 ```jsx
-import Dialog, { DialogFooter } from '@/components/ui/Dialog';
+import Dialog, { DialogFooter } from "@/components/ui/Dialog";
 
-<Dialog 
-  open={isOpen}
-  onClose={handleClose}
-  title="Confirm Action"
->
+<Dialog open={isOpen} onClose={handleClose} title="Confirm Action">
   <DialogFooter>
     <Button variant="ghost">Cancel</Button>
     <Button variant="destructive">Delete</Button>
   </DialogFooter>
-</Dialog>
+</Dialog>;
 ```
 
 ### Toast Notifications
 
 ```jsx
-import { useToast } from '@/components/ui/ToastProvider';
+import { useToast } from "@/components/ui/ToastProvider";
 
 const { success, error, warning } = useToast();
 
-success('Settings saved!');
-error('Failed to save');
-warning('This will overwrite data');
+success("Settings saved!");
+error("Failed to save");
+warning("This will overwrite data");
 ```
 
 ### Theme System
@@ -165,25 +153,30 @@ import Skeleton, { SkeletonCard } from '@/components/ui/Skeleton';
 ## Best Practices
 
 ### Colors
+
 - Use semantic tokens: `bg-bg`, `text-fg`, `border-border`
 - Never hard-code colors: ❌ `#000000` → ✅ `var(--bg)`
 - Use CSS variables for consistency
 
 ### Spacing
+
 - Follow 8px grid: `space-2` (8px), `space-4` (16px), `space-6` (24px)
 - Use consistent spacing classes: `p-4`, `m-6`, `gap-2`
 
 ### Typography
+
 - Use semantic font sizes: `text-sm`, `text-base`, `text-lg`
 - Apply consistent line heights and spacing
 
 ### Accessibility
+
 - Include ARIA labels: `aria-label="Close dialog"`
 - Use semantic HTML: `<button>`, `<input>`, `<select>`
 - Ensure keyboard navigation works
 - Test with screen readers
 
 ### Responsive Design
+
 - Mobile-first approach: `sm:`, `md:`, `lg:` prefixes
 - Use responsive spacing and typography
 - Test across all breakpoints
@@ -191,6 +184,7 @@ import Skeleton, { SkeletonCard } from '@/components/ui/Skeleton';
 ## Usage Examples
 
 ### Dashboard Card
+
 ```jsx
 <Card>
   <CardHeader className="flex flex-row items-center justify-between">
@@ -205,17 +199,14 @@ import Skeleton, { SkeletonCard } from '@/components/ui/Skeleton';
 ```
 
 ### Form with Validation
+
 ```jsx
 <Card>
   <CardHeader>
     <CardTitle>User Profile</CardTitle>
   </CardHeader>
   <CardContent className="space-y-4">
-    <Input 
-      label="Display Name" 
-      required 
-      error={errors.name}
-    />
+    <Input label="Display Name" required error={errors.name} />
     <Select label="Role" required>
       <SelectOption value="admin">Administrator</SelectOption>
       <SelectOption value="user">User</SelectOption>
@@ -230,6 +221,7 @@ import Skeleton, { SkeletonCard } from '@/components/ui/Skeleton';
 ```
 
 ### Data List with Actions
+
 ```jsx
 <Card>
   <CardHeader>
@@ -239,17 +231,17 @@ import Skeleton, { SkeletonCard } from '@/components/ui/Skeleton';
     <DataTable
       data={users}
       columns={[
-        { key: 'name', header: 'Name', sortable: true },
-        { key: 'email', header: 'Email' },
-        { 
-          key: 'status', 
-          header: 'Status',
+        { key: "name", header: "Name", sortable: true },
+        { key: "email", header: "Email" },
+        {
+          key: "status",
+          header: "Status",
           render: (status) => (
-            <Badge variant={status === 'active' ? 'success' : 'secondary'}>
+            <Badge variant={status === "active" ? "success" : "secondary"}>
               {status}
             </Badge>
-          )
-        }
+          ),
+        },
       ]}
       sortable
       pagination
@@ -259,4 +251,3 @@ import Skeleton, { SkeletonCard } from '@/components/ui/Skeleton';
 ```
 
 For complete documentation and migration guide, see [MIGRATION.md](./MIGRATION.md).
-

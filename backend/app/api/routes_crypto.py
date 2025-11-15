@@ -10,7 +10,10 @@ from fastapi import APIRouter, Query
 
 # Market Brain Integration
 try:
-    from app.services.market_brain.simple_data_hub import DataSource, enhance_market_data
+    from app.services.market_brain.simple_data_hub import (
+        DataSource,
+        enhance_market_data,
+    )
 
     BRAIN_AVAILABLE = True
     _enhance_market_data = enhance_market_data
@@ -62,7 +65,9 @@ def _get_crypto_provider():
 
 @router.get("/quotes", response_model=None)
 async def crypto_quotes(
-    symbols: str = Query(..., description="Comma-separated symbols like BTC-USD,ETH-USD,SOL-USD"),
+    symbols: str = Query(
+        ..., description="Comma-separated symbols like BTC-USD,ETH-USD,SOL-USD"
+    ),
 ):
     syms = _split(symbols)
     key = f"quotes:{','.join(syms)}"
@@ -138,7 +143,9 @@ async def crypto_quotes(
                                 if hist.shape[0] > 25
                                 else float(hist["Close"].iloc[0])
                             )
-                            pct24 = ((float(pr) - base) / base * 100.0) if base else None
+                            pct24 = (
+                                ((float(pr) - base) / base * 100.0) if base else None
+                            )
                         else:
                             pct24 = None
                     out[s] = {
@@ -147,7 +154,11 @@ async def crypto_quotes(
                         "source": "yfinance",
                     }
                 except Exception:
-                    out[s] = {"price": None, "change_pct_24h": None, "source": "fallback"}
+                    out[s] = {
+                        "price": None,
+                        "change_pct_24h": None,
+                        "source": "fallback",
+                    }
         except Exception:
             # leave whatever we have
             pass
@@ -192,7 +203,9 @@ async def crypto_ohlc(
                     if isinstance(arr, list):
                         out[s] = [
                             {
-                                "date": str(r.get("date") or r.get("time") or r.get("ts")),
+                                "date": str(
+                                    r.get("date") or r.get("time") or r.get("ts")
+                                ),
                                 "open": r.get("open"),
                                 "high": r.get("high"),
                                 "low": r.get("low"),
@@ -233,7 +246,9 @@ async def crypto_ohlc(
                     for idx, row in tail.iterrows():
                         # idx is a Timestamp
                         ts = getattr(idx, "to_pydatetime", lambda: idx)()
-                        d = getattr(ts, "strftime", lambda *_: str(ts))("%Y-%m-%d %H:%M")
+                        d = getattr(ts, "strftime", lambda *_: str(ts))(
+                            "%Y-%m-%d %H:%M"
+                        )
                         arr.append(
                             {
                                 "date": d,

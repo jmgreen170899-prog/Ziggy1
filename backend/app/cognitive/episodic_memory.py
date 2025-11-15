@@ -76,7 +76,13 @@ class MarketEpisode:
         Returns flat dictionary of numeric features for embedding.
         """
         # Convert regime to numeric
-        regime_map = {"Panic": -2.0, "RiskOff": -1.0, "Chop": 0.0, "RiskOn": 1.0, "Melt": 2.0}
+        regime_map = {
+            "Panic": -2.0,
+            "RiskOff": -1.0,
+            "Chop": 0.0,
+            "RiskOn": 1.0,
+            "Melt": 2.0,
+        }
 
         # Convert sentiment to numeric
         sentiment_map = {
@@ -175,7 +181,13 @@ class EpisodicMemory:
     def _extract_features(self, context: dict[str, Any]) -> dict[str, float]:
         """Extract numeric features from context."""
         # Map regime string to numeric value
-        regime_map = {"Panic": -2.0, "RiskOff": -1.0, "Chop": 0.0, "RiskOn": 1.0, "Melt": 2.0}
+        regime_map = {
+            "Panic": -2.0,
+            "RiskOff": -1.0,
+            "Chop": 0.0,
+            "RiskOn": 1.0,
+            "Melt": 2.0,
+        }
 
         return {
             "volatility": float(context.get("volatility", 0.5)),
@@ -314,7 +326,9 @@ class EpisodicMemory:
                 if episode.was_successful:
                     successful_episodes += 1
 
-        success_rate = successful_episodes / total_with_outcome if total_with_outcome > 0 else 0.0
+        success_rate = (
+            successful_episodes / total_with_outcome if total_with_outcome > 0 else 0.0
+        )
 
         return {
             "total_episodes": len(self.episodes),

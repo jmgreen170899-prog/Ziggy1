@@ -22,7 +22,9 @@ def test_script_compilation():
     for script in scripts:
         try:
             result = subprocess.run(
-                [sys.executable, "-m", "py_compile", script], capture_output=True, text=True
+                [sys.executable, "-m", "py_compile", script],
+                capture_output=True,
+                text=True,
             )
 
             if result.returncode == 0:
@@ -124,7 +126,11 @@ def test_report_generation():
         Path("reports").mkdir(exist_ok=True)
         test_file = Path("reports/test_validation.json")
 
-        test_data = {"timestamp": "2025-01-13T20:00:00", "test": "validation", "status": "success"}
+        test_data = {
+            "timestamp": "2025-01-13T20:00:00",
+            "test": "validation",
+            "status": "success",
+        }
 
         with open(test_file, "w") as f:
             json.dump(test_data, f, indent=2)

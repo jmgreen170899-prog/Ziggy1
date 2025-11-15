@@ -77,7 +77,9 @@ def create_demo_artifacts():
                 "missingFields": [],
                 "staleBadges": 0,
                 "consoleErrors": ["Network Error: Failed to fetch alerts"],
-                "networkErrors": ["500 - http://localhost:8000/api/alerts"],  # P0 issue!
+                "networkErrors": [
+                    "500 - http://localhost:8000/api/alerts"
+                ],  # P0 issue!
                 "loadTime": 15000,
             },
             "status": "error",  # P0 issue!

@@ -5,16 +5,19 @@
 Choose your preferred method to start the entire ZiggyAI application:
 
 ### Method 1: PowerShell Script (Recommended)
+
 ```powershell
 .\start-ziggy.ps1
 ```
 
 ### Method 2: Batch File (Simple)
+
 ```cmd
 start-ziggy.bat
 ```
 
 ### Method 3: PowerShell with Options
+
 ```powershell
 # Start everything (default)
 .\start-ziggy.ps1
@@ -37,6 +40,7 @@ start-ziggy.bat
 ## Prerequisites
 
 Make sure you have these installed:
+
 - **Node.js 18+** - [Download](https://nodejs.org/)
 - **Python 3.11+** - [Download](https://python.org/)
 - **Poetry** - [Install Guide](https://python-poetry.org/docs/#installation)
@@ -44,6 +48,7 @@ Make sure you have these installed:
 ## Access Points
 
 After startup, access ZiggyAI at:
+
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
@@ -54,6 +59,7 @@ After startup, access ZiggyAI at:
 If you prefer manual control:
 
 ### Frontend
+
 ```bash
 cd frontend
 npm install
@@ -61,6 +67,7 @@ npm run dev
 ```
 
 ### Backend
+
 ```bash
 cd backend
 python -m venv .venv
@@ -80,25 +87,30 @@ poetry run uvicorn app.main:app --reload
 ### Common Issues:
 
 **"Execution policy" error (PowerShell)**
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **"Port already in use"**
+
 - Kill processes using ports 3000 or 8000
 - Or change ports in the respective config files
 
 **"Python/Node not found"**
+
 - Ensure Python and Node.js are in your PATH
 - Restart your terminal after installation
 
 **Dependencies fail to install**
+
 - Clear caches: `npm cache clean --force` and `poetry cache clear --all pypi`
 - Delete `node_modules` and `.venv` folders, then retry
 
 ## Development Features
 
 The startup scripts automatically enable:
+
 - **Hot Reload** - Frontend and backend auto-restart on file changes
 - **Development Mode** - Enhanced logging and debugging
 - **Mock Data** - Uses mock data when backend services are unavailable
@@ -107,6 +119,7 @@ The startup scripts automatically enable:
 ## Production Deployment
 
 For production, use:
+
 ```bash
 # Build frontend
 cd frontend && npm run build

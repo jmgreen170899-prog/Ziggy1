@@ -104,7 +104,9 @@ BACKOFFS = {
 QUEUE_LIMITS = {
     # WebSocket queues
     "websocket_default": _get_int_env("QUEUE_WEBSOCKET_DEFAULT", 100),
-    "websocket_enqueue_timeout_ms": _get_int_env("QUEUE_WEBSOCKET_ENQUEUE_TIMEOUT_MS", 50),
+    "websocket_enqueue_timeout_ms": _get_int_env(
+        "QUEUE_WEBSOCKET_ENQUEUE_TIMEOUT_MS", 50
+    ),
     # Telemetry queue
     "telemetry_events": _get_int_env("QUEUE_TELEMETRY_EVENTS", 1000),
     "telemetry_batch_size": _get_int_env("QUEUE_TELEMETRY_BATCH_SIZE", 50),

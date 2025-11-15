@@ -1,9 +1,9 @@
 /**
  * TypeScript types generated from backend OpenAPI spec
  * Based on Phase 1 standardized response models
- * 
+ *
  * Generated on 2025-11-13
- * 
+ *
  * These types match the backend Pydantic models:
  * - app/models/api_responses.py
  * - app/api/routes_*.py response models
@@ -333,7 +333,7 @@ export interface ChatConfigResponse {
 export interface ChatCompletionRequest {
   /** Chat messages */
   messages: Array<{
-    role: 'system' | 'user' | 'assistant';
+    role: "system" | "user" | "assistant";
     content: string;
   }>;
   /** Model to use */

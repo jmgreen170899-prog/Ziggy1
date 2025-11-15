@@ -26,6 +26,7 @@ pip install numpy  # Required for cognitive systems
 ### Optional Dependencies
 
 For full functionality:
+
 ```bash
 pip install pytest  # For running tests
 pip install scikit-learn  # For advanced ML features
@@ -122,11 +123,13 @@ The cognitive systems are exposed via REST API in `routes_cognitive.py`.
 ### API Endpoints
 
 #### 1. Get System Status
+
 ```bash
 GET /cognitive/status
 ```
 
 Response:
+
 ```json
 {
   "cognitive_hub": "active",
@@ -150,6 +153,7 @@ Response:
 ```
 
 #### 2. Enhance Decision
+
 ```bash
 POST /cognitive/enhance-decision
 Content-Type: application/json
@@ -167,6 +171,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "ticker": "AAPL",
@@ -190,6 +195,7 @@ Response:
 ```
 
 #### 3. Record Outcome
+
 ```bash
 POST /cognitive/record-outcome
 Content-Type: application/json
@@ -216,12 +222,14 @@ Content-Type: application/json
 **Purpose**: Learn which learning strategies work best in different market conditions.
 
 **Key Features**:
+
 - Portfolio of diverse learning strategies
 - Regime-specific strategy selection
 - Genetic programming for strategy evolution
 - Performance tracking per strategy and regime
 
 **Example**:
+
 ```python
 from app.cognitive.meta_learner import MetaLearner
 
@@ -247,12 +255,14 @@ learner.update_strategy_performance(
 **Purpose**: Learn from decisions not taken by simulating alternative actions.
 
 **Key Features**:
+
 - Shadow portfolios for alternative strategies
 - Opportunity cost quantification
 - Regret minimization
 - Lesson extraction from "roads not taken"
 
 **Example**:
+
 ```python
 from app.cognitive.counterfactual import (
     CounterfactualEngine,
@@ -300,12 +310,14 @@ print(f"Key lessons: {analysis.key_lessons}")
 **Purpose**: Recall similar historical market situations for case-based reasoning.
 
 **Key Features**:
+
 - Semantic similarity matching
 - Rich contextual episode storage
 - Historical success rate tracking
 - Lesson retrieval from analogous situations
 
 **Example**:
+
 ```python
 from app.cognitive.episodic_memory import EpisodicMemory, MarketEpisode
 
@@ -362,11 +374,13 @@ data/cognitive/
 ## Performance Considerations
 
 ### Memory Usage
+
 - **Episodic Memory**: ~1KB per episode, max 10,000 episodes = ~10MB
 - **Meta-Learning**: ~10KB per strategy, typically <100KB total
 - **Counterfactual**: ~5KB per analysis, grows with trading activity
 
 ### Computational Cost
+
 - **Decision Enhancement**: <100ms per call
 - **Outcome Recording**: <50ms per call
 - **Strategy Evolution**: ~500ms every N trades (configurable)
@@ -381,6 +395,7 @@ pytest tests/test_cognitive_systems.py -v
 ```
 
 Test coverage includes:
+
 - Meta-learning strategy selection and evolution
 - Counterfactual analysis and opportunity cost
 - Episodic memory similarity matching
@@ -389,6 +404,7 @@ Test coverage includes:
 ## Integration with Existing Systems
 
 ### With Brain System
+
 ```python
 from app.services.integration_hub import ZiggyIntegrationHub
 from app.cognitive.cognitive_hub import CognitiveHub
@@ -413,6 +429,7 @@ cognitive_insights = cognitive_hub.enhance_decision(
 ```
 
 ### With Learning System
+
 ```python
 from app.services.learner import StrictLearner
 
@@ -428,6 +445,7 @@ learner = StrictLearner(
 ## Roadmap
 
 ### Phase 1: Foundation ✅ COMPLETE
+
 - [x] Meta-learning system
 - [x] Counterfactual reasoning
 - [x] Episodic memory
@@ -436,12 +454,14 @@ learner = StrictLearner(
 - [x] Documentation
 
 ### Phase 2: Advanced Features (Next)
+
 - [ ] Cognitive ensemble (multiple AI personalities)
 - [ ] Causal inference engine
 - [ ] Self-improvement loops
 - [ ] Uncertainty quantification with Bayesian models
 
 ### Phase 3: Production Optimization
+
 - [ ] Performance profiling and optimization
 - [ ] Distributed cognitive processing
 - [ ] Real-time monitoring dashboard
@@ -450,20 +470,26 @@ learner = StrictLearner(
 ## Troubleshooting
 
 ### Import Errors
+
 If you see `ModuleNotFoundError: No module named 'numpy'`:
+
 ```bash
 pip install numpy
 ```
 
 ### Data Directory Permissions
+
 If you see permission errors:
+
 ```bash
 mkdir -p data/cognitive
 chmod 755 data/cognitive
 ```
 
 ### Memory Issues
+
 If running out of memory with episodic storage:
+
 ```python
 # Reduce max episodes
 memory = EpisodicMemory(max_episodes=1000)
@@ -482,11 +508,13 @@ When adding new cognitive systems:
 ## References
 
 ### Academic Background
+
 - **Meta-Learning**: "Learning to Learn" (Thrun & Pratt, 1998)
 - **Counterfactual Reasoning**: "The Book of Why" (Pearl, 2018)
 - **Episodic Memory**: "Case-Based Reasoning" (Aamodt & Plaza, 1994)
 
 ### Implementation Inspiration
+
 - **AlphaGo**: Self-play and strategy evolution
 - **OpenAI Five**: Multi-agent learning
 - **GPT-4**: Uncertainty-aware predictions
@@ -498,6 +526,7 @@ Part of ZiggyAI platform - proprietary cognitive enhancement technology.
 ## Support
 
 For questions or issues:
+
 1. Check this README
 2. Review code documentation
 3. Run tests to verify installation

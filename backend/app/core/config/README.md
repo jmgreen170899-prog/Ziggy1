@@ -5,9 +5,11 @@ This package contains all configuration-related modules for ZiggyAI.
 ## Modules
 
 ### `settings.py`
+
 Main application settings using Pydantic. Contains the `Settings` class and `get_settings()` function.
 
 **Usage:**
+
 ```python
 from app.core.config import get_settings
 
@@ -16,9 +18,11 @@ print(settings.ENV)  # development, staging, or production
 ```
 
 ### `time_tuning.py`
+
 Centralized timeout, retry, and queue configuration parameters.
 
 **Usage:**
+
 ```python
 from app.core.config.time_tuning import TIMEOUTS, BACKOFFS, QUEUE_LIMITS
 
@@ -36,6 +40,7 @@ queue_size = get_queue_limit("websocket_default")
 ```
 
 **Environment Overrides:**
+
 ```bash
 # Override any parameter via environment variables
 export TIMEOUT_HTTP_CLIENT_DEFAULT=30.0
@@ -46,6 +51,7 @@ export QUEUE_WEBSOCKET_DEFAULT=200
 ## Quick Reference
 
 ### Common Timeouts
+
 ```python
 from app.core.config.time_tuning import TIMEOUTS
 
@@ -63,6 +69,7 @@ slow_op = TIMEOUTS["async_slow"]                # 3.5s
 ```
 
 ### Common Backoff Settings
+
 ```python
 from app.core.config.time_tuning import BACKOFFS
 
@@ -76,6 +83,7 @@ news_max = BACKOFFS["news_max_delay"]           # 15.0s
 ```
 
 ### Common Queue Limits
+
 ```python
 from app.core.config.time_tuning import QUEUE_LIMITS
 
@@ -90,6 +98,7 @@ batch_size = QUEUE_LIMITS["telemetry_batch_size"]  # 50
 ## Documentation
 
 See `docs/config_tuning.md` for comprehensive documentation including:
+
 - Complete parameter reference
 - Environment variable overrides
 - Tuning recommendations for different environments
@@ -99,6 +108,7 @@ See `docs/config_tuning.md` for comprehensive documentation including:
 ## Backward Compatibility
 
 The Settings class provides backward-compatible methods:
+
 ```python
 from app.core.config import get_settings
 
@@ -114,6 +124,7 @@ timeout = settings.get_market_fetch_timeout_s()
 When adding new timing parameters:
 
 1. Add to appropriate dictionary in `time_tuning.py`:
+
 ```python
 TIMEOUTS = {
     # ... existing entries ...
@@ -126,6 +137,7 @@ TIMEOUTS = {
 3. Update this README with common usage examples
 
 4. Use in your code:
+
 ```python
 from app.core.config.time_tuning import TIMEOUTS
 

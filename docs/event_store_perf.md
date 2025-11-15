@@ -9,17 +9,20 @@ This document summarizes the performance and durability improvements made to Zig
 ### 1. SQLite WAL Mode Configuration
 
 **What Changed:**
+
 - Enabled Write-Ahead Logging (WAL) mode for SQLite backend
 - Set synchronous mode to NORMAL for balanced durability/performance
 - Added validation to confirm WAL mode is active
 
 **Benefits:**
+
 - **Concurrent Access**: Readers don't block writers, writers don't block readers
 - **Better Performance**: Fewer fsync operations, batch commits more efficient
 - **Crash Recovery**: Superior crash recovery compared to DELETE or TRUNCATE journal modes
 - **Reduced Lock Contention**: Multiple readers can access database simultaneously during writes
 
 **Configuration:**
+
 ```python
 PRAGMA journal_mode=WAL;        # Enable WAL mode
 PRAGMA synchronous=NORMAL;       # Balanced durability (sufficient with WAL)
@@ -30,17 +33,20 @@ PRAGMA busy_timeout=5000;        # 5 second timeout for lock contention
 ### 2. Optimized Database Indices
 
 **What Changed:**
+
 - Added index on `event_type` column for fast event type filtering
 - Added index on `correlation_id` column for grouping related events
 - Retained existing indices on `ts` (timestamp) and `created_at`
 
 **Schema Updates:**
+
 ```sql
 CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type);
 CREATE INDEX IF NOT EXISTS idx_events_correlation ON events(correlation_id);
 ```
 
 **Benefits:**
+
 - **Fast Queries**: O(log n) lookups instead of O(n) table scans
 - **Efficient Filtering**: Quick filtering by event type (trade, alert, analysis, etc.)
 - **Related Event Tracking**: Fast grouping of correlated events (e.g., batch operations)
@@ -49,11 +55,13 @@ CREATE INDEX IF NOT EXISTS idx_events_correlation ON events(correlation_id);
 ### 3. Batch Write Operations
 
 **What Changed:**
+
 - Implemented `write_batch(events: list[dict]) -> list[str]` method
 - Uses single transaction for all events in batch
 - Optimized for bulk inserts with executemany()
 
 **API:**
+
 ```python
 from app.storage.event_store import write_batch
 
@@ -67,6 +75,7 @@ event_ids = write_batch(events)
 ```
 
 **Benefits:**
+
 - **2-3x Throughput**: Batch operations are 2-3x faster than individual writes
 - **Reduced Overhead**: Single transaction commit instead of per-event commits
 - **Atomic Operations**: All events in batch succeed or fail together
@@ -75,11 +84,13 @@ event_ids = write_batch(events)
 ### 4. Comprehensive Metrics Integration
 
 **What Changed:**
+
 - Integrated with existing telemetry system (`app.services.telemetry`)
 - Track batch size, latency, and throughput metrics
 - Expose metrics through storage wrapper for monitoring dashboards
 
 **Metrics Tracked:**
+
 ```python
 {
     "backend": "SQLITE",
@@ -98,6 +109,7 @@ event_ids = write_batch(events)
 ```
 
 **Telemetry Integration:**
+
 - `event_store_batch_size`: Gauge metric for batch sizes
 - `event_store_batch_latency_ms`: Latency of batch operations
 - `event_store_batch_throughput`: Events per second throughput
@@ -108,12 +120,14 @@ event_ids = write_batch(events)
 ### Before Improvements
 
 **Configuration:**
+
 - Journal mode: DELETE (default)
 - Synchronous: FULL
 - No batch operations
 - Basic indices (timestamp only)
 
 **Performance:**
+
 - Individual writes: ~50-100ms per event (with fsync)
 - Bulk operations: N × single write time
 - Lock contention on high-frequency writes
@@ -122,6 +136,7 @@ event_ids = write_batch(events)
 ### After Improvements
 
 **Configuration:**
+
 - Journal mode: WAL
 - Synchronous: NORMAL (sufficient with WAL)
 - Batch operations available
@@ -129,14 +144,15 @@ event_ids = write_batch(events)
 
 **Performance Benchmarks:**
 
-| Operation | Before | After | Improvement |
-|-----------|--------|-------|-------------|
-| Single Write | 50-100ms | 40-80ms | ~20% faster |
-| Batch (10 events) | 500-1000ms | 150-300ms | **2-3x faster** |
-| Batch (50 events) | 2500-5000ms | 800-1500ms | **3x faster** |
-| Batch (100 events) | 5000-10000ms | 1500-3000ms | **3x faster** |
+| Operation          | Before       | After       | Improvement     |
+| ------------------ | ------------ | ----------- | --------------- |
+| Single Write       | 50-100ms     | 40-80ms     | ~20% faster     |
+| Batch (10 events)  | 500-1000ms   | 150-300ms   | **2-3x faster** |
+| Batch (50 events)  | 2500-5000ms  | 800-1500ms  | **3x faster**   |
+| Batch (100 events) | 5000-10000ms | 1500-3000ms | **3x faster**   |
 
 **Throughput:**
+
 - Before: ~10-20 events/second (individual writes)
 - After (individual): ~12-25 events/second
 - After (batched): **40-100 events/second**
@@ -144,21 +160,25 @@ event_ids = write_batch(events)
 ### Query Performance
 
 **Event Type Filtering:**
+
 ```sql
 -- Find all trade events from last hour
-SELECT * FROM events 
-WHERE event_type = 'trade' 
+SELECT * FROM events
+WHERE event_type = 'trade'
   AND ts > datetime('now', '-1 hour');
 ```
+
 - Before (no index): 100-500ms (full table scan)
 - After (with index): **5-20ms** (indexed lookup)
 
 **Correlation Tracking:**
+
 ```sql
 -- Find all events in a batch operation
-SELECT * FROM events 
+SELECT * FROM events
 WHERE correlation_id = 'batch-abc123';
 ```
+
 - Before: 100-500ms (full table scan)
 - After: **5-15ms** (indexed lookup)
 
@@ -167,17 +187,20 @@ WHERE correlation_id = 'batch-abc123';
 ### WAL Mode Durability
 
 **Write-Ahead Log Properties:**
+
 1. **Atomic Commits**: All changes in a transaction commit atomically
 2. **Crash Recovery**: Database recovers to last committed transaction
 3. **Checkpoint Safety**: Automatic checkpointing ensures changes persist
 4. **NORMAL Synchronous**: fsync on checkpoints, not every commit (faster, still durable)
 
 **Durability Modes:**
+
 - `FULL`: fsync on every commit (slowest, highest durability)
 - `NORMAL`: fsync at critical checkpoints (balanced - our choice)
 - `OFF`: No fsync (fastest, risk of corruption on crash)
 
 With WAL + NORMAL, we achieve:
+
 - ✅ Protection against application crashes
 - ✅ Protection against power loss (with OS buffering)
 - ✅ Atomic batch operations
@@ -186,6 +209,7 @@ With WAL + NORMAL, we achieve:
 ### Testing
 
 Durability validated through:
+
 1. Batch write + connection close + reopen + verify
 2. Write + forced checkpoint + verify
 3. Concurrent read/write operations
@@ -196,12 +220,14 @@ Durability validated through:
 ### When to Use Batch Writes
 
 **✅ Use Batches For:**
+
 - Bulk data imports (historical data, backfills)
 - High-frequency event streams (market data, news feeds)
 - Periodic batch jobs (end-of-day processing)
 - Any operation writing >5 events
 
 **❌ Use Individual Writes For:**
+
 - Critical single events that need immediate persistence
 - Events with dependencies requiring confirmation
 - Low-frequency operations (<1 event per second)
@@ -213,6 +239,7 @@ Durability validated through:
    - Too large (>500): Increased latency, lock time
 
 2. **Error Handling**:
+
    ```python
    try:
        event_ids = write_batch(events)
@@ -223,9 +250,10 @@ Durability validated through:
    ```
 
 3. **Monitoring**:
+
    ```python
    from app.storage.event_store import get_performance_summary
-   
+
    # Log performance summary periodically
    summary = get_performance_summary()
    logger.info(summary)
@@ -247,6 +275,7 @@ Durability validated through:
 ### Existing Code Compatibility
 
 **No Breaking Changes**: All existing code continues to work
+
 - `append_event()` still works identically
 - `iter_events()` returns same results
 - All existing event formats supported
@@ -260,17 +289,19 @@ Durability validated through:
 ### Example Migration
 
 **Before:**
+
 ```python
 for event_data in event_stream:
     event_id = append_event(event_data)
 ```
 
 **After:**
+
 ```python
 batch = []
 for event_data in event_stream:
     batch.append(event_data)
-    
+
     if len(batch) >= 50:  # Batch size threshold
         write_batch(batch)
         batch = []
@@ -378,6 +409,6 @@ The event store performance improvements deliver:
 ✅ **Optimized queries** via strategic indices  
 ✅ **Comprehensive metrics** for observability  
 ✅ **Zero breaking changes** to existing code  
-✅ **Production-ready** with extensive test coverage  
+✅ **Production-ready** with extensive test coverage
 
 These enhancements position ZiggyAI's event store to handle higher throughput while maintaining reliability and providing visibility into system performance.

@@ -111,7 +111,9 @@ class BrainWriteThrough:
 
         try:
             # Build NLP event
-            nlp_event = await self._enrich_nlp_event(news_data, nlp_results, vendor_stamp)
+            nlp_event = await self._enrich_nlp_event(
+                news_data, nlp_results, vendor_stamp
+            )
 
             if BRAIN_ASYNC_MODE:
                 return await self._handle_async_write(nlp_event)
@@ -278,7 +280,9 @@ class BrainWriteThrough:
         # Extract key insights for quick access
         event["insights"] = {
             "tickers_mentioned": nlp_results.get("tickers", []),
-            "sentiment_polarity": nlp_results.get("overall_sentiment", {}).get("polarity", 0.0),
+            "sentiment_polarity": nlp_results.get("overall_sentiment", {}).get(
+                "polarity", 0.0
+            ),
             "event_type": nlp_results.get("event_classification", "unknown"),
             "entity_count": len(nlp_results.get("entities", [])),
             "novelty_score": nlp_results.get("novelty_score", 0.0),
@@ -295,7 +299,8 @@ class BrainWriteThrough:
                 # Check if we should flush
                 should_flush = (
                     len(self._pending_batch) >= BRAIN_BATCH_SIZE
-                    or (datetime.now() - self._last_flush).total_seconds() >= BRAIN_FLUSH_INTERVAL
+                    or (datetime.now() - self._last_flush).total_seconds()
+                    >= BRAIN_FLUSH_INTERVAL
                 )
 
                 if should_flush:
@@ -409,7 +414,13 @@ class BrainWriteThrough:
 
         # Boost for important event types
         event_type = nlp_results.get("event_classification", "")
-        high_priority_events = ["earnings", "merger", "acquisition", "guidance", "split"]
+        high_priority_events = [
+            "earnings",
+            "merger",
+            "acquisition",
+            "guidance",
+            "split",
+        ]
         if any(event in event_type.lower() for event in high_priority_events):
             priority = min(priority + 0.2, 1.0)
 
@@ -420,9 +431,16 @@ class BrainWriteThrough:
 
         return priority
 
-    def _assess_data_quality(self, data: dict[str, Any], data_type: str) -> dict[str, Any]:
+    def _assess_data_quality(
+        self, data: dict[str, Any], data_type: str
+    ) -> dict[str, Any]:
         """Assess data quality metrics."""
-        quality = {"completeness": 1.0, "freshness": 1.0, "consistency": 1.0, "issues": []}
+        quality = {
+            "completeness": 1.0,
+            "freshness": 1.0,
+            "consistency": 1.0,
+            "issues": [],
+        }
 
         # Check completeness
         required_fields = {
@@ -433,7 +451,9 @@ class BrainWriteThrough:
 
         if data_type in required_fields:
             required = required_fields[data_type]
-            missing = [field for field in required if field not in data or data[field] is None]
+            missing = [
+                field for field in required if field not in data or data[field] is None
+            ]
             if missing:
                 quality["completeness"] = max(0.0, 1.0 - len(missing) / len(required))
                 quality["issues"].append(f"Missing fields: {missing}")
@@ -483,7 +503,9 @@ async def write_market_data_to_brain(
     timezone_info: dict[str, Any] | None = None,
 ) -> str:
     """Write market data to brain (convenience function)."""
-    return await brain_writer.write_market_data(data, data_type, vendor_stamp, timezone_info)
+    return await brain_writer.write_market_data(
+        data, data_type, vendor_stamp, timezone_info
+    )
 
 
 async def write_nlp_to_brain(
@@ -495,7 +517,9 @@ async def write_nlp_to_brain(
     return await brain_writer.write_nlp_analysis(news_data, nlp_results, vendor_stamp)
 
 
-async def write_provider_health_to_brain(provider_name: str, health_metrics: dict[str, Any]) -> str:
+async def write_provider_health_to_brain(
+    provider_name: str, health_metrics: dict[str, Any]
+) -> str:
     """Write provider health to brain (convenience function)."""
     return await brain_writer.write_provider_health(provider_name, health_metrics)
 

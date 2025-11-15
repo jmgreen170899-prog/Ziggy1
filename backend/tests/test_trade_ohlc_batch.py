@@ -45,7 +45,8 @@ def test_batch_mixed_success(monkeypatch):
     c = TestClient(app)
 
     resp = c.get(
-        "/trade/ohlc", params={"tickers": "AAPL,FAIL,SLOW,@@@", "batch": True, "timeout_s": 0.05}
+        "/trade/ohlc",
+        params={"tickers": "AAPL,FAIL,SLOW,@@@", "batch": True, "timeout_s": 0.05},
     )
     assert resp.status_code == 200
     data = resp.json()
@@ -61,11 +62,16 @@ def test_batch_mixed_success(monkeypatch):
     assert sm["failed"] in (2, 3)  # depending on SLOW path being timeout or no_data
 
     results = {r["ticker"].upper(): r for r in data["results"]}
-    assert results["AAPL"]["ok"] is True and isinstance(results["AAPL"].get("records"), list)
-    assert results["FAIL"]["ok"] is False and str(results["FAIL"].get("error", "")).startswith(
-        "provider_error"
+    assert results["AAPL"]["ok"] is True and isinstance(
+        results["AAPL"].get("records"), list
     )
+    assert results["FAIL"]["ok"] is False and str(
+        results["FAIL"].get("error", "")
+    ).startswith("provider_error")
     # SLOW should either timeout or return no_data
     assert results["SLOW"]["ok"] is False
     assert results["SLOW"]["error"] in ("timeout", "no_data")
-    assert results["@@@"]["ok"] is False and results["@@@"].get("error") == "invalid_ticker"
+    assert (
+        results["@@@"]["ok"] is False
+        and results["@@@"].get("error") == "invalid_ticker"
+    )
