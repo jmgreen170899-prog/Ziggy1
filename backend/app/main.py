@@ -1,5 +1,7 @@
 # app/main.py - Complete ZiggyAI FastAPI Application with ALL Routers
 
+# app/main.py - Complete ZiggyAI FastAPI Application with ALL Routers
+
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -8,6 +10,11 @@ from typing import Any
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+from app.core.config.settings import get_settings
+from app.models import AckResponse, HealthResponse
+
+settings = get_settings()
 
 # ---- logger must exist before optional imports/use ----
 logger = logging.getLogger("backend")
@@ -30,52 +37,58 @@ except Exception as e:
 # ---- Lifespan management for streaming services ----
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialize and cleanup streaming services"""
+    """Initialize and cleanup streaming services."""
     logger.info("🚀 Starting ZiggyAI streaming services...")
-    
+
     # Start news streaming
     try:
         from app.services.news_streaming import start_news_streaming
+
         await start_news_streaming()
         logger.info("✅ News streaming started")
     except Exception as e:
-        logger.warning(f"⚠️ News streaming not started: {e}")
-    
+        logger.warning("⚠️ News streaming not started: %s", e)
+
     # Start alert monitoring if available
     try:
         from app.services.alert_monitoring import start_alert_monitoring
+
         await start_alert_monitoring()
         logger.info("✅ Alert monitoring started")
     except Exception as e:
-        logger.warning(f"⚠️ Alert monitoring not started: {e}")
-    
+        logger.warning("⚠️ Alert monitoring not started: %s", e)
+
     # Start portfolio streaming if available
     try:
         from app.services.portfolio_streaming import start_portfolio_streaming
+
         await start_portfolio_streaming()
         logger.info("✅ Portfolio streaming started")
     except Exception as e:
-        logger.warning(f"⚠️ Portfolio streaming not started: {e}")
-    
+        logger.warning("⚠️ Portfolio streaming not started: %s", e)
+
     logger.info("✅ ZiggyAI backend ready!")
-    
-    yield  # Server runs here
-    
+
+    # Application runs while we're in this context
+    yield
+
     # Cleanup on shutdown
     logger.info("🛑 Shutting down ZiggyAI streaming services...")
-    
+
     try:
         from app.services.news_streaming import stop_news_streaming
+
         await stop_news_streaming()
     except Exception as e:
-        logger.debug(f"News streaming cleanup: {e}")
-    
+        logger.debug("News streaming cleanup: %s", e)
+
     try:
         from app.core.websocket import connection_manager
+
         await connection_manager.stop()
     except Exception as e:
-        logger.debug(f"WebSocket cleanup: {e}")
-    
+        logger.debug("WebSocket cleanup: %s", e)
+
     logger.info("✅ ZiggyAI backend shutdown complete")
 
 
@@ -91,22 +104,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
 # ---- Add OpenAPI Security Schemes ----
-# These define the authentication methods available in the API
 def customize_openapi():
-    """Customize OpenAPI schema to include security schemes"""
+    """Customize OpenAPI schema to include security schemes."""
     if app.openapi_schema:
         return app.openapi_schema
-    
+
     from fastapi.openapi.utils import get_openapi
-    
+
     openapi_schema = get_openapi(
         title=app.title,
         version=app.version,
         description="ZiggyAI Trading Platform API with optional authentication",
         routes=app.routes,
     )
-    
+
     # Add security schemes to OpenAPI
     openapi_schema["components"]["securitySchemes"] = {
         "BearerAuth": {
@@ -122,7 +135,7 @@ def customize_openapi():
             "description": "API key for programmatic access",
         },
     }
-    
+
     # Add security info
     openapi_schema["info"]["x-security-info"] = {
         "authentication": "Optional authentication via JWT Bearer token or API Key",
@@ -130,7 +143,7 @@ def customize_openapi():
         "production": "Authentication can be enabled via ENABLE_AUTH environment variable",
         "public_endpoints": ["/health", "/health/detailed", "/docs", "/redoc", "/openapi.json"],
     }
-    
+
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
@@ -140,11 +153,16 @@ app.openapi = customize_openapi
 # ---- CORS Middleware ----
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:8080"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8080",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # ---- Rate Limiting Setup ----
 if HAVE_SLOWAPI:
@@ -153,10 +171,14 @@ if HAVE_SLOWAPI:
     app.add_middleware(SlowAPIMiddleware)
 
     @app.exception_handler(RateLimitExceeded)
-    async def _rate_limit_handler(request, exc):
+    async def _rate_limit_handler(request, exc):  # type: ignore[override]
         return JSONResponse(
             status_code=429,
-            content={"detail": "Rate limit exceeded", "code": "rate_limit_exceeded", "meta": {}},
+            content={
+                "detail": "Rate limit exceeded",
+                "code": "rate_limit_exceeded",
+                "meta": {},
+            },
         )
 
 
@@ -165,14 +187,16 @@ if HAVE_SLOWAPI:
 async def http_exception_handler(request, exc: HTTPException):
     """
     Standardize HTTPException responses to use ErrorResponse format.
-    
+
     Converts HTTPException detail to standardized {detail, code, meta} format.
     """
     from app.models import ErrorResponse
 
     # If detail is already a dict with our format, use it
     if isinstance(exc.detail, dict):
-        detail_str = exc.detail.get("detail", str(exc.detail.get("error", "An error occurred")))
+        detail_str = exc.detail.get(
+            "detail", str(exc.detail.get("error", "An error occurred"))
+        )
         code = exc.detail.get("code", f"http_{exc.status_code}")
         meta = exc.detail.get("meta", exc.detail.copy())
         # Remove standard keys from meta to avoid duplication
@@ -195,12 +219,12 @@ async def http_exception_handler(request, exc: HTTPException):
 async def general_exception_handler(request, exc: Exception):
     """
     Catch-all handler for unexpected exceptions.
-    
+
     Returns standardized error response for internal server errors.
     """
     from app.models import ErrorResponse
 
-    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    logger.error("Unhandled exception: %s", exc, exc_info=True)
     error_response = ErrorResponse(
         detail="An internal server error occurred",
         code="internal_server_error",
@@ -212,20 +236,12 @@ async def general_exception_handler(request, exc: Exception):
     )
 
 
-# ---- Router Registration with Error Handling ----
-# Note: Router registration helper function kept for potential future use
-# All routers are now explicitly registered below for better visibility and control
-
-
 # ---- Basic Health Endpoint ----
-from app.models import AckResponse, HealthResponse
-
-
 @app.get("/health")
 async def health():
     """
     Basic health check endpoint with unified response format.
-    
+
     Returns a response compatible with multiple frontend consumers:
     - status: "ok" (for components checking data.status)
     - ok: true (for components checking data.ok)
@@ -236,7 +252,7 @@ async def health():
         "status": "ok",
         "ok": True,
         "service": "ZiggyAI Backend",
-        "version": "0.1.0"
+        "version": "0.1.0",
     }
 
 
@@ -245,18 +261,18 @@ async def health():
 async def detailed_health() -> HealthResponse:
     """
     Detailed health check with router information.
-    
+
     Returns service status, version, and registered routes.
     """
     routes_info: list[dict[str, Any]] = []
     for route in app.routes:
-        if hasattr(route, "path") and hasattr(route, "methods"):
-            route_path = getattr(route, "path", "unknown")
-            route_methods = getattr(route, "methods", set())
+        route_path = getattr(route, "path", None)
+        route_methods = getattr(route, "methods", None)
+        if route_path and route_methods:
             routes_info.append(
                 {
                     "path": route_path,
-                    "methods": list(route_methods) if route_methods else [],
+                    "methods": list(route_methods),
                     "name": getattr(route, "name", "unnamed"),
                 }
             )
@@ -402,7 +418,8 @@ except Exception as e:
 try:
     from app.api.routes_signals import router as signals_router
 
-    app.include_router(signals_router, prefix="/api")  # router has prefix="/signals", combined = "/api/signals"
+    # router has prefix="/signals", combined = "/api/signals"
+    app.include_router(signals_router, prefix="/api")
 except Exception as e:
     logger.warning("Failed to include signals router: %s", e)
 
@@ -437,18 +454,20 @@ except Exception as e:
 try:
     from app.api.routes_websocket import router as websocket_router
 
-    app.include_router(websocket_router)  # WebSocket routes: /ws/market, /ws/news, etc.
+    # WebSocket routes: /ws/market, /ws/news, etc.
+    app.include_router(websocket_router)
 except Exception as e:
     logger.warning("Failed to include websocket router: %s", e)
 
-# ---- Auto-discovery fallback (catch missed routers) ----
-# Note: Auto-discovery is disabled because all routers are explicitly registered above.
-# The auto-discovery system is available in app.core.router_auto if needed in the future.
-# To enable: uncomment the code below and ensure no duplicate registrations occur.
+
+# ---- Auto-discovery fallback (currently disabled) ----
+# Note: Router auto-discovery is available in app.core.router_auto if needed.
+# It is intentionally disabled because all routers are explicitly registered above.
+# To enable in the future, ensure no duplicate registrations occur.
 # try:
 #     from app.core.router_auto import discover_and_register_routers
 #     discover_and_register_routers(app)
 # except Exception as e:
-#     # log but do not crash startup
-#     import logging
-#     logging.getLogger("ziggy.router_auto").warning("Router auto-discovery skipped: %s", e)
+#     logging.getLogger("ziggy.router_auto").warning(
+#         "Router auto-discovery skipped: %s", e
+#     )
