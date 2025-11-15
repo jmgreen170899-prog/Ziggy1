@@ -194,7 +194,7 @@ class ExplainOut(BaseModel):
 # ───────────────────────────────────────────────────────────────────────────────
 # Health (for frontend "backend" status chip) — lightweight, no upstream calls
 # ───────────────────────────────────────────────────────────────────────────────
-@router.get("/trade/health")
+@router.get("/trade/health", response_model=None)
 def trade_health():
     """
     Minimal health: do not hit upstream markets. Report scan toggle,
@@ -631,7 +631,7 @@ def _explain_with_legacy_logic(body: ExplainIn, t0: float) -> ExplainOut:
 # ───────────────────────────────────────────────────────────────────────────────
 # Telegram Notify API
 # ───────────────────────────────────────────────────────────────────────────────
-@router.post("/trade/notify")
+@router.post("/trade/notify", response_model=None)
 def trade_notify(body: NotifyIn):
     try:
         ok = tg_send(body.text, kind="manual")
@@ -655,17 +655,17 @@ def trade_notify(body: NotifyIn):
     raise HTTPException(status_code=500, detail=detail)
 
 
-@router.get("/trade/notify/diag")
+@router.get("/trade/notify/diag", response_model=None)
 def trade_notify_diag():
     return tg_diag()
 
 
-@router.get("/trade/notify/probe")
+@router.get("/trade/notify/probe", response_model=None)
 def trade_notify_probe():
     return tg_diag()
 
 
-@router.post("/trade/notify/test")
+@router.post("/trade/notify/test", response_model=None)
 def trade_notify_test():
     try:
         ok = tg_send("✅ Ziggy test ping", kind="manual-test")
@@ -683,12 +683,12 @@ def trade_notify_test():
 # ───────────────────────────────────────────────────────────────────────────────
 # Scan Toggle
 # ───────────────────────────────────────────────────────────────────────────────
-@router.get("/trade/scan/status")
+@router.get("/trade/scan/status", response_model=None)
 def scan_status():
     return {"enabled": get_scan_enabled()}
 
 
-@router.post("/trade/scan/enable")
+@router.post("/trade/scan/enable", response_model=None)
 def scan_enable(enabled: bool = Query(..., description="true/false")):
     set_scan_enabled(enabled)
     return {"enabled": get_scan_enabled()}
@@ -697,7 +697,7 @@ def scan_enable(enabled: bool = Query(..., description="true/false")):
 # ───────────────────────────────────────────────────────────────────────────────
 # Market Calendar (stub with optional external file)
 # ───────────────────────────────────────────────────────────────────────────────
-@router.get("/market/calendar")
+@router.get("/market/calendar", response_model=None)
 def market_calendar(days: int = Query(14, ge=1, le=60)):
     now = datetime.now(UTC)
     try:
@@ -767,7 +767,7 @@ def market_calendar(days: int = Query(14, ge=1, le=60)):
 # ───────────────────────────────────────────────────────────────────────────────
 # OHLC for Mini Charts (normalized via factory + debug source)
 # ───────────────────────────────────────────────────────────────────────────────
-@router.get("/trade/ohlc")
+@router.get("/trade/ohlc", response_model=None)
 async def get_ohlc(
     tickers: str = Query(..., description="Comma-separated tickers"),
     period_days: int = Query(60, ge=1, le=3650),
@@ -1055,7 +1055,7 @@ async def get_ohlc(
 # ───────────────────────────────────────────────────────────────────────────────
 # Market Breadth KPIs
 # ───────────────────────────────────────────────────────────────────────────────
-@router.get("/market/breadth")
+@router.get("/market/breadth", response_model=None)
 def market_breadth(
     symbols: str | None = Query(
         None, description="Comma-separated tickers; default internal watchlist"
@@ -2017,7 +2017,7 @@ def _to_num(v) -> float | None:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-@router.get("/trade/orders")
+@router.get("/trade/orders", response_model=None)
 def get_orders(status: str | None = Query(None, description="Filter by order status")):
     """Get all orders, optionally filtered by status."""
     try:
@@ -2029,7 +2029,7 @@ def get_orders(status: str | None = Query(None, description="Filter by order sta
         return {"orders": [], "error": str(e)}
 
 
-@router.get("/trade/positions")
+@router.get("/trade/positions", response_model=None)
 def get_positions():
     """Get all current positions."""
     try:
@@ -2041,7 +2041,7 @@ def get_positions():
         return {"positions": [], "error": str(e)}
 
 
-@router.get("/trade/portfolio")
+@router.get("/trade/portfolio", response_model=None)
 def get_portfolio():
     """Get portfolio summary with total values and P&L."""
     try:
@@ -2053,7 +2053,7 @@ def get_portfolio():
         return {"error": str(e), "total_value": 0, "total_pnl": 0}
 
 
-@router.delete("/trade/orders/{order_id}")
+@router.delete("/trade/orders/{order_id}", response_model=None)
 def cancel_order(order_id: str):
     """Cancel a specific order."""
     try:
@@ -2075,7 +2075,7 @@ def cancel_order(order_id: str):
         return {"ok": False, "error": str(e)}
 
 
-@router.post("/trade/execute")
+@router.post("/trade/execute", response_model=None)
 async def execute_trade(body: TradeIn):
     """Execute a trade with enhanced signal data."""
     try:
@@ -2104,7 +2104,7 @@ async def execute_trade(body: TradeIn):
         return {"ok": False, "error": str(e)}
 
 
-@router.post("/trade/mode/{mode}")
+@router.post("/trade/mode/{mode}", response_model=None)
 def set_trading_mode(mode: str):
     """Set trading mode: 'paper' or 'live'."""
     try:

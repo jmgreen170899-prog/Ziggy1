@@ -391,7 +391,7 @@ async def get_signal_explanation(
         raise HTTPException(status_code=500, detail=f"Explanation failed: {e!s}")
 
 
-@router.post("/explain/feedback")
+@router.post("/explain/feedback", response_model=None)
 async def submit_explanation_feedback(request: ExplainFeedbackRequest):
     """
     Submit thumbs up/down feedback on explanations.
@@ -419,7 +419,7 @@ async def submit_explanation_feedback(request: ExplainFeedbackRequest):
         raise HTTPException(status_code=500, detail=f"Feedback submission failed: {e!s}")
 
 
-@router.get("/explain/health")
+@router.get("/explain/health", response_model=None)
 async def explain_health_check():
     """Health check for explain service."""
     return {

@@ -83,7 +83,7 @@ def _router_has_path(rtr: APIRouter, path: str, method: str = "GET") -> bool:
 # ── route ─────────────────────────────────────────────────────────────────────
 
 
-@router.get("/overview")
+@router.get("/overview", response_model=None)
 async def market_overview(
     symbols: str = Query("AAPL,MSFT", description="Comma-separated symbols."),
     period_days: int = Query(30, ge=2, le=3650),

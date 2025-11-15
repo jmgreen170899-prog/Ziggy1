@@ -200,7 +200,7 @@ async def screen_market(request: ScreenerRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/universe/sp500")
+@router.get("/universe/sp500", response_model=None)
 async def get_sp500_universe():
     """Get S&P 500 universe for screening."""
     # Mock S&P 500 symbols - in production, this would come from a data provider
@@ -265,7 +265,7 @@ async def get_sp500_universe():
     }
 
 
-@router.get("/universe/nasdaq100")
+@router.get("/universe/nasdaq100", response_model=None)
 async def get_nasdaq100_universe():
     """Get NASDAQ 100 universe for screening."""
     # Mock NASDAQ 100 symbols
@@ -330,7 +330,7 @@ async def get_nasdaq100_universe():
     }
 
 
-@router.get("/presets/momentum")
+@router.get("/presets/momentum", response_model=ScreenerResponse)
 async def momentum_screen(
     universe: str = Query("sp500", description="Universe to screen"),
     min_confidence: float = Query(0.7, description="Minimum confidence"),
@@ -360,7 +360,7 @@ async def momentum_screen(
     return await screen_market(request)
 
 
-@router.get("/presets/mean_reversion")
+@router.get("/presets/mean_reversion", response_model=ScreenerResponse)
 async def mean_reversion_screen(
     universe: str = Query("sp500", description="Universe to screen"),
     min_confidence: float = Query(0.7, description="Minimum confidence"),
@@ -391,7 +391,7 @@ async def mean_reversion_screen(
     return await screen_market(request)
 
 
-@router.get("/regime_summary")
+@router.get("/regime_summary", response_model=None)
 async def get_regime_summary(universe: str = Query("sp500", description="Universe to analyze")):
     """Get regime breakdown for a universe."""
     if not COGNITIVE_CORE_AVAILABLE:

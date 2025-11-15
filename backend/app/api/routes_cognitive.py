@@ -72,7 +72,7 @@ class OutcomeRecord(BaseModel):
 
 
 # API Endpoints
-@router.get("/status")
+@router.get("/status", response_model=None)
 async def get_cognitive_status() -> dict[str, Any]:
     """
     Get status of all cognitive systems.
@@ -122,7 +122,7 @@ async def enhance_decision(request: DecisionRequest) -> DecisionResponse:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/record-outcome")
+@router.post("/record-outcome", response_model=None)
 async def record_outcome(record: OutcomeRecord) -> dict[str, str]:
     """
     Record the outcome of a trading decision.
@@ -161,7 +161,7 @@ async def record_outcome(record: OutcomeRecord) -> dict[str, str]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/meta-learning/strategies")
+@router.get("/meta-learning/strategies", response_model=None)
 async def get_meta_learning_strategies() -> dict[str, Any]:
     """
     Get all meta-learning strategies and their performance.
@@ -183,7 +183,7 @@ async def get_meta_learning_strategies() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/counterfactual/insights")
+@router.get("/counterfactual/insights", response_model=None)
 async def get_counterfactual_insights() -> dict[str, Any]:
     """
     Get aggregate insights from counterfactual analysis.
@@ -204,7 +204,7 @@ async def get_counterfactual_insights() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/episodic-memory/stats")
+@router.get("/episodic-memory/stats", response_model=None)
 async def get_episodic_memory_stats() -> dict[str, Any]:
     """
     Get statistics about episodic memory.
@@ -225,7 +225,7 @@ async def get_episodic_memory_stats() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/health")
+@router.get("/health", response_model=None)
 async def health_check() -> dict[str, str]:
     """Health check for cognitive systems."""
     try:

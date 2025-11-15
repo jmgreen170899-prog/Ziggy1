@@ -132,7 +132,7 @@ async def _post_chat(json_body: dict[str, Any], stream: bool) -> httpx.Response:
 # ──────────────────────────── Endpoints ────────────────────────────
 
 
-@router.post("/complete")
+@router.post("/complete", response_model=None)
 async def chat_complete(req: ChatRequest):
     """
     OpenAI-compatible chat completion proxy (non-streaming by default, SSE if stream=true).

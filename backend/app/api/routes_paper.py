@@ -261,7 +261,7 @@ async def get_paper_run(run_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to retrieve paper run") from e
 
 
-@router.post("/runs/{run_id}/stop")
+@router.post("/runs/{run_id}/stop", response_model=None)
 async def stop_paper_run(run_id: int, db: Session = Depends(get_db)):
     """Stop a running paper trading session"""
     verify_dev_only()
@@ -374,7 +374,7 @@ async def get_theory_performance(
         raise HTTPException(status_code=500, detail="Failed to retrieve theory performance") from e
 
 
-@router.post("/runs/{run_id}/theories/{theory_name}/pause")
+@router.post("/runs/{run_id}/theories/{theory_name}/pause", response_model=None)
 async def pause_theory(run_id: int, theory_name: str, db: Session = Depends(get_db)):
     """Pause a specific theory (stop receiving new allocations)"""
     verify_dev_only()
@@ -407,7 +407,7 @@ async def pause_theory(run_id: int, theory_name: str, db: Session = Depends(get_
 
 
 # System Health and Diagnostics
-@router.get("/runs/{run_id}/stats")
+@router.get("/runs/{run_id}/stats", response_model=None)
 async def get_run_stats(run_id: int, db: Session = Depends(get_db)):
     """Get detailed statistics and health metrics for a paper run"""
     verify_dev_only()
@@ -464,7 +464,7 @@ async def get_run_stats(run_id: int, db: Session = Depends(get_db)):
 
 
 # Model Snapshots and Learning Metrics
-@router.get("/runs/{run_id}/models")
+@router.get("/runs/{run_id}/models", response_model=None)
 async def get_model_snapshots(
     run_id: int,
     model_name: str | None = Query(None, description="Filter by model name"),
@@ -507,7 +507,7 @@ async def get_model_snapshots(
 
 
 # Emergency Controls
-@router.post("/emergency/stop_all")
+@router.post("/emergency/stop_all", response_model=None)
 async def emergency_stop_all(db: Session = Depends(get_db)):
     """Emergency stop all active paper trading runs"""
     verify_dev_only()
@@ -537,7 +537,7 @@ async def emergency_stop_all(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Emergency stop failed") from e
 
 
-@router.get("/health")
+@router.get("/health", response_model=None)
 async def paper_lab_health():
     """Comprehensive paper trading system health check with backoff/caching.
 

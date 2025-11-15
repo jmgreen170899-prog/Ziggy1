@@ -250,7 +250,7 @@ async def get_signal_trace(event_id: str = Query(..., description="Event ID to t
         raise HTTPException(status_code=500, detail=f"Trace failed: {e!s}")
 
 
-@router.get("/trace/list")
+@router.get("/trace/list", response_model=None)
 async def list_traces(
     ticker: str | None = Query(None, description="Filter by ticker"),
     limit: int = Query(20, ge=1, le=100, description="Maximum traces to return"),
@@ -293,7 +293,7 @@ async def list_traces(
         raise HTTPException(status_code=500, detail=f"Failed to list traces: {e!s}")
 
 
-@router.get("/trace/health")
+@router.get("/trace/health", response_model=None)
 async def trace_health_check():
     """Health check for trace service."""
     return {

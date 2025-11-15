@@ -270,7 +270,7 @@ async def websocket_charts(websocket: WebSocket):
         connection_manager.disconnect(websocket)
 
 
-@router.get("/ws/status")
+@router.get("/ws/status", response_model=None)
 async def websocket_status():
     """
     Get WebSocket connection statistics
