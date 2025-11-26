@@ -14,7 +14,6 @@ SECURITY NOTE: This stub prevents any actual trading operations.
 from __future__ import annotations
 
 import logging
-import random
 from datetime import datetime, UTC
 from typing import Any
 
