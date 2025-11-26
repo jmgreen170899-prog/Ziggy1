@@ -1,0 +1,102 @@
+{
+  "name": "Demo Portfolio",
+  "description": "Sample portfolio for demonstration purposes",
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T14:30:00Z",
+  "currency": "USD",
+  "initial_balance": 100000.00,
+  "cash_balance": 25432.50,
+  "total_value": 127856.75,
+  "positions": [
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "quantity": 50,
+      "avg_cost": 175.50,
+      "current_price": 185.25,
+      "market_value": 9262.50,
+      "unrealized_pnl": 487.50,
+      "unrealized_pnl_percent": 5.56
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft Corporation",
+      "quantity": 30,
+      "avg_cost": 365.00,
+      "current_price": 378.90,
+      "market_value": 11367.00,
+      "unrealized_pnl": 417.00,
+      "unrealized_pnl_percent": 3.81
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet Inc.",
+      "quantity": 40,
+      "avg_cost": 138.25,
+      "current_price": 141.50,
+      "market_value": 5660.00,
+      "unrealized_pnl": 130.00,
+      "unrealized_pnl_percent": 2.35
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA Corporation",
+      "quantity": 25,
+      "avg_cost": 820.00,
+      "current_price": 875.40,
+      "market_value": 21885.00,
+      "unrealized_pnl": 1385.00,
+      "unrealized_pnl_percent": 6.76
+    },
+    {
+      "symbol": "TSLA",
+      "name": "Tesla Inc.",
+      "quantity": 35,
+      "avg_cost": 242.00,
+      "current_price": 255.75,
+      "market_value": 8951.25,
+      "unrealized_pnl": 481.25,
+      "unrealized_pnl_percent": 5.68
+    },
+    {
+      "symbol": "AMD",
+      "name": "Advanced Micro Devices",
+      "quantity": 100,
+      "avg_cost": 145.50,
+      "current_price": 156.30,
+      "market_value": 15630.00,
+      "unrealized_pnl": 1080.00,
+      "unrealized_pnl_percent": 7.42
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms Inc.",
+      "quantity": 20,
+      "avg_cost": 475.00,
+      "current_price": 498.25,
+      "market_value": 9965.00,
+      "unrealized_pnl": 465.00,
+      "unrealized_pnl_percent": 4.89
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon.com Inc.",
+      "quantity": 45,
+      "avg_cost": 178.50,
+      "current_price": 186.75,
+      "market_value": 8403.75,
+      "unrealized_pnl": 371.25,
+      "unrealized_pnl_percent": 4.63
+    }
+  ],
+  "performance": {
+    "day_pnl": 1256.75,
+    "day_pnl_percent": 0.99,
+    "week_pnl": 3425.50,
+    "week_pnl_percent": 2.75,
+    "month_pnl": 8756.25,
+    "month_pnl_percent": 7.35,
+    "total_pnl": 27856.75,
+    "total_pnl_percent": 27.86
+  }
+}
