@@ -1,76 +1,72 @@
 # ZiggyAI Documentation
 
-Welcome to the ZiggyAI documentation! This directory contains comprehensive guides for working with the ZiggyAI repository.
+Welcome to the ZiggyAI documentation! This directory contains comprehensive guides for working with the ZiggyAI trading platform.
 
-## 📚 Available Documentation
+---
 
-### Getting Started
+## 📚 Documentation Index
 
-- **[SYNC_GUIDE.md](./SYNC_GUIDE.md)** - Quick reference for syncing GitHub changes to your local repository
-  - Perfect for: Daily workflow, quick lookups
-  - Time to read: 5 minutes
+### Essential Guides
+
+| Document | Description | Time |
+|----------|-------------|------|
+| **[API.md](./API.md)** | Complete API reference with endpoints, examples, and schemas | 30 min |
+| **[architecture.md](./architecture.md)** | System architecture with Mermaid diagrams | 15 min |
+| **[SetupGuide.md](./SetupGuide.md)** | Installation and local development setup | 15 min |
+| **[Deployment.md](./Deployment.md)** | Production deployment instructions | 20 min |
+| **[TechStack.md](./TechStack.md)** | Complete technology documentation | 10 min |
+| **[Troubleshooting.md](./Troubleshooting.md)** | Common issues and solutions | 10 min |
+| **[Changelog.md](./Changelog.md)** | Version history and release notes | 5 min |
 
 ### Workflow & Process
 
-- **[GITHUB_WORKFLOW.md](./GITHUB_WORKFLOW.md)** - Visual guide to GitHub workflows
-  - Perfect for: Understanding the complete flow, visual learners
-  - Time to read: 10 minutes
-  - Includes: Diagrams, timelines, common patterns
-
-- **[../CONTRIBUTING.md](../CONTRIBUTING.md)** - Complete contributing guide
-  - Perfect for: In-depth understanding, troubleshooting
-  - Time to read: 20 minutes
-  - Includes: Detailed workflows, best practices, comprehensive troubleshooting
+| Document | Description | Time |
+|----------|-------------|------|
+| **[SYNC_GUIDE.md](./SYNC_GUIDE.md)** | Quick reference for syncing GitHub changes | 5 min |
+| **[GITHUB_WORKFLOW.md](./GITHUB_WORKFLOW.md)** | Visual guide to GitHub workflows | 10 min |
+| **[../CONTRIBUTING.md](../CONTRIBUTING.md)** | Complete contributing guide | 20 min |
 
 ### Architecture & Technical
 
-- **[IntegrationSystem.md](./IntegrationSystem.md)** - Integration architecture
-- **[LearningSystem.md](./LearningSystem.md)** - Machine learning system details
-- **[UI_AUDIT_SYSTEM.md](./UI_AUDIT_SYSTEM.md)** - UI auditing system
-- **[ZiggyContext.md](./ZiggyContext.md)** - Overall system context
+| Document | Description |
+|----------|-------------|
+| **[architecture/ZiggyAI_FULL_WRITEUP.md](./architecture/ZiggyAI_FULL_WRITEUP.md)** | Detailed system architecture write-up |
+| **[IntegrationSystem.md](./IntegrationSystem.md)** | Integration architecture |
+| **[LearningSystem.md](./LearningSystem.md)** | Machine learning system details |
 
 ### Development
 
-- **[development/README-dev.md](./development/README-dev.md)** - Development environment setup
-- **[development/AUDIT_README.md](./development/AUDIT_README.md)** - Code health audit system
+| Document | Description |
+|----------|-------------|
+| **[development/README-dev.md](./development/README-dev.md)** | Development environment setup |
+| **[development/AUDIT_README.md](./development/AUDIT_README.md)** | Code health audit system |
 
 ---
 
-## 🚀 Quick Start: Syncing Changes from GitHub
+## 🚀 Quick Start
 
-### The Problem
+### New to ZiggyAI?
 
-You need to ensure all changes from GitHub (pull requests, commits) are reflected in your local files.
+1. **Read the Setup Guide** - [SetupGuide.md](./SetupGuide.md)
+2. **Understand the Architecture** - [architecture.md](./architecture.md)
+3. **Explore the API** - [API.md](./API.md)
 
-### The Solution
+### Want to Contribute?
 
-**Three simple steps:**
+1. **Fork and clone** the repository
+2. **Set up locally** - [SetupGuide.md](./SetupGuide.md)
+3. **Read contributing guide** - [CONTRIBUTING.md](../CONTRIBUTING.md)
+4. **Create a PR**
 
-```bash
-# 1. Fetch changes
-git fetch origin
+### Deploying to Production?
 
-# 2. Pull into your branch
-git pull origin main
-
-# 3. Install dependencies (if needed)
-npm install
-pip install -r backend/requirements.lock
-```
-
-**Or use our automated script:**
-
-```bash
-# Linux/Mac
-./scripts/sync-from-github.sh
-
-# Windows
-.\scripts\sync-from-github.ps1
-```
+1. **Choose your platform** - Docker, Render, Vercel
+2. **Follow the guide** - [Deployment.md](./Deployment.md)
+3. **Configure security** - See security checklist
 
 ---
 
-## 📖 Documentation Quick Reference
+## 📖 Quick Reference
 
 ### I want to...
 
