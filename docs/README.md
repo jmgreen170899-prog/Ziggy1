@@ -31,8 +31,8 @@ Welcome to the ZiggyAI documentation! This directory contains comprehensive guid
 
 ### Development
 
-- **[../implements/README-dev.md](../implements/README-dev.md)** - Development environment setup
-- **[../implements/AUDIT_README.md](../implements/AUDIT_README.md)** - Code health audit system
+- **[development/README-dev.md](./development/README-dev.md)** - Development environment setup
+- **[development/AUDIT_README.md](./development/AUDIT_README.md)** - Code health audit system
 
 ---
 
@@ -197,7 +197,7 @@ make audit-frontend-full
 make audit-backend-full
 ```
 
-**See:** [AUDIT_README.md](../implements/AUDIT_README.md)
+**See:** [AUDIT_README.md](./development/AUDIT_README.md)
 
 ### Development Commands
 
@@ -215,7 +215,7 @@ cd frontend && npm run dev
 cd backend && pytest -q
 ```
 
-**See:** [README-dev.md](../implements/README-dev.md)
+**See:** [README-dev.md](./development/README-dev.md)
 
 ---
 
@@ -364,8 +364,8 @@ pip install --upgrade -r requirements.lock
 
 ### ZiggyAI Specific
 
-- [Architecture Overview](../implements/ZiggyAI_FULL_WRITEUP.md)
-- [Backend Functionality](../implements/ZiggyAI_Backend_Functionality_Explained.txt)
+- [Architecture Overview](./architecture/ZiggyAI_FULL_WRITEUP.md)
+- [Backend Functionality](./architecture/ZiggyAI_Backend_Functionality_Explained.txt)
 - [Task Documentation](../TASK.md)
 - [Issue Reports](../ISSUES.md)
 
@@ -395,6 +395,9 @@ docs/
 ├── README.md              ← You are here (index)
 ├── SYNC_GUIDE.md          ← Quick sync reference
 ├── GITHUB_WORKFLOW.md     ← Visual workflow guide
+├── architecture/          ← Technical architecture docs
+├── development/           ← Development guides
+├── archive/               ← Historical/status docs
 └── ...other docs
 
 CONTRIBUTING.md            ← Complete contributing guide (root)

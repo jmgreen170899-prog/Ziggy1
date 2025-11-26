@@ -40,7 +40,7 @@ cd backend && uvicorn app.main:app --reload   # Backend only
 cd frontend && npm run dev                     # Frontend only
 ```
 
-📖 **See:** [Development Setup Guide](implements/README-dev.md)
+📖 **See:** [Development Setup Guide](docs/development/README-dev.md)
 
 ---
 
@@ -53,8 +53,8 @@ cd frontend && npm run dev                     # Frontend only
 | **[SYNC_GUIDE.md](docs/SYNC_GUIDE.md)**           | Quick reference for syncing GitHub changes | 5 min  |
 | **[GITHUB_WORKFLOW.md](docs/GITHUB_WORKFLOW.md)** | Visual guide to GitHub workflows           | 10 min |
 | **[CONTRIBUTING.md](CONTRIBUTING.md)**            | Complete contributing guide                | 20 min |
-| **[README-dev.md](implements/README-dev.md)**     | Development environment setup              | 15 min |
-| **[AUDIT_README.md](implements/AUDIT_README.md)** | Code health audit system                   | 10 min |
+| **[README-dev.md](docs/development/README-dev.md)**     | Development environment setup              | 15 min |
+| **[AUDIT_README.md](docs/development/AUDIT_README.md)** | Code health audit system                   | 10 min |
 
 📂 **Full Documentation:** [docs/README.md](docs/README.md)
 
@@ -292,7 +292,7 @@ git commit -m "merge: resolve conflicts"
 
 - [Task Overview](TASK.md)
 - [Issue Tracking](ISSUES.md)
-- [Architecture Details](implements/ZiggyAI_FULL_WRITEUP.md)
+- [Architecture Details](docs/architecture/ZiggyAI_FULL_WRITEUP.md)
 - [Learning System](docs/LearningSystem.md)
 - [Integration System](docs/IntegrationSystem.md)
 
@@ -310,7 +310,7 @@ git commit -m "merge: resolve conflicts"
 **New to the project?**
 
 1. Read [SYNC_GUIDE.md](docs/SYNC_GUIDE.md) (5 min)
-2. Set up your environment: [README-dev.md](implements/README-dev.md) (15 min)
+2. Set up your environment: [README-dev.md](docs/development/README-dev.md) (15 min)
 3. Run the sync script: `./scripts/sync-from-github.sh`
 
 **Ready to contribute?**
@@ -355,8 +355,8 @@ Built with ❤️ by the ZiggyAI team.
 - 🔄 [Sync Guide](docs/SYNC_GUIDE.md)
 - 🔀 [GitHub Workflow](docs/GITHUB_WORKFLOW.md)
 - 🤝 [Contributing Guide](CONTRIBUTING.md)
-- 🛠️ [Development Setup](implements/README-dev.md)
-- 🏥 [Audit System](implements/AUDIT_README.md)
+- 🛠️ [Development Setup](docs/development/README-dev.md)
+- 🏥 [Audit System](docs/development/AUDIT_README.md)
 
 ---
 

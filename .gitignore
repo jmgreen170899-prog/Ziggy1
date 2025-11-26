@@ -119,12 +119,22 @@ requirements-merged.txt
 ############### App data generated locally ###############
 backend/data/paper_events.jsonl
 backend/data/telegram_log.jsonl
+backend/data/memory/events.jsonl
 backend/test_events.jsonl
 backend/test_feedback_events.jsonl
 backend/data/decisions/**
+data/paper_events.jsonl
+data/decisions/
 
 ############### Built wheels ###############
 backend/wheelhouse/*.whl
 
 ############### Test artifacts ###############
 test_learn_report.json
+
+############### Diagnostic dumps (never commit) ###############
+_diag/
+
+############### Sensitive bot info / secrets ###############
+**/Bot*Information*
+**/bot*info*

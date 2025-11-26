@@ -1,4 +1,20 @@
 # app/core/security.py
+"""
+ZiggyAI Security Module
+
+This module provides authentication and authorization for the ZiggyAI platform.
+
+SECURITY NOTES FOR PRODUCTION:
+------------------------------
+1. SECRET_KEY: MUST be set via environment variable in production.
+   The default value is for development only and is not secure.
+
+2. Demo Users (fake_users_db): These are placeholder accounts for development
+   and demos. In production, replace with a real user database.
+
+3. API Keys: The hardcoded API keys below are for demos only.
+   Production should use secure key management (e.g., AWS Secrets Manager).
+"""
 from __future__ import annotations
 
 import logging
@@ -19,6 +35,7 @@ logger = logging.getLogger("ziggy.security")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT settings
+# WARNING: In production, SECRET_KEY MUST be set via environment variable
 SECRET_KEY = os.getenv("SECRET_KEY", "ziggy-secret-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
@@ -29,12 +46,16 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
 class TokenData(BaseModel):
+    """JWT token data structure."""
+
     username: str | None = None
     scopes: list[str] = []
     exp: datetime | None = None
 
 
 class User(BaseModel):
+    """User model for authentication."""
+
     username: str
     email: str | None = None
     full_name: str | None = None
@@ -43,16 +64,23 @@ class User(BaseModel):
 
 
 class UserInDB(User):
+    """User model with hashed password for database storage."""
+
     hashed_password: str
 
 
-# Mock user database (replace with real database in production)
+# ------------------------------------------------------------------------------
+# DEMO USER DATABASE
+# WARNING: For development and demos only. Replace with real database in production.
+# Password for all demo users: "secret"
+# The bcrypt hash below corresponds to the password "secret"
+# ------------------------------------------------------------------------------
 fake_users_db = {
     "ziggy": {
         "username": "ziggy",
         "full_name": "Ziggy AI",
         "email": "ziggy@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # password: "secret"
+        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
         "scopes": ["admin", "trading", "market_data"],
     },
@@ -60,7 +88,7 @@ fake_users_db = {
         "username": "demo",
         "full_name": "Demo User",
         "email": "demo@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # password: "secret"
+        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
         "scopes": ["read_only"],
     },
@@ -68,7 +96,7 @@ fake_users_db = {
         "username": "user",
         "full_name": "ZiggyAI Dev User",
         "email": "dev@localhost",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # password: "secret"
+        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
         "scopes": ["admin", "trading", "paper_trading", "dev_brain"],
     },
@@ -174,7 +202,14 @@ async def get_current_active_user(
 
 
 def require_scope(required_scope: str):
-    """Dependency factory for scope-based authorization"""
+    """Dependency factory for scope-based authorization.
+
+    Args:
+        required_scope: The scope required to access the endpoint.
+
+    Returns:
+        A FastAPI dependency that validates the user has the required scope.
+    """
 
     async def scope_checker(
         current_user: User = Depends(get_current_active_user),
@@ -192,7 +227,13 @@ def require_scope(required_scope: str):
     return scope_checker
 
 
-# API Key authentication
+# ------------------------------------------------------------------------------
+# DEMO API KEYS
+# WARNING: For development and demos only. Production should use:
+# - Environment-based key configuration
+# - Secure key management (AWS Secrets Manager, HashiCorp Vault, etc.)
+# - Key rotation policies
+# ------------------------------------------------------------------------------
 API_KEYS = {
     "ziggy-admin-key": {
         "name": "Admin API Key",
