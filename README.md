@@ -1,10 +1,15 @@
 # ZiggyAI - Intelligent Trading Platform
 
+[![Build Status](https://img.shields.io/github/actions/workflow/status/jmgreen170899-prog/Ziggy1/ci.yml?branch=main&label=build)](https://github.com/jmgreen170899-prog/Ziggy1/actions)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11+-green.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-green.svg)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19.1-blue.svg)](https://react.dev)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black.svg)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
+
+> **⚠️ DEMO VERSION**: This is a demonstration version of ZiggyAI intended for portfolio showcasing and educational purposes. Real trading integrations are stubbed for safety. See [Demo Mode](#-demo-mode) for details.
 
 > **ZiggyAI** is a sophisticated full-stack paper trading platform featuring autonomous trading strategies, real-time market data integration, machine learning-powered signal generation, and comprehensive learning capabilities.
 
@@ -12,6 +17,7 @@
 
 ## 📋 Table of Contents
 
+- [Demo Mode](#-demo-mode)
 - [Project Summary](#-project-summary)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
@@ -28,6 +34,38 @@
 - [Contributing](#-contributing)
 
 ---
+
+## 🎮 Demo Mode
+
+This repository is configured as a **public demo version** for portfolio showcasing and educational purposes.
+
+### What's Included
+
+✅ **Full UI/UX Experience** - Complete React dashboard with all components  
+✅ **Paper Trading Engine** - Simulated trading with realistic mechanics  
+✅ **Market Data Integration** - Real-time data via public APIs (Yahoo Finance, etc.)  
+✅ **Machine Learning Pipeline** - Online learning and signal generation  
+✅ **RAG AI Assistant** - Document retrieval and chat capabilities  
+✅ **Complete API Layer** - All REST endpoints functional  
+
+### What's Stubbed/Disabled
+
+🔒 **Live Broker Integrations** - IBKR, Alpaca live trading adapters are stubbed  
+🔒 **Real Money Execution** - No actual trades can be placed  
+🔒 **Production Secrets** - All API keys use placeholder values  
+🔒 **External Paid Services** - Premium data feeds are mocked  
+
+### Demo Credentials
+
+For testing the authentication flow:
+
+| Username | Password | Role |
+|----------|----------|------|
+| `ziggy` | `secret` | Admin (full access) |
+| `demo` | `secret` | Read-only |
+| `user` | `secret` | Dev user |
+
+> **Note**: These credentials are for demonstration only. Production deployments must use proper authentication.
 
 ## 🎯 Project Summary
 
